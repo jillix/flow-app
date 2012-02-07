@@ -81,16 +81,22 @@ this.getUserByAuthPub = function( authPub, fields, callback ){
 // !TODO: check this: wrong query!!
 this.getUsersOperation = function( operationID, userID, callback ) {
 	
-	orient( CONFIG.orientDB, function( err, db ){
-		
-		if( err ) callback( err );
-		else db.sql(
+	var opid = operationID.replace( /[^0-9]/g, "" );
+	
+	if( opid ) {
+	
+		orient( CONFIG.orientDB, function( err, db ){
 			
-			"select file,method,env,params from OGraphVertex where "+
-			"_in traverse(5,11) (klass = 'User' and @rid = #5:" + userID + " )"+
-			"and klass = 'Operation' and @rid = #5:" + operationID, callback
-		);
-	});
+			if( err ) callback( err );
+			else db.sql(
+				
+				"select file,method,env,params from OGraphVertex where "+
+				"_in traverse(5,11) (klass = 'User' and @rid = #5:" + userID + " )"+
+				"and klass = 'Operation' and @rid = #5:" + opid, callback
+			);
+		});
+	}
+	else callback( new Error( "Invalid Operation ID: " + operationID ) );
 };
 
 this.getUsersUIElements = function( userID, callback ) {
