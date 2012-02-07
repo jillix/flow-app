@@ -17,7 +17,7 @@ if (!CONFIG.orientDB || !CONFIG.mongoDB) {
 
 // set environment variables
 process.env.ROOT        = CONFIG.root;
-process.env.PUBLIC_USER    = CONFIG.public_user || "0";
+process.env.PUBLIC_USER = CONFIG.public_user || "0";
 
 // check for dev mode
 if (CONFIG.dev) {
@@ -30,14 +30,14 @@ var http        = require("http"),
     parseurl    = require("url").parse,
     util        = require(process.env.ROOT + "/core/util"),
     send        = require(process.env.ROOT + "/core/send").send,
-    getSession    = require(process.env.ROOT + "/core/session").get,
-    formidable    = require("formidable");
+    getSession  = require(process.env.ROOT + "/core/session").get,
+    formidable  = require("formidable");
 
 // start http server
 http.createServer(function(req, res) {
 
-    var url        = parseurl(req.url, true),
-        path    = url.pathname.replace(/\/$|^\//g, "").split("/", 42);
+    var url  = parseurl(req.url, true),
+        path = url.pathname.replace(/\/$|^\//g, "").split("/", 42);
     
     // pause request on POST requests
     if (req.method == "POST") {

@@ -1,6 +1,6 @@
 this.dev = true;
 
-this.devPort = 8008;
+this.devPort = 8000;
 
 this.root = __dirname;
 
