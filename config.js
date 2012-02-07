@@ -1,4 +1,5 @@
 this.dev = true;
+
 this.devPort = 8008;
 
 this.root = __dirname;
@@ -10,7 +11,7 @@ this.orientDB = {
 	port:		2480,
 	name:		"mono",
 	username:	"admin",
-	password:	"admin"db
+	password:	"admin"
 };
 
 this.mongoDB = {
