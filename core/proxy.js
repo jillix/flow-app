@@ -45,7 +45,10 @@ http.createServer(function( req, res ) {
 			
 			if( err || !operation || !operation.file || !operation.method ) {
 				
-				console.log( err || new Error( "No Operation found.." ))
+				if (process.env.DEV) {
+					
+					console.log( err || new Error( "No Operation found.." ));
+				}
 				send.forbidden( res );
 			}
 			else {
