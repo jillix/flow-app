@@ -69,12 +69,12 @@ server.on("stderr", function(err) {
 
 //restart event
 server.on("restart", function() {
-
+    
     util.log("Info: Restarted HTTP Server [Parameter: " + params.join( ", " ) + "]!");
     util.log(lastError);
-
-    if (config.mail) {
     
+    if (config.mail) {
+        
         nodemailer.send_mail(
             {
                 to:      config.mail,
@@ -84,8 +84,8 @@ server.on("restart", function() {
             function(err, success) {
             
                 if (!success) {
-                	
-                	util.log("Error: Notification sending failed!");
+                    
+                    util.log("Error: Notification sending failed!");
                 }
             }
         );
