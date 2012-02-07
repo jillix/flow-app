@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+		<title>update browser</title>
+		<style>
+		body { height:100%; font-family:Arial,Verdana; font-size:16px; }
+		ul { list-style:none; }
+		li { float:left; width:200px; height:320px; background:#f3e6f3; margin-right:5px; }
+		p { font-size:18px; font-weight:bold; padding-left:50px; }
+		
+		a:link { text-decoration:none; color:#000; }
+		a:visited { text-decoration:none; color:#000; }
+		
+		#ub_wrapper { position:absolute; top:100px; left:50%; margin-left:-550px; }
+		#ub_logo { width:246px; height:52px; background:url(img/logo.png) no-repeat; margin-left:50px; }
+		#ub_browsers { width:1100px; height:400px; background:#cc99cc; padding-top:30px; }
+		.ub_bLogo { width:150px; height:170px; background-repeat:no-repeat; background-position:center; margin:10px 0 10px 25px; }
+		.ub_bTitle { text-align:center; font-weight:bold; margin-bottom:30px; }
+		.ub_bTxt { text-align:center; }
+		
+		#imgChrome { background-image:url(img/chrome.gif); }
+		#imgFirefox { background-image:url(img/firefox.gif); }
+		#imgSafari { background-image:url(img/safari.gif); }
+		#imgOpera { background-image:url(img/opera.gif); }
+		#imgIE { background-image:url(img/ie.gif); }
+		</style>
+	</head>
+	<body>
+		<div id="ub_wrapper">
+			<div id="ub_logo"></div>
+			<p id="ub_desc">Die Seite kann nicht angezeigt werden. Sie surfen mit einem veralteten Browser.<br/>Holen Sie sich hier kostenlos den neuesten Browser.</p>
+			<div id="ub_browsers">
+				<ul>
+					<a href="http://google.com/chrome/">
+						<li>
+							<div id="imgChrome" class="ub_bLogo"></div>
+							<div class="ub_bTitle">Google Chrome</div>
+							<div class="ub_bTxt">Besuchen Sie<br/>die Webseite für<br/>mehr Infos</div>
+						</li>
+					</a>
+					<a href="http://mozilla.org/firefox/">
+						<li>
+							<div id="imgFirefox" class="ub_bLogo"></div>
+							<div class="ub_bTitle">Firefox</div>
+							<div class="ub_bTxt">Besuchen Sie<br/>die Webseite für<br/>mehr Infos</div>
+						</li>
+					</a>
+					<a href="http://apple.com/safari/">
+						<li>
+							<div id="imgSafari" class="ub_bLogo"></div>
+							<div class="ub_bTitle">Safari</div>
+							<div class="ub_bTxt">Besuchen Sie<br/>die Webseite für<br/>mehr Infos</div>
+						</li>
+					</a>
+					<a href="http://opera.com/">
+						<li>
+							<div id="imgOpera" class="ub_bLogo"></div>
+							<div class="ub_bTitle">Opera</div>
+							<div class="ub_bTxt">Besuchen Sie<br/>die Webseite für<br/>mehr Infos</div>
+						</li>
+					</a>
+					<a href="http://microsoft.com/windows/internet-explorer/">
+						<li>
+							<div id="imgIE" class="ub_bLogo"></div>
+							<div class="ub_bTitle">Internet Explorer</div>
+							<div class="ub_bTxt">Besuchen Sie<br/>die Webseite für<br/>mehr Infos</div>
+						</li>
+					</a>
+				</ul>
+			</div>
+			<p id="ub_warning">Einen veralteten Browser zu benutzen macht Ihren Computer unsicher.</p>
+		</div>
+	</body>
+</html>

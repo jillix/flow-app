@@ -1,0 +1,10 @@
+div.adminMain {
+    
+    display:	block;
+    position:	absolute;
+    top:		0px;
+    left:		0px;
+    right:		0px;
+    bottom:		0px;
+    background-color: rgb( 232,232,232 );
+}

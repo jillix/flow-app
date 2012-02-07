@@ -1,0 +1,136 @@
+@import url(http://fonts.googleapis.com/css?family=Droid+Serif);
+
+body {
+	
+	overflow:hidden;
+}
+
+div.editorI18N {
+	
+	display:			block;
+	position:			absolute;
+	top:				0px;
+	left:				0px;
+	right:				0px;
+	bottom:				0px;
+	background-color:	rgb( 232,232,232 );
+}
+
+div.editorI18N ul {
+	
+	display:			block;
+	position:			absolute;
+	left:				0px;
+	right:				0px;
+}
+
+div.editorI18N ul#bar {
+	
+	top:				0px;
+	height:				31px;
+	margin:				0;
+	padding:			0;
+	font-family:		'Droid Serif', serif;
+	font-size:			13px;
+	color:				#eee;
+	background-color:	#333;
+	border-bottom:		solid 1px #000;
+	box-shadow:			0 0 10px 0 #333;
+}
+
+div.editorI18N ul#bar li {
+	
+	display:			block;
+	position:			relative;
+	height:				15px;
+	float:				left;
+	padding:			8px 10px;
+	cursor:				pointer;
+	border-right:		solid 1px #000;
+}
+
+div.editorI18N ul#bar li.btn:hover {
+	
+	background-color:	#000;
+}
+
+div.editorI18N ul#bar li#status {
+	
+	border:				none;
+	padding-left:		20px;
+	color:				#aaa;
+	cursor:				default;
+	
+	font-family:		Arial, sans-serif;
+}
+
+div.editorI18N ul#bar li.right {
+	
+	float:				right;
+	border-right:		none;
+	border-left:		solid 1px #000;
+}
+
+div.editorI18N div {
+	
+	display:			block;
+}
+
+div.editorI18N div#ace {
+	
+	top:				0px;
+	bottom:				0px;
+	left: 				0px;
+	right:				0px;
+	background-color:	#fff;
+}
+
+div.editorI18N div#aceWrapper {
+	
+	transition:			right .5s;
+	-webkit-transition:	right .5s;
+	-moz-transition:	right .5s;
+	-o-transition:		right .5s;
+	position:			absolute;
+	top:				44px;
+	bottom:				10px;
+	left: 				0px;
+	right:				15px;
+	overflow:			hidden;
+	border:				solid 1px #ccc;
+}
+
+div.editorI18N div#aceWrapper.lean {
+	
+	right:				215px;
+}
+
+div.editorI18N div#settings {
+	
+	transition:			right .5s;
+	-webkit-transition:	right .5s;
+	-moz-transition:	right .5s;
+	-o-transition:		right .5s;
+	position:			absolute;
+	top:				44px;
+	bottom:				10px;
+	right:				-200px;
+	width:				190px;
+	padding:			0 10px 0 0;
+	font-family:		'Droid Serif', serif;
+	font-size:			13px;
+}
+
+div.editorI18N div#settings.open {
+	
+	right:				0px;
+}
+
+div.editorI18N li#openSettings {
+	
+	background-image:	url( "cog22x22.png" );
+	background-repeat:	no-repeat;
+	background-position:	center center;
+	width:				22px;
+	height:				15px;
+}
