@@ -1,0 +1,38 @@
+{
+	"name": "mono",
+  	"version": "0.3.0",
+  	"author": "jillix <contact@jillix.com>",
+    "description": "The jillix web application framework",
+    "contributors": [ 
+    	{
+			"name": "Adrian Ottiker",
+			"email": "adi@ottiker.com"
+    	},
+    	{
+     	 	"name": "Gabriel Petrovay",
+      		"email": "gabipetrovay@gmail.com"
+    	}
+	],
+  	"main": "./core/proxy",
+  	"repository": {
+    	"type": "git",
+    	"url": "https://github.com/adioo/mono.git"
+  	},
+	"keywords": [
+    	"web",
+    	"application",
+    	"framework"
+  	],
+  	"dependencies" : {
+   		"forever"		: "*",
+  		"formidable"	: "*",
+  		"mongodb"		: "*",
+  		"node-static"	: "*",
+  		"nodemailer"	: "*"
+	},
+  	"devDependencies": {
+  	},
+  	"engine": {
+    	"node": ">=0.6"
+  	}
+}
