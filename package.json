@@ -14,7 +14,8 @@
     	}
 	],
   	"main": "./core/proxy",
-  	"repository": {
+  	"scripts": {"start": "node start.js"},
+	"repository": {
     	"type": "git",
     	"url": "https://github.com/adioo/mono.git"
   	},
