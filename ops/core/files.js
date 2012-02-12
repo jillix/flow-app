@@ -11,14 +11,14 @@ this.index = function( link ) {
 	link.res.headers['content-style-type'] = "text/css";
 	link.res.headers['content-type'] = "text/html; charset=utf-8";
 	
-	send.ok( link.res, '<!DOCTYPE html><html><head><script data-main="11/' + Nscript + '" src="11/' + Rscript + '"></script></head><body></body></html>' );
+	send.ok( link.res, '<!DOCTYPE html><html><head><script data-main="11/N/' + Nscript + '" src="11/' + Rscript + '"></script></head><body></body></html>' );
 };
 
 //ui modules ( controllers )
 // !TODO: optimize performance
-this.modules = function( link ) {
+this.getModule = function( link ) {
 	
-	if( link.path[ 0 ] == Nscript || link.path[ 0 ] == Rscript ) {
+	if( link.path[ 0 ] == Rscript ) {
 		
 		link.req.url = link.path.join( "/" );
 		modules.serve( link.req, link.res );
