@@ -2,75 +2,84 @@ var send    = require(process.env.ROOT + "/core/send.js").send,
     read    = require(process.env.ROOT + "/core/util.js").read,
     getComp = require(process.env.ROOT + "/db/queries.js").getUsersComp;
 
-function buildComp(data, comp) {
+function buildComp(response, module) {
     
-    if (!data[comp._view]) {
-       
-       data[comp._view] = [];
-    }
-                
-    var uie = [comp.name, comp.config || {}];
+    if (module.name) {
     
-    if (comp.css) {
+        if (!response[0][module.name]) {
+            
+            response[0][module.name] = [];
+        }
         
-        uie[2] = comp.css + ".css";
+       response[0][module.name].push(module.config || {});
+        
+        if (comp.css) {
+            
+            if (!response[2]) {
+                
+                response[2] = [];
+            }
+            
+            response[2].push(response.css + ".css");
+        }
     }
-
-    data[comp._view].push(uie);
 }
 
-this.comp = function(link) {
+this.getComp = function(link) {
     
     getComp(
         
         link.session.uid,
         (link.path && link.path[0] != "0" ? link.path[0] : link.req.headers.host),
-        function(err, comp) {
+        function(err, modules) {
             
             if (err) {
                 
                 send.notfound(link.res);
             }
-            else if (comp) {
+            else if (modules) {
                 
-                if (!(comp instanceof Array)) {
+                if (!(modules instanceof Array)) {
                     
-                    comp = [comp];
+                    modules = [modules];
                 }
-                var data = ["", {}],
+                
+                var response = [{}],
                     next = function(i, l) {
                         
                         if (i < l) {
                             
-                            if (comp[i].html) {
+                            if (modules[i].html) {
                                 
-                                read("/files/apps/" + comp[i].html + ".html", "utf8", function(err, html) {
+                                read("/files/apps/" + modules[i].html + ".html", "utf8", function(err, html) {
                                 
-                                    if (err) {
+                                    if (!err) {
                                         
-                                        next(++i, l);
-                                    }
-                                    else { 
+                                        if (!response[1]) {
+                                            
+                                            response[1] = html;
+                                        }
+                                        else response[1] += html;
                                         
-                                        data[0] += html;
-                                        buildComp(data[1], comp[i]);
-                                        next(++i, l);
+                                        buildComp(response, modules[i]);
                                     }
+                                    
+                                    next(++i, l);
                                 });
                             }
                             else {
                                 
-                                buildComp(data[1], comp[i]);
+                                buildComp(response, modules[i]);
                                 next(++i, l);
                             }
                         }
                         else {
                             
-                            send.ok(link.res, data);
+                            send.ok(link.res, response);
                         }
                     };
                 
-                next(0, comp.length);
+                next(0, modules.length);
             }
             else {
                 
