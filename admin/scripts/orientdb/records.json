@@ -1,0 +1,208 @@
+{
+    "records": [
+        {
+            "@type": "d",
+            "@rid": "#7:0",
+            "@version": 0,
+            "@class": "VUser",
+            "name": "Guido Fawkes",
+            "out": [
+                
+                "#12:0"
+            ]
+        },
+        {
+            "@type": "d",
+            "@rid": "#7:1",
+            "@version": 0,
+            "@class": "VUser",
+            "name": "Default Admin",
+            "pubword": "admin",
+            "pasword": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
+            "out": [
+                
+                "#12:1"
+                "#12:2"
+            ]
+        },
+        {
+            "@type": "d",
+            "@rid": "#8:0",
+            "@version": 0,
+            "@class": "VRole",
+            "name": "Public",
+            "in": [
+                
+                "#12:0"
+                "#12:1"
+            ],
+            "out": [
+                
+                "#13:0",
+                "#13:1",
+                "#13:2"
+            ]
+        },
+        {
+            "@type": "d",
+            "@rid": "#8:1",
+            "@version": 0,
+            "@class": "VRole",
+            "name": "Mono Admin",
+            "in": [
+                
+                "#12:2"
+            ]
+        },
+        {
+            "@type": "d",
+            "@rid": "#9:0",
+            "@version": 0,
+            "@class": "VOperation",
+            "name": "index",
+            "module": "core/files",
+            "method": "index",
+            "in": [
+                
+                "#13:0"
+            ]
+        },
+        {
+            "@type": "d",
+            "@rid": "#9:1",
+            "@version": 0,
+            "@class": "VOperation",
+            "name": "getModule",
+            "module": "core/files",
+            "method": "getModule",
+            "in": [
+                
+                "#13:1"
+            ]
+        },
+        {
+            "@type": "d",
+            "@rid": "#9:2",
+            "@version": 0,
+            "@class": "VOperation",
+            "name": "getComp",
+            "module": "core/comp",
+            "method": "getComp",
+            "in": [
+                
+                "#13:2"
+            ]
+        },
+        {
+            "@type": "d",
+            "@rid": "#9:3",
+            "@version": 0,
+            "@class": "VOperation",
+            "name": "adminPublicStaticFiles",
+            "module": "admin/main",
+            "method": "publicStaticFiles",
+            "in": [
+                
+                "#13:3"
+            ]
+        },
+        {
+            "@type": "d",
+            "@rid": "#10:0",
+            "@version": 0,
+            "@class": "VModule",
+            "name": "i18n",
+            "in": [
+                
+                "#14:0"
+            ],
+            "out": []
+        },
+                {
+            "@type": "d",
+            "@rid": "#11:0",
+            "@version": 0,
+            "@class": "VComponent",
+            "name": "Mono Admin",
+            "out": []
+        },
+        {
+            "@type": "d",
+            "@rid": "#12:0",
+            "@version": 0,
+            "@class": "EMemberOf",
+            "in": "#7:0",
+            "out": "#8:0"
+        },
+        {
+            "@type": "d",
+            "@rid": "#12:1",
+            "@version": 0,
+            "@class": "EMemberOf",
+            "in": "#7:1",
+            "out": "#8:0"
+        },
+        {
+            "@type": "d",
+            "@rid": "#12:2",
+            "@version": 0,
+            "@class": "EMemberOf",
+            "in": "#7:1",
+            "out": "#8:1"
+        },
+        {
+            "@type": "d",
+            "@rid": "#13:0",
+            "@version": 0,
+            "@class": "ECanPerform",
+            "in": "#8:0",
+            "out": "#9:0"
+        },
+        {
+            "@type": "d",
+            "@rid": "#13:1",
+            "@version": 0,
+            "@class": "ECanPerform",
+            "in": "#8:0",
+            "out": "#9:1"
+        },
+        {
+            "@type": "d",
+            "@rid": "#13:2",
+            "@version": 0,
+            "@class": "ECanPerform",
+            "in": "#8:0",
+            "out": "#9:2"
+        },
+        {
+            "@type": "d",
+            "@rid": "#13:3",
+            "@version": 0,
+            "@class": "ECanPerform",
+            "in": "#8:0",
+            "out": "#9:3"
+        },
+        {
+            "@type": "d",
+            "@rid": "#14:0",
+            "@version": 0,
+            "@class": "EHasAccessTo",
+            "html": "",
+            "css": "",
+            "config": {
+                
+                locale: ["en", "US"]
+            },
+            "in": "#8:0",
+            "out": "#10:0",
+        },
+        {
+            "@type": "d",
+            "@rid": "#15:0",
+            "@version": 0,
+            "@class": "EBuildWith",
+            "in": "#11:0",
+            "out": "#10:0"
+        }
+    ]
+}
