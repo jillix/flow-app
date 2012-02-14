@@ -10,8 +10,6 @@ ORIENTDB_ROOT_PASSWORD=`grep "name=\"$ORIENTDB_ROOT_USER\"" $ORIENTDB_ROOT/confi
 
 
 echo "Installing the OrientDB database..."
-echo $ORIENTDB_ROOT_PASSWORD
-
 
 $ORIENTDB_ROOT/bin/console.sh $SCRIPT_DIR/mono.sql
 

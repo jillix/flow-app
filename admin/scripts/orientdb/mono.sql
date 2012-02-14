@@ -7,5 +7,3 @@ import database /Users/gabriel/Work/jillix/admin/scripts/orientdb/records.json;
 
 classes;
 
-select from OGraphVertex;
-
