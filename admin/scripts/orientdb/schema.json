@@ -1,7 +1,7 @@
 {
     "info": {
         
-        "name": "space", 
+        "name": "mono", 
         "default-cluster-id": 2, 
         "exporter-version": 2, 
         "engine-version": "1.0rc8", 
