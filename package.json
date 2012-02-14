@@ -15,7 +15,8 @@
     ],
     "main": "./core/proxy",
     "scripts": {
-        "start": "node start.js"
+        "start"     : "node start.js",
+        "test"      : "node node_modules/tap/bin/tap.js ./test"
     },
     "repository": {
         "type": "git",
@@ -34,6 +35,7 @@
         "nodemailer"    : "*"
     },
     "devDependencies": {
+        "tap"           : "*"
     },
     "engine": {
         "node": ">=0.6"

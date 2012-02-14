@@ -191,10 +191,10 @@
             "css": "",
             "config": {
                 
-                locale: ["en", "US"]
+                "locale": ["en", "US"]
             },
             "in": "#8:0",
-            "out": "#10:0",
+            "out": "#10:0"
         },
         {
             "@type": "d",
