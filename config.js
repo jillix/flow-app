@@ -1,3 +1,5 @@
+this.port = 80;
+
 this.dev = true;
 
 this.devPort = 8000;
@@ -23,7 +25,7 @@ this.mongoDB = {
 
 this.public_user = "1";
 
-this.default_operation = "4";
+this.operationKey = "@";
 
 this.forever = {
     

@@ -416,7 +416,7 @@ var N = {
 		comp_id = comp_id || "0";
 		
 		//get component
-		if( target ) N.link({ url: "/5/" + comp_id }, function( err, response ) {
+		if( target ) N.link({ url: N.ok + "/getComp/" + comp_id }, function( err, response ) {
 			
 			if( !err && response ) {
 				
@@ -493,10 +493,9 @@ var N = {
 	}
 };
 
-//get default comp for current domain
-window.onload = function() {
-	
-	N.comp("body");
+// !TODO: send error to server
+window.onerror = function( error, url, line ){
+    
+    alert( error + "\n" + url + "\n" + line );
 };
-
 };

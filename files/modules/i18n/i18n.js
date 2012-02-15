@@ -4,10 +4,8 @@
 define(function(){
 
 	return {
-	
-		name: "i18n",
-		
-		init: function( view, config ){
+	   
+	   init: function( config ){
 			
 			console.log( config );
 			

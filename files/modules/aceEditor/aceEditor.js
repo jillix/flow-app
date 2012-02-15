@@ -74,9 +74,7 @@ define([ "ace/ace", "ace/mode/javascript", "ace/theme/textmate" ], function( ace
 	
 	return {
 		
-		name: "aceEditor",
-		
-		init: function( view, config ){
+		init: function( config ){
 			
 			//temp config
 			config = {
