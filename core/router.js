@@ -3,13 +3,20 @@ var send = require(process.env.ROOT + "/core/send").send,
     Rscript = process.env.DEV ? "require.dev.js" : "require.js",
     delimiter = "\/";
 
+// TODO: get routing tables from db (mongodb) 
 var table = {
     
     '/': 5,
     'users': {
         
         'public.*': 10,
-        'admin': 454
+        'admin': {
+            
+            'deep': {
+                
+                'deeper': 454
+            }
+        }
     },
     'roles': 71
 }
@@ -57,7 +64,8 @@ this.route = function(link) {
 //
 function traverse(path, routes, regexp) {
 
-    var current,
+    var result,
+        current,
         match;
     
     //remove last backslash from path
@@ -121,7 +129,12 @@ function traverse(path, routes, regexp) {
             // attempt to continue matching against the next portion of the
             // routing table. 
             //
-            traverse(path, routes[r], current)
+            result = traverse(path, routes[r], current);
+            
+            if (result) {
+                
+                return result;
+            }
         }
     }
     
