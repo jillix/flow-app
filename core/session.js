@@ -52,27 +52,35 @@ setInterval(function(){
 //------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------
-this.get = function( op, sid, callback ) {
-	
-	// 1. if sid: get session if opid is in session ( mongodb )
-	if( sid ) queries.getSession( sid, expire(), expire( expire_time ), function( err, session ) {
-		
-		if( err ) callback( err );
-		else if( session ) queries.getUsersOperation( op, session.uid, function( err, operation ) {
-			
-			if( err ) callback( err );
-			else callback( null, operation, session );
-		});
-		
-		// !TODO: redirect to login?
-		else callback( new Error( "Session not found." ) );
-	});
-	
-	else queries.getUsersOperation( op, process.env.PUBLIC_USER, function( err, operation ) {
-		
-		if( err ) callback( err );
-		else callback( null, operation, { uid: process.env.PUBLIC_USER });
-	});
+this.get = function(sid, callback) {
+    
+    //try to find session
+    if (sid) {
+        
+        queries.getSession(sid, expire(), expire(expire_time), function(err, session) {
+            
+            if (err) {
+                
+                callback(err);
+            }
+            else if (session) {
+                
+                callback(null, session);
+            }
+            else {
+                
+                callback(new Error("Session not found."));
+            }
+        });
+    }
+    //if no session-id is defined create public session
+    else {
+       
+       callback(null, {
+           
+           uid: process.env.PUBLIC_USER
+       });
+    }
 };
 
 //start new Session

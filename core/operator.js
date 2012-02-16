@@ -7,17 +7,29 @@ var send = require(process.env.ROOT + "/core/send").send;
 
 this.operation = function(link) {
     
-    console.log("operation");
-    
-    send.ok(link.res,"operation");
-    
-    /*
-    // pause request on POST requests
+    //pause request on POST requests
     if (link.req.method == "POST") {
         
-        var resume = util.pause( req );
+        var resume = util.pause(req);
     }
     
+    getSession(link.req.headers['x-sid'] || (link.query ? link.query._s : null), function(err, session){
+        
+        if (!err && session) {
+            
+            send.ok(link.res, link.path[1]);
+        }
+        else {
+            
+            send.forbidden(link.res);
+        }
+        
+        if (typeof resume != "undefined") {
+            
+            resume();
+        }
+    });
+    /*
     getOperation(operationID, function(err, operation) {
     
         if (err || !operation || !operation.file || !operation.method) {
