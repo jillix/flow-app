@@ -2,8 +2,8 @@
 //---------------------------------------------------------------------------------*
 
 var self = this,
-	uuid = require( process.env.ROOT + "/core/util" ).uuid,
-	queries = require( process.env.ROOT + "/db/queries" ),
+	uuid = require( CONFIG.root + "/core/util" ).uuid,
+	queries = require( CONFIG.root + "/db/queries" ),
 	expire_time = 9,
 	
 	//session class
@@ -47,7 +47,7 @@ setInterval(function(){
 		if( err ) throw new Error( err );
 	});
 		
-}, 1800000 ); //30 min
+}, 1800000); //30 min
 
 //------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------
@@ -78,7 +78,7 @@ this.get = function(sid, callback) {
        
        callback(null, {
            
-           uid: process.env.PUBLIC_USER
+           uid: CONFIG.publicUser
        });
     }
 };
@@ -108,14 +108,13 @@ this.start = function( uid, locale, data, callback ){
 //------------------------------------------------------------------------------------------
 
 //new session object
-function newSession( ses, instance ){
+function newSession( ses ){
 	
 	var cloned_session = Object.clone( Session );
 	
 	if( ses.sid ) cloned_session.sid = ses.sid;
 	if( ses.uid ) cloned_session.uid = ses.uid;
 	if( ses.loc ) cloned_session.loc = ses.loc;
-	if( instance ) cloned_session.ins = instance; // !TODO: what is this?
 	if( ses.data ) cloned_session.data = ses.data;
 	
 	return cloned_session;
