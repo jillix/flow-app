@@ -10,6 +10,8 @@ this.publicUser = "1";
 
 this.operationKey = "@";
 
+this.uploadDir = __dirname + "/files/upload";
+
 this.orientDB = {
     
     //create: true,
