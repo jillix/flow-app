@@ -59,9 +59,9 @@
             "@rid": "#9:0",
             "@version": 0,
             "@class": "VOperation",
-            "name": "index",
-            "module": "core/files",
-            "method": "index",
+            "module": "comp",
+            "file": "comp",
+            "method": "getComp",
             "in": [
                 
                 "#13:0"
@@ -72,8 +72,8 @@
             "@rid": "#9:1",
             "@version": 0,
             "@class": "VOperation",
-            "name": "getModule",
-            "module": "core/files",
+            "module": "comp",
+            "file": "modules",
             "method": "getModule",
             "in": [
                 
@@ -82,36 +82,11 @@
         },
         {
             "@type": "d",
-            "@rid": "#9:2",
-            "@version": 0,
-            "@class": "VOperation",
-            "name": "getComp",
-            "module": "core/comp",
-            "method": "getComp",
-            "in": [
-                
-                "#13:2"
-            ]
-        },
-        {
-            "@type": "d",
-            "@rid": "#9:3",
-            "@version": 0,
-            "@class": "VOperation",
-            "name": "adminPublicStaticFiles",
-            "module": "admin/main",
-            "method": "publicStaticFiles",
-            "in": [
-                
-                "#13:3"
-            ]
-        },
-        {
-            "@type": "d",
             "@rid": "#10:0",
             "@version": 0,
             "@class": "VModule",
-            "name": "i18n",
+            "module": "comp",
+            "dir": "/client",
             "in": [
                 
                 "#14:0"
@@ -165,22 +140,6 @@
             "@class": "ECanPerform",
             "in": "#8:0",
             "out": "#9:1"
-        },
-        {
-            "@type": "d",
-            "@rid": "#13:2",
-            "@version": 0,
-            "@class": "ECanPerform",
-            "in": "#8:0",
-            "out": "#9:2"
-        },
-        {
-            "@type": "d",
-            "@rid": "#13:3",
-            "@version": 0,
-            "@class": "ECanPerform",
-            "in": "#8:0",
-            "out": "#9:3"
         },
         {
             "@type": "d",
