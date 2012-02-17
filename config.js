@@ -6,6 +6,10 @@ this.devPort = 8000;
 
 this.root = __dirname;
 
+this.publicUser = "1";
+
+this.operationKey = "@";
+
 this.orientDB = {
     
     //create: true,
@@ -22,10 +26,6 @@ this.mongoDB = {
     host: "localhost",
     port: 27017
 };
-
-this.public_user = "1";
-
-this.operationKey = "@";
 
 this.forever = {
     
