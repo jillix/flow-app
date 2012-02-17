@@ -1,5 +1,5 @@
-var mongo	= require( process.env.ROOT + "/db/mongo" ).db,
-	orient	= require( process.env.ROOT + "/db/orientdb" ).db;
+var mongo	= require( CONFIG.root + "/db/mongo" ).db,
+	orient	= require( CONFIG.root + "/db/orientdb" ).db;
 
 // !----------------------------------------------------------------------------------------
 
