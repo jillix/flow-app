@@ -23,7 +23,7 @@ var table = {
 
 this.route = function(link) {
     
-    var url = link.req.url != delimiter ? link.req.url.replace(/\/$/, "") : link.req.url,
+    var url = link.pathname != delimiter ? link.pathname.replace(/\/$/, "") : link.pathname,
         compID = traverse(url, table, "");
     
     if (compID) {
@@ -39,7 +39,6 @@ this.route = function(link) {
             "<script data-main='/"+ CONFIG.operationKey +"/getModule/N/"+ Nscript +"' src='/"+ CONFIG.operationKey +"/getModule/"+ Rscript +"'></script>"+
             "<script type='text/javascript'>window.onload=function(){"+
                 "N.ok='/"+ CONFIG.operationKey +"';"+
-                "N.url='"+ url +"';"+
                 "N.comp('body','"+ compID +"')"+
             "}</script>"+
             "</head><body></body></html>"

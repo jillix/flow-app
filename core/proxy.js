@@ -21,11 +21,12 @@ http.createServer(function(req, res) {
     var url = parse(req.url, true),
         link = {
             
-            req:    req,
-            res:    res,
-            query:  url.query || {},
-            path:   url.pathname.replace(/\/$|^\//g, "").split("/", 42),
-            host:   req.headers.host.split(":")[0].split(".").reverse()
+            req:        req,
+            res:        res,
+            query:      url.query || {},
+            pathname:   url.pathname,
+            path:       url.pathname.replace(/\/$|^\//g, "").split("/", 42),
+            host:       req.headers.host.split(":")[0].split(".").reverse()
         };
     
     link.res.headers = {};
