@@ -37,31 +37,40 @@ this.uuid = function( len, uuid ){
  *		resume();
  */
 this.pause = function( req ) {
-
-	var onData, onEnd,
-		events = [];
-	
-	// buffer data
-	req.on('data', onData = function( data, encoding ) {
-	
-		events.push([ 'data', data, encoding ]);
-	});
-	
-	// buffer end
-	req.on('end', onEnd = function( data, encoding ) {
-	
-		events.push([ 'end', data, encoding ]);
-	});
-	
-	return function() {
-		
-	    req.removeListener( 'data', onData );
-	    req.removeListener( 'end', onEnd );
-	    
-	    for( var i=0, l=events.length; i<l; ++i ) {
-	    
-            req.emit.apply( req, events[ i ] );
-		}
+    
+    var onData, onEnd,
+        events = [];
+    
+    // buffer data
+    req.on('data', onData = function( data, encoding ) {
+    
+        events.push([ 'data', data, encoding ]);
+    });
+    
+    // buffer end
+    req.on('end', onEnd = function( data, encoding ) {
+    
+        events.push([ 'end', data, encoding ]);
+    });
+    
+    return function(abort) {
+        
+        req.removeListener('data', onData);
+        req.removeListener('end', onEnd);
+        
+        if (abort) {
+            
+            events = null;
+        }
+        else {
+            
+            for(var i = 0, l = events.length; i < l; ++i) {
+            
+                req.emit.apply(req, events[i]);
+            }
+            
+            events = null;
+        }
 	};
 };
 
