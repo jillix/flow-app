@@ -88,7 +88,7 @@ this.pause = function(req) {
 // !TODO: limit memory usage
 this.load = function(file, method) {
     
-    file = process.env.ROOT + "/ops" + file;
+    file = CONFIG.root + "/ops" + file;
     
     if (!require.cache[file]) {
         
@@ -108,15 +108,15 @@ this.load = function(file, method) {
 };
 
 /**
- *    description:    Load File in Memory and reload it when File changes
- *    author:            Adrian Ottiker
- *    date:            21.12.2011
+ * description:  Load File in Memory and reload it when File changes
+ * author:       Adrian Ottiker
+ * date:         21.12.2011
  */
 // !TODO: limit memory usage
 var fileCache = {};
 this.read = function(file, encoding, callback) {
     
-    file = process.env.ROOT + file;
+    file =  CONFIG.root + file;
     
     if (fileCache[file]) {
         
