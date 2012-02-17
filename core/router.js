@@ -1,6 +1,6 @@
-var send = require(process.env.ROOT + "/core/send").send,
-    Nscript	= process.env.DEV ? "N.dev.js" : "N.js",
-    Rscript = process.env.DEV ? "require.dev.js" : "require.js",
+var send = require(CONFIG.root + "/core/send").send,
+    Nscript	= CONFIG.dev ? "N.dev.js" : "N.js",
+    Rscript = CONFIG.dev ? "require.dev.js" : "require.js",
     delimiter = "\/";
 
 // TODO: get routing tables from db (mongodb) 
@@ -23,7 +23,8 @@ var table = {
 
 this.route = function(link) {
     
-    var compID = traverse(link.req.url, table);
+    var url = link.req.url != delimiter ? link.req.url.replace(/\/$/, "") : link.req.url,
+        compID = traverse(url, table, "");
     
     if (compID) {
     
@@ -32,15 +33,16 @@ this.route = function(link) {
         link.res.headers['content-type']       = "text/html; charset=utf-8";
         
         send.ok(
-           
-           link.res,
-           "<!DOCTYPE html><html><head>"+
-           "<script data-main='/"+ CONFIG.operationKey +"/getModule/N/"+ Nscript +"' src='/"+ CONFIG.operationKey +"/getModule/"+ Rscript +"'></script>"+
-           "<script type='text/javascript'>"+
-               "N.ok='/"+ CONFIG.operationKey +"'"+
-               "window.onload=function(){N.comp('body','"+ compID +"')}"+
-           "</script>"+
-           "</head><body></body></html>"
+            
+            link.res,
+            "<!DOCTYPE html><html><head>"+
+            "<script data-main='/"+ CONFIG.operationKey +"/getModule/N/"+ Nscript +"' src='/"+ CONFIG.operationKey +"/getModule/"+ Rscript +"'></script>"+
+            "<script type='text/javascript'>window.onload=function(){"+
+                "N.ok='/"+ CONFIG.operationKey +"';"+
+                "N.url='"+ url +"';"+
+                "N.comp('body','"+ compID +"')"+
+            "}</script>"+
+            "</head><body></body></html>"
         );
     }
     else {
@@ -62,20 +64,8 @@ this.route = function(link) {
 // specified `path` within `routes` looking for component-id 
 // returning a component-id or false if nothing is found. 
 //
-function traverse(path, routes, regexp) {
+function traverse(path, routes, current, result, exact, match) {
 
-    var result,
-        current,
-        match;
-    
-    //remove last backslash from path
-    path = path != delimiter ? path.replace(/\/$/, "") : path;
-    
-    if (!regexp) {
-        
-        regexp = "";
-    }
-    
     //
     // Base Case #1: 
     // If we are dispatching from the root
@@ -99,9 +89,9 @@ function traverse(path, routes, regexp) {
             // which is built from the `regexp` that has been built 
             // through recursive iteration.
             //
-            current = regexp + delimiter + r;
+            exact = current + delimiter + r;
             
-            match = path.match(new RegExp('^' + current));
+            match = path.match(new RegExp('^' + exact));
             
             if (!match) {
                 //
@@ -129,7 +119,7 @@ function traverse(path, routes, regexp) {
             // attempt to continue matching against the next portion of the
             // routing table. 
             //
-            result = traverse(path, routes[r], current);
+            result = traverse(path, routes[r], exact);
             
             if (result) {
                 
