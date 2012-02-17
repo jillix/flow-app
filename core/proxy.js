@@ -9,21 +9,11 @@ Object.clone = function(obj) {
 // get configuration
 CONFIG = require(process.argv[2] || "../config.js");
 
-// set environment variables
-process.env.ROOT        = CONFIG.root;
-process.env.PUBLIC_USER = CONFIG.public_user || "0";
-
-// check for dev mode
-if (CONFIG.dev) {
-
-    process.env.DEV = 1;
-}
-
 // include modules
 var http        = require("http"),
     parse       = require("url").parse,
-    route       = require(process.env.ROOT + "/core/router.js").route,
-    operation   = require(process.env.ROOT + "/core/operator.js").operation;
+    route       = require(CONFIG.root + "/core/router.js").route,
+    operation   = require(CONFIG.root + "/core/operator.js").operation;
 
 // start http server
 http.createServer(function(req, res) {
