@@ -1,9 +1,8 @@
 var formidable      = require("formidable"),
     util            = require(CONFIG.root + "/core/util.js"),
+    send            = require(CONFIG.root + "/core/send.js").send,
     getSession      = require(CONFIG.root + "/core/session.js").get,
     getOperation    = require(CONFIG.root + "/db/queries.js").getOperation;
-
-var send = require(CONFIG.root + "/core/send").send;
 
 this.operation = function(link) {
     
