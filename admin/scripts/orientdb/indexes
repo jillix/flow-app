@@ -1,1 +1,1 @@
-create index operationNames on VOperation (name) unique
+create index moduleNames on VModule (module) unique;
