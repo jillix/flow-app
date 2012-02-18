@@ -70,31 +70,6 @@
             "name": "vcomponent",
             "id": 11,
             "type": "PHYSICAL"
-        },
-        {
-            "name": "ememberof",
-            "id": 12,
-            "type": "PHYSICAL"
-        },
-        {
-            "name": "ecanperform",
-            "id": 13,
-            "type": "PHYSICAL"
-        },
-        {
-            "name": "ehasaccessto",
-            "id": 14,
-            "type": "PHYSICAL"
-        },
-        {
-            "name": "ebuildwith",
-            "id": 15,
-            "type": "PHYSICAL"
-        },
-        {
-            "name": "ehas",
-            "id": 16,
-            "type": "PHYSICAL"
         }
     ],
     "schema":{
@@ -299,22 +274,22 @@
             },
             {
                 "name": "EMemberOf",
-                "default-cluster-id": 12,
-                "cluster-ids": [12],
+                "default-cluster-id": 6,
+                "cluster-ids": [6],
                 "super-class": "OGraphEdge",
                 "properties": []
             },
             {
                 "name": "ECanPerform",
-                "default-cluster-id": 13,
-                "cluster-ids": [13],
+                "default-cluster-id": 6,
+                "cluster-ids": [6],
                 "super-class": "OGraphEdge",
                 "properties": []
             },
             {
                 "name": "EHasAccessTo",
-                "default-cluster-id": 14,
-                "cluster-ids": [14],
+                "default-cluster-id": 6,
+                "cluster-ids": [6],
                 "super-class": "OGraphEdge",
                 "properties": [
                     {
@@ -339,15 +314,15 @@
             },
             {
                 "name": "EBuildWith",
-                "default-cluster-id": 15,
-                "cluster-ids": [15],
+                "default-cluster-id": 6,
+                "cluster-ids": [6],
                 "super-class": "OGraphEdge",
                 "properties": []
             },
             {
                 "name": "EHas",
-                "default-cluster-id": 16,
-                "cluster-ids": [16],
+                "default-cluster-id": 6,
+                "cluster-ids": [6],
                 "super-class": "OGraphEdge",
                 "properties": []
             }
