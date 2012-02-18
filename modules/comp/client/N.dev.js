@@ -416,7 +416,7 @@ var N = {
 		comp_id = comp_id || "0";
 		
 		//get component
-		if( target ) N.link({ url: N.ok + "/getComp/" + comp_id }, function( err, response ) {
+		if( target ) N.link({ url: N.ok + "/1/" + comp_id }, function( err, response ) {
 			
 			if( !err && response ) {
 				
@@ -496,6 +496,6 @@ var N = {
 // !TODO: send error to server
 window.onerror = function( error, url, line ){
     
-    alert( error + "\n" + url + "\n" + line );
+    console.log( error + "\n" + url + "\n" + line );
 };
 };

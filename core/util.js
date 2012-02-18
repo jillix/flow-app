@@ -81,21 +81,19 @@ this.pause = function(req) {
 };
 
 /**
- * description: Hot-load CommonJS Modules ( reload module automaticaly if file has changed )
+ * description: Hot-load CommonJS Modules (reload module automaticaly if file has changed)
  * author:      Adrian Ottiker
  * date:        22.11.2011
  */
 // !TODO: limit memory usage
 this.load = function(file, method) {
     
-    file = CONFIG.root + "/ops" + file;
-    
     if (!require.cache[file]) {
         
         fs.unwatchFile(file);
         fs.watchFile(file, function(curr, prev) {
             
-            if (curr.mtime.valueOf() != prev.mtime.valueOf() || curr.ctime.valueOf() != prev.ctime.valueOf()) {
+            if (curr.mtime.valueOf() != prev.mtime.valueOf()) {
                 
                 require.cache[file] = null;
                 delete require.cache[file];

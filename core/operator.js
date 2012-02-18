@@ -2,7 +2,7 @@ var formidable      = require("formidable"),
     util            = require(CONFIG.root + "/core/util.js"),
     send            = require(CONFIG.root + "/core/send.js").send,
     getSession      = require(CONFIG.root + "/core/session.js").get,
-    getOperation    = require(CONFIG.root + "/db/queries.js").getOperation;
+    getOperation    = require(CONFIG.root + "/db/queries.js").getUsersOperation;
 
 this.operation = function(link) {
     
@@ -22,9 +22,9 @@ this.operation = function(link) {
             
             if (operationId) {
                 
-                getOperation(operationId, function(err, operation){
+                getOperation(operationId, session.uid, function(err, operation){
                     
-                    if (err || !operation || !operation.file || !operation.method) {
+                    if (err || !operation || !operation.module || !operation.file || !operation.method) {
                     
                         if (resume) {
                 
@@ -35,9 +35,15 @@ this.operation = function(link) {
                     }
                     else {
                         
-                        var method = util.load(operation.file, operation.method);
+                        var method = util.load(
+                            
+                            CONFIG.root + "/modules/" + operation.module + "/" + operation.file,
+                            operation.method
+                        );
                         
                         if (typeof method == "function") {
+                            
+                            link.session = session || {};
                             
                             if (operation.params) {
                             
@@ -132,7 +138,7 @@ function handlePostRequest(link, resume) {
         });
     }
     //handle form data requests
-    else if (contentType.indexOf("multipart/form-data" ) > -1  ) {
+    else if (contentType.indexOf("multipart/form-data" ) > -1) {
         
         var form = new formidable.IncomingForm();
         

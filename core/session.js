@@ -1,6 +1,3 @@
-// SESSION
-//---------------------------------------------------------------------------------*
-
 var self = this,
 	uuid = require( CONFIG.root + "/core/util" ).uuid,
 	queries = require( CONFIG.root + "/db/queries" ),

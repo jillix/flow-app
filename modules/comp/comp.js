@@ -1,19 +1,19 @@
-var send    = require(process.env.ROOT + "/core/send.js").send,
-    read    = require(process.env.ROOT + "/core/util.js").read,
-    getComp = require(process.env.ROOT + "/db/queries.js").getUsersComp;
+var send = require(CONFIG.root + "/core/send.js").send,
+    read = require(CONFIG.root + "/core/util.js").read,
+    getComp = require(CONFIG.root + "/db/queries.js").getUsersComp;
 
 function buildComp(response, module) {
     
-    if (module.name) {
-    
-        if (!response[0][module.name]) {
+    if (module.module) {
+        
+        if (!response[0][module.module]) {
             
-            response[0][module.name] = [];
+            response[0][module.module] = [];
         }
         
-       response[0][module.name].push(module.config || {});
+       response[0][module.module].push(module.config || {});
         
-        if (comp.css) {
+        if (module.css) {
             
             if (!response[2]) {
                 
@@ -30,7 +30,7 @@ this.getComp = function(link) {
     getComp(
         
         link.session.uid,
-        (link.path && link.path[0] != "0" ? link.path[0] : link.req.headers.host),
+        link.path[2],
         function(err, modules) {
             
             if (err) {
