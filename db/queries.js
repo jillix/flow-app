@@ -78,7 +78,6 @@ this.getUserByAuthPub = function( authPub, fields, callback ){
 	});
 };
 
-// !TODO: check this: wrong query!!
 this.getUsersOperation = function( operationID, userID, callback ) {
 	
 	var opid = operationID.replace( /[^0-9]/g, "" );
@@ -90,9 +89,8 @@ this.getUsersOperation = function( operationID, userID, callback ) {
 			if( err ) callback( err );
 			else db.sql(
 				
-				"select file,method,env,params from OGraphVertex where "+
-				"_in traverse(5,11) (klass = 'User' and @rid = #5:" + userID + " )"+
-				"and klass = 'Operation' and @rid = #5:" + opid, callback
+				"select module,file,method from #9:" + opid + " where in traverse(5,5) (@rid = #7:" + userID + ")",
+				callback
 			);
 		});
 	}
@@ -113,19 +111,16 @@ this.getUsersUIElements = function( userID, callback ) {
 	});
 };
 
-// !TODO: get minified version if dev is false
-this.getUsersUIElement = function( UIElementName, userID, callback ) {
+this.getUsersModule = function(modid, userID, callback) {
 	
 	orient( CONFIG.orientDB, function( err, db ){
 	
 		if( err ) callback( err );
 		else db.sql(
-			
-			"select _out.name AS name from OGraphEdge where " +
-			"_in traverse(3,3) (klass = 'User' and @rid = #5:" + userID + " )"+
-			"and _out.klass = 'Module' and _label = 'HAS_ACCESS_TO' and _out.name = '" + UIElementName + "'",
-			callback
-		);
+            
+            "select module,dir from VModule where module = '" + modid + "' and in traverse(5,5) (@rid = #7:" + userID + ")",
+            callback
+        );
 	});
 };
 
@@ -136,9 +131,11 @@ this.getUsersComp = function( userID, compID, callback ){
 		if( err ) callback( err );
 		else db.sql(
 			
-			"select _view, config, html, css, _out.name AS name from OGraphEdge where "+
-			"_in traverse(3,3) (klass = 'User' and @rid = #5:" + userID + " )"+
-			"and _out.klass = 'Module' and _label = 'HAS_ACCESS_TO' and _comp = '" + compID + "'",
+			"select module,dir,in[@class = 'EHasAccessTo'].config as config,"+
+			"in[@class = 'EHasAccessTo'].html as html,"+
+			"in[@class = 'EHasAccessTo'].css as css "+
+			"from VModule where in traverse(5,5) (@rid = #7:"+ userID +" ) "+
+			"and in traverse(2,2) (@rid = #11:"+ compID +")",
 			callback
 		);
 	});
