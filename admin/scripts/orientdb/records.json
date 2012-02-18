@@ -89,8 +89,19 @@
             "in": [
                 
                 "#6:5"
-            ],
-            "out": []
+            ]
+        },
+        {
+            "@type": "d",
+            "@rid": "#10:1",
+            "@version": 0,
+            "@class": "VModule",
+            "module": "ace",
+            "in": [
+                
+                "#6:5",
+                "#6:6"
+            ]
         },
         {
             "@type": "d",
@@ -98,7 +109,10 @@
             "@version": 0,
             "@class": "VComponent",
             "name": "Mono Admin",
-            "out": []
+            "out": [
+                
+                "#6:6"
+            ]
         },
         {
             "@type": "d",
@@ -160,7 +174,17 @@
             "@version": 0,
             "@class": "EBuildWith",
             "in": "#11:0",
-            "out": "#10:0"
+            "out": "#10:1"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:7",
+            "@version": 0,
+            "@class": "EHasAccessTo",
+            "html": "",
+            "css": "",
+            "in": "#8:0",
+            "out": "#10:1"
         }
     ]
 }
