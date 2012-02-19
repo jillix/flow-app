@@ -7,7 +7,7 @@ this.getModule = function( link ) {
     
     if (link.path && typeof link.path[2] != "undefined") {
         
-        var module = link.path[2].replace( /[^0-9a-z_\-]/gi, "" );
+        var module = link.path[2].replace(/[^0-9a-z_\-]/gi, "");
         
         if (module != "") {
         
