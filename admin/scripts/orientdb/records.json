@@ -81,6 +81,19 @@
         },
         {
             "@type": "d",
+            "@rid": "#9:2",
+            "@version": 0,
+            "@class": "VOperation",
+            "module": "comp",
+            "file": "comp",
+            "method": "getFile",
+            "in": [
+                
+                "#6:8"
+            ]
+        },
+        {
+            "@type": "d",
             "@rid": "#10:0",
             "@version": 0,
             "@class": "VModule",
@@ -96,11 +109,23 @@
             "@rid": "#10:1",
             "@version": 0,
             "@class": "VModule",
-            "module": "ace",
+            "module": "editor",
+            "dir": "/client",
             "in": [
                 
                 "#6:5",
                 "#6:6"
+            ]
+        },
+        {
+            "@type": "d",
+            "@rid": "#10:2",
+            "@version": 0,
+            "@class": "VModule",
+            "module": "ace",
+            "in": [
+                
+                "#6:7"
             ]
         },
         {
@@ -159,12 +184,8 @@
             "@rid": "#6:5",
             "@version": 0,
             "@class": "EHasAccessTo",
-            "html": "",
-            "css": "",
-            "config": {
-                
-                "locale": ["en", "US"]
-            },
+            "html": "admin/ace",
+            "css": "ace",
             "in": "#8:0",
             "out": "#10:0"
         },
@@ -181,10 +202,20 @@
             "@rid": "#6:7",
             "@version": 0,
             "@class": "EHasAccessTo",
-            "html": "",
-            "css": "",
             "in": "#8:0",
-            "out": "#10:1"
+            "out": "#10:2"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:8",
+            "@version": 0,
+            "@class": "ECanPerform",
+            "params": {
+                
+                "dir": "admin/pub/"
+            },
+            "in": "#8:0",
+            "out": "#9:2"
         }
     ]
 }

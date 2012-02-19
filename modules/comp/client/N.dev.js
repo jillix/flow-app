@@ -433,19 +433,19 @@ var N = {
 				// create component
 				var comp = {
 				    
-				    $: target,
-				    obs: N.obs()
-				},
-				modules = [],
-				configs = {},
-				current = 0;
+				        $: target,
+				        obs: N.obs()
+				    },
+				    modules = [],
+				    configs = {},
+				    current = 0;
 				
-				// load css
+				//load css
 				if (response[2]) {
 				    
-				    for( var i=0, l=response[2].length; i < l; ++i ) {
+				    for(var i=0, l=response[2].length; i < l; ++i) {
 						
-						N.css("/12/" + response[2][i]);
+						N.css(N.ok + "/2/" + response[2][i]);
 				    }
 				}
 				

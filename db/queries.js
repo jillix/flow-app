@@ -89,7 +89,7 @@ this.getUsersOperation = function( operationID, userID, callback ) {
 			if( err ) callback( err );
 			else db.sql(
 				
-				"select module,file,method from #9:" + opid + " where in traverse(5,5) (@rid = #7:" + userID + ")",
+				"select module,file,method,in[@class = 'ECanPerform'].params as params from #9:" + opid + " where in traverse(5,5) (@rid = #7:" + userID + ")",
 				callback
 			);
 		});

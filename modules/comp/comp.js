@@ -1,6 +1,7 @@
 var send = require(CONFIG.root + "/core/send.js").send,
     read = require(CONFIG.root + "/core/util.js").read,
-    getComp = require(CONFIG.root + "/db/queries.js").getUsersComp;
+    getComp = require(CONFIG.root + "/db/queries.js").getUsersComp,
+    files = new ( require( "node-static" ).Server )( CONFIG.root + "/files/apps" );
 
 function buildComp(response, module) {
     
@@ -20,7 +21,7 @@ function buildComp(response, module) {
                 response[2] = [];
             }
             
-            response[2].push(response.css + ".css");
+            response[2].push(module.css + ".css");
         }
     }
 }
@@ -87,4 +88,18 @@ this.getComp = function(link) {
             }
         }
     );
+};
+
+this.getFile = function(link){
+    
+    if (link.params && link.params.dir) {
+        
+        link.req.url = link.params.dir + link.path.slice(2).join("/").replace(/[^a-z0-9\/\.\-_]|\.\.\//gi, "");
+        
+        files.serve(link.req, link.res);
+    }
+    else {
+        
+        send.forbidden(link.res);
+    }
 };

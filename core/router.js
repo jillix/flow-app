@@ -5,16 +5,13 @@ var send = require(CONFIG.root + "/core/send").send,
 // TODO: get routing tables from db (mongodb) 
 var table = {
     
-    '/': 5,
+    '/': 0,
     'users': {
         
         'public.*': 10,
         'admin': {
             
-            'deep': {
-                
-                'deeper': 0
-            }
+            'editor': 0
         }
     },
     'roles': 71
