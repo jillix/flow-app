@@ -6,7 +6,7 @@
  */
 
 //tell user, he should update his browser
-function UB(){ window.location = "/12/updateBrowser/" }
+function UB(){ window.location = "/12/updateBrowser/"; }
 
 // REMOVE WHEN IT GETS OBSOLETE
 //checks if browser supports JSON parsing and if querySelector is supported
@@ -214,7 +214,7 @@ var N = {
 			}
 			else if( item.tagName.toLowerCase() == "input" ) {
 				
-				item.value = content
+				item.value = content;
 			}
 			else try {
 				
@@ -463,7 +463,7 @@ var N = {
 					
 					modules = arguments;
 					
-					for (key in modules) {
+					for (var key in modules) {
 						
 						if (modules[key] && configs[key]) {
 							
@@ -498,4 +498,4 @@ window.onerror = function( error, url, line ){
     
     console.log( error + "\n" + url + "\n" + line );
 };
-};
+}
