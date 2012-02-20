@@ -1,9 +1,6 @@
-// SESSION
-//---------------------------------------------------------------------------------*
-
 var self = this,
-	uuid = require( process.env.ROOT + "/core/util" ).uuid,
-	queries = require( process.env.ROOT + "/db/queries" ),
+	uuid = require( CONFIG.root + "/core/util" ).uuid,
+	queries = require( CONFIG.root + "/db/queries" ),
 	expire_time = 9,
 	
 	//session class
@@ -47,32 +44,40 @@ setInterval(function(){
 		if( err ) throw new Error( err );
 	});
 		
-}, 1800000 ); //30 min
+}, 1800000); //30 min
 
 //------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------
-this.get = function( op, sid, callback ) {
-	
-	// 1. if sid: get session if opid is in session ( mongodb )
-	if( sid ) queries.getSession( sid, expire(), expire( expire_time ), function( err, session ) {
-		
-		if( err ) callback( err );
-		else if( session ) queries.getUsersOperation( op, session.uid, function( err, operation ) {
-			
-			if( err ) callback( err );
-			else callback( null, operation, session );
-		});
-		
-		// !TODO: redirect to login?
-		else callback( new Error( "Session not found." ) );
-	});
-	
-	else queries.getUsersOperation( op, process.env.PUBLIC_USER, function( err, operation ) {
-		
-		if( err ) callback( err );
-		else callback( null, operation, { uid: process.env.PUBLIC_USER });
-	});
+this.get = function(sid, callback) {
+    
+    //try to find session
+    if (sid) {
+        
+        queries.getSession(sid, expire(), expire(expire_time), function(err, session) {
+            
+            if (err) {
+                
+                callback(err);
+            }
+            else if (session) {
+                
+                callback(null, session);
+            }
+            else {
+                
+                callback(new Error("Session not found."));
+            }
+        });
+    }
+    //if no session-id is defined create public session
+    else {
+       
+       callback(null, {
+           
+           uid: CONFIG.publicUser
+       });
+    }
 };
 
 //start new Session
@@ -100,14 +105,13 @@ this.start = function( uid, locale, data, callback ){
 //------------------------------------------------------------------------------------------
 
 //new session object
-function newSession( ses, instance ){
+function newSession( ses ){
 	
 	var cloned_session = Object.clone( Session );
 	
 	if( ses.sid ) cloned_session.sid = ses.sid;
 	if( ses.uid ) cloned_session.uid = ses.uid;
 	if( ses.loc ) cloned_session.loc = ses.loc;
-	if( instance ) cloned_session.ins = instance; // !TODO: what is this?
 	if( ses.data ) cloned_session.data = ses.data;
 	
 	return cloned_session;

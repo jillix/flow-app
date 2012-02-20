@@ -15,7 +15,7 @@
             "name": "internal",
             "id": 0,
             "type": "PHYSICAL"
-        }, 
+        },
         {
             "name": "index",
             "id": 1,
@@ -25,80 +25,50 @@
             "name": "default",
             "id": 2,
             "type": "PHYSICAL"
-        }, 
+        },
         {
             "name": "orole",
             "id": 3,
             "type": "PHYSICAL"
-        }, 
+        },
         {
             "name": "ouser",
             "id": 4,
             "type": "PHYSICAL"
-        }, 
+        },
         {
             "name": "ographvertex",
             "id": 5,
             "type": "PHYSICAL"
-        }, 
+        },
         {
             "name": "ographedge",
             "id": 6,
             "type": "PHYSICAL"
-        }, 
+        },
         {
             "name": "vuser",
             "id": 7,
             "type": "PHYSICAL"
-        }, 
+        },
         {
             "name": "vrole",
             "id": 8,
             "type": "PHYSICAL"
-        }, 
+        },
         {
             "name": "voperation",
             "id": 9,
             "type": "PHYSICAL"
-        }, 
+        },
         {
             "name": "vmodule",
             "id": 10,
             "type": "PHYSICAL"
-        }, 
+        },
         {
             "name": "vcomponent",
             "id": 11,
-            "type": "PHYSICAL"
-        },
-        {
-            "name": "ememberof",
-            "id": 12,
-            "type": "PHYSICAL"
-        }, 
-        {
-            "name": "ecanperform",
-            "id": 13,
-            "type": "PHYSICAL"
-        }, 
-        {
-            "name": "ehasaccessto",
-            "id": 14,
-            "type": "PHYSICAL"
-        }, 
-        {
-            "name": "ebuildwith",
-            "id": 15,
-            "type": "PHYSICAL"
-        }, 
-        {
-            "name": "ehas",
-            "id": 16,
-            "type": "PHYSICAL"
-        },
-        {
-            "name": "vdomain",
-            "id": 17,
             "type": "PHYSICAL"
         }
     ],
@@ -249,13 +219,13 @@
                 "super-class": "OGraphVertex",
                 "properties": [
                     {
-                        "name": "name",
+                        "name": "module",
                         "type": "STRING",
                         "mandatory": true,
                         "not-null": true
                     },
                     {
-                        "name": "module",
+                        "name": "file",
                         "type": "STRING",
                         "mandatory": true,
                         "not-null": true
@@ -275,9 +245,15 @@
                 "super-class": "OGraphVertex",
                 "properties": [
                     {
-                        "name": "name",
+                        "name": "module",
                         "type": "STRING",
                         "mandatory": true,
+                        "not-null": true
+                    },
+                    {
+                        "name": "dir",
+                        "type": "STRING",
+                        "mandatory": false,
                         "not-null": true
                     }
                 ]
@@ -297,37 +273,23 @@
                 ]
             },
             {
-                "name": "VDomain",
-                "default-cluster-id": 17,
-                "cluster-ids": [17],
-                "super-class": "OGraphVertex",
-                "properties": [
-                    {
-                        "name": "name",
-                        "type": "STRING",
-                        "mandatory": true,
-                        "not-null": true
-                    }
-                ]
-            },
-            {
                 "name": "EMemberOf",
-                "default-cluster-id": 12,
-                "cluster-ids": [12],
+                "default-cluster-id": 6,
+                "cluster-ids": [6],
                 "super-class": "OGraphEdge",
                 "properties": []
             },
             {
                 "name": "ECanPerform",
-                "default-cluster-id": 13,
-                "cluster-ids": [13],
+                "default-cluster-id": 6,
+                "cluster-ids": [6],
                 "super-class": "OGraphEdge",
                 "properties": []
             },
             {
                 "name": "EHasAccessTo",
-                "default-cluster-id": 14,
-                "cluster-ids": [14],
+                "default-cluster-id": 6,
+                "cluster-ids": [6],
                 "super-class": "OGraphEdge",
                 "properties": [
                     {
@@ -352,15 +314,15 @@
             },
             {
                 "name": "EBuildWith",
-                "default-cluster-id": 15,
-                "cluster-ids": [15],
+                "default-cluster-id": 6,
+                "cluster-ids": [6],
                 "super-class": "OGraphEdge",
                 "properties": []
             },
             {
                 "name": "EHas",
-                "default-cluster-id": 16,
-                "cluster-ids": [16],
+                "default-cluster-id": 6,
+                "cluster-ids": [6],
                 "super-class": "OGraphEdge",
                 "properties": []
             }

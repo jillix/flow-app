@@ -1,8 +1,16 @@
+this.port = 80;
+
 this.dev = true;
 
 this.devPort = 8000;
 
 this.root = __dirname;
+
+this.publicUser = "1";
+
+this.operationKey = "@";
+
+this.uploadDir = __dirname + "/files/upload";
 
 this.orientDB = {
     
@@ -20,10 +28,6 @@ this.mongoDB = {
     host: "localhost",
     port: 27017
 };
-
-this.public_user = "1";
-
-this.default_operation = "4";
 
 this.forever = {
     
