@@ -49,12 +49,12 @@ setInterval(function(){
 //------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------
-this.get = function(sid, callback) {
+this.get = function(link, callback) {
     
     //try to find session
-    if (sid) {
+    if (link.req.headers['x-sid']) {
         
-        queries.getSession(sid, expire(), expire(expire_time), function(err, session) {
+        queries.getSession(link.req.headers['x-sid'], expire(), expire(expire_time), function(err, session) {
             
             if (err) {
                 
@@ -72,11 +72,25 @@ this.get = function(sid, callback) {
     }
     //if no session-id is defined create public session
     else {
-       
-       callback(null, {
-           
-           uid: CONFIG.publicUser
-       });
+        
+        queries.getDomainsPublicUser(link.host[1] + "." + link.host[0], function(err, result){
+            
+            if (err) {
+                
+                callback(err);
+            }
+            else if (result && result.publicUser) {
+                
+                callback(null, {
+                
+                    uid: result.publicUser.split(":")[1]
+                });
+            }
+            else {
+                
+                callback(new Error("No public user not found"));
+            }
+        });
     }
 };
 

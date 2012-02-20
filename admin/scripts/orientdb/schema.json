@@ -70,6 +70,11 @@
             "name": "vcomponent",
             "id": 11,
             "type": "PHYSICAL"
+        },
+        {
+            "name": "vdomain",
+            "id": 12,
+            "type": "PHYSICAL"
         }
     ],
     "schema":{
@@ -269,6 +274,27 @@
                         "type": "STRING",
                         "mandatory": true,
                         "not-null": true
+                    }
+                ]
+            },
+            {
+                "name": "VDomain",
+                "default-cluster-id": 12,
+                "cluster-ids": [12],
+                "super-class": "OGraphVertex",
+                "properties": [
+                    {
+                        "name": "name",
+                        "type": "STRING",
+                        "mandatory": true,
+                        "not-null": true
+                    },
+                    {
+                        "name": "publicUser",
+                        "type": "LINK",
+                        "mandatory": true,
+                        "not-null": true,
+                        "linked-class": "VUser"
                     }
                 ]
             },

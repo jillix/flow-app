@@ -141,6 +141,19 @@ this.getUsersComp = function( userID, compID, callback ){
 	});
 };
 
+this.getDomainsPublicUser = function(domain, callback) {
+	
+	orient(CONFIG.orientDB, function(err, db){
+	
+		if( err ) callback( err );
+		else db.sql(
+            
+            "select publicUser from VDomain where name = '" + domain + "'",
+            callback
+        );
+	});
+};
+
 // !----------------------------------------------------------------------------------------
 
 this.getRole = function( roleID, callback ){

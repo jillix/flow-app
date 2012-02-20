@@ -141,6 +141,14 @@
         },
         {
             "@type": "d",
+            "@rid": "#12:0",
+            "@version": 0,
+            "@class": "VDomain",
+            "name": "mono.ch",
+            "publicUser": "#7:0"
+        },
+        {
+            "@type": "d",
             "@rid": "#6:0",
             "@version": 0,
             "@class": "EMemberOf",

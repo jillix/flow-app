@@ -14,7 +14,7 @@ this.operation = function(link) {
         resume = util.pause(req);
     }
     
-    getSession(link.req.headers['x-sid'], function(err, session){
+    getSession(link, function(err, session){
         
         if (!err && session) {
             
