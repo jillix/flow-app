@@ -6,8 +6,6 @@ this.devPort = 8000;
 
 this.root = __dirname;
 
-this.publicUser = "1";
-
 this.operationKey = "@";
 
 this.uploadDir = __dirname + "/files/upload";
