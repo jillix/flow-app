@@ -118,7 +118,7 @@ this.getUsersModule = function(modid, userID, callback) {
 		if( err ) callback( err );
 		else db.sql(
             
-            "select module,dir from VModule where module = '" + modid + "' and in traverse(5,5) (@rid = #7:" + userID + ")",
+            "select name as module,dir from VModule where name = '" + modid + "' and in traverse(5,5) (@rid = #7:" + userID + ")",
             callback
         );
 	});
@@ -131,7 +131,7 @@ this.getUsersComp = function( userID, compID, callback ){
 		if( err ) callback( err );
 		else db.sql(
 			
-			"select module,dir,in[@class = 'EHasAccessTo'].config as config,"+
+			"select name as module,dir,in[@class = 'EHasAccessTo'].config as config,"+
 			"in[@class = 'EHasAccessTo'].html as html,"+
 			"in[@class = 'EHasAccessTo'].css as css "+
 			"from VModule where in traverse(5,5) (@rid = #7:"+ userID +" ) "+

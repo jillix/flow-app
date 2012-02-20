@@ -245,7 +245,7 @@
                 "super-class": "OGraphVertex",
                 "properties": [
                     {
-                        "name": "module",
+                        "name": "name",
                         "type": "STRING",
                         "mandatory": true,
                         "not-null": true
