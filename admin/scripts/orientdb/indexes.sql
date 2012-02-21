@@ -1,1 +1,0 @@
-create index moduleNames on VModule (module) unique;

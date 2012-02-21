@@ -1,4 +1,6 @@
 npm-debug.log
 .DS_Store
-node_modules/
 .orientdb_history
+bin/
+node_modules/
+tmp/
