@@ -4,26 +4,30 @@
 SCRIPT=`which $0`
 SCRIPT_DIR=`dirname $SCRIPT`
 
+TMP_DIR=tmp
+
 ORIENTDB_ROOT=bin/orientdb
 ORIENTDB_VERSION=`curl --silent http://www.orientechnologies.com/listing/m2/com/orientechnologies/orientdb-graphdb/maven-metadata.xml | grep "release" | cut -d ">" -f 2 | cut -d "<" -f 1`
+ORIENTDB_ROOT_USER=root
+ORIENTDB_MONO_SQL=mono.sql
 
 
 function download_orientdb {
 
     ORIENTDB_ARCHIVE=orientdb-graphed-$ORIENTDB_VERSION.zip
-    if [ -e "$ORIENTDB_ARCHIVE" ]
+    if [ -e "$TMP_DIR/$ORIENTDB_ARCHIVE" ]
     then
-        echo "Found OrientDB release: $ORIENTDB_ARCHIVE"
+        echo "Found OrientDB release archive: $TMP_DIR/$ORIENTDB_ARCHIVE"
     else
         echo "Trying to download OrientDB release: $ORIENTDB_ARCHIVE"
         ORIENTDB_ARCHIVE_LOCATION=http://orient.googlecode.com/files/
         echo "From location: $ORIENTDB_ARCHIVE_LOCATION"
 
-        curl -O http://orient.googlecode.com/files/$ORIENTDB_ARCHIVE --silent
+        curl -o "$TMP_DIR/$ORIENTDB_ARCHIVE" "http://orient.googlecode.com/files/$ORIENTDB_ARCHIVE" --silent
     fi
 
     echo "Unpacking OrientDB in: $ORIENTDB_ROOT"
-    unzip -o -q -d $ORIENTDB_ROOT $ORIENTDB_ARCHIVE
+    unzip -o -q -d "$ORIENTDB_ROOT" "$TMP_DIR/$ORIENTDB_ARCHIVE"
     chmod +x bin/orientdb/bin/*sh
 }
 
@@ -50,13 +54,37 @@ function install_orientdb {
         download_orientdb
     fi
 
-    ORIENTDB_ROOT_USER=root
+    # TODO only if not already running
+    # start OrientDB to make sure the root user and password are generated
+    TMP_CUR_DIR=`pwd`
+    cd "$ORIENTDB_ROOT/bin/"
+    ./server.sh > /dev/null 2>&1 &
+    cd "$TMP_CUR_DIR"
+
+    # wait for the server to start
+    sleep 2
+
     ORIENTDB_ROOT_PASSWORD=`grep "name=\"$ORIENTDB_ROOT_USER\"" $ORIENTDB_ROOT/config/orientdb-server-config.xml | cut -d \" -f 4`
 
-    ORIENTDB_MONO_SQL=mono.sql
-    echo "Installing the OrientDB database from: $ORIENTDB_MONO_SQL"
+    echo "Configuring OrientDB mono SQL file: $SCRIPT_DIR/$ORIENTDB_MONO_SQL"
+    sed -e "s/@ORIENTDB_ROOT_PASSWORD@/$ORIENTDB_ROOT_PASSWORD/" "$SCRIPT_DIR/$ORIENTDB_MONO_SQL" > "$TMP_DIR/$ORIENTDB_MONO_SQL"
 
-    $ORIENTDB_ROOT/bin/console.sh $SCRIPT_DIR/mono.sql
+    echo "Installing the OrientDB database from: $TMP_DIR/$ORIENTDB_MONO_SQL"
+    IMPORT_LOG=$TMP_DIR/$ORIENTDB_MONO_SQL.log
+    $ORIENTDB_ROOT/bin/console.sh "$TMP_DIR/$ORIENTDB_MONO_SQL" 2>&1 > "$IMPORT_LOG"
+    
+    # TODO Whu doesn't console return non-zero on error?
+    if [ $? -eq 0 ]
+    then
+        echo "Database imported successfully."
+        echo "Database import log written to: $IMPORT_LOG"
+    else
+        echo "Database imported FAILED!"
+        cat "$IMPORT_LOG"
+    fi
+
+    # close now OrientDB server TODO but only if we start it above
+    kill $(ps aux | grep "$ORIENTDB_ROOT" | grep -v "grep" | awk '{print $2}')
 }
 
 
