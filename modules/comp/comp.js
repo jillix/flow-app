@@ -1,7 +1,7 @@
 var send = require(CONFIG.root + "/core/send.js").send,
     read = require(CONFIG.root + "/core/util.js").read,
     getComp = require(CONFIG.root + "/db/queries.js").getUsersComp,
-    files = new ( require( "node-static" ).Server )( CONFIG.root + "/files/apps" );
+    files = new ( require( "node-static" ).Server )( CONFIG.root + "/files/domains" );
 
 function buildComp(response, module) {
     
@@ -12,7 +12,7 @@ function buildComp(response, module) {
             response[0][module.module] = [];
         }
         
-       response[0][module.module].push(module.config || {});
+        response[0][module.module].push(module.config || {});
         
         if (module.css) {
             
@@ -52,7 +52,7 @@ this.getComp = function(link) {
                             
                             if (modules[i].html) {
                                 
-                                read("/files/apps/" + modules[i].html + ".html", "utf8", function(err, html) {
+                                read("/files/domains/" + modules[i].html + ".html", "utf8", function(err, html) {
                                 
                                     if (!err) {
                                         
