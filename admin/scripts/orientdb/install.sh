@@ -5,6 +5,7 @@ SCRIPT=`which $0`
 SCRIPT_DIR=`dirname $SCRIPT`
 
 TMP_DIR=tmp
+mkdir -p "$TMP_DIR"
 
 ORIENTDB_ROOT=bin/orientdb
 ORIENTDB_VERSION=`curl --silent http://www.orientechnologies.com/listing/m2/com/orientechnologies/orientdb-graphdb/maven-metadata.xml | grep "release" | cut -d ">" -f 2 | cut -d "<" -f 1`
@@ -50,7 +51,7 @@ function install_orientdb {
     else
         echo "Installing OrientDB in: $ORIENTDB_ROOT"
         rm -Rf $ORIENTDB_ROOT
-        mkdir $ORIENTDB_ROOT
+        mkdir -p $ORIENTDB_ROOT
         download_orientdb
     fi
 
@@ -61,8 +62,8 @@ function install_orientdb {
     ./server.sh > /dev/null 2>&1 &
     cd "$TMP_CUR_DIR"
 
-    # wait for the server to start
-    sleep 2
+    # TODO wait for the server to start (find a better sollution)
+    sleep 4
 
     ORIENTDB_ROOT_PASSWORD=`grep "name=\"$ORIENTDB_ROOT_USER\"" $ORIENTDB_ROOT/config/orientdb-server-config.xml | cut -d \" -f 4`
 
