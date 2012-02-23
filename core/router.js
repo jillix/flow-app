@@ -1,6 +1,21 @@
-var send = require(CONFIG.root + "/core/send").send,
-    Nscript	= CONFIG.dev ? "N.dev" : "N",
-    delimiter = "\/";
+// extend Object with clone function
+Object.clone = function(obj) {
+    
+    function O(){}
+    O.prototype = obj;
+    return new O();
+};
+
+// get configuration
+CONFIG = require(process.argv[2] || "../config.js");
+
+// include modules
+var http        = require("http"),
+    parse       = require("url").parse,
+    send        = require(CONFIG.root + "/core/send").send,
+    operation   = require(CONFIG.root + "/core/operator.js").operation,
+    Nscript     = CONFIG.dev ? "N.dev" : "N",
+    delimiter   = "\/";
 
 // TODO: get routing tables from db (mongodb) 
 var table = {
@@ -15,42 +30,63 @@ var table = {
         }
     },
     'roles': 71
-}
+};
 
-this.route = function(link) {
+// start http server
+http.createServer(function(req, res) {
     
-    var url = link.pathname != delimiter ? link.pathname.replace(/\/$/, "") : link.pathname,
-        compID = traverse(url, table, "");
-    
-    if (typeof compID == "number") {
-    
-        //set headers
-        link.res.headers['content-style-type'] = "text/css";
-        link.res.headers['content-type']       = "text/html; charset=utf-8";
-        
-        send.ok(
+    var url = parse(req.url, true),
+        link = {
             
-            link.res,
-            "<!DOCTYPE html><html><head>"+
-            "<script type='text/javascript'>"+
-            "var require={"+
-                "baseUrl:'/"+ CONFIG.operationKey +"/0',"+
-                "deps:['comp/"+ Nscript +"']"+
-            "};"+
-            "window.onload=function(){"+
-                "N.ok='/"+ CONFIG.operationKey +"';"+
-                "N.comp('body','"+ compID +"')"+
-            "}"+
-            "</script>"+
-            "<script src='/"+ CONFIG.operationKey +"/0/comp/require.js'></script>"+
-            "</head><body></body></html>"
-        );
+            req:        req,
+            res:        res,
+            query:      url.query || {},
+            pathname:   url.pathname,
+            path:       url.pathname.replace(/\/$|^\//g, "").split("/", 42),
+            host:       req.headers.host.split(":")[0].split(".").reverse()
+        };
+    
+    link.res.headers = {};
+    
+    if (link.path[0] == CONFIG.operationKey) {
+        
+        operation(link);
     }
     else {
         
-        send.notfound(link.res);
+        var compID = traverse(url.pathname != delimiter ? url.pathname.replace(/\/$/, "") : url.pathname, table, "");
+    
+        if (typeof compID == "number") {
+        
+            //set headers
+            res.headers['content-style-type'] = "text/css";
+            res.headers['content-type']       = "text/html; charset=utf-8";
+            
+            send.ok(
+                
+                res,
+                "<!DOCTYPE html><html><head>"+
+                "<script type='text/javascript'>"+
+                "var require={"+
+                    "baseUrl:'/"+ CONFIG.operationKey +"/0',"+
+                    "deps:['comp/"+ Nscript +"']"+
+                "};"+
+                "window.onload=function(){"+
+                    "N.ok='/"+ CONFIG.operationKey +"';"+
+                    "N.comp('body','"+ compID +"')"+
+                "}"+
+                "</script>"+
+                "<script src='/"+ CONFIG.operationKey +"/0/comp/require.js'></script>"+
+                "</head><body></body></html>"
+            );
+        }
+        else {
+            
+            send.notfound(res);
+        }
     }
-}
+    
+}).listen(CONFIG.dev ? CONFIG.devPort : CONFIG.port);
 
 /*
     borrowed logic from https://github.com/flatiron/director/blob/master/lib/director/router.js

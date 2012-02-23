@@ -45,7 +45,7 @@ if (config.spinSleepTime >= config.minUptime) {
 }
 
 //watch node process
-var server = new forever.Monitor(__dirname + "/core/proxy.js", {
+var server = new forever.Monitor(__dirname + "/core/router.js", {
 
     max:           config.maxAttempts,
     minUptime:     config.minUptime,
