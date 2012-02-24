@@ -134,7 +134,7 @@ this.getUsersComp = function( userID, compID, callback ){
 			"select name as module,dir,in[@class = 'EHasAccessTo'].config as config,"+
 			"in[@class = 'EHasAccessTo'].html as html,"+
 			"in[@class = 'EHasAccessTo'].css as css "+
-			"from VModule where in traverse(5,5) (@rid = #7:"+ userID +" ) "+
+			"from VModule where in traverse(5,8) (@rid = #7:"+ userID +" ) "+
 			"and in traverse(2,2) (@rid = #11:"+ compID +")",
 			callback
 		);
