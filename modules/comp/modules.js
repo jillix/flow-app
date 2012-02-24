@@ -9,7 +9,7 @@ this.getModule = function( link ) {
         
         var module = link.path[2].replace(/[^0-9a-z_\-]/gi, "");
         
-        if (module != "") {
+        if (module !== "") {
         
             getModule(module, link.session.uid, function(err, res) {
                 
