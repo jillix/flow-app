@@ -112,13 +112,13 @@ this.getUsersUIElements = function( userID, callback ) {
 };
 
 this.getUsersModule = function(modid, userID, callback) {
-	
+    
 	orient( CONFIG.orientDB, function( err, db ){
 	
 		if( err ) callback( err );
 		else db.sql(
             
-            "select name as module,dir from VModule where name = '" + modid + "' and in traverse(5,5) (@rid = #7:" + userID + ")",
+            "select name as module,dir from VModule where name = '" + modid + "' and in traverse(5,8) (@rid = #7:" + userID + ")",
             callback
         );
 	});
