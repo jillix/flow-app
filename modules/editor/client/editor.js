@@ -1,4 +1,4 @@
-define(["ace/ace", "ace/mode/javascript", "ace/theme/textmate"], function(ace, jsMode, theme){
+define(["ace/ace", "ace/mode/javascript", "ace/theme/textmate"], function(ace, jsMode, theme) {
     
     //status
     var cssNs = "div.editor ",
