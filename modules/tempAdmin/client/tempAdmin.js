@@ -1,15 +1,19 @@
 define(["list/list"], function() {
         
         //collect dom references
-    var cssNs = "div#adminMain",
-        refItemList = N.dom.findOne(cssNs + "itemsLeft."),
-        refItemMessage = N.dom.findOne(cssNs + ""),
-        refItemAdd = N.dom.findOne(cssNs + ""),
-        refItemRemove = N.dom.findOne(cssNs + ""),
-        refItemPaging = N.dom.findOne(cssNs + ""),
-        refDetailForm = N.dom.findOne(cssNs + ""),
-        refDetailMessage = N.dom.findOne(cssNs + ""),
-        refDetailCancel = N.dom.findOne(cssNs + ""),
+    var cssNs = "div.adminMain",
+        refUsers = N.dom.findOne(cssNs + " #users"),
+        refRoles = N.dom.findOne(cssNs + " #roles"),
+        refOperations = N.dom.findOne(cssNs + " #operations"),
+        refModules = N.dom.findOne(cssNs + " #modules"),
+        refItemList = N.dom.findOne(cssNs + ">div#itemsLeft>ul.list"),
+        refItemMessage = N.dom.findOne(cssNs + ">div#itemsLeft>div.noSelection"),
+        refItemAdd = N.dom.findOne(cssNs + ">div#itemsLeft>ul.bottom>li.add"),
+        refItemRemove = N.dom.findOne(cssNs + ">div#itemsLeft>ul.bottom>li.remove"),
+        refItemPaging = N.dom.findOne(cssNs + ">div#itemsLeft>ul.bottom>li.paging"),
+        refDetailForm = N.dom.findOne(cssNs + ">div#itemDetail>div.detail"),
+        refDetailMessage = N.dom.findOne(cssNs + ">div#itemDetail>div.noSelection"),
+        refDetailCancel = N.dom.findOne(cssNs + ">div#itemDetail>ul.bottom>li.cancel"),
         
         viewStates = {
             
@@ -103,11 +107,46 @@ define(["list/list"], function() {
             ]
         };
     
+    function showViewState(name) {
+        
+        if (viewStates && viewStates[name]) {
+            
+            for (var i = 0, l = viewStates[name].length; i < l; ++i) {
+                
+                if (viewStates[name][i].elm instanceof HTMLElement) {
+                    
+                    viewStates[name][i].elm.style[viewStates[name][i].style] = viewStates[name][i].value;
+                }
+            }
+        }
+    }
+    
     return {
         
         init: function(config) {
             
-            console.log(this.comp);
+            refUsers.bind("click", function(){
+                
+                showViewState("category");
+            });
+            
+            refRoles.bind("click", function(){
+                
+                showViewState("category");
+            });
+            
+            refOperations.bind("click", function(){
+                
+                showViewState("category");
+            });
+            
+            refModules.bind("click", function(){
+                
+                showViewState("category");
+            });
+            
+            showViewState("noCategory");
+            showViewState("noItem");
         }
     };
 });

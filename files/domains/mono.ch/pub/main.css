@@ -1,10 +1,193 @@
-div.adminMain {
+@import url(http://fonts.googleapis.com/css?family=Droid+Serif);
+
+body {
     
-    display:	block;
-    position:	absolute;
-    top:		0px;
-    left:		0px;
-    right:		0px;
-    bottom:		0px;
-    background-color: rgb( 232,232,232 );
+	overflow:			hidden;
+}
+
+div.adminMain,
+div.adminMain > div {
+	
+	display:			block;
+	position:			absolute;
+	top:				0;
+	bottom:				0;
+	background-color:	rgb( 232,232,232 );
+	font-family:		Arial;
+	font-size:			13px;
+}
+
+div.adminMain {
+	
+	left:				0;
+	right:				0;
+}
+
+div.adminMain > div#itemsLeft {
+	
+	left:				0;
+	width:				299px;
+	border-right:		solid 1px #000;
+}
+
+div.adminMain > div#itemDetail {
+	
+	left:				300px;
+	right:				300px;
+	min-width:			500px;
+	overflow:			auto;
+}
+
+div.adminMain > div#itemsRight {
+	
+	right:				0;
+	width:				299px;
+	border-left:		solid 1px #000;
+}
+
+div.adminMain > div#itemsLeft > div.noSelection,
+div.adminMain > div#itemsRight > div.noSelection {
+	
+	position:			absolute;
+	display:			block;
+	top:				32px;
+	left:				0;
+	right:				0;
+	bottom:				31px;
+	padding:			10px;
+	background-color:	rgb( 232,232,232 );
+}
+
+div.adminMain ul.bar {
+	
+	position:			absolute;
+	display:			block;
+	margin:				0;
+	padding:			0;
+	left:				0;
+	right:				0;
+	height:				31px;
+	font-family:		'Droid Serif', serif;
+	font-size:			13px;
+	color:				#eee;
+	background-color:	#333;
+}
+
+div.adminMain ul.bar.top {
+	
+    top:				0;
+	border-bottom:		solid 1px #000;
+}
+
+div.adminMain ul.bar.second {
+	
+	top:				31px;
+	border-bottom:		solid 1px #000;
+	background-color:	transparent;
+	color:				#333;
+}
+
+div.adminMain ul.bar.bottom {
+	
+	bottom:				0;
+	border-top:			solid 1px #000;
+}
+
+div.adminMain ul.bar > li {
+	
+	display:			block;
+	position:			relative;
+	height:				15px;
+	padding:			8px 10px;
+	float:				left;
+	cursor:				pointer;
+	border-right:		solid 1px #000;
+}
+
+div.adminMain ul.bar > li:hover,
+div.adminMain ul.bar > li.active {
+	
+	background-color:	#000;
+}
+
+div.adminMain ul.bar > li.search {
+	
+	position:			absolute;
+	border:				0;
+	padding:			5px;
+	left:				0;
+	right:				0;
+	top:				0;
+	bottom:				0;
+}
+
+div.adminMain ul.bar > li.search:hover {
+	
+	background-color:	transparent;
+}
+
+div.adminMain ul.bar > li.search > input {
+	
+	display:			block;
+	position:			absolute;
+	left:				10px;
+	right:				10px;
+	top:				5px;
+}
+
+div.adminMain ul.bar > li.right {
+	
+	float:				right;
+	border-right:		none;
+	border-left:		solid 1px #000;
+}
+
+div.adminMain ul.list {
+	
+	position:			absolute;
+	display:			block;
+	margin:				0;
+	padding:			0;
+	left:				0;
+	right:				0;
+	bottom:				31px;
+}
+
+div.adminMain ul.list.left {
+	
+	top:				62px;
+}
+
+div.adminMain ul.list.right {
+	
+	top:				31px;
+}
+
+div.adminMain ul.list > li {
+	
+	display:			block;
+	position:			relative;
+	left:				0;
+	right:				0;
+	height:				25px;
+	padding:			8px 10px;
+	cursor:				pointer;
+	border-bottom:		solid 1px #000;
+}
+
+div.adminMain ul.list > li:hover,
+div.adminMain ul.list > li.active {
+	
+	color:				#eee;
+	background-color:	#333;
+}
+
+div.adminMain > div#itemDetail > div {
+	
+	display:			block;
+	position:			absolute;
+	left:				0;
+	right:				0;
+	top:				31px;
+	bottom:				31px;
 }
