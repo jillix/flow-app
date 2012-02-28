@@ -294,10 +294,10 @@ var N = {
      *
      * options: {
      *        
-     *        url:        {string}    the url
-     *        sync:        {boolean}    if true the request will block all other browser actions
-     *        upload:        {function}    first argument: percent of loaded data, second argument: XMLHttpRequestProgressEvent
-     *        download:    {function}    first argument: percent of loaded data, second argument: XMLHttpRequestProgressEvent
+     *        url:      {string}    the url
+     *        sync:     {boolean}   if true the request will block all other browser actions
+     *        upload:   {function}  first argument: percent of loaded data, second argument: XMLHttpRequestProgressEvent
+     *        download: {function}  first argument: percent of loaded data, second argument: XMLHttpRequestProgressEvent
      * }
      */
     link: function( options, callback ){
@@ -308,7 +308,7 @@ var N = {
         if( link && options && options.url ){
             
             //open the connection
-            link.open( options.data ? "post" : "get", options.url, !options.sync );
+            link.open( options.data ? "post" : "get", N.ok + options.url, !options.sync );
             
             //set session id in http header
             if( window.name ) link.setRequestHeader( "x-sid", window.name );
@@ -393,7 +393,7 @@ var N = {
      * Load css Files
      * @param {string} url to css file
      */
-    css: function( url ){
+    css: function(file) {
         
         //create link and append it to the DOM
         N.dom.findOne( "head" ).appendChild(
@@ -401,7 +401,7 @@ var N = {
             N.dom.elm( "link", {
                 rel:    "stylesheet",
                 type:   "text/css",
-                href:   url
+                href:   N.ok + "/2/" + file
             })
         );
     },
@@ -410,14 +410,14 @@ var N = {
     /**
      * Create Instances of Components
      */
-    comp: function( target, comp_id, callback ){
+    comp: function(target, comp_id, callback) {
         
         target = typeof target == "string" ? N.dom.findOne(target) : target;
         
         //get component
         if (target && typeof comp_id !== "undefined") {
             
-            N.link({ url: N.ok + "/1/" + comp_id }, function(err, response) {
+            N.link({ url: "/1/" + comp_id }, function(err, response) {
         
                 if(!err && response) {
                     
@@ -446,7 +446,7 @@ var N = {
                         
                         for(var i=0, l=response[2].length; i < l; ++i) {
                             
-                            N.css(N.ok + "/2/" + response[2][i]);
+                            N.css(response[2][i]);
                         }
                     }
                     
@@ -474,6 +474,8 @@ var N = {
                                     
                                     clone.comp = comp;
                                     
+                                    // TODO: register module state
+                                    
                                     //init module
                                     if (clone.init) {
                                         
@@ -483,20 +485,61 @@ var N = {
                             }
                         }
                         
-                        // !TODO: hide loader
-                        
+                        // TODO: hide loader
+                        // TODO: handle state
+                                                
                         target.style.display = "block";
                         
-                        if( callback ) callback( null, comp );
+                        if (callback) {
+                            
+                            callback(null, comp);
+                        }
                     });
                 }
             });     
         }
-    }
+    },
+    
+    state: (function(){
+        
+        /*  
+            1. register all module states to N.states or whatever..
+            2. onchange go through all module states
+            
+            every module has his own state map object.
+            listen to onhashchange.
+            
+            create a api function to change hashes?
+            
+            example of a map = {
+                
+                '/path/x': {
+                    
+                    //activate this state if dom event was fired
+                    events: [
+                        
+                        ["#selector", "click"]
+                    ],
+                    
+                    //execute methods if state is activated
+                    methods: [
+                        
+                        ["getItems", ["param1", "param2"]]
+                    ],
+                    
+                    //activate viewstates if state is activated
+                    viewStates: ["listEmpty"]
+                }
+            }
+        */
+        return function() {
+            
+        };
+    })()
 };
 
 // !TODO: send error to server
-window.onerror = function( error, url, line ){
+window.onerror = function(error, url, line) {
     
     console.log( error + "\n" + url + "\n" + line );
 };

@@ -6,20 +6,22 @@ define(["list/list"], function() {
         refRoles = N.dom.findOne(cssNs + " #roles"),
         refOperations = N.dom.findOne(cssNs + " #operations"),
         refModules = N.dom.findOne(cssNs + " #modules"),
+        refLeftMessage = N.dom.findOne(cssNs + ">div#itemsLeft>div.message"),
         refItemList = N.dom.findOne(cssNs + ">div#itemsLeft>ul.list"),
-        refItemMessage = N.dom.findOne(cssNs + ">div#itemsLeft>div.noSelection"),
+        refItemSearch = N.dom.findOne(cssNs + ">div#itemsLeft ul.second"),
         refItemAdd = N.dom.findOne(cssNs + ">div#itemsLeft>ul.bottom>li.add"),
         refItemRemove = N.dom.findOne(cssNs + ">div#itemsLeft>ul.bottom>li.remove"),
         refItemPaging = N.dom.findOne(cssNs + ">div#itemsLeft>ul.bottom>li.paging"),
         refDetailForm = N.dom.findOne(cssNs + ">div#itemDetail>div.detail"),
-        refDetailMessage = N.dom.findOne(cssNs + ">div#itemDetail>div.noSelection"),
+        refDetailMessage = N.dom.findOne(cssNs + ">div#itemDetail>div.noDetail"),
         refDetailCancel = N.dom.findOne(cssNs + ">div#itemDetail>ul.bottom>li.cancel"),
         
+        // TODO: bind viewstates to events
         viewStates = {
             
             category: [
                 {
-                    elm: refItemMessage,
+                    elm: refLeftMessage,
                     style: "display",
                     value: "none"
                 },
@@ -35,18 +37,13 @@ define(["list/list"], function() {
                 },
                 {
                     elm: refItemRemove,
-                    style: "display",
-                    value: "block"
-                },
-                {
-                    elm: refItemPaging,
                     style: "display",
                     value: "block"
                 }
             ],
             noCategory: [
                 {
-                    elm: refItemMessage,
+                    elm: refLeftMessage,
                     style: "display",
                     value: "block"
                 },
@@ -71,7 +68,51 @@ define(["list/list"], function() {
                     value: "none"
                 }
             ],
-            item: [
+            items: [
+                {
+                    elm: refLeftMessage,
+                    style: "display",
+                    value: "none"
+                },
+                {
+                    elm: refItemList,
+                    style: "display",
+                    value: "block"
+                },
+                {
+                    elm: refItemSearch,
+                    style: "display",
+                    value: "block"
+                },
+                {
+                    elm: refItemPaging,
+                    style: "display",
+                    value: "block"
+                }
+            ],
+            noItems: [
+                {
+                    elm: refLeftMessage,
+                    style: "display",
+                    value: "block"
+                },
+                {
+                    elm: refItemList,
+                    style: "display",
+                    value: "none"
+                },
+                {
+                    elm: refItemSearch,
+                    style: "display",
+                    value: "none"
+                },
+                {
+                    elm: refItemPaging,
+                    style: "display",
+                    value: "none"
+                }
+            ],
+            detail: [
                 {
                     elm: refDetailForm,
                     style: "display",
@@ -88,7 +129,7 @@ define(["list/list"], function() {
                     value: "block"
                 }
             ],
-            noItem: [
+            noDetail: [
                 {
                     elm: refDetailForm,
                     style: "display",
@@ -121,32 +162,51 @@ define(["list/list"], function() {
         }
     }
     
+    showViewState("noItems");
+    showViewState("noCategory");
+    showViewState("noDetail");
+    
+    refUsers.bind("click", function() {
+        
+        showViewState("category");
+        showViewState("noItems");
+    });
+    
+    refRoles.bind("click", function() {
+        
+        showViewState("category");
+        showViewState("items");
+    });
+    
+    refOperations.bind("click", function() {
+        
+        showViewState("category");
+        showViewState("noItems");
+    });
+    
+    refModules.bind("click", function() {
+        
+        showViewState("category");
+        showViewState("items");
+    });
+    
     return {
         
         init: function(config) {
             
-            refUsers.bind("click", function(){
-                
-                showViewState("category");
-            });
+            console.log(config);
+        },
+        
+        //test function 1
+        fn1: function() {
             
-            refRoles.bind("click", function(){
-                
-                showViewState("category");
-            });
+            console.log(arguments);
+        },
+        
+        //test function 2
+        fn2: function() {
             
-            refOperations.bind("click", function(){
-                
-                showViewState("category");
-            });
-            
-            refModules.bind("click", function(){
-                
-                showViewState("category");
-            });
-            
-            showViewState("noCategory");
-            showViewState("noItem");
+            console.log(arguments);
         }
     };
 });
