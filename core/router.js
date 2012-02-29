@@ -1,10 +1,16 @@
 // extend Object with clone function
-Object.clone = function(obj) {
-    
-    function O(){}
-    O.prototype = obj;
-    return new O();
-};
+Object.defineProperty(Object.prototype, "clone", {
+        
+    writeable: false,
+    enumerable: false,
+    configurable: false,
+    get: function(){
+        
+        function O(){}
+        O.prototype = this;
+        return new O();
+    }
+});
 
 // get configuration
 CONFIG = require(process.argv[2] || "../config.js");
