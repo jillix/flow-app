@@ -1,10 +1,10 @@
-// extend Object with clone function
+// extend Object prototype with clone function
 Object.defineProperty(Object.prototype, "clone", {
         
-    writeable: false,
-    enumerable: false,
-    configurable: false,
-    get: function(){
+    //writeable: false, (default value)
+    //enumerable: false, (default value)
+    //configurable: false, (default value)
+    value: function(){
         
         function O(){}
         O.prototype = this;

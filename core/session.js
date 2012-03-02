@@ -121,7 +121,7 @@ this.start = function( uid, locale, data, callback ){
 //new session object
 function newSession( ses ){
 	
-	var cloned_session = Session.clone;
+	var cloned_session = Session.clone();
 	
 	if( ses.sid ) cloned_session.sid = ses.sid;
 	if( ses.uid ) cloned_session.uid = ses.uid;

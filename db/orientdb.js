@@ -457,7 +457,7 @@ this.db = function(config, callback) {
         
         dbCache[key] = null;
         
-        var db = DB.clone;
+        var db = DB.clone();
         
         db.databaseHost = config.host || "localhost";
         db.databasePort = config.port || 2480;
