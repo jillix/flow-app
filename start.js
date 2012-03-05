@@ -39,9 +39,6 @@ config.maxAttempts   = config.maxAttempts   || 23;
 config.minUptime     = config.minUptime     || 2000;
 config.spinSleepTime = config.spinSleepTime || 1000;
 
-console.log(JSON.stringify(config));
-return;
-
 if (config.spinSleepTime >= config.minUptime) {
     
     throw new Error( "Error: spinSleepTime is greater than minUptime!" );
