@@ -32,5 +32,5 @@ this.forever = {
     maxAttempts:   23,
     minUptime:     2000,
     spinSleepTime: 1000,
-    mail:          "adrian@ottiker.com"
+    mail:          "admin@jillix.com"
 };

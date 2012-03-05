@@ -1,0 +1,29 @@
+{
+    "port"          : 80,
+    "dev"           : true,
+    "devPort"       : 8000,
+    "operationKey"  : "@",
+    "uploadDir"     : "files/upload",
+
+    "orientDB"      : {
+        "host"          : "localhost",
+        "port"          : 2480,
+        "name"          : "mono",
+        "username"      : "admin",
+        "password"      : "admin"
+    },
+
+    "mongoDB"       : {
+        "name"  : "mono",
+        "host"  : "localhost",
+        "port"  : 27017
+    },
+
+    "forever"       : {
+        "maxAttempts"   : 23,
+        "minUptime"     : 2000,
+        "spinSleepTime" : 1000,
+        "mail"          : "admin@jillix.com"
+    }
+}
+

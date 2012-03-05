@@ -1,6 +1,7 @@
 npm-debug.log
 .DS_Store
 .orientdb_history
+*.swp
 bin/
 node_modules/
 tmp/
