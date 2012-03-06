@@ -1,36 +1,21 @@
-this.port = 80;
+// load the mono configuration file
+var config = module.exports = require("./mono");
 
-this.dev = true;
+// configure the root directory
+config.root = __dirname;
 
-this.devPort = 8000;
+// configure defaults
 
-this.root = __dirname;
+// admin Email
+//      Email address to send problems to.
+//      E.g.: if the server is restarted, etc.
+//
+if (config.adminEmail) {
 
-this.operationKey = "@";
-
-this.uploadDir = __dirname + "/files/upload";
-
-this.orientDB = {
+    var filter = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
     
-    //create: true,
-    host:     "localhost",
-    port:     2480,
-    name:     "mono",
-    username: "admin",
-    password: "admin"
-};
+    if (!filter.test(config.adminEmail)) {
+        throw new Error("Error: Notification set active, but no valid mail has been set!");
+    }
+}
 
-this.mongoDB = {
-    
-    name: "mono",
-    host: "localhost",
-    port: 27017
-};
-
-this.forever = {
-    
-    maxAttempts:   23,
-    minUptime:     2000,
-    spinSleepTime: 1000,
-    mail:          "admin@jillix.com"
-};

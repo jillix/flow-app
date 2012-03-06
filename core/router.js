@@ -12,6 +12,7 @@ Object.defineProperty(Object.prototype, "clone", {
     }
 });
 
+
 // get configuration
 CONFIG = require(process.argv[2] || "../config.js");
 

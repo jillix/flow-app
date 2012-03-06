@@ -3,7 +3,10 @@
     "dev"           : true,
     "devPort"       : 8000,
     "operationKey"  : "@",
-    "uploadDir"     : "files/upload",
+    "uploaddir"     : "files/upload",
+    "adminEmail"    : "admin@jillix.com",
+
+    "monoServer"    : "core/router.js",
 
     "orientDB"      : {
         "host"          : "localhost",
@@ -20,10 +23,10 @@
     },
 
     "forever"       : {
-        "maxAttempts"   : 23,
+        "max"           : 10,
         "minUptime"     : 2000,
         "spinSleepTime" : 1000,
-        "mail"          : "admin@jillix.com"
+        "silent"        : true
     }
 }
 
