@@ -23,7 +23,7 @@
     },
 
     "forever"       : {
-        "max"           : 10,
+        "max"           : 3,
         "minUptime"     : 2000,
         "spinSleepTime" : 1000,
         "silent"        : true
