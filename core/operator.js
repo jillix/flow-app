@@ -4,13 +4,13 @@ var formidable      = require("formidable"),
     getSession      = require(CONFIG.root + "/core/session.js").get,
     getOperation    = require(CONFIG.root + "/db/queries.js").getUsersOperation;
 
-this.operation = function(link) {
+
+exports.operation = function(link) {
     
     var resume;
     
     //pause on POST requests (chache data untile resume is called)
     if (link.req.method == "POST") {
-        
         resume = util.pause(req);
     }
     
@@ -27,7 +27,6 @@ this.operation = function(link) {
                     if (err || !operation || !operation.module || !operation.file || !operation.method) {
                     
                         if (resume) {
-                
                             resume(true);
                         }
                         
@@ -35,34 +34,27 @@ this.operation = function(link) {
                     }
                     else {
                         
-                        var method = util.load(
-                            
-                            CONFIG.root + "/modules/" + operation.module + "/" + operation.file,
-                            operation.method
-                        );
+                        var file = CONFIG.root + "/modules/" + operation.module + "/" + operation.file;
+                        var method = util.load(file, operation.method);
                         
                         if (typeof method == "function") {
                             
                             link.session = session || {};
                             
                             if (operation.params) {
-                            
                                 link.params = operation.params;
                             }
                             
                             if (resume) {
-                                
                                 handlePostRequest(link, resume);
                             }
                             else {
-                                
                                 method(link);
                             }
                         }
                         else {
                             
                             if (resume) {
-                            
                                 resume(true);
                             }
                             
@@ -74,7 +66,6 @@ this.operation = function(link) {
             else {
                 
                 if (resume) {
-            
                     resume(true);
                 }
                 
@@ -84,7 +75,6 @@ this.operation = function(link) {
         else {
             
             if (resume) {
-                
                 resume(true);
             }
             
@@ -92,6 +82,7 @@ this.operation = function(link) {
         }
     });
 };
+
 
 function handlePostRequest(link, resume) {
     
@@ -105,7 +96,6 @@ function handlePostRequest(link, resume) {
         
         // buffer data
         link.req.on("data", function(chunk) {
-            
             jsonString += chunk.toString("utf-8");
         });
         
@@ -113,14 +103,12 @@ function handlePostRequest(link, resume) {
         link.req.on("end", function() {
             
             try {
-                
                 // try to parse response to Object
                 jsonString = jsonString ? JSON.parse(jsonString) : {};
             }
             catch(parseError) {
                 
                 if (CONFIG.dev) {
-                    
                     console.log(parseError);
                 }
                 
@@ -128,11 +116,9 @@ function handlePostRequest(link, resume) {
             }
             
             if (err) {
-                
                 send.badrequest(link.res);
             }
             else {
-                
                 method(link);
             }
         });
@@ -151,7 +137,6 @@ function handlePostRequest(link, resume) {
             if (err) {
                 
                 if (CONFIG.dev) {
-                    
                     console.log( err );
                 }
                 
@@ -164,7 +149,6 @@ function handlePostRequest(link, resume) {
                 if (files) {
                     
                     for(var file in files) {
-                        
                         link.data[file] = files[file];
                     }
                 }
@@ -174,9 +158,9 @@ function handlePostRequest(link, resume) {
         });
     }
     else {
-    
         method(link);
     }
     
     resume();
 }
+

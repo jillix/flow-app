@@ -16,7 +16,6 @@
     "main": "./core/proxy",
     "scripts": {
         "install"   : "admin/scripts/orientdb/install.sh",
-        "start"     : "node start.js",
         "test"      : "node node_modules/tap/bin/tap.js ./test"
     },
     "repository": {

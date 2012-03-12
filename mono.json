@@ -5,8 +5,9 @@
     "operationKey"  : "@",
     "uploaddir"     : "files/upload",
     "adminEmail"    : "admin@jillix.com",
+    "clientLibrary" : "N",
 
-    "monoServer"    : "core/router.js",
+    "monoServer"    : "server.js",
 
     "orientDB"      : {
         "host"          : "localhost",

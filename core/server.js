@@ -1,77 +1,43 @@
-var nodemailer = require("nodemailer"),
-    util       = require("util");
+var http  = require("http");
 
-var params    = [process.argv[2] || __dirname + "/config.js"],
-    lastError = "";
+// imported functions
+var parseUrl  = require("url").parse,
+    operation = require(CONFIG.root + "/core/operator.js").operation,
+    route     = require(CONFIG.root + "/core/router.js").route;
 
 
-var Server = exports.Server = function (config) {
-    var self = this;
+var Server = exports.Server = function () {
+};
 
-    self.config = config;
-    self.server = null;
-
-    var monoServerPath = config.root + "/" + config.monoServer;
-
-    if (config.forever) {
-        var forever = require("forever");
-        self.server = new forever.Monitor(monoServerPath, config.forever);
-        addHandlers(self.server, self.config);
-    }
-    else {
-        var Router = require(monoServerPath).Router;
-        self.server = new Router();
-    }
-}
 
 Server.prototype.start = function() {
     var self = this;
 
-    self.server.start();
-}
+    // start http server
+    self.server = http.createServer(requestHandler)
+    self.server.listen(CONFIG.dev ? CONFIG.devPort : CONFIG.port);
+};
 
-function addHandlers(server, config) {
 
-    // file load error
-    server.on("error", function() {
-        util.log("Error: Loading HTTP Server [Parameter: " + params.join(", ") + "] as daemon failed!");
-    });
+function requestHandler(req, res) {
+debugger;
+    var url = parseUrl(req.url, true),
+        link = {
+            req:        req,
+            res:        res,
+            query:      url.query || {},
+            pathname:   url.pathname,
+            path:       url.pathname.replace(/\/$|^\//g, "").split("/", 42),
+            host:       req.headers.host.split(":")[0].split(".").reverse()
+        };
 
-    // process error
-    server.on("stderr", function(err) {
+    link.res.headers = {};
 
-        console.log("stderr");
-
-        lastError = err.toString("utf8");
-    });
-
-    var transport = nodemailer.createTransport("Sendmail");
-
-    // restart event
-    server.on("restart", function() {
-    
-        var title = "Info: Restarted HTTP Server";
-        var error = lastError || "unknown error";
-
-        util.log(title);
-        util.log(error);
-
-        if (config.adminEmail) {
-   
-            var mail = {
-                transport: transport,
-                from:    "admin@jillix.com",
-                to:      config.adminEmail,
-                subject: title,
-                body:    "Error Log: \n" + error
-            };
-
-            nodemailer.send_mail(mail, function(err, success) {
-                if (!success) {
-                    util.log("Error: Notification sending failed!");
-                }
-            });
-        }
-    });
+    if (link.path[0] == CONFIG.operationKey) {
+        operation(link);
+    }
+    else {
+        route(link);
+    }
 }
 
