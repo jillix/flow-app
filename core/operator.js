@@ -3,83 +3,86 @@ var formidable      = require("formidable"),
     send            = require(CONFIG.root + "/core/send.js").send,
     getSession      = require(CONFIG.root + "/core/session.js").get,
     getOperation    = require(CONFIG.root + "/db/queries.js").getUsersOperation;
+    getNewOperation = require(CONFIG.root + "/core/model/orient.js").getOperation;
 
 
 exports.operation = function(link) {
-    
+
     var resume;
-    
-    //pause on POST requests (chache data untile resume is called)
+
+    // pause on POST requests (cache data until resume is called)
     if (link.req.method == "POST") {
-        resume = util.pause(req);
+        link.req.pause();
+        resume = util.pause(link.req);
     }
-    
-    getSession(link, function(err, session){
-        
-        if (!err && session) {
-            
-            var operationId = link.path[1] ? link.path[1].replace( /[^a-z0-9]/gi, "" ) : null;
-            
-            if (operationId) {
-                
-                getOperation(operationId, session.uid, function(err, operation){
-                    
-                    if (err || !operation || !operation.module || !operation.file || !operation.method) {
-                    
-                        if (resume) {
-                            resume(true);
-                        }
-                        
-                        send.notfound(link.res);
-                    }
-                    else {
-                        
-                        var file = CONFIG.root + "/modules/" + operation.module + "/" + operation.file;
-                        var method = util.load(file, operation.method);
-                        
-                        if (typeof method == "function") {
-                            
-                            link.session = session || {};
-                            
-                            if (operation.params) {
-                                link.params = operation.params;
-                            }
-                            
-                            if (resume) {
-                                handlePostRequest(link, resume);
-                            }
-                            else {
-                                method(link);
-                            }
-                        }
-                        else {
-                            
-                            if (resume) {
-                                resume(true);
-                            }
-                            
-                            send.notfound(link.res);
-                        }
-                    }
-                });
-            }
-            else {
-                
-                if (resume) {
-                    resume(true);
-                }
-                
-                send.badrequest(link.res);
-            }
-        }
-        else {
+
+    getSession(link, function(err, session) {
+
+        // if no session or an error getting it
+        if (err || !session) {
             
             if (resume) {
                 resume(true);
             }
             
             send.forbidden(link.res);
+            return;
         }
+
+        link.session = session;
+
+        // read the operation from the request URL
+        var operationId = link.path[1] ? link.path[1] : null;
+
+        // id no operation was found in the request URL
+        if (!operationId) {
+
+            if (resume) {
+                resume(true);
+            }
+
+            send.badrequest(link.res);
+            return;
+        }
+
+        getNewOperation(operationId, /*session.uid, */ function(err, operation) {
+
+            // is the operation does not have the required fields or an error occurred while retrieving it
+            // TODO these two cases must be split and reported/logged properly
+            if (err || !operation || !operation.module || !operation.file || !operation.method) {
+
+                if (resume) {
+                    resume(true);
+                }
+
+                send.notfound(link.res);
+                return;
+            }
+
+            var file = CONFIG.root + "/modules/" + operation.module + "/" + operation.file;
+            var method = util.load(file, operation.method);
+
+            if (typeof method !== "function") {
+
+                if (resume) {
+                    resume(true);
+                }
+
+                send.notfound(link.res);
+                return;
+            }
+
+            if (operation.params) {
+                link.params = operation.params;
+            }
+
+            if (resume) {
+                handlePostRequest(link, resume);
+            }
+            else {
+                method(link);
+            }
+        });
     });
 };
 
@@ -124,7 +127,7 @@ function handlePostRequest(link, resume) {
         });
     }
     //handle form data requests
-    else if (contentType.indexOf("multipart/form-data" ) > -1) {
+    else if (contentType.indexOf("multipart/form-data" ) > -1 || contentType.indexOf("application/x-www-form-urlencoded" ) > -1) {
         
         var form = new formidable.IncomingForm();
         
@@ -134,6 +137,7 @@ function handlePostRequest(link, resume) {
         //parse form data
         form.parse(link.req, function(err, fields, files) {
             
+       debugger; 
             if (err) {
                 
                 if (CONFIG.dev) {
