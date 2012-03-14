@@ -22,16 +22,17 @@ exports.getOperation = function(operationId, callback) {
 
         if (vopClusterId < 0) { return callback("Could not find the VOperation cluster ID."); }
 
-        var command = "SELECT module,file,method FROM #" + vopClusterId + ":" + operationId;
+        var command = "SELECT module, file, method FROM #" + vopClusterId + ":" + operationId;
         sql(command, callback);
     });
 };
 
 
-exports.getModule = function(modId, userId, callback) {
+exports.getModule = function(moduleId, userId, callback) {
 
     // TODO add either a db.open or make the db.open call before any operation
-    var command = "SELECT  name AS module,dir FROM VModule WHERE name = '" + modId + "' AND IN traverse(5,8) (@rid = #7:" + userId + ")";
+    // TODO get the VUser cluster ID from the db.open result
+    var command = "SELECT name AS module, dir FROM (TRAVERSE out FROM #7:" + userId + ") WHERE @class = 'VModule' AND name = '" + moduleId + "'";
     sql(command, callback);
 };
 

@@ -21,7 +21,6 @@ exports.getModule = function(link) {
     
     getModule(module, link.session.uid, function(err, res) {
         
-debugger;
         if (err || !res || !res.module) {
             send.notfound(link.res);
             return;

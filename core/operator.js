@@ -8,7 +8,7 @@ var formidable      = require("formidable"),
 
 exports.operation = function(link) {
 
-    var resume;
+    var resume = null;
 
     // pause on POST requests (cache data until resume is called)
     if (link.req.method == "POST") {
@@ -20,11 +20,11 @@ exports.operation = function(link) {
 
         // if no session or an error getting it
         if (err || !session) {
-            
+
             if (resume) {
                 resume(true);
             }
-            
+
             send.forbidden(link.res);
             return;
         }
