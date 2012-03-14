@@ -1,105 +1,130 @@
+var util = require("util");
+
+
 this.send = (function(){
     
     var ct = { 'content-type': "text/plain" };
-    
-	return {
-		
-		ok: function( res, send ){
-            
-            try {
-                
-                if( typeof send != "undefined" ) {
-                
-                    if( send instanceof Buffer === false ){
-                            
-                        if( typeof send == "object" ) {
-                            
-                            send = JSON.stringify( send );
-                            res.headers[ 'content-type' ] = "application/json; charset=utf-8";
-                        }
-                        else send = send.toString();
-                    }
-                    
-                    res.writeHead( 200, res.headers || ct );
-                    res.end( send );
-                }
-			    else {
-                    
-                    res.writeHead( 204, res.headers || ct );
+
+    var functionTable = {
+
+        201: { name: "created", logLevel: "none" },
+        202: { name: "accepted", logLevel: "none" },
+
+        302: { name: "found", logLevel: "none" },
+        303: { name: "seeother", logLevel: "none" },
+
+        400: { name: "badrequest", logLevel: "error" },
+        403: { name: "forbidden", logLevel: "error" },
+        404: { name: "notfound", logLevel: "error" },
+        418: { name: "imateapot", logLevel: "error" },
+
+        500: { name: "internalservererror", logLevel: "error" },
+        503: { name: "serviceunavailable", logLevel: "error" },
+    };
+
+    var functions = {};
+
+    for (var statusCode in functionTable) {
+
+        // we need a loop closure since we define functions inside
+        (function (statusCode) {
+
+            var name = functionTable[statusCode].name;
+            var logLevel = functionTable[statusCode].logLevel;
+            var statusCode = parseInt(statusCode);
+
+            if (statusCode < 400) {
+
+                functions[name] = function(res) {
+
+                     // TODO add the URL to the log
+                    log(logLevel, statusCode + " " + "???URL???");
+
+                    res.writeHead(statusCode, res.headers || ct);
                     res.end();
-			    }
+		        };
             }
-			catch( err ){
-                
-                res.writeHead( 500, ct );
-                res.end( "Send Data: Parse Error" );
+            else {
+
+                 functions[name] = function(res, msg) {
+
+                     // TODO add the URL to the log
+                     log(logLevel, statusCode + " " + "???URL???" + " " + msg);
+
+	                 res.writeHead(statusCode, ct);
+	                 res.end(msg || null);
+                 };
             }
-		},
-		
-		created: function( res ){
-			
-			res.writeHead( 201, res.headers || ct );
-			res.end();
-		},
-		
-		accepted: function( res ){
-			
-			res.writeHead( 202, res.headers || ct );
-			res.end();
-		},
-		
-		found: function( res ){
-			
-			res.writeHead( 302, res.headers || ct );
-			res.end();
-		},
-		
-		seeother: function( res ){
-			
-			res.writeHead( 303, res.headers || ct );
-			res.end();
-		},
-		
-		//CLIENT 4xx
-		badrequest: function( res, msg ){
-			
-			res.writeHead( 400, ct );
-			res.end( msg || null );
-		},
-		
-		forbidden: function( res, msg ){
-			
-			res.writeHead( 403, ct );
-			res.end( msg || null );
-		},
-		
-		notfound: function( res, msg ){
-			
-			res.writeHead( 404, ct );
-			res.end( msg || null );
-		},
-		
-		imateapot: function( res, msg ){
-			
-			res.writeHead( 418, ct );
-			res.end( msg || null );
-		},
-		
-		//SERVER 5xx
-		internalservererror: function( res, msg ){
-			
-			res.writeHead( 500, ct );
-			res.end( msg || null );
-		},
-		
-		serviceunavailable: function( res, msg ){
-			
-			res.writeHead( 503, ct );
-			res.end( msg || null );
-		}
-	};
+
+        })(statusCode);
+    }
+
+    functions.ok = function(res, send) {
+
+        try {
+
+            if (typeof send != "undefined" ) {
+
+                if (send instanceof Buffer === false) {
+
+                    if (typeof send === "object") {
+                        send = JSON.stringify( send );
+                        res.headers[ 'content-type' ] = "application/json; charset=utf-8";
+                    }
+                    else {
+                        send = send.toString();
+                    }
+                }
+
+                res.writeHead(200, res.headers || ct);
+                res.end(send);
+            }
+            else {
+                res.writeHead( 204, res.headers || ct );
+                res.end();
+            }
+        }
+        catch (err){
+            res.writeHead( 500, ct );
+            res.end( "Send Data: Parse Error" );
+        }
+    };
+
+    return functions;
 
 })();
+
+
+function log(level, message) {
+
+    switch (CONFIG.logLevel) {
+
+        case "debug":
+            if (level === "debug") {
+                util.log("DEBUG: " + message);
+                break;
+            }
+
+        case "info":
+            if (level === "info") {
+                util.log("INFO: " + message);
+                break;
+            }
+
+        case "warning":
+            if (level === "warning") {
+                util.log("WARNING: " + message);
+                break;
+            }
+
+        case "error":
+            if (level === "error") {
+                util.log("ERROR: " + message);
+                break;
+            }
+    }
+}
+
 
 this.mongoStream = (function(){
     
@@ -153,3 +178,4 @@ this.mongoStream = (function(){
         cursor.nextObject( stream );
     };
 })();
+

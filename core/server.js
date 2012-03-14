@@ -21,8 +21,6 @@ Server.prototype.start = function() {
 
 function requestHandler(req, res) {
 
-console.log(req.url);
-
     var url = parseUrl(req.url, true),
         link = {
             req:        req,

@@ -6,6 +6,33 @@ config.root = __dirname;
 
 // configure defaults
 
+
+// log level
+//      One of: error, warning, info, debug, none
+if (!config.logLevel) {
+
+    if (config.dev) {
+        config.logLevel = "debug";
+    }
+    else {
+        config.logLevel = "error";
+    }
+}
+else {
+
+    switch (config.logLevel) {
+        case "error":
+        case "warning":
+        case "info":
+        case "debug":
+        case "none":
+            break;
+        default:
+            throw new Error(config.logLevel + " is not a supported log level.");
+    }
+}
+
+
 // admin Email
 //      Email address to send problems to.
 //      E.g.: if the server is restarted, etc.
