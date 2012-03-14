@@ -7,5 +7,7 @@ create index moduleNames on VModule (name) unique;
 
 import database admin/scripts/orientdb/records.json;
 
+rebuild index *;
+
 info;
 
