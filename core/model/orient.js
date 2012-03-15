@@ -32,7 +32,7 @@ exports.getModule = function(moduleId, userId, callback) {
 
     // TODO add either a db.open or make the db.open call before any operation
     // TODO get the VUser cluster ID from the db.open result
-    var command = "SELECT name AS module, dir FROM (TRAVERSE out FROM #7:" + userId + ") WHERE @class = 'VModule' AND name = '" + moduleId + "'";
+    var command = "SELECT name AS module, dir FROM (TRAVERSE out FROM #7:" + userId + " WHERE $depth <= 4) WHERE @class = 'VModule' AND name = '" + moduleId + "'";
     sql(command, callback);
 };
 
