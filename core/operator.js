@@ -3,7 +3,7 @@ var formidable      = require("formidable"),
     send            = require(CONFIG.root + "/core/send.js").send,
     getSession      = require(CONFIG.root + "/core/session.js").get,
     getOperation    = require(CONFIG.root + "/db/queries.js").getUsersOperation;
-    getNewOperation = require(CONFIG.root + "/core/model/orient.js").getOperation;
+    getNewOperation = require(CONFIG.root + "/core/model/orient.js").getUserOperation;
 
 
 exports.operation = function(link) {
@@ -45,7 +45,7 @@ exports.operation = function(link) {
             return;
         }
 
-        getNewOperation(operationId, /*session.uid, */ function(err, operation) {
+        getNewOperation(operationId, session.uid, function(err, operation) {
 
             // is the operation does not have the required fields or an error occurred while retrieving it
             // TODO these two cases must be split and reported/logged properly

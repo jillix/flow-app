@@ -24,6 +24,10 @@ this.send = (function(){
 
     var functions = {};
 
+    function warnOldUsage() {
+        log("debug", new Error("Please pass the mono link object literal to the send.js functions").stack);
+    }
+
     for (var statusCode in functionTable) {
 
         // we need a loop closure since we define functions inside
@@ -41,9 +45,13 @@ this.send = (function(){
                     // this way one can also pass a mono link object literal to the send functions
                     var res = link.res || link;
                     var req = link.req || {};
-                    var url = req.url || "???URL???(pass the link object to the send.js function)";
+                    var url = req.url || "MISSING_URL";
 
                     log(logLevel, statusCode + " " + url);
+
+                    if (!req.url) {
+                        warnOldUsage();
+                    }
 
                     res.writeHead(statusCode, res.headers || ct);
                     res.end();
@@ -52,19 +60,23 @@ this.send = (function(){
             // for error responses
             else {
 
-                 functions[name] = function(link, msg) {
+                functions[name] = function(link, msg) {
 
                     // this way one can also pass a mono link object literal to the send functions
                     var res = link.res || link;
                     var req = link.req || {};
-                    var url = req.url || "???URL???(pass the link object to the send.js function)";
+                    var url = req.url || "MISSING_URL";
                     msg = msg ? " " + msg : "";
 
-                     log(logLevel, statusCode + " " + url + msg);
+                    log(logLevel, statusCode + " " + url + msg);
 
-	                 res.writeHead(statusCode, ct);
-	                 res.end(msg || null);
-                 };
+                    if (!req.url) {
+                        warnOldUsage();
+                    }
+
+	                res.writeHead(statusCode, ct);
+	                res.end(msg || null);
+                };
             }
 
         })(statusCode);

@@ -28,6 +28,38 @@ exports.getOperation = function(operationId, callback) {
 };
 
 
+exports.getUserOperation = function(operationId, userId, callback) {
+
+    db.open(function(err, result) {
+
+        if (err) { return callback(err); }
+
+        // TODO the cluster IDs should be searched for in the mono initialization phase where also the connection is opened
+        var vopClusterId = -1,
+            vuClusterId = -1;
+
+        for (var i in result.clusters) {
+
+            if (result.clusters[i].name === "voperation") {
+                vopClusterId = result.clusters[i].id;
+                continue;
+            }
+            if (result.clusters[i].name === "vuser") {
+                vuClusterId = result.clusters[i].id;
+                continue;
+            }
+        }
+
+        if (vopClusterId < 0) { return callback("Could not find the VOperation cluster ID."); }
+        if (vuClusterId < 0) { return callback("Could not find the VOperation cluster ID."); }
+
+        var command = "SELECT module, file, method, in[@class = 'ECanPerform'].params AS params FROM (TRAVERSE * FROM #" + vuClusterId + ":" + userId +" WHERE $depth <= 4) WHERE @rid = #" + vopClusterId + ":" + operationId;
+        
+        sql(command, callback);
+    });
+};
+
+
 exports.getModule = function(moduleId, userId, callback) {
 
     // TODO add either a db.open or make the db.open call before any operation
@@ -41,7 +73,7 @@ function sql(command, callback) {
 
     db.command(command, function(err, results) {
 
-        if (err) { return calback(err); }
+        if (err) { return callback(err); }
 
         var result = null;
 

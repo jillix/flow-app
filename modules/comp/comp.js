@@ -26,7 +26,7 @@ function buildComp(response, module) {
     }
 }
 
-this.getComp = function(link) {
+exports.getComp = function(link) {
     
     getComp(
         
@@ -90,16 +90,13 @@ this.getComp = function(link) {
     );
 };
 
-this.getFile = function(link){
-    
+exports.getFile = function(link){
+
     if (link.params && link.params.dir) {
-        
         link.req.url = link.params.dir + link.path.slice(2).join("/").replace(/[^a-z0-9\/\.\-_]|\.\.\//gi, "");
-        
         files.serve(link.req, link.res);
     }
     else {
-        
         send.forbidden(link.res);
     }
 };
