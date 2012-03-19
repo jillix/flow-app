@@ -1,7 +1,8 @@
 var send = require(CONFIG.root + "/core/send.js").send,
     read = require(CONFIG.root + "/core/util.js").read,
-    getComp = require(CONFIG.root + "/db/queries.js").getUsersComp,
+    getComp = require(CONFIG.root + "/core/model/orient.js").getUserComponent,
     files = new ( require( "node-static" ).Server )( CONFIG.root + "/files/domains" );
+
 
 function buildComp(response, module) {
     
@@ -27,15 +28,10 @@ function buildComp(response, module) {
 }
 
 exports.getComp = function(link) {
-    
-    getComp(
-        
-        link.session.uid,
-        link.path[2],
-        function(err, modules) {
-            
+
+    getComp(link.path[2], link.session.uid, function(err, modules) {
+
             if (err) {
-                
                 send.notfound(link.res);
             }
             else if (modules) {

@@ -69,6 +69,22 @@ exports.getModule = function(moduleId, userId, callback) {
 };
 
 
+exports.getUserComponent = function(compId, userId, callback) {
+
+    // TODO add either a db.open or make the db.open call before any operation
+    // TODO get the VUser cluster ID from the db.open result
+
+    // TODO adapt to the new traverse syntax
+    var command = "select name as module,dir,in[@class = 'EHasAccessTo'].config as config,"+
+     	"in[@class = 'EHasAccessTo'].html as html,"+
+     	"in[@class = 'EHasAccessTo'].css as css "+
+     	"from VModule where in traverse(5,8) (@rid = #7:"+ userId +" ) "+
+     	"and in traverse(2,2) (@rid = #11:"+ compId +")";
+
+    sql(command, callback);
+};
+
+
 function sql(command, callback) {
 
     db.command(command, function(err, results) {
