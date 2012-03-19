@@ -19,5 +19,6 @@ CONFIG = require(process.argv[2] || "./config.js");
 // now start a mono server
 var Server = new require("./core/server").Server;
     server = new Server();
+
 server.start();
 

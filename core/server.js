@@ -14,7 +14,7 @@ Server.prototype.start = function() {
     var self = this;
 
     // start http server
-    self.server = http.createServer(requestHandler)
+    self.server = http.createServer(requestHandler);
     self.server.listen(CONFIG.dev ? CONFIG.devPort : CONFIG.port);
 };
 

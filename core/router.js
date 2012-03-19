@@ -51,7 +51,7 @@ exports.route = function(link) {
         );
     }
     else {
-        send.notfound(link.res);
+        send.notfound(link);
     }
 };
 
