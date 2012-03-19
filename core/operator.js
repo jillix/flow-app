@@ -25,7 +25,7 @@ exports.operation = function(link) {
                 resume(true);
             }
 
-            send.forbidden(link.res);
+            send.forbidden(link, err || "No valid session");
             return;
         }
 

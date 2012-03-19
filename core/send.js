@@ -33,23 +33,34 @@ this.send = (function(){
             var logLevel = functionTable[statusCode].logLevel;
             var statusCode = parseInt(statusCode);
 
+            // for non-error responses
             if (statusCode < 400) {
 
-                functions[name] = function(res) {
+                functions[name] = function(link) {
 
-                     // TODO add the URL to the log
-                    log(logLevel, statusCode + " " + "???URL???");
+                    // this way one can also pass a mono link object literal to the send functions
+                    var res = link.res || link;
+                    var req = link.req || {};
+                    var url = req.url || "???URL???(pass the link object to the send.js function)";
+
+                    log(logLevel, statusCode + " " + url);
 
                     res.writeHead(statusCode, res.headers || ct);
                     res.end();
 		        };
             }
+            // for error responses
             else {
 
-                 functions[name] = function(res, msg) {
+                 functions[name] = function(link, msg) {
 
-                     // TODO add the URL to the log
-                     log(logLevel, statusCode + " " + "???URL???" + " " + msg);
+                    // this way one can also pass a mono link object literal to the send functions
+                    var res = link.res || link;
+                    var req = link.req || {};
+                    var url = req.url || "???URL???(pass the link object to the send.js function)";
+                    msg = msg ? " " + msg : "";
+
+                     log(logLevel, statusCode + " " + url + msg);
 
 	                 res.writeHead(statusCode, ct);
 	                 res.end(msg || null);

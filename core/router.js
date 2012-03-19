@@ -20,6 +20,12 @@ var table = {
 
 exports.route = function(link) {
 
+    // TODO add a favicon
+    if (link.req.url === "/favicon.ico") {
+        send.ok(link.res);
+        return;
+    }
+
     var compId = traverse(link.pathname != "/" ? link.pathname.replace(/\/$/, "") : link.pathname, table, "");
 
     if (typeof compId == "number") {
