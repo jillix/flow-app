@@ -18,6 +18,32 @@ var table = {
 };
 
 
+function initScripts(compId) {
+
+    var baseUrl = "/" + CONFIG.operationKey + "/0";
+    var nl = (CONFIG.dev ? "\r\n" : "");
+
+    return "<!DOCTYPE html>" + nl +
+        "<html>" + nl +
+        "<head>" + nl +
+        "<script type='text/javascript'>" + nl +
+        (CONFIG.dev ? "// require.js reads this global property, if available" : "") + nl +
+        "var require={" + nl +
+            "baseUrl:'" + baseUrl + "'," + nl +
+            "deps:['comp/" + Nscript + "']" + nl +
+        "};" + nl +
+        "window.onload=function(){" + nl +
+            "N.ok='/"+ CONFIG.operationKey  + "';" + nl +
+            "N.comp('body','" + compId + "')" + nl +
+        "}" + nl +
+        "</script>" + nl +
+        "<script src='" + baseUrl + "/comp/require.js'></script>" + nl +
+        "</head>" + nl +
+        "<body></body>" + nl +
+        "</html>";
+}
+
+
 exports.route = function(link) {
 
     // TODO add a favicon
@@ -33,22 +59,8 @@ exports.route = function(link) {
         // set headers
         link.res.headers["content-style-type"] = "text/css";
         link.res.headers["content-type"]       = "text/html; charset=utf-8";
-        
-        send.ok(link.res,
-            "<!DOCTYPE html><html><head>"+
-            "<script type='text/javascript'>"+
-            "var require={"+
-                "baseUrl:'/"+ CONFIG.operationKey +"/0',"+
-                "deps:['comp/"+ Nscript +"']"+
-            "};"+
-            "window.onload=function(){"+
-                "N.ok='/"+ CONFIG.operationKey +"';"+
-                "N.comp('body','"+ compId +"')"+
-            "}"+
-            "</script>"+
-            "<script src='/"+ CONFIG.operationKey +"/0/comp/require.js'></script>"+
-            "</head><body></body></html>"
-        );
+
+        send.ok(link.res, initScripts(compId));
     }
     else {
         send.notfound(link);
