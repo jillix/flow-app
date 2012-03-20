@@ -1,90 +1,86 @@
 var send = require(CONFIG.root + "/core/send.js").send,
     read = require(CONFIG.root + "/core/util.js").read,
-    getComp = require(CONFIG.root + "/core/model/orient.js").getUserComponent,
-    files = new ( require( "node-static" ).Server )( CONFIG.root + "/files/domains" );
+    getComp = require(CONFIG.root + "/core/model/orient.js").getComponent,
+    files = new (require("node-static").Server)(CONFIG.root + "/files/domains");
 
 
 function buildComp(response, module) {
+
+    // add the module config in the first response object
+    var r0 = response[0];
+    r0[module.module] = r0[module.module] || [];
+    r0[module.module].push(module.config || {});
     
-    if (module.module) {
-        
-        if (!response[0][module.module]) {
-            
-            response[0][module.module] = [];
-        }
-        
-        response[0][module.module].push(module.config || {});
-        
-        if (module.css) {
-            
-            if (!response[2]) {
-                
-                response[2] = [];
-            }
-            
-            response[2].push(module.css + ".css");
-        }
+    // add the module css in the third response object
+    if (module.css) {
+        response[2].push(module.css + ".css");
     }
 }
+
 
 exports.getComp = function(link) {
 
     getComp(link.path[2], link.session.uid, function(err, modules) {
 
-            if (err) {
-                send.notfound(link.res);
+        // error checks
+        if (err || !modules) {
+            send.notfound(link);
+            return;
+        }
+
+        if (!(modules instanceof Array)) {
+            modules = [modules];
+        }
+
+        var response = [
+            // configs
+            {},
+            // html
+            "",
+            // styles
+            []
+        ];
+        var length = modules.length;
+
+        var next = function(i) {
+
+            if (i >= length) {
+                send.ok(link.res, response);
+                return;
             }
-            else if (modules) {
-                
-                if (!(modules instanceof Array)) {
-                    
-                    modules = [modules];
-                }
-                
-                var response = [{}],
-                    next = function(i, l) {
-                        
-                        if (i < l) {
-                            
-                            if (modules[i].html) {
-                                
-                                read("/files/domains/" + modules[i].html + ".html", "utf8", function(err, html) {
-                                
-                                    if (!err) {
-                                        
-                                        if (!response[1]) {
-                                            
-                                            response[1] = html;
-                                        }
-                                        else response[1] += html;
-                                        
-                                        buildComp(response, modules[i]);
-                                    }
-                                    
-                                    next(++i, l);
-                                });
-                            }
-                            else {
-                                
-                                buildComp(response, modules[i]);
-                                next(++i, l);
-                            }
+
+            if (modules[i].html) {
+
+                // TODO this is duplicate directory name in the same file
+                // try some refactoring or a config option
+                read("/files/domains/" + modules[i].html + ".html", "utf8", function(err, html) {
+
+                    if (err) {
+
+                        // TODO let the module define it's missing module placeholder
+                        html = "<p>An error occurred while retrieving this module HTML.</p>";
+
+                        if (CONFIG.dev) {
+                            html += "<p>Error: " + err + "</p>"
                         }
-                        else {
-                            
-                            send.ok(link.res, response);
-                        }
-                    };
-                
-                next(0, modules.length);
+                    }
+
+                    response[1] += html;
+                    buildComp(response, modules[i]);
+
+                    next(++i);
+                });
             }
             else {
-                
-                send.notfound(link.res);
+                buildComp(response, modules[i]);
+                next(++i);
             }
-        }
-    );
+        };
+            
+        next(0, modules.length);
+    });
 };
+
 
 exports.getFile = function(link){
 
@@ -93,6 +89,7 @@ exports.getFile = function(link){
         files.serve(link.req, link.res);
     }
     else {
-        send.forbidden(link.res);
+        send.forbidden(link);
     }
 };
+

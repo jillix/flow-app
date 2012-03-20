@@ -556,12 +556,7 @@ var N = {
 
             target.style.display = "none";
 
-            // !TODO: show loader
-
-            // render html
-            if (response[1]) {
-                target.innerHTML = response[1];
-            }
+            // TODO show loader
 
             // create component
             var comp = {
@@ -573,46 +568,48 @@ var N = {
                 configs = {},
                 current = 0;
 
-            // load css
-            if (response[2]) {
-
-                for (var i=0, l=response[2].length; i < l; ++i) {
-
-                    N.css(response[2][i]);
-                }
+            // render html from response[1]
+            if (response[1]) {
+                target.innerHTML = response[1];
             }
 
-            // prepare modules for require
+            // load css from response[2]
+            for (var i in response[2]) {
+                N.css(response[2][i]);
+            }
+
+            // prepare modules for require from response[0]
             for (var module in response[0]) {
 
                 configs[current] = response[0][module];
+                // TODO what does the next line do?
                 modules[current] = module + "/" + module;
 
                 ++current;
             }
 
-            //load, clone and init modules
+            // load, clone and init modules
             require(modules, function() {
 
                 modules = arguments;
 
                 for (var key in modules) {
 
-                    if (modules[key] && configs[key]) {
+                    if (!modules[key] || !configs[key]) {
+                        continue;
+                    }
 
-                        for (var i = 0, l = configs[key].length; i < l; ++i) {
+                    for (var i in configs[key]) {
 
-                            var clone = modules[key].clone();
+                        var clone = modules[key].clone();
 
-                            clone.comp = comp;
+                        clone.comp = comp;
 
-                            // TODO: register module state
+                        // TODO register module state
 
-                            //init module
-                            if (clone.init) {
-
-                                clone.init(configs[key][i]);
-                            }
+                        // init module
+                        if (clone.init) {
+                            clone.init(configs[key][i]);
                         }
                     }
                 }
@@ -623,7 +620,6 @@ var N = {
                 target.style.display = "block";
 
                 if (callback) {
-
                     callback(null, comp);
                 }
             });

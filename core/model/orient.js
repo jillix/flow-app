@@ -69,7 +69,7 @@ exports.getModule = function(moduleId, userId, callback) {
 };
 
 
-exports.getUserComponent = function(compId, userId, callback) {
+exports.getComponent = function(compId, userId, callback) {
 
     // TODO add either a db.open or make the db.open call before any operation
     // TODO get the VUser cluster ID from the db.open result
