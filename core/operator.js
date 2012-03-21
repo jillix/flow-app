@@ -55,7 +55,7 @@ exports.operation = function(link) {
                     resume(true);
                 }
 
-                send.notfound(link.res);
+                send.notfound(link, err || "Operation object not complete");
                 return;
             }
 
