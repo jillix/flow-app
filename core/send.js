@@ -60,22 +60,42 @@ this.send = (function(){
             // for error responses
             else {
 
-                functions[name] = function(link, msg) {
+                functions[name] = function(link, message) {
 
                     // this way one can also pass a mono link object literal to the send functions
                     var res = link.res || link;
                     var req = link.req || {};
                     var url = req.url || "MISSING_URL";
-                    msg = msg ? " " + msg : "";
 
-                    log(logLevel, statusCode + " " + url + msg);
+                    log(logLevel, statusCode + " " + url);
+
+                    // now log the error message
+                    if (message === null || message === undefined) {
+                        message = "";
+                    }
+
+                    switch (typeof message) {
+
+                        case "object":
+                            message = JSON.stringify(message);
+                            break;
+
+                        case "function":
+                            log("warning", "The second argument to a send function must not be a function")
+                            message = "";
+                            break;
+
+                        // if message is of type string, number, or boolean it remains the same
+                    }
+
+                    log("debug", new Error(message).stack)
 
                     if (!req.url) {
                         warnOldUsage();
                     }
 
 	                res.writeHead(statusCode, ct);
-	                res.end(msg || null);
+	                res.end(message || null);
                 };
             }
 

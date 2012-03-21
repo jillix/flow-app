@@ -6,6 +6,7 @@ var Nscript = CONFIG.clientLibrary + (CONFIG.dev ? ".dev" : "");
 var table = {
     
     "/": 0,
+    "stdl": 1,
     "users": {
         
         "public.*": 10,

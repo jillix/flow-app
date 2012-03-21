@@ -31,7 +31,7 @@ exports.getOperation = function(operationId, callback) {
 exports.getUserOperation = function(operationId, userId, callback) {
 
     db.open(function(err, result) {
-debugger;
+
         if (err) { return callback(err); }
 
         // TODO the cluster IDs should be searched for in the mono initialization phase where also the connection is opened
