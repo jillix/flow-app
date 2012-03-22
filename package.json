@@ -30,7 +30,7 @@
     "dependencies" : {
         "forever"       : "*",
         "formidable"    : "*",
-        "orientdb"      : "0.5.0",
+        "orientdb"      : "0.x",
         "mongodb"       : "*",
         "node-static"   : "*",
         "nodemailer"    : "*"
