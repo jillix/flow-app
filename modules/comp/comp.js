@@ -24,7 +24,7 @@ exports.getComp = function(link) {
 
         // error checks
         if (err || !modules) {
-            send.notfound(link);
+            send.notfound(link, err || "The component has no modules");
             return;
         }
 

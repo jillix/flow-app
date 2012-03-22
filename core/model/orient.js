@@ -5,6 +5,13 @@ var server = new Server(CONFIG.orient.server),
     db = new Db(CONFIG.orient.db.database_name, server, CONFIG.orient.db);
 
 
+exports.getComponents = function(callback) {
+
+    var command = "SELECT FROM VComponent";
+    sql(command, callback);
+};
+
+
 exports.getOperation = function(operationId, callback) {
 
     db.open(function(err, result) {
@@ -43,7 +50,34 @@ exports.getUserOperation = function(operationId, userId, callback) {
 
         var command = "SELECT module, file, method, in[@class = 'ECanPerform'].params AS params FROM (TRAVERSE * FROM #" + vuClusterId + ":" + userId +" WHERE $depth <= 4) WHERE @rid = #" + vopClusterId + ":" + operationId;
         
-        sql(command, callback);
+        sql(command, function(err, results) {
+
+            if (err) {
+                return callback("An error occurred while retrieving the user's operation: " + err);
+            }
+
+            // if there is no result
+            if (!results || results.length == 0) {
+                return callback("Operation not found");
+            }
+
+            // if there are too many results
+            if (results.length > 1) {
+                return callback("Could not uniquely determine the operation");
+            }
+            
+            var operation = results[0];
+
+            // is the operation does not have the required fields or an error occurred while retrieving it
+            if (!operation.module || !operation.file || !operation.method) {
+                var detail = "Missing: " + (operation.module ? (operation.file ? "operation.method": "operation.file") : "operation.module");
+                return callback("The operation object is not complete. " + detail);
+            }
+
+            callback(null, operation);
+
+        
+        });
     });
 };
 
@@ -85,18 +119,6 @@ exports.getComponent = function(compId, userId, callback) {
 
 
 function sql(command, callback) {
-
-    db.command(command, function(err, results) {
-
-        if (err) { return callback(err); }
-
-        var result = null;
-
-        if (results.length != 0) {
-            result = eval("({" + results[0].content + "})");
-        }
-
-        callback(undefined, result);
-    });
+    db.command(command, callback);
 }
 

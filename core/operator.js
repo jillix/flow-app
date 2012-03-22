@@ -47,15 +47,9 @@ exports.operation = function(link) {
 
         getNewOperation(operationId, session.uid, function(err, operation) {
 
-            // is the operation does not have the required fields or an error occurred while retrieving it
-            // TODO these two cases must be split and reported/logged properly
-            if (err || !operation || !operation.module || !operation.file || !operation.method) {
-
-                if (resume) {
-                    resume(true);
-                }
-
-                send.notfound(link, err || "Operation object not complete");
+            if (err) {
+                if (resume) { resume(true); }
+                send.internalservererror(link, err);
                 return;
             }
 
@@ -68,7 +62,7 @@ exports.operation = function(link) {
                     resume(true);
                 }
 
-                send.notfound(link.res);
+                send.notfound(link, "Method must be a function");
                 return;
             }
 

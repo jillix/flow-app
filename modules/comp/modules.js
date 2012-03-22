@@ -25,6 +25,9 @@ exports.getModule = function(link) {
     // find the module in the database
     getModule(module, link.session.uid, function(err, res) {
 
+        // TODO move check in the model and return a valid module
+        var res = res[0];
+
         // error checks
         if (err || !res || !res.module) {
             send.notfound(link, err || ("Could not find module: " + module));

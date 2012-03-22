@@ -1,4 +1,4 @@
-define(["list/list"], function() {
+define(function(list) {
         
         //collect dom references
     var cssNs = "div.adminMain",
