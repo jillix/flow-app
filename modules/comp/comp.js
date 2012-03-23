@@ -82,11 +82,26 @@ exports.getComp = function(link) {
 };
 
 
-exports.getFile = function(link){
+exports.getFile = function(link) {
+
+    var externalUrl = link.req.url;
 
     if (link.params && link.params.dir) {
+
         link.req.url = link.params.dir + link.path.slice(2).join("/").replace(/[^a-z0-9\/\.\-_]|\.\.\//gi, "");
-        files.serve(link.req, link.res);
+        files.serve(link.req, link.res, function(err, data) {
+
+            // TODO one can hook stats in here
+            if (!err) return;
+
+            switch (err.status) {
+                case 404:
+                    send.notfound(link, "File not found: " + externalUrl);
+                    return;
+                default:
+                    send.internalservererror(link, err);
+            }
+        });
     }
     else {
         send.forbidden(link);

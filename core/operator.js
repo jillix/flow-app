@@ -82,83 +82,70 @@ exports.operation = function(link) {
 
 
 function handlePostRequest(link, resume) {
-    
+
     var contentType = link.req.headers['content-type'] || "";
-    
+
     // handle json requests
     if (contentType.indexOf("application/json") > -1) {
-        
+
         var jsonString = "",
             err;
-        
+
         // buffer data
         link.req.on("data", function(chunk) {
             jsonString += chunk.toString("utf-8");
         });
-        
+
         // if all data are received 
         link.req.on("end", function() {
-            
+
             try {
                 // try to parse response to Object
                 jsonString = jsonString ? JSON.parse(jsonString) : {};
             }
-            catch(parseError) {
-                
-                if (CONFIG.dev) {
-                    console.log(parseError);
-                }
-                
+            catch (parseError) {
                 err = parseError;
             }
-            
+
             if (err) {
-                send.badrequest(link.res);
+                send.badrequest(link, err);
+                return;
             }
-            else {
-                method(link);
-            }
+
+            method(link);
         });
     }
-    //handle form data requests
+    // handle form data requests
     else if (contentType.indexOf("multipart/form-data" ) > -1 || contentType.indexOf("application/x-www-form-urlencoded" ) > -1) {
-        
+
         var form = new formidable.IncomingForm();
-        
-        //define upload dir for temporary files
+
+        // define upload dir for temporary files
         form.uploadDir = link.params && link.params.uploadDir ? link.params.uploadDir : CONFIG.uploadDir;
-        
-        //parse form data
+
+        // parse form data
         form.parse(link.req, function(err, fields, files) {
-            
-       debugger; 
+
             if (err) {
-                
-                if (CONFIG.dev) {
-                    console.log( err );
-                }
-                
-                send.badrequest(link.res);
+                send.badrequest(link, err);
+                return;
             }
-            else {
-                
-                link.data = fields;
-                
-                if (files) {
-                    
-                    for(var file in files) {
-                        link.data[file] = files[file];
-                    }
+
+            link.data = fields;
+
+            if (files) {
+                for(var file in files) {
+                    link.data[file] = files[file];
                 }
-                
-                method(link);
             }
+
+            method(link);
         });
     }
     else {
         method(link);
     }
-    
+
     resume();
 }
 

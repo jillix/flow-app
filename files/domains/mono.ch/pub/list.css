@@ -1,0 +1,79 @@
+/* jxlist */
+.jxlist {
+
+    width: 250px;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    background: #fff;
+}
+
+.jxlist > .search {
+
+    background: silver;
+    padding: 5px;
+}
+
+.jxlist > .list > li {
+
+    border-bottom: 1px #999 solid;
+    padding: 5px;
+    cursor: pointer;
+}
+
+.jxlist > .list > li:hover {
+
+    background: #eee;
+}
+
+.jxlist > .list > li.selected {
+
+    background: #66e;
+}
+
+/* jxdetail */
+.jxdetail {
+
+    left: 250px;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background: #eee;
+}
+
+.jxdetail h1 {
+
+    font-weight: bold;
+    font-size: 20px;
+    margin-bottom: 20px;
+}
+
+.jxdetail .editable {
+
+    color: #66e;
+    font-weight: bold;
+    cursor: text;
+}
+
+.jxdetail > .detail {
+
+    display: none;
+    margin: 20px;
+}
+
+.jxdetail .row {
+
+    width: 300px;
+}
+
+.jxdetail .btn {
+
+    width: 16px;
+    height: 16px;
+    text-align: center;
+    line-height: 16px;
+    cursor: pointer;
+    background: #fff;
+    border: 1px #bbb solid;
+}
+

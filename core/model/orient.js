@@ -49,7 +49,7 @@ exports.getUserOperation = function(operationId, userId, callback) {
         if (vuClusterId < 0) { return callback("Could not find the VUser cluster ID."); }
 
         var command = "SELECT module, file, method, in[@class = 'ECanPerform'].params AS params FROM (TRAVERSE * FROM #" + vuClusterId + ":" + userId +" WHERE $depth <= 4) WHERE @rid = #" + vopClusterId + ":" + operationId;
-        
+
         sql(command, function(err, results) {
 
             if (err) {
@@ -65,7 +65,7 @@ exports.getUserOperation = function(operationId, userId, callback) {
             if (results.length > 1) {
                 return callback("Could not uniquely determine the operation");
             }
-            
+
             var operation = results[0];
 
             // is the operation does not have the required fields or an error occurred while retrieving it
@@ -74,9 +74,12 @@ exports.getUserOperation = function(operationId, userId, callback) {
                 return callback("The operation object is not complete. " + detail);
             }
 
-            callback(null, operation);
+            // if the operation has parameters, parse them as JSON
+            if (operation.params) {
+                operation.params = JSON.parse(operation.params);
+            }
 
-        
+            callback(null, operation);
         });
     });
 };

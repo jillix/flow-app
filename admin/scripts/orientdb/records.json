@@ -297,6 +297,8 @@
             "@rid": "#6:10",
             "@version": 0,
             "@class": "EHasAccessTo",
+            "html": "mono.ch/stdl/list/list",
+            "css": "list",
             "in": "#8:0",
             "out": "#10:3"
         },
