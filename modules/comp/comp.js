@@ -12,8 +12,8 @@ function buildComp(response, module) {
     r0[module.module].push(module.config || {});
     
     // add the module css in the third response object
-    if (module.css) {
-        response[2].push(module.css + ".css");
+    for (var i in module.css) {
+        response[2].push(module.css[i] + ".css");
     }
 }
 
@@ -26,10 +26,6 @@ exports.getComp = function(link) {
         if (err || !modules) {
             send.notfound(link, err || "The component has no modules");
             return;
-        }
-
-        if (!(modules instanceof Array)) {
-            modules = [modules];
         }
 
         var response = [
@@ -88,7 +84,9 @@ exports.getFile = function(link) {
 
     if (link.params && link.params.dir) {
 
+        // change the request URL to the internal one
         link.req.url = link.params.dir + link.path.slice(2).join("/").replace(/[^a-z0-9\/\.\-_]|\.\.\//gi, "");
+
         files.serve(link.req, link.res, function(err, data) {
 
             // TODO one can hook stats in here

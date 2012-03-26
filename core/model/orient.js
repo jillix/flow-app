@@ -70,6 +70,7 @@ exports.getUserOperation = function(operationId, userId, callback) {
 
             // is the operation does not have the required fields or an error occurred while retrieving it
             if (!operation.module || !operation.file || !operation.method) {
+            debugger;
                 var detail = "Missing: " + (operation.module ? (operation.file ? "operation.method": "operation.file") : "operation.module");
                 return callback("The operation object is not complete. " + detail);
             }
@@ -117,7 +118,19 @@ exports.getComponent = function(compId, userId, callback) {
      	"from VModule where in traverse(5,8) (@rid = #" + vuClusterId  + ":"+ userId +" ) "+
      	"and in traverse(2,2) (@rid = #" + vcClusterId + ":"+ compId +")";
 
-    sql(command, callback);
+    sql(command, function(err, modules) {
+
+        // error checks
+        if (err) {
+            return callback("An error occured while retrieving the component modules. " + err);
+        }
+
+        if (modules.length == 0) {
+            return callback("The component has no modules");
+        }
+
+        callback(null, modules);
+    });
 };
 
 

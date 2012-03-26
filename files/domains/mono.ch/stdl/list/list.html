@@ -1,9 +1,36 @@
 <!-- list -->
 <div id="nav" class="jxlist abs">
-    <div class="search">
-        <input type="search"/>
-    </div>
-    <ul class="list"></ul>
-    <ul class="ops"></ul>
+	<div class="search">
+		<input type="search"/>
+	</div>
+	<ul class="list"></ul>
+	<ul class="ops"></ul>
 </div>
 
+<!-- detail view -->
+<div class="jxdetail abs">
+	<div class="detail">
+		<h1>Details</h1>
+		<div class="row clearfix">
+			<label>Cnr:</label>
+			<label class="cnr right"></label>
+		</div>
+		<div class="row clearfix">
+			<label>Customer:</label>
+			<label class="customer right"></label>
+		</div>
+		<div class="row clearfix">
+			<label>Happy Points:</label>
+			<input id="inpAddHP" type="number" class="right hidden"/>
+			<div id="addHP" class="btn right">+</div>
+			<label id="hp" class="right"></label>
+		</div>
+	</div>
+	
+	<!-- history list -->
+	<div id="history" class="jxlist detail">
+		<h1 class="hidden">History</h1>
+		<ul class="list"></ul>
+	</div>
+	
+</div>

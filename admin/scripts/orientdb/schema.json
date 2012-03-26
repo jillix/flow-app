@@ -326,7 +326,7 @@
                     },
                     {
                         "name": "css",
-                        "type": "STRING",
+                        "type": "EMBEDDEDSET",
                         "mandatory": false,
                         "not-null": true
                     },

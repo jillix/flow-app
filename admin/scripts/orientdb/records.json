@@ -260,7 +260,7 @@
             "@version": 0,
             "@class": "EHasAccessTo",
             "html": "mono.ch/ace",
-            "css": "ace",
+            "css": ["ace"],
             "in": "#8:0",
             "out": "#10:1"
         },
@@ -298,7 +298,7 @@
             "@version": 0,
             "@class": "EHasAccessTo",
             "html": "mono.ch/stdl/list/list",
-            "css": "list",
+            "css": ["list", "def", "screen"],
             "in": "#8:0",
             "out": "#10:3"
         },
@@ -308,7 +308,7 @@
             "@version": 0,
             "@class": "EHasAccessTo",
             "html": "mono.ch/main",
-            "css": "main",
+            "css": ["main"],
             "in": "#8:0",
             "out": "#10:4"
         },
