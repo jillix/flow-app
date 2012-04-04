@@ -53,7 +53,7 @@ exports.operation = function(link) {
                 return;
             }
 
-            var file = CONFIG.root + "/modules/" + operation.module + "/" + operation.file;
+            var file = CONFIG.root + "/old_modules/" + operation.module + "/" + operation.file;
             var method = util.load(file, operation.method);
 
             if (typeof method !== "function") {

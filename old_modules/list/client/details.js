@@ -105,7 +105,17 @@ var details = {
         N.link({ url: "/3/" + cnr }, function(err, usr) {
 
             $( '.cnr' ).text( usr.system.cnr );
-            $( '.customer' ).text( usr.adress.work.company || usr.adress.work.addition );
+
+            var workAddr = usr.adress.work,
+                customer = [];
+
+            for (var key in workAddr) {
+                customer.push(workAddr[key]);
+            }
+            customer = customer.join(", ");
+            customer === "" ? "unknown" : customer;
+
+            $( '.customer' ).text( customer );
             $( '#hp' ).text( usr.happybonus ? usr.happybonus.points : "No HB!" );
             $( '.jxdetail > .detail' ).show();
 

@@ -1,7 +1,7 @@
 var send = require(CONFIG.root + "/core/send.js" ).send,
     getModule = require(CONFIG.root + "/core/model/orient.js").getModule,
     StaticServer = require("node-static" ).Server,
-    modules = new StaticServer(CONFIG.root + "/modules");
+    modules = new StaticServer(CONFIG.root + "/old_modules");
 
 
 // browser modules
