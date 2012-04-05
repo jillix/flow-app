@@ -69,7 +69,7 @@
             "@rid": "#9:0",
             "@version": 0,
             "@class": "VOperation",
-            "module": "gabipetrovay/require.js",
+            "module": "core/require.js",
             "file": "modules",
             "method": "getModule",
             "in": [
@@ -82,7 +82,7 @@
             "@rid": "#9:1",
             "@version": 0,
             "@class": "VOperation",
-            "module": "gabipetrovay/comp",
+            "module": "core/comp",
             "file": "comp",
             "method": "getComp",
             "in": [
@@ -95,7 +95,7 @@
             "@rid": "#9:2",
             "@version": 0,
             "@class": "VOperation",
-            "module": "gabipetrovay/comp",
+            "module": "core/comp",
             "file": "comp",
             "method": "getFile",
             "in": [
@@ -121,9 +121,8 @@
             "@rid": "#10:0",
             "@version": 0,
             "@class": "VModule",
-            "owner": "gabipetrovay",
+            "owner": "core",
             "name": "comp",
-            "dir": "client",
             "in": [
 
                 "#6:5"
@@ -134,7 +133,7 @@
             "@rid": "#10:1",
             "@version": 0,
             "@class": "VModule",
-            "owner": "gabipetrovay",
+            "owner": "jillix",
             "name": "editor",
             "dir": "client",
             "in": [
@@ -147,7 +146,7 @@
             "@rid": "#10:2",
             "@version": 0,
             "@class": "VModule",
-            "owner": "gabipetrovay",
+            "owner": "jillix",
             "name": "ace",
             "in": [
 
@@ -172,10 +171,9 @@
             "@type": "d",
             "@rid": "#10:4",
             "@version": 0,
-            "owner": "gabipetrovay",
+            "owner": "jillix",
             "@class": "VModule",
             "name": "tempAdmin",
-            "dir": "client",
             "in": [
 
                 "#6:7",
@@ -186,7 +184,7 @@
             "@type": "d",
             "@rid": "#10:5",
             "@version": 0,
-            "owner": "gabipetrovay",
+            "owner": "core",
             "@class": "VModule",
             "name": "require.js",
             "in": [
