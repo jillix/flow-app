@@ -48,7 +48,8 @@
                 "#6:10",
                 "#6:11",
                 "#6:12",
-                "#6:13"
+                "#6:13",
+                "#6:14"
 
             ]
         },
@@ -68,7 +69,7 @@
             "@rid": "#9:0",
             "@version": 0,
             "@class": "VOperation",
-            "module": "comp",
+            "module": "gabipetrovay/require.js",
             "file": "modules",
             "method": "getModule",
             "in": [
@@ -81,7 +82,7 @@
             "@rid": "#9:1",
             "@version": 0,
             "@class": "VOperation",
-            "module": "comp",
+            "module": "gabipetrovay/comp",
             "file": "comp",
             "method": "getComp",
             "in": [
@@ -94,7 +95,7 @@
             "@rid": "#9:2",
             "@version": 0,
             "@class": "VOperation",
-            "module": "comp",
+            "module": "gabipetrovay/comp",
             "file": "comp",
             "method": "getFile",
             "in": [
@@ -107,7 +108,7 @@
             "@rid": "#9:3",
             "@version": 0,
             "@class": "VOperation",
-            "module": "list",
+            "module": "faeb187/stdl.list",
             "file": "ops",
             "method": "getData",
             "in": [
@@ -120,8 +121,9 @@
             "@rid": "#10:0",
             "@version": 0,
             "@class": "VModule",
+            "owner": "gabipetrovay",
             "name": "comp",
-            "dir": "/client",
+            "dir": "client",
             "in": [
 
                 "#6:5"
@@ -132,8 +134,9 @@
             "@rid": "#10:1",
             "@version": 0,
             "@class": "VModule",
+            "owner": "gabipetrovay",
             "name": "editor",
-            "dir": "/client",
+            "dir": "client",
             "in": [
 
                 "#6:6"
@@ -144,6 +147,7 @@
             "@rid": "#10:2",
             "@version": 0,
             "@class": "VModule",
+            "owner": "gabipetrovay",
             "name": "ace",
             "in": [
 
@@ -155,8 +159,9 @@
             "@rid": "#10:3",
             "@version": 0,
             "@class": "VModule",
-            "name": "list",
-            "dir": "/client",
+            "owner": "faeb187",
+            "name": "stdl.list",
+            "dir": "js/client",
             "in": [
 
                 "#6:10",
@@ -167,13 +172,26 @@
             "@type": "d",
             "@rid": "#10:4",
             "@version": 0,
+            "owner": "gabipetrovay",
             "@class": "VModule",
             "name": "tempAdmin",
-            "dir": "/client",
+            "dir": "client",
             "in": [
 
                 "#6:7",
                 "#6:11"
+            ]
+        },
+        {
+            "@type": "d",
+            "@rid": "#10:5",
+            "@version": 0,
+            "owner": "gabipetrovay",
+            "@class": "VModule",
+            "name": "require.js",
+            "in": [
+
+                "#6:14"
             ]
         },
         {
@@ -327,6 +345,14 @@
             "@class": "ECanPerform",
             "in": "#8:0",
             "out": "#9:3"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:14",
+            "@version": 0,
+            "@class": "EHasAccessTo",
+            "in": "#8:0",
+            "out": "#10:5"
         }
     ]
 }

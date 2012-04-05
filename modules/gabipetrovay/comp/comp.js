@@ -7,9 +7,11 @@ var send = require(CONFIG.root + "/core/send.js").send,
 function buildComp(response, module) {
 
     // add the module config in the first response object
-    var r0 = response[0];
-    r0[module.module] = r0[module.module] || [];
-    r0[module.module].push(module.config || {});
+    var r0 = response[0],
+        key = module.owner + "/" + module.module;
+
+    r0[key] = r0[key] || [];
+    r0[key].push(module.config || {});
     
     // add the module css in the third response object
     for (var i in module.css) {

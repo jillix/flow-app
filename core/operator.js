@@ -2,8 +2,7 @@ var formidable      = require("formidable"),
     util            = require(CONFIG.root + "/core/util.js"),
     send            = require(CONFIG.root + "/core/send.js").send,
     getSession      = require(CONFIG.root + "/core/session.js").get,
-    getOperation    = require(CONFIG.root + "/db/queries.js").getUsersOperation;
-    getNewOperation = require(CONFIG.root + "/core/model/orient.js").getUserOperation;
+    getOperation = require(CONFIG.root + "/core/model/orient.js").getUserOperation;
 
 
 exports.operation = function(link) {
@@ -45,7 +44,7 @@ exports.operation = function(link) {
             return;
         }
 
-        getNewOperation(operationId, session.uid, function(err, operation) {
+        getOperation(operationId, session.uid, function(err, operation) {
 
             if (err) {
                 if (resume) { resume(true); }
@@ -53,7 +52,7 @@ exports.operation = function(link) {
                 return;
             }
 
-            var file = CONFIG.root + "/old_modules/" + operation.module + "/" + operation.file;
+            var file = CONFIG.root + "/modules/" + operation.module + "/" + operation.file;
             var method = util.load(file, operation.method);
 
             if (typeof method !== "function") {

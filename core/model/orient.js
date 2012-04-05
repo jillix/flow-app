@@ -86,7 +86,7 @@ exports.getUserOperation = function(operationId, userId, callback) {
 };
 
 
-exports.getModule = function(moduleId, userId, callback) {
+exports.getModule = function(ownerName, moduleName, userId, callback) {
 
     // TODO add either a db.open or make the db.open call before any operation
     // TODO the cluster IDs should be searched for in the mono initialization phase where also the connection is opened
@@ -96,7 +96,7 @@ exports.getModule = function(moduleId, userId, callback) {
     if (vopClusterId < 0) { return callback("Could not find the VOperation cluster ID."); }
     if (vuClusterId < 0) { return callback("Could not find the VUser cluster ID."); }
 
-    var command = "SELECT name AS module, dir FROM (TRAVERSE out FROM #" + vuClusterId + ":" + userId + " WHERE $depth <= 4) WHERE @class = 'VModule' AND name = '" + moduleId + "'";
+    var command = "SELECT owner, name, dir FROM (TRAVERSE out FROM #" + vuClusterId + ":" + userId + " WHERE $depth <= 4) WHERE @class = 'VModule' AND name = '" + moduleName + "' AND owner = '" + ownerName + "'";
     sql(command, callback);
 };
 
@@ -112,11 +112,12 @@ exports.getComponent = function(compId, userId, callback) {
     if (vuClusterId < 0) { return callback("Could not find the VUser cluster ID."); }
 
     // TODO adapt to the new traverse syntax
-    var command = "select name as module,dir,in[@class = 'EHasAccessTo'].config as config,"+
-     	"in[@class = 'EHasAccessTo'].html as html,"+
-     	"in[@class = 'EHasAccessTo'].css as css "+
-     	"from VModule where in traverse(5,8) (@rid = #" + vuClusterId  + ":"+ userId +" ) "+
-     	"and in traverse(2,2) (@rid = #" + vcClusterId + ":"+ compId +")";
+    var command = "SELECT name AS module, owner, dir, " +
+        "in[@class = 'EHasAccessTo'].config AS config, " +
+     	"in[@class = 'EHasAccessTo'].html AS html, " +
+     	"in[@class = 'EHasAccessTo'].css AS css " +
+     	"FROM VModule WHERE in traverse(5,8) (@rid = #" + vuClusterId  + ":"+ userId +" ) "+
+     	"AND in traverse(2,2) (@rid = #" + vcClusterId + ":"+ compId +")";
 
     sql(command, function(err, modules) {
 

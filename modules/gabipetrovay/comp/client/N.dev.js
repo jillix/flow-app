@@ -583,7 +583,7 @@ var N = {
 
                 configs[current] = response[0][module];
                 // TODO what does the next line do?
-                modules[current] = module + "/" + module;
+                modules[current] = module + "/main";
 
                 ++current;
             }

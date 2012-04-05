@@ -250,6 +250,12 @@
                 "super-class": "OGraphVertex",
                 "properties": [
                     {
+                        "name": "owner",
+                        "type": "STRING",
+                        "mandatory": true,
+                        "not-null": true
+                    },
+                    {
                         "name": "name",
                         "type": "STRING",
                         "mandatory": true,

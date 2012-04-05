@@ -31,14 +31,14 @@ function initScripts(compId) {
         (CONFIG.dev ? "// require.js reads this global property, if available" : "") + nl +
         "var require={" + nl +
             "baseUrl:'" + baseUrl + "'," + nl +
-            "deps:['comp/" + Nscript + "']" + nl +
+            "deps:['gabipetrovay/comp/" + Nscript + "']" + nl +
         "};" + nl +
         "window.onload=function(){" + nl +
             "N.ok='/"+ CONFIG.operationKey  + "';" + nl +
             "N.comp('body','" + compId + "')" + nl +
         "}" + nl +
         "</script>" + nl +
-        "<script src='" + baseUrl + "/comp/require.js'></script>" + nl +
+        "<script src='" + baseUrl + "/gabipetrovay/require.js/require.js'></script>" + nl +
         "</head>" + nl +
         "<body></body>" + nl +
         "</html>";
