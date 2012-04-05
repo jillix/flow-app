@@ -1,3 +1,6 @@
 [submodule "modules/faeb187/stdl.list"]
 	path = modules/faeb187/stdl.list
 	url = git@github.com:faeb187/stdl.list.git
+[submodule "modules/gabipetrovay/stdl.tab"]
+	path = modules/gabipetrovay/stdl.tab
+	url = git@github.com:gabipetrovay/stdl.tab.git
