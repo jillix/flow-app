@@ -70,7 +70,6 @@ exports.getUserOperation = function(operationId, userId, callback) {
 
             // is the operation does not have the required fields or an error occurred while retrieving it
             if (!operation.module || !operation.file || !operation.method) {
-            debugger;
                 var detail = "Missing: " + (operation.module ? (operation.file ? "operation.method": "operation.file") : "operation.module");
                 return callback("The operation object is not complete. " + detail);
             }

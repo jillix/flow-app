@@ -23,10 +23,10 @@ exports.getModule = function(link) {
         send.badrequest(link, "Incorrect module name in request URL");
         return;
     }
-debugger;
+
     // find the module in the database
     getModule(ownerName, moduleName, link.session.uid, function(err, module) {
-debugger;
+
         // TODO move check in the model and return a valid module
         var module = module[0];
 

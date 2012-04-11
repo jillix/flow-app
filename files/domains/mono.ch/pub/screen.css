@@ -3,6 +3,12 @@ body {
 
 	font-family: Arial;
 	font-size: 14px;
+    line-height: 20px;
+}
+
+.th {
+    white-space: nowrap;
+    font-weight: bold;
 }
 
 /* nav */
@@ -13,6 +19,8 @@ body {
 	bottom: 0;
 	left: 0;
 	background: #fff;
+    height: 100%;
+    overflow: scroll;
 }
 
 #nav > .search {
@@ -59,7 +67,7 @@ body {
 
 	color: #66e;
 	font-weight: bold;
-	cursor: text;
+	cursor: pointer;
 }
 
 .jxdetail > .detail {
@@ -121,3 +129,9 @@ body {
 
 	margin-top: 60px;
 }
+
+.undo {
+    color: #e66;
+    cursor: pointer;
+}
+

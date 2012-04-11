@@ -11,26 +11,33 @@
 <div class="jxdetail abs">
 	<div class="detail">
 		<h1>Details</h1>
-		<div class="row clearfix">
-			<label>Cnr:</label>
-			<label class="cnr right"></label>
-		</div>
-		<div class="row clearfix">
-			<label>Customer:</label>
-			<label class="customer right"></label>
-		</div>
-		<div class="row clearfix">
-			<label>Happy Points:</label>
-			<input id="inpAddHP" type="number" class="right hidden"/>
-			<div id="addHP" class="btn right">+</div>
-			<label id="hp" class="right"></label>
-		</div>
+        <table id="details">
+            <tr>
+                <td class="bold">
+                    <label>Customer Number:</label></td>
+                <td>
+			        <label id="cnr"></label>
+                </td>
+            </tr>
+            <tr>
+                <td class="bold">Customer Name:</td>
+                <td>
+			        <label id="customer"></label>
+                </td>
+            </tr>
+            <tr>
+                <td class="bold">Happy Points:</td>
+                <td>
+                    <label id="points" class="editable"></label>
+                </td>
+            </tr>
+        </table>
 	</div>
 	
 	<!-- history list -->
 	<div id="history" class="jxlist detail">
 		<h1 class="hidden">History</h1>
-		<ul class="list"></ul>
+		<table class="list"></table>
 	</div>
 	
 </div>

@@ -31,7 +31,7 @@ exports.getComp = function(link) {
         }
 
         var response = [
-            // configs
+            // modules & configs
             {},
             // html
             "",
@@ -51,6 +51,7 @@ exports.getComp = function(link) {
 
                 // TODO this is duplicate directory name in the same file
                 // try some refactoring or a config option
+                // TODO get html from module directory
                 read("/files/domains/" + modules[i].html + ".html", "utf8", function(err, html) {
 
                     if (err) {

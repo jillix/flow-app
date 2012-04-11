@@ -48,11 +48,18 @@
     margin-bottom: 20px;
 }
 
+.jxdetail .inserable {
+
+    color: #e66;
+    font-weight: bold;
+	cursor: pointer;
+}
+
 .jxdetail .editable {
 
     color: #66e;
     font-weight: bold;
-    cursor: text;
+	cursor: pointer;
 }
 
 .jxdetail > .detail {
