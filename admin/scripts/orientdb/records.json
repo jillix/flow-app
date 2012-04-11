@@ -70,7 +70,7 @@
             "@version": 0,
             "@class": "VOperation",
             "module": "core/require.js",
-            "file": "modules",
+            "file": "modules.js",
             "method": "getModule",
             "in": [
 
@@ -83,7 +83,7 @@
             "@version": 0,
             "@class": "VOperation",
             "module": "core/comp",
-            "file": "comp",
+            "file": "comp.js",
             "method": "getComp",
             "in": [
 
@@ -96,7 +96,7 @@
             "@version": 0,
             "@class": "VOperation",
             "module": "core/comp",
-            "file": "comp",
+            "file": "comp.js",
             "method": "getFile",
             "in": [
 
@@ -109,7 +109,7 @@
             "@version": 0,
             "@class": "VOperation",
             "module": "faeb187/stdl.list",
-            "file": "ops",
+            "file": "ops.js",
             "method": "getData",
             "in": [
 
