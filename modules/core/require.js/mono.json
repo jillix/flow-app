@@ -1,0 +1,8 @@
+{
+    operations: [
+
+        { path: "modules.js", function: "getModule" }
+    
+    ]
+
+}
