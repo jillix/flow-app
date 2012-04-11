@@ -349,7 +349,14 @@
                 "default-cluster-id": 6,
                 "cluster-ids": [6],
                 "super-class": "OGraphEdge",
-                "properties": []
+                "properties": [
+                    {
+                        "name": "name",
+                        "type": "STRING",
+                        "mandatory": true,
+                        "not-null": true
+                    }
+                ]
             },
             {
                 "name": "EHas",

@@ -286,7 +286,8 @@
             "@version": 0,
             "@class": "EBuildWith",
             "in": "#11:0",
-            "out": "#10:4"
+            "out": "#10:4",
+            "name": "Admin Interface"
         },
         {
             "@type": "d",
@@ -302,7 +303,6 @@
             "@version": 0,
             "@class": "ECanPerform",
             "params": {
-
                 "dir": "mono.ch/pub/"
             },
             "in": "#8:0",
@@ -334,7 +334,8 @@
             "@version": 0,
             "@class": "EBuildWith",
             "in": "#11:1",
-            "out": "#10:3"
+            "out": "#10:3",
+            "name": "Navigation List",
         },
         {
             "@type": "d",
