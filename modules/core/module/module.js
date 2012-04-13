@@ -1,8 +1,9 @@
 var send = require(CONFIG.root + "/core/send.js").send,
     read = require(CONFIG.root + "/core/util.js").read,
-    getComp = require(CONFIG.root + "/core/model/orient.js").getComponent,
-    files = new (require("node-static").Server)(CONFIG.root + "/files/domains");
-
+    stat = require("node-static").Server,
+    model = require(CONFIG.root + "/core/model/orient.js"),
+    files = new stat(CONFIG.root + "/files/domains"),
+    modules = new stat(CONFIG.root + "/modules");
 
 function buildComp(response, module) {
 
@@ -19,10 +20,9 @@ function buildComp(response, module) {
     }
 }
 
+exports.getConfig = function(link) {
 
-exports.getComp = function(link) {
-
-    getComp(link.path[2], link.session.uid, function(err, modules) {
+    model.getModuleConfig(link.path[2], link.session.uid, function(err, modules) {
 
         // error checks
         if (err || !modules) {
@@ -80,16 +80,54 @@ exports.getComp = function(link) {
     });
 };
 
+// browser modules
+exports.getModule = function(link) {
+
+    // error checks
+    if (!link.path || typeof link.path[1] == "undefined" || typeof link.path[2] == "undefined") {
+        send.badrequest(link, "Module name missing");
+        return;
+    }
+
+    // get the module owner name from the URL
+    var ownerName = link.path[4].replace(/[^0-9a-z_\-\.]/gi, "");
+    // get the module name from the URL
+    var moduleName = link.path[5].replace(/[^0-9a-z_\-\.]/gi, "");
+
+    // the module name must be almost alphanumeric
+    if (ownerName.length != link.path[4].length || moduleName.length != link.path[5].length) {
+        send.badrequest(link, "Incorrect module name in request URL");
+        return;
+    }
+
+    // find the module in the database
+    model.getModuleFile(ownerName, moduleName, link.session.uid, function(err, module) {
+        
+        // TODO move check in the model and return a valid module
+        var module = module[0];
+
+        // error checks
+        if (err || !module || !module.name) {
+            send.notfound(link, err || ("Could not find module: " + ownerName + "/" + moduleName));
+            return;
+        }
+
+        // now serve the module file
+        link.req.url = module.owner + "/" + module.name + "/" + (module.dir || "") + link.path.slice(6).join("/").replace(/[^a-z0-9\/\.\-_]|\.\.\//gi, "");
+        
+        modules.serve(link.req, link.res);
+    });
+};
 
 exports.getFile = function(link) {
 
     var externalUrl = link.req.url;
-
+    
     if (link.params && link.params.dir) {
 
         // change the request URL to the internal one
         link.req.url = link.params.dir + link.path.slice(2).join("/").replace(/[^a-z0-9\/\.\-_]|\.\.\//gi, "");
-
+        
         files.serve(link.req, link.res, function(err, data) {
 
             // TODO one can hook stats in here
@@ -108,4 +146,3 @@ exports.getFile = function(link) {
         send.forbidden(link);
     }
 };
-

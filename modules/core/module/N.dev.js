@@ -529,34 +529,34 @@ var N = {
 
     // !------------------------------ N.comp
     /**
-     * Create Instances of Components
+     * Create Instances of Modules
      */
-    comp: function(target, comp_id, callback) {
+    mod: function(target, moduleId, callback) {
 
-        // default argument values
+        //default argument values
         callback = (typeof callback == "function" ? callback : function() {});
         target = (typeof target == "string" ? N.dom.findOne(target) : target);
 
-        // error checks
+        //error checks
         if (!target) {
             return callback("Target not found or undefined.");
         }
-        if (typeof comp_id === "undefined") {
+        if (typeof moduleId === "undefined") {
             return callback("Component ID undefined.");
         }
 
-        // get component
-        N.link({ url: "/1/" + comp_id }, function(err, response) {
+        //get module
+        N.link({ url: "/core/module/getConfig/" + moduleId }, function(err, response) {
 
-            // error checks
+            //error checks
             if (err || !response) {
-                callback("A problem occurred while getting component.");
+                callback("A problem occurred while getting module.");
                 return;
             }
 
             target.style.display = "none";
 
-            // TODO show loader
+            //TODO show loader
 
             // create component
             var comp = {
@@ -619,9 +619,7 @@ var N = {
 
                 target.style.display = "block";
 
-                if (callback) {
-                    callback(null, comp);
-                }
+                callback(null, comp);
             });
         });
     },

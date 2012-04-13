@@ -35,7 +35,7 @@ exports.getOperation = function(operationId, callback) {
 };
 
 
-exports.getUserOperation = function(operationId, userId, callback) {
+exports.getUserOperation = function(module, method, userId, callback) {
 
     db.open(function(err, result) {
 
@@ -48,10 +48,10 @@ exports.getUserOperation = function(operationId, userId, callback) {
         if (vopClusterId < 0) { return callback("Could not find the VOperation cluster ID."); }
         if (vuClusterId < 0) { return callback("Could not find the VUser cluster ID."); }
 
-        var command = "SELECT module, file, method, in[@class = 'ECanPerform'].params AS params FROM (TRAVERSE * FROM #" + vuClusterId + ":" + userId +" WHERE $depth <= 4) WHERE @rid = #" + vopClusterId + ":" + operationId;
-
+        var command = "SELECT file, in[@class = 'ECanPerform'].params AS params FROM (TRAVERSE * FROM #" + vuClusterId + ":" + userId + " WHERE $depth <= 4) WHERE @class = 'VOperation' AND module = '" + module + "' AND method = '" + method + "'";
+        
         sql(command, function(err, results) {
-
+            
             if (err) {
                 return callback("An error occurred while retrieving the user's operation: " + err);
             }
@@ -69,9 +69,12 @@ exports.getUserOperation = function(operationId, userId, callback) {
             var operation = results[0];
 
             // is the operation does not have the required fields or an error occurred while retrieving it
-            if (!operation.module || !operation.file || !operation.method) {
+            /*if (!operation.module || !operation.file || !operation.method) {
                 var detail = "Missing: " + (operation.module ? (operation.file ? "operation.method": "operation.file") : "operation.module");
                 return callback("The operation object is not complete. " + detail);
+            }*/
+            if (!operation.file) {
+                return callback("The operation object is not complete. Missing: operation.file");
             }
 
             // if the operation has parameters, parse them as JSON
@@ -85,7 +88,7 @@ exports.getUserOperation = function(operationId, userId, callback) {
 };
 
 
-exports.getModule = function(ownerName, moduleName, userId, callback) {
+exports.getModuleFile = function(ownerName, moduleName, userId, callback) {
 
     // TODO add either a db.open or make the db.open call before any operation
     // TODO the cluster IDs should be searched for in the mono initialization phase where also the connection is opened
@@ -100,7 +103,7 @@ exports.getModule = function(ownerName, moduleName, userId, callback) {
 };
 
 
-exports.getComponent = function(compId, userId, callback) {
+exports.getModuleConfig = function(compId, userId, callback) {
 
     // TODO add either a db.open or make the db.open call before any operation
 

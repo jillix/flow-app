@@ -21,7 +21,7 @@ var table = {
 
 function initScripts(compId) {
 
-    var baseUrl = "/" + CONFIG.operationKey + "/0";
+    var baseUrl = "/" + CONFIG.operationKey + "/core/module/getModule";
     var nl = (CONFIG.dev ? "\r\n" : "");
 
     return "<!DOCTYPE html>" + nl +
@@ -31,14 +31,14 @@ function initScripts(compId) {
         (CONFIG.dev ? "// require.js reads this global property, if available" : "") + nl +
         "var require={" + nl +
             "baseUrl:'" + baseUrl + "'," + nl +
-            "deps:['core/comp/" + Nscript + "']" + nl +
+            "deps:['core/module/" + Nscript + "']" + nl +
         "};" + nl +
         "window.onload=function(){" + nl +
             "N.ok='/"+ CONFIG.operationKey  + "';" + nl +
-            "N.comp('body','" + compId + "')" + nl +
+            "N.mod('body','" + compId + "')" + nl +
         "}" + nl +
         "</script>" + nl +
-        "<script src='" + baseUrl + "/core/require.js/require.js'></script>" + nl +
+        "<script src='" + baseUrl + "/core/module/require.js'></script>" + nl +
         "</head>" + nl +
         "<body></body>" + nl +
         "</html>";
