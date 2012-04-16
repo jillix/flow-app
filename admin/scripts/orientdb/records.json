@@ -63,8 +63,8 @@
             "@rid": "#9:0",
             "@version": 0,
             "@class": "VOperation",
-            "module": "core/require.js",
-            "file": "modules.js",
+            "module": "core/module",
+            "file": "module.js",
             "method": "getModule",
             "in": [
                 "#6:3"
@@ -75,9 +75,9 @@
             "@rid": "#9:1",
             "@version": 0,
             "@class": "VOperation",
-            "module": "core/comp",
-            "file": "comp.js",
-            "method": "getComp",
+            "module": "core/module",
+            "file": "module.js",
+            "method": "getConfig",
             "in": [
                 "#6:4"
             ]
@@ -112,7 +112,7 @@
             "@version": 0,
             "@class": "VModule",
             "owner": "core",
-            "name": "comp",
+            "name": "module",
             "in": [
                 "#6:5"
             ]

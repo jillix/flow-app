@@ -35,7 +35,7 @@ exports.getOperation = function(operationId, callback) {
 };
 
 
-exports.getUserOperation = function(operationId, userId, callback) {
+exports.getUserOperation = function(module, method, userId, callback) {
 
     db.open(function(err, result) {
 
@@ -50,13 +50,15 @@ exports.getUserOperation = function(operationId, userId, callback) {
 
         var command =
             "SELECT " +
-                "module, file, method, " +
+                "file, " +
                 "in[@class = 'ECanPerform'].params AS params " +
-            "FROM (" +
-                "TRAVERSE VUser.out, EMemberOf.in, VRole.out, ECanPerform.in FROM #" + vuClusterId + ":" + userId +") WHERE @rid = #" + vopClusterId + ":" + operationId;
+            "FROM " +
+                "(TRAVERSE VUser.out, EMemberOf.in, VRole.out, ECanPerform.in FROM #" + vuClusterId + ":" + userId + ")"
+            "WHERE " +
+                "@rid = #" + vopClusterId + ":" + operationId;
 
         sql(command, function(err, results) {
-
+            
             if (err) {
                 return callback("An error occurred while retrieving the user's operation: " + err);
             }
@@ -74,9 +76,12 @@ exports.getUserOperation = function(operationId, userId, callback) {
             var operation = results[0];
 
             // is the operation does not have the required fields or an error occurred while retrieving it
-            if (!operation.module || !operation.file || !operation.method) {
+            /*if (!operation.module || !operation.file || !operation.method) {
                 var detail = "Missing: " + (operation.module ? (operation.file ? "operation.method": "operation.file") : "operation.module");
                 return callback("The operation object is not complete. " + detail);
+            }*/
+            if (!operation.file) {
+                return callback("The operation object is not complete. Missing: operation.file");
             }
 
             // if the operation has parameters, parse them as JSON
@@ -90,7 +95,21 @@ exports.getUserOperation = function(operationId, userId, callback) {
 };
 
 
-exports.getModule = function(ownerName, moduleName, userId, callback) {
+exports.getModuleFile = function(ownerName, moduleName, userId, callback) {
+
+    getModule(ownerName, moduleName, userId, false, callback);
+
+};
+
+
+exports.getModuleConfig = function(ownerName, moduleName, userId, callback) {
+
+    getModule(ownerName, moduleName, userId, true, callback);
+
+};
+
+
+function getModule(ownerName, moduleName, userId, withConfig, callback) {
 
     // TODO add either a db.open or make the db.open call before any operation
     // TODO the cluster IDs should be searched for in the mono initialization phase where also the connection is opened
@@ -98,31 +117,42 @@ exports.getModule = function(ownerName, moduleName, userId, callback) {
 
     if (vuClusterId < 0) { return callback("Could not find the VUser cluster ID."); }
 
+    var configFields = !withConfig ? "" :
+        (", " +
+        "in[@class = 'EHasAccessTo'].config AS config, " +
+        "in[@class = 'EHasAccessTo'].html AS html, " +
+        "in[@class = 'EHasAccessTo'].css AS css "
+        );
+
     var command =
         "SELECT " +
-            "owner, name, dir, " +
-            "in[@class = 'EHasAccessTo'].config AS config, " +
-     	    "in[@class = 'EHasAccessTo'].html AS html, " +
-     	    "in[@class = 'EHasAccessTo'].css AS css " +
-        "FROM (" +
-            "TRAVERSE VUser.out, EMemberOf.in, VRole.out, EHasAccessTo.in FROM #" + vuClusterId + ":" + userId +
-        ") " +
-        "WHERE @class = 'VModule' AND name = '" + moduleName + "' AND owner = '" + ownerName + "'";
+            "owner, name, dir " + configFields +
+        "FROM " +
+            "(TRAVERSE VUser.out, EMemberOf.in, VRole.out, EHasAccessTo.in FROM #" + vuClusterId + ":" + userId + ") " +
+        "WHERE " +
+            "@class = 'VModule' AND " +
+            "name = '" + moduleName + "' AND " +
+            "owner = '" + ownerName + "'";
 
-    sql(command, function(err, module) {
+    sql(command, function(err, results) {
 
         // error checks
         if (err) {
             return callback("An error occured while retrieving the module '" + ownerName + "/" + moduleName + "':" + err);
         }
-
-        if (modules.length == 0) {
+ 
+        if (results.length == 0) {
             return callback("No such module: " + ownerName + "/" + moduleName);
         }
 
+        if (results.length != 0) {
+            return callback("There can be only one module: " + ownerName + "/" + moduleName + ". Found: " + results.length);
+        }
+
+        var module = results[0];
         callback(null, module);
     });
-};
+}
 
 
 function sql(command, callback) {
