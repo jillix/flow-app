@@ -1,38 +1,9 @@
-var Db = require("orientdb").Db,
-    Server = require("orientdb").Server;
+var orient = require("orientdb"),
+    Db = orient.Db,
+    Server = orient.Server;
 
 var server = new Server(CONFIG.orient.server),
     db = new Db(CONFIG.orient.db.database_name, server, CONFIG.orient.db);
-
-
-exports.getComponents = function(callback) {
-
-    var command = "SELECT FROM VComponent";
-    sql(command, callback);
-};
-
-
-exports.getOperation = function(operationId, callback) {
-
-    db.open(function(err, result) {
-
-        if (err) { return callback(err); }
-
-        var vopClusterId = -1;
-
-        for (var i in result.clusters) {
-
-            if (result.clusters[i].name === "voperation") {
-                vopClusterId = result.clusters[i].id;
-            }
-        }
-
-        if (vopClusterId < 0) { return callback("Could not find the VOperation cluster ID."); }
-
-        var command = "SELECT module, file, method FROM #" + vopClusterId + ":" + operationId;
-        sql(command, callback);
-    });
-};
 
 
 exports.getUserOperation = function(module, method, userId, callback) {
@@ -42,10 +13,8 @@ exports.getUserOperation = function(module, method, userId, callback) {
         if (err) { return callback(err); }
 
         // TODO the cluster IDs should be searched for in the mono initialization phase where also the connection is opened
-        var vopClusterId = db.getClusterIdByClass("VOperation"),
-            vuClusterId = db.getClusterIdByClass("VUser");
+        var vuClusterId = db.getClusterIdByClass("VUser");
 
-        if (vopClusterId < 0) { return callback("Could not find the VOperation cluster ID."); }
         if (vuClusterId < 0) { return callback("Could not find the VUser cluster ID."); }
 
         var command =
@@ -53,12 +22,14 @@ exports.getUserOperation = function(module, method, userId, callback) {
                 "file, " +
                 "in[@class = 'ECanPerform'].params AS params " +
             "FROM " +
-                "(TRAVERSE VUser.out, EMemberOf.in, VRole.out, ECanPerform.in FROM #" + vuClusterId + ":" + userId + ")"
+                "(TRAVERSE VUser.out, EMemberOf.in, VRole.out, ECanPerform.in FROM #" + vuClusterId + ":" + userId + ") " +
             "WHERE " +
-                "@rid = #" + vopClusterId + ":" + operationId;
+                "@class = 'VOperation' AND " +
+                "module = '" + module + "' AND " +
+                "method = '" + method + "'";
 
         sql(command, function(err, results) {
-            
+
             if (err) {
                 return callback("An error occurred while retrieving the user's operation: " + err);
             }
@@ -76,11 +47,7 @@ exports.getUserOperation = function(module, method, userId, callback) {
             var operation = results[0];
 
             // is the operation does not have the required fields or an error occurred while retrieving it
-            /*if (!operation.module || !operation.file || !operation.method) {
-                var detail = "Missing: " + (operation.module ? (operation.file ? "operation.method": "operation.file") : "operation.module");
-                return callback("The operation object is not complete. " + detail);
-            }*/
-            if (!operation.file) {
+            if (!operation || !operation.file) {
                 return callback("The operation object is not complete. Missing: operation.file");
             }
 
@@ -110,7 +77,7 @@ exports.getModuleConfig = function(ownerName, moduleName, userId, callback) {
 
 
 function getModule(ownerName, moduleName, userId, withConfig, callback) {
-
+debugger;
     // TODO add either a db.open or make the db.open call before any operation
     // TODO the cluster IDs should be searched for in the mono initialization phase where also the connection is opened
     var vuClusterId = db.getClusterIdByClass("VUser");
@@ -140,12 +107,12 @@ function getModule(ownerName, moduleName, userId, withConfig, callback) {
         if (err) {
             return callback("An error occured while retrieving the module '" + ownerName + "/" + moduleName + "':" + err);
         }
- 
+
         if (results.length == 0) {
             return callback("No such module: " + ownerName + "/" + moduleName);
         }
 
-        if (results.length != 0) {
+        if (results.length > 1) {
             return callback("There can be only one module: " + ownerName + "/" + moduleName + ". Found: " + results.length);
         }
 
@@ -156,6 +123,7 @@ function getModule(ownerName, moduleName, userId, withConfig, callback) {
 
 
 function sql(command, callback) {
+    console.log(command);
     db.command(command, callback);
 }
 
