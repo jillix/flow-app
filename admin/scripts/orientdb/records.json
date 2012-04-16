@@ -7,7 +7,6 @@
             "@class": "VUser",
             "name": "Guido Fawkes",
             "out": [
-
                 "#6:0"
             ]
         },
@@ -20,7 +19,6 @@
             "pubword": "admin",
             "pasword": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
             "out": [
-
                 "#6:1",
                 "#6:2"
             ]
@@ -32,15 +30,14 @@
             "@class": "VRole",
             "name": "Public",
             "in": [
-
                 "#6:0",
                 "#6:1"
             ],
             "out": [
-
                 "#6:3",
                 "#6:4",
                 "#6:9",
+                "#6:13",
 
                 "#6:5",
                 "#6:6",
@@ -48,9 +45,7 @@
                 "#6:10",
                 "#6:11",
                 "#6:12",
-                "#6:13",
                 "#6:14"
-
             ]
         },
         {
@@ -60,7 +55,6 @@
             "@class": "VRole",
             "name": "Mono Admin",
             "in": [
-
                 "#6:2"
             ]
         },
@@ -73,7 +67,6 @@
             "file": "modules.js",
             "method": "getModule",
             "in": [
-
                 "#6:3"
             ]
         },
@@ -86,7 +79,6 @@
             "file": "comp.js",
             "method": "getComp",
             "in": [
-
                 "#6:4"
             ]
         },
@@ -99,7 +91,6 @@
             "file": "comp.js",
             "method": "getFile",
             "in": [
-
                 "#6:9"
             ]
         },
@@ -112,7 +103,6 @@
             "file": "ops.js",
             "method": "getData",
             "in": [
-
                 "#6:13"
             ]
         },
@@ -124,7 +114,6 @@
             "owner": "core",
             "name": "comp",
             "in": [
-
                 "#6:5"
             ]
         },
@@ -137,7 +126,6 @@
             "name": "editor",
             "dir": "client",
             "in": [
-
                 "#6:6"
             ]
         },
@@ -149,7 +137,6 @@
             "owner": "jillix",
             "name": "ace",
             "in": [
-
                 "#6:8"
             ]
         },
@@ -160,11 +147,8 @@
             "@class": "VModule",
             "owner": "faeb187",
             "name": "stdl.list",
-            "dir": "js/client",
             "in": [
-
-                "#6:10",
-                "#6:12"
+                "#6:10"
             ]
         },
         {
@@ -175,8 +159,6 @@
             "@class": "VModule",
             "name": "tempAdmin",
             "in": [
-
-                "#6:7",
                 "#6:11"
             ]
         },
@@ -188,35 +170,34 @@
             "@class": "VModule",
             "name": "require.js",
             "in": [
-
                 "#6:14"
             ]
         },
         {
             "@type": "d",
+            "@rid": "#10:6",
+            "@version": 0,
+            "@class": "VModule",
+            "owner": "adioo",
+            "name": "stdl.layout",
+            "in": [
+                "#6:10"
+            ]
+        },
+        {
+            "@type": "d",
+            "@rid": "#10:7",
+            "@version": 0,
+            "@class": "VModule",
+            "owner": "gabipetrovay",
+            "name": "stdl.tab",
+            "in": [
+                "#6:10"
+            ]
+        },
+        {
+            "@type": "d",
             "@rid": "#11:0",
-            "@version": 0,
-            "@class": "VComponent",
-            "name": "Mono Admin",
-            "out": [
-
-                "#6:7"
-            ]
-        },
-        {
-            "@type": "d",
-            "@rid": "#11:1",
-            "@version": 0,
-            "@class": "VComponent",
-            "name": "Standard Library",
-            "out": [
-
-                "#6:7"
-            ]
-        },
-        {
-            "@type": "d",
-            "@rid": "#12:0",
             "@version": 0,
             "@class": "VDomain",
             "name": "mono.ch",
@@ -227,48 +208,48 @@
             "@rid": "#6:0",
             "@version": 0,
             "@class": "EMemberOf",
-            "in": "#7:0",
-            "out": "#8:0"
+            "out": "#7:0",
+            "in": "#8:0"
         },
         {
             "@type": "d",
             "@rid": "#6:1",
             "@version": 0,
             "@class": "EMemberOf",
-            "in": "#7:1",
-            "out": "#8:0"
+            "out": "#7:1",
+            "in": "#8:0"
         },
         {
             "@type": "d",
             "@rid": "#6:2",
             "@version": 0,
             "@class": "EMemberOf",
-            "in": "#7:1",
-            "out": "#8:1"
+            "out": "#7:1",
+            "in": "#8:1"
         },
         {
             "@type": "d",
             "@rid": "#6:3",
             "@version": 0,
             "@class": "ECanPerform",
-            "in": "#8:0",
-            "out": "#9:0"
+            "out": "#8:0",
+            "in": "#9:0"
         },
         {
             "@type": "d",
             "@rid": "#6:4",
             "@version": 0,
             "@class": "ECanPerform",
-            "in": "#8:0",
-            "out": "#9:1"
+            "out": "#8:0",
+            "in": "#9:1"
         },
         {
             "@type": "d",
             "@rid": "#6:5",
             "@version": 0,
             "@class": "EHasAccessTo",
-            "in": "#8:0",
-            "out": "#10:0"
+            "out": "#8:0",
+            "in": "#10:0"
         },
         {
             "@type": "d",
@@ -277,25 +258,16 @@
             "@class": "EHasAccessTo",
             "html": "mono.ch/ace",
             "css": ["ace"],
-            "in": "#8:0",
-            "out": "#10:1"
-        },
-        {
-            "@type": "d",
-            "@rid": "#6:7",
-            "@version": 0,
-            "@class": "EBuildWith",
-            "in": "#11:0",
-            "out": "#10:4",
-            "name": "Admin Interface"
+            "out": "#8:0",
+            "in": "#10:1"
         },
         {
             "@type": "d",
             "@rid": "#6:8",
             "@version": 0,
             "@class": "EHasAccessTo",
-            "in": "#8:0",
-            "out": "#10:2"
+            "out": "#8:0",
+            "in": "#10:2"
         },
         {
             "@type": "d",
@@ -305,8 +277,8 @@
             "params": {
                 "dir": "mono.ch/pub/"
             },
-            "in": "#8:0",
-            "out": "#9:2"
+            "out": "#8:0",
+            "in": "#9:2"
         },
         {
             "@type": "d",
@@ -315,8 +287,8 @@
             "@class": "EHasAccessTo",
             "html": "mono.ch/stdl/list/list",
             "css": ["list", "def", "screen"],
-            "in": "#8:0",
-            "out": "#10:3"
+            "out": "#8:0",
+            "in": "#10:3"
         },
         {
             "@type": "d",
@@ -325,33 +297,34 @@
             "@class": "EHasAccessTo",
             "html": "mono.ch/main",
             "css": ["main"],
-            "in": "#8:0",
-            "out": "#10:4"
+            "out": "#8:0",
+            "in": "#10:4"
         },
         {
             "@type": "d",
             "@rid": "#6:12",
             "@version": 0,
-            "@class": "EBuildWith",
-            "in": "#11:1",
-            "out": "#10:3",
-            "name": "Navigation List",
+            "@class": "EHasAccessTo",
+            "html": "mono.ch/stdl/layout/layout",
+            "css": ["def", "screen"],
+            "out": "#8:0",
+            "in": "#10:6"
         },
         {
             "@type": "d",
             "@rid": "#6:13",
             "@version": 0,
             "@class": "ECanPerform",
-            "in": "#8:0",
-            "out": "#9:3"
+            "out": "#8:0",
+            "in": "#9:3"
         },
         {
             "@type": "d",
             "@rid": "#6:14",
             "@version": 0,
             "@class": "EHasAccessTo",
-            "in": "#8:0",
-            "out": "#10:5"
+            "out": "#8:0",
+            "in": "#10:5"
         }
     ]
 }
