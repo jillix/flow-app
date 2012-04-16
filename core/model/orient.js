@@ -1,38 +1,9 @@
-var Db = require("orientdb").Db,
-    Server = require("orientdb").Server;
+var orient = require("orientdb"),
+    Db = orient.Db,
+    Server = orient.Server;
 
 var server = new Server(CONFIG.orient.server),
     db = new Db(CONFIG.orient.db.database_name, server, CONFIG.orient.db);
-
-
-exports.getComponents = function(callback) {
-
-    var command = "SELECT FROM VComponent";
-    sql(command, callback);
-};
-
-
-exports.getOperation = function(operationId, callback) {
-
-    db.open(function(err, result) {
-
-        if (err) { return callback(err); }
-
-        var vopClusterId = -1;
-
-        for (var i in result.clusters) {
-
-            if (result.clusters[i].name === "voperation") {
-                vopClusterId = result.clusters[i].id;
-            }
-        }
-
-        if (vopClusterId < 0) { return callback("Could not find the VOperation cluster ID."); }
-
-        var command = "SELECT module, file, method FROM #" + vopClusterId + ":" + operationId;
-        sql(command, callback);
-    });
-};
 
 
 exports.getUserOperation = function(module, method, userId, callback) {
@@ -42,16 +13,23 @@ exports.getUserOperation = function(module, method, userId, callback) {
         if (err) { return callback(err); }
 
         // TODO the cluster IDs should be searched for in the mono initialization phase where also the connection is opened
-        var vopClusterId = db.getClusterIdByClass("VOperation"),
-            vuClusterId = db.getClusterIdByClass("VUser");
+        var vuClusterId = db.getClusterIdByClass("VUser");
 
-        if (vopClusterId < 0) { return callback("Could not find the VOperation cluster ID."); }
         if (vuClusterId < 0) { return callback("Could not find the VUser cluster ID."); }
 
-        var command = "SELECT file, in[@class = 'ECanPerform'].params AS params FROM (TRAVERSE * FROM #" + vuClusterId + ":" + userId + " WHERE $depth <= 4) WHERE @class = 'VOperation' AND module = '" + module + "' AND method = '" + method + "'";
-        
+        var command =
+            "SELECT " +
+                "file, " +
+                "in[@class = 'ECanPerform'].params AS params " +
+            "FROM " +
+                "(TRAVERSE VUser.out, EMemberOf.in, VRole.out, ECanPerform.in FROM #" + vuClusterId + ":" + userId + ") " +
+            "WHERE " +
+                "@class = 'VOperation' AND " +
+                "module = '" + module + "' AND " +
+                "method = '" + method + "'";
+
         sql(command, function(err, results) {
-            
+
             if (err) {
                 return callback("An error occurred while retrieving the user's operation: " + err);
             }
@@ -69,11 +47,7 @@ exports.getUserOperation = function(module, method, userId, callback) {
             var operation = results[0];
 
             // is the operation does not have the required fields or an error occurred while retrieving it
-            /*if (!operation.module || !operation.file || !operation.method) {
-                var detail = "Missing: " + (operation.module ? (operation.file ? "operation.method": "operation.file") : "operation.module");
-                return callback("The operation object is not complete. " + detail);
-            }*/
-            if (!operation.file) {
+            if (!operation || !operation.file) {
                 return callback("The operation object is not complete. Missing: operation.file");
             }
 
@@ -90,54 +64,66 @@ exports.getUserOperation = function(module, method, userId, callback) {
 
 exports.getModuleFile = function(ownerName, moduleName, userId, callback) {
 
-    // TODO add either a db.open or make the db.open call before any operation
-    // TODO the cluster IDs should be searched for in the mono initialization phase where also the connection is opened
-    var vopClusterId = db.getClusterIdByClass("VOperation"),
-        vuClusterId = db.getClusterIdByClass("VUser");
+    getModule(ownerName, moduleName, userId, false, callback);
 
-    if (vopClusterId < 0) { return callback("Could not find the VOperation cluster ID."); }
-    if (vuClusterId < 0) { return callback("Could not find the VUser cluster ID."); }
-
-    var command = "SELECT owner, name, dir FROM (TRAVERSE out FROM #" + vuClusterId + ":" + userId + " WHERE $depth <= 4) WHERE @class = 'VModule' AND name = '" + moduleName + "' AND owner = '" + ownerName + "'";
-    sql(command, callback);
 };
 
 
-exports.getModuleConfig = function(compId, userId, callback) {
+exports.getModuleConfig = function(ownerName, moduleName, userId, callback) {
 
+    getModule(ownerName, moduleName, userId, true, callback);
+
+};
+
+
+function getModule(ownerName, moduleName, userId, withConfig, callback) {
+debugger;
     // TODO add either a db.open or make the db.open call before any operation
+    // TODO the cluster IDs should be searched for in the mono initialization phase where also the connection is opened
+    var vuClusterId = db.getClusterIdByClass("VUser");
 
-    var vcClusterId = db.getClusterIdByClass("VComponent"),
-        vuClusterId = db.getClusterIdByClass("VUser");
-
-    if (vcClusterId < 0) { return callback("Could not find the VComponent cluster ID."); }
     if (vuClusterId < 0) { return callback("Could not find the VUser cluster ID."); }
 
-    // TODO adapt to the new traverse syntax
-    var command = "SELECT name AS module, owner, dir, " +
+    var configFields = !withConfig ? "" :
+        (", " +
         "in[@class = 'EHasAccessTo'].config AS config, " +
-     	"in[@class = 'EHasAccessTo'].html AS html, " +
-     	"in[@class = 'EHasAccessTo'].css AS css " +
-     	"FROM VModule WHERE in traverse(5,8) (@rid = #" + vuClusterId  + ":"+ userId +" ) "+
-     	"AND in traverse(2,2) (@rid = #" + vcClusterId + ":"+ compId +")";
+        "in[@class = 'EHasAccessTo'].html AS html, " +
+        "in[@class = 'EHasAccessTo'].css AS css "
+        );
 
-    sql(command, function(err, modules) {
+    var command =
+        "SELECT " +
+            "owner, name, dir " + configFields +
+        "FROM " +
+            "(TRAVERSE VUser.out, EMemberOf.in, VRole.out, EHasAccessTo.in FROM #" + vuClusterId + ":" + userId + ") " +
+        "WHERE " +
+            "@class = 'VModule' AND " +
+            "name = '" + moduleName + "' AND " +
+            "owner = '" + ownerName + "'";
+
+    sql(command, function(err, results) {
 
         // error checks
         if (err) {
-            return callback("An error occured while retrieving the component modules. " + err);
+            return callback("An error occured while retrieving the module '" + ownerName + "/" + moduleName + "':" + err);
         }
 
-        if (modules.length == 0) {
-            return callback("The component has no modules");
+        if (results.length == 0) {
+            return callback("No such module: " + ownerName + "/" + moduleName);
         }
 
-        callback(null, modules);
+        if (results.length > 1) {
+            return callback("There can be only one module: " + ownerName + "/" + moduleName + ". Found: " + results.length);
+        }
+
+        var module = results[0];
+        callback(null, module);
     });
-};
+}
 
 
 function sql(command, callback) {
+    console.log(command);
     db.command(command, callback);
 }
 

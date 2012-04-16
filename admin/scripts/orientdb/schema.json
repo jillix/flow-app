@@ -67,13 +67,8 @@
             "type": "PHYSICAL"
         },
         {
-            "name": "vcomponent",
-            "id": 11,
-            "type": "PHYSICAL"
-        },
-        {
             "name": "vdomain",
-            "id": 12,
+            "id": 11,
             "type": "PHYSICAL"
         }
     ],
@@ -270,23 +265,9 @@
                 ]
             },
             {
-                "name": "VComponent",
+                "name": "VDomain",
                 "default-cluster-id": 11,
                 "cluster-ids": [11],
-                "super-class": "OGraphVertex",
-                "properties": [
-                    {
-                        "name": "name",
-                        "type": "STRING",
-                        "mandatory": true,
-                        "not-null": true
-                    }
-                ]
-            },
-            {
-                "name": "VDomain",
-                "default-cluster-id": 12,
-                "cluster-ids": [12],
                 "super-class": "OGraphVertex",
                 "properties": [
                     {
@@ -340,20 +321,6 @@
                         "name": "config",
                         "type": "EMBEDDEDMAP",
                         "mandatory": false,
-                        "not-null": true
-                    }
-                ]
-            },
-            {
-                "name": "EBuildWith",
-                "default-cluster-id": 6,
-                "cluster-ids": [6],
-                "super-class": "OGraphEdge",
-                "properties": [
-                    {
-                        "name": "name",
-                        "type": "STRING",
-                        "mandatory": true,
                         "not-null": true
                     }
                 ]

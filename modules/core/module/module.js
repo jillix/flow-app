@@ -22,14 +22,15 @@ function buildComp(response, module) {
 
 exports.getConfig = function(link) {
 
-    model.getModuleConfig(link.path[2], link.session.uid, function(err, modules) {
+    model.getModuleConfig(link.path[1], link.path[2], link.session.uid, function(err, module) {
 
         // error checks
-        if (err || !modules) {
+        if (err || !module) {
             send.notfound(link, err || "The component has no modules");
             return;
         }
 
+        // TODO ab hier
         var response = [
             // modules & configs
             {},
@@ -38,6 +39,7 @@ exports.getConfig = function(link) {
             // styles
             []
         ];
+
         var length = modules.length;
 
         var next = function(i) {
@@ -103,9 +105,6 @@ exports.getModule = function(link) {
     // find the module in the database
     model.getModuleFile(ownerName, moduleName, link.session.uid, function(err, module) {
         
-        // TODO move check in the model and return a valid module
-        var module = module[0];
-
         // error checks
         if (err || !module || !module.name) {
             send.notfound(link, err || ("Could not find module: " + ownerName + "/" + moduleName));
