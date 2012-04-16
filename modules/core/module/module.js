@@ -84,7 +84,7 @@ exports.getConfig = function(link) {
 exports.getModule = function(link) {
 
     // error checks
-    if (!link.path || typeof link.path[1] == "undefined" || typeof link.path[2] == "undefined") {
+    if (!link.path || typeof link.path[4] == "undefined" || typeof link.path[5] == "undefined") {
         send.badrequest(link, "Module name missing");
         return;
     }
