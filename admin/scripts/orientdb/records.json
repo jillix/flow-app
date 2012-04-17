@@ -87,8 +87,8 @@
             "@rid": "#9:2",
             "@version": 0,
             "@class": "VOperation",
-            "module": "core/comp",
-            "file": "comp.js",
+            "module": "core/module",
+            "file": "module.js",
             "method": "getFile",
             "in": [
                 "#6:9"

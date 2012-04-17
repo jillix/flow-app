@@ -22,18 +22,27 @@ Server.prototype.start = function() {
 function requestHandler(req, res) {
 
     var url = parseUrl(req.url, true),
+        path = url.pathname.replace(/\/$|^\//g, "").split("/", 42);
         link = {
             req:        req,
             res:        res,
             query:      url.query || {},
             pathname:   url.pathname,
-            path:       url.pathname.replace(/\/$|^\//g, "").split("/", 42),
             host:       req.headers.host.split(":")[0].split(".").reverse()
         };
 
     link.res.headers = {};
 
-    if (link.path[0] == CONFIG.operationKey) {
+    if (path[0] == CONFIG.operationKey) {
+    
+        link.operation = {
+        
+            module: path[1] && path[2] ? path[1] + "/" + path[2] : null,
+            method: path[3] ? path[3] : null
+        };
+        
+        link.path = path.slice(4);
+        
         operation(link);
     }
     else {

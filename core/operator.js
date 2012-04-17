@@ -29,23 +29,23 @@ exports.operation = function(link) {
         }
 
         link.session = session;
-
+        
         // read the operation from the request URL
-        var moduleName = link.path[1] && link.path[2] ? link.path[1] + "/" + link.path[2] : null;
-            methodName = link.path[3] ? link.path[3] : null;
+        //var moduleName = link.path[1] && link.path[2] ? (link.path[1] + "/" + link.path[2]) : null,
+        //    methodName = link.path[3] ? link.path[3] : null;
         
         // id no operation was found in the request URL
-        if (!moduleName || !methodName) {
+        if (!link.operation.module || !link.operation.method) {
 
             if (resume) {
                 resume(true);
             }
 
-            send.badrequest(link.res);
+            send.badrequest(link, "Missing Modulename or Methodname.");
             return;
         }
-
-        getOperation(moduleName, methodName, session.uid, function(err, operation) {
+        
+        getOperation(link.operation.module, link.operation.method, session.uid, function(err, operation) {
             
             if (err) {
                 if (resume) { resume(true); }
@@ -53,8 +53,8 @@ exports.operation = function(link) {
                 return;
             }
 
-            var file = CONFIG.root + "/modules/" + moduleName + "/" + operation.file;
-            var method = util.load(file, methodName);
+            var file = CONFIG.root + "/modules/" + link.operation.module + "/" + operation.file;
+            var method = util.load(file, link.operation.method);
             
             if (typeof method !== "function") {
 

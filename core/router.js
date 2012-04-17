@@ -5,7 +5,7 @@ var Nscript = CONFIG.clientLibrary + (CONFIG.dev ? ".dev" : "");
 // TODO: get routing tables from db (mongodb) 
 var table = {
     
-    "/": 0,
+    "/": "jillix/editor",
     "stdl": 1,
     "users": {
         
@@ -19,7 +19,7 @@ var table = {
 };
 
 
-function initScripts(compId) {
+function initScripts(module) {
 
     var baseUrl = "/" + CONFIG.operationKey + "/core/module/getModule";
     var nl = (CONFIG.dev ? "\r\n" : "");
@@ -35,7 +35,7 @@ function initScripts(compId) {
         "};" + nl +
         "window.onload=function(){" + nl +
             "N.ok='/"+ CONFIG.operationKey  + "';" + nl +
-            "N.mod('body','" + compId + "')" + nl +
+            "N.mod('body','" + module + "')" + nl +
         "}" + nl +
         "</script>" + nl +
         "<script src='" + baseUrl + "/core/module/require.js'></script>" + nl +
@@ -53,15 +53,15 @@ exports.route = function(link) {
         return;
     }
 
-    var compId = traverse(link.pathname != "/" ? link.pathname.replace(/\/$/, "") : link.pathname, table, "");
-
-    if (typeof compId == "number") {
+    var module = traverse(link.pathname != "/" ? link.pathname.replace(/\/$/, "") : link.pathname, table, "");
+    
+    if (typeof module == "string") {
 
         // set headers
         link.res.headers["content-style-type"] = "text/css";
         link.res.headers["content-type"]       = "text/html; charset=utf-8";
 
-        send.ok(link.res, initScripts(compId));
+        send.ok(link.res, initScripts(module));
     }
     else {
         send.notfound(link);
@@ -75,7 +75,7 @@ exports.route = function(link) {
 */
 function traverse(path, routes, current, result, exact, match) {
 
-    if (path === "/" && typeof routes[path] == "number") {
+    if (path === "/" && typeof routes[path] == "string") {
         return routes[path];
     }
 
@@ -96,7 +96,7 @@ function traverse(path, routes, current, result, exact, match) {
             
             result = traverse(path, routes[r], exact);
             
-            if (typeof result == "number") {
+            if (typeof result == "string") {
                 return result;
             }
         }

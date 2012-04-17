@@ -27,7 +27,7 @@ exports.getUserOperation = function(module, method, userId, callback) {
                 "@class = 'VOperation' AND " +
                 "module = '" + module + "' AND " +
                 "method = '" + method + "'";
-
+        
         sql(command, function(err, results) {
 
             if (err) {
@@ -93,7 +93,7 @@ debugger;
 
     var command =
         "SELECT " +
-            "owner, name, dir " + configFields +
+            "dir " + configFields +
         "FROM " +
             "(TRAVERSE VUser.out, EMemberOf.in, VRole.out, EHasAccessTo.in FROM #" + vuClusterId + ":" + userId + ") " +
         "WHERE " +
@@ -123,7 +123,7 @@ debugger;
 
 
 function sql(command, callback) {
-    console.log(command);
+    //console.log(command);
     db.command(command, callback);
 }
 

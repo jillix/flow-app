@@ -522,7 +522,7 @@ var N = {
             N.dom.elm("link", {
                 rel:    "stylesheet",
                 type:   "text/css",
-                href:   N.ok + "/2/" + file
+                href:   N.ok + "/core/module/getFile/" + file
             })
         );
     },
@@ -558,16 +558,6 @@ var N = {
 
             //TODO show loader
 
-            // create component
-            var comp = {
-                $: target,
-                obs: N.obs()
-            };
-
-            var modules = [],
-                configs = {},
-                current = 0;
-
             // render html from response[1]
             if (response[1]) {
                 target.innerHTML = response[1];
@@ -578,40 +568,21 @@ var N = {
                 N.css(response[2][i]);
             }
 
-            // prepare modules for require from response[0]
-            for (var module in response[0]) {
-
-                configs[current] = response[0][module];
-                // TODO what does the next line do?
-                modules[current] = module + "/main";
-
-                ++current;
-            }
-
             // load, clone and init modules
-            require(modules, function() {
+            require([moduleId + "/main"], function(module) {
 
-                modules = arguments;
+                var clone = module.clone();
 
-                for (var key in modules) {
+                clone.$ = target;
+                
+                // TODO create observer with user defined id (only for GUI)
+                clone.obs = N.obs(moduleId)
 
-                    if (!modules[key] || !configs[key]) {
-                        continue;
-                    }
+                // TODO register module state
 
-                    for (var i in configs[key]) {
-
-                        var clone = modules[key].clone();
-
-                        clone.comp = comp;
-
-                        // TODO register module state
-
-                        // init module
-                        if (clone.init) {
-                            clone.init(configs[key][i]);
-                        }
-                    }
+                // init module
+                if (clone.init) {
+                    clone.init(response[0]);
                 }
 
                 // TODO: hide loader
@@ -619,7 +590,7 @@ var N = {
 
                 target.style.display = "block";
 
-                callback(null, comp);
+                callback(null, clone);
             });
         });
     },

@@ -6,13 +6,8 @@ var send = require(CONFIG.root + "/core/send.js").send,
     modules = new stat(CONFIG.root + "/modules");
 
 function buildComp(response, module) {
-
-    // add the module config in the first response object
-    var r0 = response[0],
-        key = module.owner + "/" + module.module;
-
-    r0[key] = r0[key] || [];
-    r0[key].push(module.config || {});
+    
+    response[0] = module.config || {};
     
     // add the module css in the third response object
     for (var i in module.css) {
@@ -21,15 +16,15 @@ function buildComp(response, module) {
 }
 
 exports.getConfig = function(link) {
-
-    model.getModuleConfig(link.path[1], link.path[2], link.session.uid, function(err, module) {
-
+   
+    model.getModuleConfig(link.path[0], link.path[1], link.session.uid, function(err, module) {
+        
         // error checks
         if (err || !module) {
             send.notfound(link, err || "The component has no modules");
             return;
         }
-
+        
         // TODO ab hier
         var response = [
             // modules & configs
@@ -39,65 +34,55 @@ exports.getConfig = function(link) {
             // styles
             []
         ];
+        
+        if (module.html) {
+        
+            // TODO this is duplicate directory name in the same file
+            // try some refactoring or a config option
+            // TODO get html from module directory
+            read("/files/domains/" + module.html + ".html", "utf8", function(err, html) {
 
-        var length = modules.length;
+                if (err) {
 
-        var next = function(i) {
+                    // TODO let the module define it's missing module placeholder
+                    html = "<p>An error occurred while retrieving this module HTML.</p>";
 
-            if (i >= length) {
-                send.ok(link.res, response);
-                return;
-            }
-
-            if (modules[i].html) {
-
-                // TODO this is duplicate directory name in the same file
-                // try some refactoring or a config option
-                // TODO get html from module directory
-                read("/files/domains/" + modules[i].html + ".html", "utf8", function(err, html) {
-
-                    if (err) {
-
-                        // TODO let the module define it's missing module placeholder
-                        html = "<p>An error occurred while retrieving this module HTML.</p>";
-
-                        if (CONFIG.dev) {
-                            html += "<p>Error: " + err + "</p>"
-                        }
+                    if (CONFIG.dev) {
+                        html += "<p>Error: " + err + "</p>"
                     }
+                }
 
-                    response[1] += html;
-                    buildComp(response, modules[i]);
-
-                    next(++i);
-                });
-            }
-            else {
-                buildComp(response, modules[i]);
-                next(++i);
-            }
-        };
+                response[1] += html;
+                buildComp(response, module);
+                
+                send.ok(link.res, response);
+            });
+        }
+        else {
+        
+            buildComp(response, module);
             
-        next(0, modules.length);
+            send.ok(link.res, response);
+        }
     });
 };
 
 // browser modules
 exports.getModule = function(link) {
-
+    
     // error checks
-    if (!link.path || typeof link.path[4] == "undefined" || typeof link.path[5] == "undefined") {
+    if (!link.path || typeof link.path[0] == "undefined" || typeof link.path[1] == "undefined") {
         send.badrequest(link, "Module name missing");
         return;
     }
 
     // get the module owner name from the URL
-    var ownerName = link.path[4].replace(/[^0-9a-z_\-\.]/gi, "");
+    var ownerName = link.path[0].replace(/[^0-9a-z_\-\.]/gi, "");
     // get the module name from the URL
-    var moduleName = link.path[5].replace(/[^0-9a-z_\-\.]/gi, "");
+    var moduleName = link.path[1].replace(/[^0-9a-z_\-\.]/gi, "");
 
     // the module name must be almost alphanumeric
-    if (ownerName.length != link.path[4].length || moduleName.length != link.path[5].length) {
+    if (ownerName.length != link.path[0].length || moduleName.length != link.path[1].length) {
         send.badrequest(link, "Incorrect module name in request URL");
         return;
     }
@@ -106,20 +91,20 @@ exports.getModule = function(link) {
     model.getModuleFile(ownerName, moduleName, link.session.uid, function(err, module) {
         
         // error checks
-        if (err || !module || !module.name) {
+        if (err || !module) {
             send.notfound(link, err || ("Could not find module: " + ownerName + "/" + moduleName));
             return;
         }
-
+        
         // now serve the module file
-        link.req.url = module.owner + "/" + module.name + "/" + (module.dir || "") + link.path.slice(6).join("/").replace(/[^a-z0-9\/\.\-_]|\.\.\//gi, "");
+        link.req.url = ownerName + "/" + moduleName + "/" + (module.dir ? module.dir + "/" : "") + link.path.slice(2).join("/").replace(/[^a-z0-9\/\.\-_]|\.\.\//gi, "");
         
         modules.serve(link.req, link.res);
     });
 };
 
 exports.getFile = function(link) {
-
+    
     var externalUrl = link.req.url;
     
     if (link.params && link.params.dir) {
