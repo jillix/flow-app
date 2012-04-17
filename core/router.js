@@ -6,7 +6,8 @@ var Nscript = CONFIG.clientLibrary + (CONFIG.dev ? ".dev" : "");
 var table = {
     
     "/": "jillix/editor",
-    "stdl": 1,
+    "stdl": "faeb187/stdl.list"
+    /*,
     "users": {
         
         "public.*": 10,
@@ -16,6 +17,7 @@ var table = {
         }
     },
     "roles": 71
+    */
 };
 
 
