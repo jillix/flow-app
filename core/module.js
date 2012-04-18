@@ -2,7 +2,7 @@ var send = require(CONFIG.root + "/core/send.js").send,
     read = require(CONFIG.root + "/core/util.js").read,
     stat = require("node-static").Server,
     model = require(CONFIG.root + "/core/model/orient.js"),
-    files = new stat(CONFIG.root + "/files/domains"),
+    client = new stat(CONFIG.root + "/core/client"),
     modules = new stat(CONFIG.root + "/modules");
 
 function buildComp(response, module) {
@@ -104,7 +104,14 @@ exports.getModule = function(link) {
     });
 };
 
-exports.getFile = function(link) {
+exports.getClient = function(link){
+    
+    link.req.url = link.path[0];
+    
+    client.serve(link.req, link.res);
+};
+
+/*exports.getFile = function(link) {
     
     var externalUrl = link.req.url;
     
@@ -130,4 +137,4 @@ exports.getFile = function(link) {
     else {
         send.forbidden(link);
     }
-};
+};*/

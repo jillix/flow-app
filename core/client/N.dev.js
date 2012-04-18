@@ -547,7 +547,7 @@ var N = {
         }
 
         //get module
-        N.link({ url: "/core/module/getConfig/" + moduleId }, function(err, response) {
+        N.link({ url: "/core/getConfig/" + moduleId }, function(err, response) {
 
             //error checks
             if (err || !response) {

@@ -6,8 +6,8 @@ var Nscript = CONFIG.clientLibrary + (CONFIG.dev ? ".dev" : "");
 // TODO add ModuleInstanceID to routing table
 var table = {
     
-    "/": "jillix/editor",
-    "stdl": "faeb187/stdl.list"
+    "/": "MIID_Y",
+    "stdl": "MIID_X"
     /*,
     "users": {
         
@@ -34,14 +34,14 @@ function initScripts(module) {
         (CONFIG.dev ? "// require.js reads this global property, if available" : "") + nl +
         "var require={" + nl +
             "baseUrl:'" + baseUrl + "'," + nl +
-            "deps:['core/module/MIID/" + Nscript + "']" + nl +
+            "deps:['/" + CONFIG.operationKey + "/core/getClient/" + Nscript + ".js']" + nl +
         "};" + nl +
         "window.onload=function(){" + nl +
             "N.ok='/"+ CONFIG.operationKey  + "';" + nl +
             "N.mod('body','" + module + "')" + nl +
         "}" + nl +
         "</script>" + nl +
-        "<script src='" + baseUrl + "/MIID/require.js'></script>" + nl +
+        "<script src='/" + CONFIG.operationKey + "/core/getClient/require.js'></script>" + nl +
         "</head>" + nl +
         "<body></body>" + nl +
         "</html>";
