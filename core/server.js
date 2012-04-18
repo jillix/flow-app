@@ -37,7 +37,7 @@ function requestHandler(req, res) {
 
     if (path[0] == CONFIG.operationKey) {
         
-        if (link.path.length < 3) {
+        if (path.length < 3) {
         
             return send.badrequest(link, "incorrect operation url");
         }
