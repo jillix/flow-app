@@ -11,13 +11,15 @@ function buildComp(response, module) {
     
     // add the module css in the third response object
     for (var i in module.css) {
+    
+        // TODO append D/ for domain css and M/ for module css
         response[2].push(module.css[i] + ".css");
     }
 }
 
 exports.getConfig = function(link) {
    
-    model.getModuleConfig(link.path[0], link.path[1], link.session.uid, function(err, module) {
+    model.getModuleConfig(link.path[0], link.path[1], link.operation.miid, link.session.uid, function(err, module) {
         
         // error checks
         if (err || !module) {
@@ -86,7 +88,9 @@ exports.getModule = function(link) {
         send.badrequest(link, "Incorrect module name in request URL");
         return;
     }
-
+    
+    console.log(link.operation);
+    
     // find the module in the database
     model.getModuleFile(ownerName, moduleName, link.session.uid, function(err, module) {
         
