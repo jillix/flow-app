@@ -4,8 +4,7 @@ var http  = require("http");
 var parseUrl  = require("url").parse,
     send      = require(CONFIG.root + "/core/send.js").send,
     operation = require(CONFIG.root + "/core/operator.js").operation,
-    route     = require(CONFIG.root + "/core/router.js").route,
-    mods      = require(CONFIG.root + "/core/module.js");
+    route     = require(CONFIG.root + "/core/router.js").route;
 
 
 var Server = exports.Server = function () {

@@ -1,6 +1,7 @@
 var formidable      = require("formidable"),
     util            = require(CONFIG.root + "/core/util.js"),
     send            = require(CONFIG.root + "/core/send.js").send,
+    mods            = require(CONFIG.root + "/core/module.js"),
     getSession      = require(CONFIG.root + "/core/session.js").get,
     getOperation = require(CONFIG.root + "/core/model/orient.js").getUserOperation;
 
@@ -32,13 +33,13 @@ exports.operation = function(link) {
 
         if (link.operation.module === CONFIG.coreKey) {
             
-            if (mods[link.operation.module]) {
+            if (mods[link.operation.method]) {
                 
-                mods[link.operation.module](link);
+                mods[link.operation.method](link);
             }
             else {
                 
-                send.badrequest(link, "Core method does not exists: " + link.operation.module);
+                send.badrequest(link, "Core method does not exists: " + link.operation.method);
             }
             
             return;

@@ -79,13 +79,9 @@ exports.getModule = function(link) {
     }
     
     // get the module instance id
-    var miid = link.path[0].replace(/[^0-9a-z_\-\.]/gi, "");
+    var miid = link.path[0].replace(/[^0-9a-z_\-\.]/gi, ""),
+        appid = link.host[1] + "." + link.host[0];
     
-    // get the module owner name from the URL
-    //var ownerName = link.path[0].replace(/[^0-9a-z_\-\.]/gi, "");
-    // get the module name from the URL
-    //var moduleName = link.path[1].replace(/[^0-9a-z_\-\.]/gi, "");
-
     // the module name must be almost alphanumeric
     if (miid.length != link.path[0].length) {
         send.badrequest(link, "Incorrect module instance in request URL");
@@ -93,7 +89,7 @@ exports.getModule = function(link) {
     }
     
     // find the module in the database
-    model.getModuleFile(link.path[0], link.session.uid, function(err, module) {
+    model.getModuleFile(appid, miid, link.session.uid, function(err, module) {
         
         // error checks
         if (err || !module) {

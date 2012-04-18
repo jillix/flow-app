@@ -24,7 +24,7 @@ var table = {
 
 function initScripts(module) {
 
-    var baseUrl = "/" + CONFIG.operationKey + "/core/module/MIID/getModule";
+    var baseUrl = "/" + CONFIG.operationKey + "/core/getModule";
     var nl = (CONFIG.dev ? "\r\n" : "");
 
     return "<!DOCTYPE html>" + nl +
@@ -41,7 +41,7 @@ function initScripts(module) {
             "N.mod('body','" + module + "')" + nl +
         "}" + nl +
         "</script>" + nl +
-        "<script src='" + baseUrl + "/core/module/require.js'></script>" + nl +
+        "<script src='" + baseUrl + "/MIID/require.js'></script>" + nl +
         "</head>" + nl +
         "<body></body>" + nl +
         "</html>";
