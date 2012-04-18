@@ -2,10 +2,11 @@ var send = require(CONFIG.root + "/core/send").send;
 
 var Nscript = CONFIG.clientLibrary + (CONFIG.dev ? ".dev" : "");
 
-// TODO: get routing tables from db (mongodb) 
+// TODO get routing tables from db (mongodb)
+// TODO add ModuleInstanceID to routing table
 var table = {
     
-    "/": "jillix/editor",
+    "/": "jillix/editor/maineditor",
     "stdl": "faeb187/stdl.list"
     /*,
     "users": {
@@ -23,7 +24,7 @@ var table = {
 
 function initScripts(module) {
 
-    var baseUrl = "/" + CONFIG.operationKey + "/core/module/getModule";
+    var baseUrl = "/" + CONFIG.operationKey + "/core/module/MIID/getModule";
     var nl = (CONFIG.dev ? "\r\n" : "");
 
     return "<!DOCTYPE html>" + nl +
@@ -33,7 +34,7 @@ function initScripts(module) {
         (CONFIG.dev ? "// require.js reads this global property, if available" : "") + nl +
         "var require={" + nl +
             "baseUrl:'" + baseUrl + "'," + nl +
-            "deps:['core/module/" + Nscript + "']" + nl +
+            "deps:['core/module/MIID/" + Nscript + "']" + nl +
         "};" + nl +
         "window.onload=function(){" + nl +
             "N.ok='/"+ CONFIG.operationKey  + "';" + nl +
@@ -62,7 +63,7 @@ exports.route = function(link) {
         // set headers
         link.res.headers["content-style-type"] = "text/css";
         link.res.headers["content-type"]       = "text/html; charset=utf-8";
-
+        
         send.ok(link.res, initScripts(module));
     }
     else {

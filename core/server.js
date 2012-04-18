@@ -38,11 +38,12 @@ function requestHandler(req, res) {
         link.operation = {
         
             module: path[1] && path[2] ? path[1] + "/" + path[2] : null,
-            method: path[3] ? path[3] : null
+            method: path[4] ? path[4] : null,
+            miid: path[3]
         };
         
-        link.path = path.slice(4);
-        
+        link.path = path.slice(5);
+        console.log(link.operation);
         operation(link);
     }
     else {

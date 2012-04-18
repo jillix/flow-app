@@ -531,6 +531,7 @@ var N = {
     /**
      * Create Instances of Modules
      */
+    // TODO Module Instace ID
     mod: function(target, moduleId, callback) {
 
         //default argument values
@@ -569,10 +570,12 @@ var N = {
             }
 
             // load, clone and init modules
+            // TODO load main from config if exists
             require([moduleId + "/main"], function(module) {
 
                 var clone = module.clone();
-
+                
+                clone.module = module;
                 clone.$ = target;
                 
                 // TODO create observer with user defined id (only for GUI)
