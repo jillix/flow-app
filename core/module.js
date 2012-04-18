@@ -77,31 +77,32 @@ exports.getModule = function(link) {
         send.badrequest(link, "Module name missing");
         return;
     }
-
+    
+    // get the module instance id
+    var miid = link.path[0].replace(/[^0-9a-z_\-\.]/gi, "");
+    
     // get the module owner name from the URL
-    var ownerName = link.path[0].replace(/[^0-9a-z_\-\.]/gi, "");
+    //var ownerName = link.path[0].replace(/[^0-9a-z_\-\.]/gi, "");
     // get the module name from the URL
-    var moduleName = link.path[1].replace(/[^0-9a-z_\-\.]/gi, "");
+    //var moduleName = link.path[1].replace(/[^0-9a-z_\-\.]/gi, "");
 
     // the module name must be almost alphanumeric
-    if (ownerName.length != link.path[0].length || moduleName.length != link.path[1].length) {
-        send.badrequest(link, "Incorrect module name in request URL");
+    if (miid.length != link.path[0].length) {
+        send.badrequest(link, "Incorrect module instance in request URL");
         return;
     }
     
-    console.log(link.operation);
-    
     // find the module in the database
-    model.getModuleFile(ownerName, moduleName, link.session.uid, function(err, module) {
+    model.getModuleFile(link.path[0], link.session.uid, function(err, module) {
         
         // error checks
         if (err || !module) {
-            send.notfound(link, err || ("Could not find module: " + ownerName + "/" + moduleName));
+            send.notfound(link, err || ("Could not find module: " + miid));
             return;
         }
         
         // now serve the module file
-        link.req.url = ownerName + "/" + moduleName + "/" + (module.dir ? module.dir + "/" : "") + link.path.slice(2).join("/").replace(/[^a-z0-9\/\.\-_]|\.\.\//gi, "");
+        link.req.url = module.owner + "/" + module.name + "/" + (module.dir ? module.dir + "/" : "") + link.path.slice(2).join("/").replace(/[^a-z0-9\/\.\-_]|\.\.\//gi, "");
         
         modules.serve(link.req, link.res);
     });
