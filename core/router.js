@@ -6,7 +6,7 @@ var Nscript = CONFIG.clientLibrary + (CONFIG.dev ? ".dev" : "");
 // TODO add ModuleInstanceID to routing table
 var table = {
     
-    "/": "jillix/editor/maineditor",
+    "/": "jillix/editor",
     "stdl": "faeb187/stdl.list"
     /*,
     "users": {

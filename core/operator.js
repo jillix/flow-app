@@ -30,9 +30,19 @@ exports.operation = function(link) {
 
         link.session = session;
 
-        // read the operation from the request URL
-        //var moduleName = link.path[1] && link.path[2] ? (link.path[1] + "/" + link.path[2]) : null,
-        //    methodName = link.path[3] ? link.path[3] : null;
+        if (link.operation.module === CONFIG.coreKey) {
+            
+            if (mods[link.operation.module]) {
+                
+                mods[link.operation.module](link);
+            }
+            else {
+                
+                send.badrequest(link, "Core method does not exists: " + link.operation.module);
+            }
+            
+            return;
+        }
 
         // id no operation was found in the request URL
         if (!link.operation.module || !link.operation.method) {
@@ -41,7 +51,7 @@ exports.operation = function(link) {
                 resume(true);
             }
 
-            send.badrequest(link, "Missing Modulename or Methodname.");
+            send.badrequest(link, "Missing module instance or method name");
             return;
         }
 

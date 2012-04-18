@@ -62,9 +62,9 @@ exports.getUserOperation = function(module, method, userId, callback) {
 };
 
 
-exports.getModuleFile = function(ownerName, moduleName, userId, callback) {
+exports.getModuleFile = function(miid, userId, callback) {
 
-    getModule(ownerName, moduleName, userId, false, callback);
+    getModule(miid, userId, false, callback);
 
 };
 
@@ -76,7 +76,7 @@ exports.getModuleConfig = function(ownerName, moduleName, userId, callback) {
 };
 
 
-function getModule(ownerName, moduleName, userId, withConfig, callback) {
+function getModule(miid, userId, withConfig, callback) {
 
     // TODO add either a db.open or make the db.open call before any operation
     // TODO the cluster IDs should be searched for in the mono initialization phase where also the connection is opened

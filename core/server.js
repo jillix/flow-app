@@ -2,8 +2,10 @@ var http  = require("http");
 
 // imported functions
 var parseUrl  = require("url").parse,
+    send      = require(CONFIG.root + "/core/send.js").send,
     operation = require(CONFIG.root + "/core/operator.js").operation,
-    route     = require(CONFIG.root + "/core/router.js").route;
+    route     = require(CONFIG.root + "/core/router.js").route,
+    mods      = require(CONFIG.root + "/core/module.js");
 
 
 var Server = exports.Server = function () {
@@ -34,16 +36,22 @@ function requestHandler(req, res) {
     link.res.headers = {};
 
     if (path[0] == CONFIG.operationKey) {
-    
-        link.operation = {
         
-            module: path[1] && path[2] ? path[1] + "/" + path[2] : null,
-            method: path[4] ? path[4] : null,
-            miid: path[3]
+        if (link.path.length < 3) {
+        
+            return send.badrequest(link, "incorrect operation url");
+        }
+        
+        link.operation = {
+            
+            module: path[1],
+            method: path[2]
         };
         
-        link.path = path.slice(5);
+        link.path = path.slice(3);
+        
         console.log(link.operation);
+        
         operation(link);
     }
     else {

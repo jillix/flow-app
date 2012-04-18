@@ -3,6 +3,7 @@
     "dev"           : true,
     "devPort"       : 8000,
     "operationKey"  : "@",
+    "coreKey"       : "core",
     "uploaddir"     : "files/upload",
     "adminEmail"    : "admin@jillix.com",
     "clientLibrary" : "N",
