@@ -27,7 +27,7 @@ exports.getUserOperation = function(module, method, userId, callback) {
                 "@class = 'VOperation' AND " +
                 "module = '" + module + "' AND " +
                 "method = '" + method + "'";
-        
+
         sql(command, function(err, results) {
 
             if (err) {
@@ -77,7 +77,7 @@ exports.getModuleConfig = function(ownerName, moduleName, userId, callback) {
 
 
 function getModule(ownerName, moduleName, userId, withConfig, callback) {
-debugger;
+
     // TODO add either a db.open or make the db.open call before any operation
     // TODO the cluster IDs should be searched for in the mono initialization phase where also the connection is opened
     var vuClusterId = db.getClusterIdByClass("VUser");
@@ -122,8 +122,47 @@ debugger;
 }
 
 
+this.getDomainPublicUser = function(domain, callback) {
+
+    db.open(function(err, result) {
+
+        if (err) { return callback(err); }
+
+        var command = "SELECT publicUser FROM VApplication WHERE name = 'mono.ch'";
+
+        sql(command, function(err, results) {
+
+            // error checks
+            if (err) {
+                return callback("An error occured while retrieving the public user for domain '" + domain + "':" + err);
+            }
+
+            if (results.length == 0) {
+                return callback("No such domain: " + domain);
+            }
+
+            if (results.length > 1) {
+                return callback("There can be only one domain: " + domain + ". Found: " + results.length);
+            }
+
+            if (!results[0] || !results[0].publicUser) {
+                return callback("The domain '" + domain + "' has no public user.");
+            }
+
+            var rid = results[0].publicUser;
+            var id = parseInt(rid.split(":")[1]);
+
+            if (isNaN(id)) {
+                return callback("Invalid public user id for domain '" + domain + "': " + rid);
+            }
+
+            callback(null, id);
+        });
+    });
+};
+
 function sql(command, callback) {
-    //console.log(command);
+    console.log(command);
     db.command(command, callback);
 }
 

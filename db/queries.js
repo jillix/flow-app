@@ -111,36 +111,6 @@ this.getUsersUIElements = function( userID, callback ) {
 	});
 };
 
-this.getUsersModule = function(modid, userID, callback) {
-    
-	orient( CONFIG.orientDB, function( err, db ){
-	
-		if( err ) callback( err );
-		else db.sql(
-            
-            "select name as module,dir from VModule where name = '" + modid + "' and in traverse(5,8) (@rid = #7:" + userID + ")",
-            callback
-        );
-	});
-};
-
-this.getUsersComp = function( userID, compID, callback ){
-	
-	orient( CONFIG.orientDB, function( err, db ){
-		
-		if( err ) callback( err );
-		else db.sql(
-			
-			"select name as module,dir,in[@class = 'EHasAccessTo'].config as config,"+
-			"in[@class = 'EHasAccessTo'].html as html,"+
-			"in[@class = 'EHasAccessTo'].css as css "+
-			"from VModule where in traverse(5,8) (@rid = #7:"+ userID +" ) "+
-			"and in traverse(2,2) (@rid = #11:"+ compID +")",
-			callback
-		);
-	});
-};
-
 this.getDomainsPublicUser = function(domain, callback) {
 	
 	orient(CONFIG.orientDB, function(err, db){

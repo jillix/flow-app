@@ -2,17 +2,6 @@
     "records": [
         {
             "@type": "d",
-            "@rid": "#11:0",
-            "@version": 0,
-            "@class": "VDomain",
-            "name": "mono.ch",
-            "roles": [
-                "#8:0",
-                "#8:1"
-            ]
-        },
-        {
-            "@type": "d",
             "@rid": "#7:0",
             "@version": 0,
             "@class": "VUser",
@@ -36,11 +25,23 @@
         },
         {
             "@type": "d",
+            "@rid": "#11:0",
+            "@version": 0,
+            "@class": "VApplication",
+            "name": "mono.ch",
+            "publicUser": "#7:0",
+            "roles": [
+                "#8:0",
+                "#8:1"
+            ]
+        },
+        {
+            "@type": "d",
             "@rid": "#8:0",
             "@version": 0,
             "@class": "VRole",
             "name": "Mono Public",
-            "domain": "#11:0",
+            "app": "#11:0",
             "in": [
                 "#6:0",
                 "#6:1"
@@ -65,7 +66,7 @@
             "@version": 0,
             "@class": "VRole",
             "name": "Mono Admin",
-            "domain": "#11:0",
+            "app": "#11:0",
             "in": [
                 "#6:2"
             ]

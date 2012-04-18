@@ -205,11 +205,11 @@
                         "not-null": true
                     },
                     {
-                        "name": "domain",
+                        "name": "app",
                         "type": "LINK",
                         "mandatory": true,
                         "not-null": true,
-                        "linked-class": "VDomain"
+                        "linked-class": "VApplication"
                     }
                 ]
             },
@@ -266,7 +266,7 @@
                 ]
             },
             {
-                "name": "VDomain",
+                "name": "VApplication",
                 "default-cluster-id": 11,
                 "cluster-ids": [11],
                 "super-class": "OGraphVertex",

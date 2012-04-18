@@ -6,7 +6,7 @@ var formidable      = require("formidable"),
 
 
 exports.operation = function(link) {
-    
+
     var resume = null;
 
     // pause on POST requests (cache data until resume is called)
@@ -16,7 +16,7 @@ exports.operation = function(link) {
     }
 
     getSession(link, function(err, session) {
-        
+
         // if no session or an error getting it
         if (err || !session) {
 
@@ -29,11 +29,11 @@ exports.operation = function(link) {
         }
 
         link.session = session;
-        
+
         // read the operation from the request URL
         //var moduleName = link.path[1] && link.path[2] ? (link.path[1] + "/" + link.path[2]) : null,
         //    methodName = link.path[3] ? link.path[3] : null;
-        
+
         // id no operation was found in the request URL
         if (!link.operation.module || !link.operation.method) {
 
@@ -44,9 +44,9 @@ exports.operation = function(link) {
             send.badrequest(link, "Missing Modulename or Methodname.");
             return;
         }
-        
+
         getOperation(link.operation.module, link.operation.method, session.uid, function(err, operation) {
-            
+
             if (err) {
                 if (resume) { resume(true); }
                 send.internalservererror(link, err);
@@ -55,7 +55,7 @@ exports.operation = function(link) {
 
             var file = CONFIG.root + "/modules/" + link.operation.module + "/" + operation.file;
             var method = util.load(file, link.operation.method);
-            
+
             if (typeof method !== "function") {
 
                 if (resume) {

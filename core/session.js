@@ -1,6 +1,7 @@
 var self = this,
 	uuid = require( CONFIG.root + "/core/util" ).uuid,
 	queries = require( CONFIG.root + "/db/queries" ),
+	model = require(CONFIG.root + "/core/model/orient.js"),
 	expire_time = 9,
 	
 	//session class
@@ -70,26 +71,15 @@ this.get = function(link, callback) {
             }
         });
     }
-    //if no session-id is defined create public session
+    // if no session-id is defined create public session
     else {
+        model.getDomainPublicUser(link.host[1] + "." + link.host[0], function(err, userId) {
         
-        queries.getDomainsPublicUser(link.host[1] + "." + link.host[0], function(err, result){
-            
             if (err) {
-                
-                callback(err);
+                return callback(err);
             }
-            else if (result && result.publicUser) {
-                
-                callback(null, {
-                
-                    uid: result.publicUser.split(":")[1]
-                });
-            }
-            else {
-                
-                callback(new Error("No public user not found"));
-            }
+
+            callback(null, { uid: userId });
         });
     }
 };
