@@ -179,22 +179,16 @@
                 "super-class": "OGraphVertex",
                 "properties": [
                     {
-                        "name": "name",
+                        "name": "username",
                         "type": "STRING",
                         "mandatory": true,
-                        "not-null": false
+                        "not-null": true
                     },
                     {
-                        "name": "pasword",
+                        "name": "password",
                         "type": "STRING",
-                        "mandatory": false,
-                        "not-null": false
-                    },
-                    {
-                        "name": "pubword",
-                        "type": "STRING",
-                        "mandatory": false,
-                        "not-null": false
+                        "mandatory": true,
+                        "not-null": true
                     }
                 ]
             },
@@ -209,6 +203,13 @@
                         "type": "STRING",
                         "mandatory": true,
                         "not-null": true
+                    },
+                    {
+                        "name": "domain",
+                        "type": "LINK",
+                        "mandatory": true,
+                        "not-null": true,
+                        "linked-class": "VDomain"
                     }
                 ]
             },
@@ -277,11 +278,11 @@
                         "not-null": true
                     },
                     {
-                        "name": "publicUser",
-                        "type": "LINK",
-                        "mandatory": true,
-                        "not-null": true,
-                        "linked-class": "VUser"
+                        "name": "roles",
+                        "type": "LINKSET",
+                        "mandatory": false,
+                        "not-null": false,
+                        "linked-class": "VRole"
                     }
                 ]
             },
@@ -297,7 +298,14 @@
                 "default-cluster-id": 6,
                 "cluster-ids": [6],
                 "super-class": "OGraphEdge",
-                "properties": []
+                "properties": [
+                    {
+                        "name": "miid",
+                        "type": "STRING",
+                        "mandatory": true,
+                        "not-null": true
+                    }
+                ]
             },
             {
                 "name": "EHasAccessTo",
@@ -305,6 +313,12 @@
                 "cluster-ids": [6],
                 "super-class": "OGraphEdge",
                 "properties": [
+                    {
+                        "name": "miid",
+                        "type": "STRING",
+                        "mandatory": true,
+                        "not-null": true
+                    },
                     {
                         "name": "html",
                         "type": "STRING",
@@ -324,13 +338,6 @@
                         "not-null": true
                     }
                 ]
-            },
-            {
-                "name": "EHas",
-                "default-cluster-id": 6,
-                "cluster-ids": [6],
-                "super-class": "OGraphEdge",
-                "properties": []
             }
         ]
     }

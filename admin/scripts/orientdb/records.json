@@ -2,10 +2,22 @@
     "records": [
         {
             "@type": "d",
+            "@rid": "#11:0",
+            "@version": 0,
+            "@class": "VDomain",
+            "name": "mono.ch",
+            "roles": [
+                "#8:0",
+                "#8:1"
+            ]
+        },
+        {
+            "@type": "d",
             "@rid": "#7:0",
             "@version": 0,
             "@class": "VUser",
-            "name": "Guido Fawkes",
+            "username": "anonymous",
+            "password": "",
             "out": [
                 "#6:0"
             ]
@@ -15,9 +27,8 @@
             "@rid": "#7:1",
             "@version": 0,
             "@class": "VUser",
-            "name": "Default Admin",
-            "pubword": "admin",
-            "pasword": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
+            "username": "admin",
+            "password": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
             "out": [
                 "#6:1",
                 "#6:2"
@@ -28,7 +39,8 @@
             "@rid": "#8:0",
             "@version": 0,
             "@class": "VRole",
-            "name": "Public",
+            "name": "Mono Public",
+            "domain": "#11:0",
             "in": [
                 "#6:0",
                 "#6:1"
@@ -44,8 +56,7 @@
                 "#6:8",
                 "#6:10",
                 "#6:11",
-                "#6:12",
-                "#6:14"
+                "#6:12"
             ]
         },
         {
@@ -54,6 +65,7 @@
             "@version": 0,
             "@class": "VRole",
             "name": "Mono Admin",
+            "domain": "#11:0",
             "in": [
                 "#6:2"
             ]
@@ -147,6 +159,7 @@
             "@class": "VModule",
             "owner": "faeb187",
             "name": "stdl.list",
+            "dir": "js/client",
             "in": [
                 "#6:10"
             ]
@@ -160,17 +173,6 @@
             "name": "tempAdmin",
             "in": [
                 "#6:11"
-            ]
-        },
-        {
-            "@type": "d",
-            "@rid": "#10:5",
-            "@version": 0,
-            "owner": "core",
-            "@class": "VModule",
-            "name": "require.js",
-            "in": [
-                "#6:14"
             ]
         },
         {
@@ -194,14 +196,6 @@
             "in": [
                 "#6:10"
             ]
-        },
-        {
-            "@type": "d",
-            "@rid": "#11:0",
-            "@version": 0,
-            "@class": "VDomain",
-            "name": "mono.ch",
-            "publicUser": "#7:0"
         },
         {
             "@type": "d",
@@ -232,6 +226,7 @@
             "@rid": "#6:3",
             "@version": 0,
             "@class": "ECanPerform",
+            "miid": "mono_core_module",
             "out": "#8:0",
             "in": "#9:0"
         },
@@ -240,6 +235,7 @@
             "@rid": "#6:4",
             "@version": 0,
             "@class": "ECanPerform",
+            "miid": "mono_core_module",
             "out": "#8:0",
             "in": "#9:1"
         },
@@ -248,6 +244,7 @@
             "@rid": "#6:5",
             "@version": 0,
             "@class": "EHasAccessTo",
+            "miid": "mono_core_module",
             "out": "#8:0",
             "in": "#10:0"
         },
@@ -256,6 +253,7 @@
             "@rid": "#6:6",
             "@version": 0,
             "@class": "EHasAccessTo",
+            "miid": "mono_editor_1",
             "html": "mono.ch/ace",
             "css": ["ace"],
             "out": "#8:0",
@@ -266,6 +264,7 @@
             "@rid": "#6:8",
             "@version": 0,
             "@class": "EHasAccessTo",
+            "miid": "mono_ace_1",
             "out": "#8:0",
             "in": "#10:2"
         },
@@ -274,6 +273,7 @@
             "@rid": "#6:9",
             "@version": 0,
             "@class": "ECanPerform",
+            "miid": "mono_core_module",
             "params": {
                 "dir": "mono.ch/pub/"
             },
@@ -285,6 +285,7 @@
             "@rid": "#6:10",
             "@version": 0,
             "@class": "EHasAccessTo",
+            "miid": "mono_stdl_list_1",
             "html": "mono.ch/stdl/list/list",
             "css": ["list", "def", "screen"],
             "out": "#8:0",
@@ -295,6 +296,7 @@
             "@rid": "#6:11",
             "@version": 0,
             "@class": "EHasAccessTo",
+            "miid": "mono_temp_admin",
             "html": "mono.ch/main",
             "css": ["main"],
             "out": "#8:0",
@@ -305,6 +307,7 @@
             "@rid": "#6:12",
             "@version": 0,
             "@class": "EHasAccessTo",
+            "miid": "mono_stdl_layout_1",
             "html": "mono.ch/stdl/layout/layout",
             "css": ["def", "screen"],
             "out": "#8:0",
@@ -315,16 +318,9 @@
             "@rid": "#6:13",
             "@version": 0,
             "@class": "ECanPerform",
+            "miid": "mono_stdl_list_1",
             "out": "#8:0",
             "in": "#9:3"
-        },
-        {
-            "@type": "d",
-            "@rid": "#6:14",
-            "@version": 0,
-            "@class": "EHasAccessTo",
-            "out": "#8:0",
-            "in": "#10:5"
         }
     ]
 }
