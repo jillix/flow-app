@@ -1,7 +1,5 @@
 var send = require(CONFIG.root + "/core/send").send;
 
-var Nscript = CONFIG.clientLibrary + (CONFIG.dev ? ".dev" : "");
-
 // TODO get routing tables from db (mongodb)
 // TODO add ModuleInstanceID to routing table
 var table = {
@@ -34,7 +32,7 @@ function initScripts(module) {
         (CONFIG.dev ? "// require.js reads this global property, if available" : "") + nl +
         "var require={" + nl +
             "baseUrl:'" + baseUrl + "'," + nl +
-            "deps:['/" + CONFIG.operationKey + "/core/getClient/" + Nscript + ".js']" + nl +
+            "deps:['/" + CONFIG.operationKey + "/core/getClient/N.js']" + nl +
         "};" + nl +
         "window.onload=function(){" + nl +
             "N.ok='/"+ CONFIG.operationKey  + "';" + nl +

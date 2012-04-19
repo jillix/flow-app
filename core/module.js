@@ -5,44 +5,49 @@ var send = require(CONFIG.root + "/core/send.js").send,
     client = new stat(CONFIG.root + "/core/client"),
     modules = new stat(CONFIG.root + "/modules");
 
-function buildComp(response, module) {
+function buildComp(module) {
     
-    response[0] = module.config || {};
+    var response = [
+        
+        module.config || {},
+        module.html || ""
+    ];
     
-    // add the module css in the third response object
-    for (var i in module.css) {
-    
-        // TODO append D/ for domain css and M/ for module css
-        response[2].push(module.css[i] + ".css");
+    if (module.css) {
+        
+        response[2] = [];
+        
+        // add the module css in the third response object
+        for (var i in module.css) {
+        
+            // TODO append D/ for domain css and M/ for module css
+            response[2].push(module.css[i] + ".css");
+        }
     }
+    
+    return response;
 }
 
 exports.getConfig = function(link) {
-   
-    model.getModuleConfig(link.path[0], link.path[1], link.operation.miid, link.session.uid, function(err, module) {
+    
+    // get the module instance id
+    var miid = link.path[0].replace(/[^0-9a-z_\-\.]/gi, ""),
+        appid = link.host[1] + "." + link.host[0];
+    
+    model.getModuleConfig(appid, miid, link.session.uid, function(err, module) {
         
         // error checks
         if (err || !module) {
-            send.notfound(link, err || "The component has no modules");
+            send.notfound(link, err || "No module found");
             return;
         }
-        
-        // TODO ab hier
-        var response = [
-            // modules & configs
-            {},
-            // html
-            "",
-            // styles
-            []
-        ];
         
         if (module.html) {
         
             // TODO this is duplicate directory name in the same file
             // try some refactoring or a config option
             // TODO get html from module directory
-            read("/files/domains/" + module.html + ".html", "utf8", function(err, html) {
+            read("/apps/" + appid + "/" + module.html + ".html", "utf8", function(err, html) {
 
                 if (err) {
 
@@ -54,17 +59,14 @@ exports.getConfig = function(link) {
                     }
                 }
 
-                response[1] += html;
-                buildComp(response, module);
+                module.html = html;
                 
-                send.ok(link.res, response);
+                send.ok(link.res, buildComp(module));
             });
         }
         else {
-        
-            buildComp(response, module);
             
-            send.ok(link.res, response);
+            send.ok(link.res, buildComp(module));
         }
     });
 };

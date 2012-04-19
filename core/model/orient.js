@@ -62,21 +62,21 @@ exports.getUserOperation = function(module, method, userId, callback) {
 };
 
 
-exports.getModuleFile = function(miid, userId, callback) {
+exports.getModuleFile = function(appid, miid, userId, callback) {
 
-    getModule(miid, userId, false, callback);
-
-};
-
-
-exports.getModuleConfig = function(ownerName, moduleName, userId, callback) {
-
-    getModule(ownerName, moduleName, userId, true, callback);
+    getModule(appid, miid, userId, false, callback);
 
 };
 
 
-function getModule(miid, userId, withConfig, callback) {
+exports.getModuleConfig = function(appid, miid, userId, callback) {
+
+    getModule(appid, miid, userId, true, callback);
+
+};
+
+
+function getModule(appid, miid, userId, withConfig, callback) {
 
     // TODO add either a db.open or make the db.open call before any operation
     // TODO the cluster IDs should be searched for in the mono initialization phase where also the connection is opened
@@ -98,22 +98,21 @@ function getModule(miid, userId, withConfig, callback) {
             "(TRAVERSE VUser.out, EMemberOf.in, VRole.out, EHasAccessTo.in FROM #" + vuClusterId + ":" + userId + ") " +
         "WHERE " +
             "@class = 'VModule' AND " +
-            "name = '" + moduleName + "' AND " +
-            "owner = '" + ownerName + "'";
+            "name = '" + miid + "'";
 
     sql(command, function(err, results) {
 
         // error checks
         if (err) {
-            return callback("An error occured while retrieving the module '" + ownerName + "/" + moduleName + "':" + err);
+            return callback("An error occured while retrieving the module '" + miid + "':" + err);
         }
 
         if (results.length == 0) {
-            return callback("No such module: " + ownerName + "/" + moduleName);
+            return callback("No such module: " + miid);
         }
 
         if (results.length > 1) {
-            return callback("There can be only one module: " + ownerName + "/" + moduleName + ". Found: " + results.length);
+            return callback("There can be only one module: " + miid + ". Found: " + results.length);
         }
 
         var module = results[0];

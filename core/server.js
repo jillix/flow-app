@@ -19,7 +19,6 @@ Server.prototype.start = function() {
     self.server.listen(CONFIG.dev ? CONFIG.devPort : CONFIG.port);
 };
 
-
 function requestHandler(req, res) {
 
     var url = parseUrl(req.url, true),
@@ -48,8 +47,6 @@ function requestHandler(req, res) {
         };
         
         link.path = path.slice(3);
-        
-        console.log(link.operation);
         
         operation(link);
     }

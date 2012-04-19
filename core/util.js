@@ -85,7 +85,7 @@ this.pause = function(req) {
  * author:      Adrian Ottiker
  * date:        22.11.2011
  */
-// !TODO: limit memory usage
+// TODO limit memory usage
 this.load = function(file, method) {
     
     if (!require.cache[file]) {
@@ -110,7 +110,7 @@ this.load = function(file, method) {
  * author:       Adrian Ottiker
  * date:         21.12.2011
  */
-// !TODO: limit memory usage
+// TODO limit memory usage
 var fileCache = {};
 this.read = function(file, encoding, callback) {
     
