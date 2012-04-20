@@ -62,12 +62,11 @@ exports.getUserOperation = function(module, method, userId, callback) {
 };
 
 
-exports.getModuleFile = function(appid, miid, userId, callback) {
+exports.getModuleFile = function(owner, name, userId, callback) {
 
-    getModule(appid, miid, userId, false, callback);
+    getModule(owner, name, userId, false, callback);
 
 };
-
 
 exports.getModuleConfig = function(appid, miid, userId, callback) {
 
@@ -76,7 +75,7 @@ exports.getModuleConfig = function(appid, miid, userId, callback) {
 };
 
 
-function getModule(appid, miid, userId, withConfig, callback) {
+function getModule(owner, name, userId, withConfig, callback) {
 
     // TODO add either a db.open or make the db.open call before any operation
     // TODO the cluster IDs should be searched for in the mono initialization phase where also the connection is opened
@@ -98,21 +97,22 @@ function getModule(appid, miid, userId, withConfig, callback) {
             "(TRAVERSE VUser.out, EMemberOf.in, VRole.out, EHasAccessTo.in FROM #" + vuClusterId + ":" + userId + ") " +
         "WHERE " +
             "@class = 'VModule' AND " +
-            "name = '" + miid + "'";
+            "owner = '" + owner + "' AND " +
+            "name = '" + name + "'";
 
     sql(command, function(err, results) {
 
         // error checks
         if (err) {
-            return callback("An error occured while retrieving the module '" + miid + "':" + err);
+            return callback("An error occured while retrieving the module '" + name + "':" + err);
         }
 
         if (results.length == 0) {
-            return callback("No such module: " + miid);
+            return callback("No such module: " + name);
         }
 
         if (results.length > 1) {
-            return callback("There can be only one module: " + miid + ". Found: " + results.length);
+            return callback("There can be only one module: " + name + ". Found: " + results.length);
         }
 
         var module = results[0];

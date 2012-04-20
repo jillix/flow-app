@@ -4,8 +4,8 @@ var send = require(CONFIG.root + "/core/send").send;
 // TODO add ModuleInstanceID to routing table
 var table = {
     
-    "/": "MIID_Y",
-    "stdl": "MIID_X"
+    "/": "mono_editor_1",
+    "stdl": "mono_stdl_list_1"
     /*,
     "users": {
         

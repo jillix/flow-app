@@ -522,7 +522,7 @@ var N = {
             N.dom.elm("link", {
                 rel:    "stylesheet",
                 type:   "text/css",
-                href:   N.ok + "/core/module/getFile/" + file
+                href:   N.ok + "/core/getFile/" + file
             })
         );
     },
@@ -532,7 +532,7 @@ var N = {
      * Create Instances of Modules
      */
     // TODO Module Instace ID
-    mod: function(target, moduleId, callback) {
+    mod: function(target, miid, callback) {
 
         //default argument values
         callback = (typeof callback == "function" ? callback : function() {});
@@ -542,12 +542,12 @@ var N = {
         if (!target) {
             return callback("Target not found or undefined.");
         }
-        if (typeof moduleId === "undefined") {
+        if (typeof miid === "undefined") {
             return callback("Component ID undefined.");
         }
 
         //get module
-        N.link({ url: "/core/getConfig/" + moduleId }, function(err, response) {
+        N.link({ url: "/core/getConfig/" + miid }, function(err, response) {
 
             //error checks
             if (err || !response) {
@@ -570,16 +570,15 @@ var N = {
             }
 
             // load, clone and init modules
-            // TODO load main from config if exists
-            require([moduleId + "/main"], function(module) {
-
+            require([response[0].owner + "/" + response[0].name + "/main"], function(module) {
+                
                 var clone = module.clone();
                 
                 clone.module = module;
                 clone.$ = target;
                 
                 // TODO create observer with user defined id (only for GUI)
-                clone.obs = N.obs(moduleId)
+                clone.obs = N.obs(miid)
 
                 // TODO register module state
 

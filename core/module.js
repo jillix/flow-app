@@ -3,7 +3,8 @@ var send = require(CONFIG.root + "/core/send.js").send,
     stat = require("node-static").Server,
     model = require(CONFIG.root + "/core/model/orient.js"),
     client = new stat(CONFIG.root + "/core/client"),
-    modules = new stat(CONFIG.root + "/modules");
+    modules = new stat(CONFIG.root + "/modules"),
+    files = new stat(CONFIG.root + "/apps");
 
 function buildComp(module) {
     
@@ -12,6 +13,9 @@ function buildComp(module) {
         module.config || {},
         module.html || ""
     ];
+    
+    response[0].owner = module.owner;
+    response[0].name = module.name;
     
     if (module.css) {
         
@@ -36,18 +40,30 @@ exports.getConfig = function(link) {
     
     model.getModuleConfig(appid, miid, link.session.uid, function(err, module) {
         
+        // REMOVE WHEN CALLBACK RETURNS CORRECT RESULT
+        err = null;
+        module = {
+            
+            config: {},
+            html: ["a", "stdl/ace/ace"],
+            css: ["ace"],
+            owner: "jillix",
+            name: "editor"
+        };
+        
         // error checks
         if (err || !module) {
             send.notfound(link, err || "No module found");
             return;
         }
         
-        if (module.html) {
+        if (module.html && module.html instanceof Array) {
         
             // TODO this is duplicate directory name in the same file
             // try some refactoring or a config option
-            // TODO get html from module directory
-            read("/apps/" + appid + "/" + module.html + ".html", "utf8", function(err, html) {
+            var path = (module.html[0] === "a" ? "/apps/" + appid : "/modules/" + module.owner + "/" + module.name) + "/" + module.html[1] + ".html";
+            
+            read(path, "utf8", function(err, html) {
 
                 if (err) {
 
@@ -81,17 +97,17 @@ exports.getModule = function(link) {
     }
     
     // get the module instance id
-    var miid = link.path[0].replace(/[^0-9a-z_\-\.]/gi, ""),
-        appid = link.host[1] + "." + link.host[0];
+    var owner = link.path[0].replace(/[^0-9a-z_\-\.]/gi, ""),
+        name = link.path[1].replace(/[^0-9a-z_\-\.]/gi, "");
     
     // the module name must be almost alphanumeric
-    if (miid.length != link.path[0].length) {
+    if (owner.length != link.path[0].length || name.length != link.path[1].length) {
         send.badrequest(link, "Incorrect module instance in request URL");
         return;
     }
     
     // find the module in the database
-    model.getModuleFile(appid, miid, link.session.uid, function(err, module) {
+    model.getModuleFile(owner, name, link.session.uid, function(err, module) {
         
         // error checks
         if (err || !module) {
@@ -100,7 +116,7 @@ exports.getModule = function(link) {
         }
         
         // now serve the module file
-        link.req.url = module.owner + "/" + module.name + "/" + (module.dir ? module.dir + "/" : "") + link.path.slice(2).join("/").replace(/[^a-z0-9\/\.\-_]|\.\.\//gi, "");
+        link.req.url = owner + "/" + name + "/" + (module.dir ? module.dir + "/" : "") + link.path.slice(2).join("/").replace(/[^a-z0-9\/\.\-_]|\.\.\//gi, "");
         
         modules.serve(link.req, link.res);
     });
@@ -113,14 +129,16 @@ exports.getClient = function(link){
     client.serve(link.req, link.res);
 };
 
-/*exports.getFile = function(link) {
+// ONLY PUBLIC FILES
+exports.getFile = function(link) {
     
-    var externalUrl = link.req.url;
+    var externalUrl = link.req.url,
+        appid = link.host[1] + "." + link.host[0];
     
-    if (link.params && link.params.dir) {
+    if (appid) {
 
         // change the request URL to the internal one
-        link.req.url = link.params.dir + link.path.slice(2).join("/").replace(/[^a-z0-9\/\.\-_]|\.\.\//gi, "");
+        link.req.url = appid + "/pub/" + link.path.join("/").replace(/[^a-z0-9\/\.\-_]|\.\.\//gi, "");
         
         files.serve(link.req, link.res, function(err, data) {
 
@@ -139,4 +157,4 @@ exports.getClient = function(link){
     else {
         send.forbidden(link);
     }
-};*/
+};
