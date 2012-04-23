@@ -68,8 +68,7 @@ exports.getModuleFile = function(appId, miid, userId, callback) {
 
 };
 
-
-exports.getModuleConfig = function(appId, miid, userId, callback) {
+exports.getModuleConfig = function(appid, miid, userId, callback) {
 
     getModule(appId, miid, userId, true, callback);
 
@@ -103,15 +102,15 @@ function getModule(appId, miid, userId, withConfig, callback) {
 
         // error checks
         if (err) {
-            return callback("An error occured while retrieving the module '" + ownerName + "/" + moduleName + "':" + err);
+            return callback("An error occured while retrieving the module '" + name + "':" + err);
         }
 
         if (results.length == 0) {
-            return callback("No such module: " + ownerName + "/" + moduleName);
+            return callback("No such module: " + name);
         }
 
         if (results.length > 1) {
-            return callback("There can be only one module: " + ownerName + "/" + moduleName + ". Found: " + results.length);
+            return callback("There can be only one module: " + name + ". Found: " + results.length);
         }
 
         var module = results[0];

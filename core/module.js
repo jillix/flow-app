@@ -2,47 +2,68 @@ var send = require(CONFIG.root + "/core/send.js").send,
     read = require(CONFIG.root + "/core/util.js").read,
     stat = require("node-static").Server,
     model = require(CONFIG.root + "/core/model/orient.js"),
-    files = new stat(CONFIG.root + "/files/domains"),
-    modules = new stat(CONFIG.root + "/modules");
+    client = new stat(CONFIG.root + "/core/client"),
+    modules = new stat(CONFIG.root + "/modules"),
+    files = new stat(CONFIG.root + "/apps");
 
-function buildComp(response, module) {
+function buildComp(module) {
     
-    response[0] = module.config || {};
+    var response = [
+        
+        module.config || {},
+        module.html || ""
+    ];
     
-    // add the module css in the third response object
-    for (var i in module.css) {
+    response[0].owner = module.owner;
+    response[0].name = module.name;
     
-        // TODO append D/ for domain css and M/ for module css
-        response[2].push(module.css[i] + ".css");
+    if (module.css) {
+        
+        response[2] = [];
+        
+        // add the module css in the third response object
+        for (var i in module.css) {
+        
+            // TODO append D/ for domain css and M/ for module css
+            response[2].push(module.css[i] + ".css");
+        }
     }
+    
+    return response;
 }
 
 exports.getConfig = function(link) {
-   
-    model.getModuleConfig(link.path[0], link.path[1], link.operation.miid, link.session.uid, function(err, module) {
+    
+    // get the module instance id
+    var miid = link.path[0].replace(/[^0-9a-z_\-\.]/gi, ""),
+        appid = link.host[1] + "." + link.host[0];
+    
+    model.getModuleConfig(appid, miid, link.session.uid, function(err, module) {
+        
+        // REMOVE WHEN CALLBACK RETURNS CORRECT RESULT
+        err = null;
+        module = {
+            
+            config: {},
+            html: ["a", "stdl/ace/ace"],
+            css: ["ace"],
+            owner: "jillix",
+            name: "editor"
+        };
         
         // error checks
         if (err || !module) {
-            send.notfound(link, err || "The component has no modules");
+            send.notfound(link, err || "No module found");
             return;
         }
         
-        // TODO ab hier
-        var response = [
-            // modules & configs
-            {},
-            // html
-            "",
-            // styles
-            []
-        ];
-        
-        if (module.html) {
+        if (module.html && module.html instanceof Array) {
         
             // TODO this is duplicate directory name in the same file
             // try some refactoring or a config option
-            // TODO get html from module directory
-            read("/files/domains/" + module.html + ".html", "utf8", function(err, html) {
+            var path = (module.html[0] === "a" ? "/apps/" + appid : "/modules/" + module.owner + "/" + module.name) + "/" + module.html[1] + ".html";
+            
+            read(path, "utf8", function(err, html) {
 
                 if (err) {
 
@@ -54,17 +75,14 @@ exports.getConfig = function(link) {
                     }
                 }
 
-                response[1] += html;
-                buildComp(response, module);
+                module.html = html;
                 
-                send.ok(link.res, response);
+                send.ok(link.res, buildComp(module));
             });
         }
         else {
-        
-            buildComp(response, module);
             
-            send.ok(link.res, response);
+            send.ok(link.res, buildComp(module));
         }
     });
 };
@@ -79,21 +97,17 @@ exports.getModule = function(link) {
     }
     
     // get the module instance id
-    var miid = link.path[0].replace(/[^0-9a-z_\-\.]/gi, "");
+    var owner = link.path[0].replace(/[^0-9a-z_\-\.]/gi, ""),
+        name = link.path[1].replace(/[^0-9a-z_\-\.]/gi, "");
     
-    // get the module owner name from the URL
-    //var ownerName = link.path[0].replace(/[^0-9a-z_\-\.]/gi, "");
-    // get the module name from the URL
-    //var moduleName = link.path[1].replace(/[^0-9a-z_\-\.]/gi, "");
-
     // the module name must be almost alphanumeric
-    if (miid.length != link.path[0].length) {
+    if (owner.length != link.path[0].length || name.length != link.path[1].length) {
         send.badrequest(link, "Incorrect module instance in request URL");
         return;
     }
     
     // find the module in the database
-    model.getModuleFile(link.path[0], link.session.uid, function(err, module) {
+    model.getModuleFile(owner, name, link.session.uid, function(err, module) {
         
         // error checks
         if (err || !module) {
@@ -102,20 +116,29 @@ exports.getModule = function(link) {
         }
         
         // now serve the module file
-        link.req.url = module.owner + "/" + module.name + "/" + (module.dir ? module.dir + "/" : "") + link.path.slice(2).join("/").replace(/[^a-z0-9\/\.\-_]|\.\.\//gi, "");
+        link.req.url = owner + "/" + name + "/" + (module.dir ? module.dir + "/" : "") + link.path.slice(2).join("/").replace(/[^a-z0-9\/\.\-_]|\.\.\//gi, "");
         
         modules.serve(link.req, link.res);
     });
 };
 
+exports.getClient = function(link){
+    
+    link.req.url = link.path[0];
+    
+    client.serve(link.req, link.res);
+};
+
+// ONLY PUBLIC FILES
 exports.getFile = function(link) {
     
-    var externalUrl = link.req.url;
+    var externalUrl = link.req.url,
+        appid = link.host[1] + "." + link.host[0];
     
-    if (link.params && link.params.dir) {
+    if (appid) {
 
         // change the request URL to the internal one
-        link.req.url = link.params.dir + link.path.slice(2).join("/").replace(/[^a-z0-9\/\.\-_]|\.\.\//gi, "");
+        link.req.url = appid + "/pub/" + link.path.join("/").replace(/[^a-z0-9\/\.\-_]|\.\.\//gi, "");
         
         files.serve(link.req, link.res, function(err, data) {
 

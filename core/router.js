@@ -1,13 +1,11 @@
 var send = require(CONFIG.root + "/core/send").send;
 
-var Nscript = CONFIG.clientLibrary + (CONFIG.dev ? ".dev" : "");
-
 // TODO get routing tables from db (mongodb)
 // TODO add ModuleInstanceID to routing table
 var table = {
     
-    "/": "jillix/editor",
-    "stdl": "faeb187/stdl.list"
+    "/": "mono_editor_1",
+    "stdl": "mono_stdl_list_1"
     /*,
     "users": {
         
@@ -24,7 +22,7 @@ var table = {
 
 function initScripts(module) {
 
-    var baseUrl = "/" + CONFIG.operationKey + "/core/module/MIID/getModule";
+    var baseUrl = "/" + CONFIG.operationKey + "/core/getModule";
     var nl = (CONFIG.dev ? "\r\n" : "");
 
     return "<!DOCTYPE html>" + nl +
@@ -34,14 +32,14 @@ function initScripts(module) {
         (CONFIG.dev ? "// require.js reads this global property, if available" : "") + nl +
         "var require={" + nl +
             "baseUrl:'" + baseUrl + "'," + nl +
-            "deps:['core/module/MIID/" + Nscript + "']" + nl +
+            "deps:['/" + CONFIG.operationKey + "/core/getClient/N.js']" + nl +
         "};" + nl +
         "window.onload=function(){" + nl +
             "N.ok='/"+ CONFIG.operationKey  + "';" + nl +
             "N.mod('body','" + module + "')" + nl +
         "}" + nl +
         "</script>" + nl +
-        "<script src='" + baseUrl + "/core/module/require.js'></script>" + nl +
+        "<script src='/" + CONFIG.operationKey + "/core/getClient/require.js'></script>" + nl +
         "</head>" + nl +
         "<body></body>" + nl +
         "</html>";

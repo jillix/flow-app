@@ -4,8 +4,7 @@ var http  = require("http");
 var parseUrl  = require("url").parse,
     send      = require(CONFIG.root + "/core/send.js").send,
     operation = require(CONFIG.root + "/core/operator.js").operation,
-    route     = require(CONFIG.root + "/core/router.js").route,
-    mods      = require(CONFIG.root + "/core/module.js");
+    route     = require(CONFIG.root + "/core/router.js").route;
 
 
 var Server = exports.Server = function () {
@@ -19,7 +18,6 @@ Server.prototype.start = function() {
     self.server = http.createServer(requestHandler);
     self.server.listen(CONFIG.dev ? CONFIG.devPort : CONFIG.port);
 };
-
 
 function requestHandler(req, res) {
 
@@ -49,8 +47,6 @@ function requestHandler(req, res) {
         };
         
         link.path = path.slice(3);
-        
-        console.log(link.operation);
         
         operation(link);
     }
