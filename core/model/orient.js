@@ -6,7 +6,7 @@ var server = new Server(CONFIG.orient.server),
     db = new Db(CONFIG.orient.db.database_name, server, CONFIG.orient.db);
 
 
-exports.getUserOperation = function(module, method, userId, callback) {
+exports.getUserOperation = function(miid, method, userId, callback) {
 
     db.open(function(err, result) {
 
@@ -19,14 +19,13 @@ exports.getUserOperation = function(module, method, userId, callback) {
 
         var command =
             "SELECT " +
-                "file, " +
-                "in[@class = 'ECanPerform'].params AS params " +
+                "in.module AS module, in.file AS file, params " +
             "FROM " +
-                "(TRAVERSE VUser.out, EMemberOf.in, VRole.out, ECanPerform.in FROM #" + vuClusterId + ":" + userId + ") " +
+                "(TRAVERSE VUser.out, EMemberOf.in, VRole.out FROM #" + vuClusterId + ":" + userId + ") " +
             "WHERE " +
-                "@class = 'VOperation' AND " +
-                "module = '" + module + "' AND " +
-                "method = '" + method + "'";
+                "@class = 'ECanPerform' AND " +
+                "miid = '" + miid + "' AND " +
+                "in.method = '" + method + "'";
 
         sql(command, function(err, results) {
 
@@ -62,20 +61,7 @@ exports.getUserOperation = function(module, method, userId, callback) {
 };
 
 
-exports.getModuleFile = function(appId, miid, userId, callback) {
-
-    getModule(appId, miid, userId, false, callback);
-
-};
-
-exports.getModuleConfig = function(appid, miid, userId, callback) {
-
-    getModule(appId, miid, userId, true, callback);
-
-};
-
-
-function getModule(appId, miid, userId, withConfig, callback) {
+exports.getModuleConfig = function(appId, miid, userId, callback) {
 
     // TODO add either a db.open or make the db.open call before any operation
     // TODO the cluster IDs should be searched for in the mono initialization phase where also the connection is opened
@@ -83,20 +69,16 @@ function getModule(appId, miid, userId, withConfig, callback) {
 
     if (vuClusterId < 0) { return callback("Could not find the VUser cluster ID."); }
 
-    var configFields = !withConfig ? "" : (", config, html, css ");
-
     // TODO the link to the appId is missing
     //      only miid's from this appId must be searched
     var command =
         "SELECT " +
-            "in.dir AS dir " + configFields +
+            "in.owner AS owner, in.name AS name, config, html, css " +
         "FROM " +
             "(TRAVERSE VUser.out, EMemberOf.in, VRole.out FROM #" + vuClusterId + ":" + userId + ") " +
         "WHERE " +
             "@class = 'EHasAccessTo' AND " +
             "miid = '" + miid + "'";
-            //"in.owner = '" + ownerName + "' AND " +
-            //"in.name = '" + moduleName + "'";
 
     sql(command, function(err, results) {
 
@@ -106,11 +88,48 @@ function getModule(appId, miid, userId, withConfig, callback) {
         }
 
         if (results.length == 0) {
-            return callback("No such module: " + name);
+            return callback("No such module instance (app: " + appId + "): " + miid);
         }
 
         if (results.length > 1) {
-            return callback("There can be only one module: " + name + ". Found: " + results.length);
+            return callback("There can be only one module (app: " + appId + "): " + miid + ". Found: " + results.length);
+        }
+
+        var module = results[0];
+        callback(null, module);
+    });
+}
+
+
+exports.getModuleFile = function(owner, name, userId, callback) {
+
+    // TODO add either a db.open or make the db.open call before any operation
+    // TODO the cluster IDs should be searched for in the mono initialization phase where also the connection is opened
+    var vuClusterId = db.getClusterIdByClass("VUser");
+
+    if (vuClusterId < 0) { return callback("Could not find the VUser cluster ID."); }
+
+    // TODO the link to the appId is missing
+    //      only miid's from this appId must be searched
+    var command =
+        "SELECT " +
+            "dir, owner, name " +
+        "FROM " +
+            "(TRAVERSE VUser.out, EMemberOf.in, VRole.out, EHasAccessTo.in FROM #" + vuClusterId + ":" + userId + ") " +
+        "WHERE " +
+            "@class = 'VModule' AND " +
+            "owner = '" + owner + "' AND " +
+            "name = '" + name + "'";
+
+    sql(command, function(err, results) {
+
+        // error checks
+        if (err) {
+            return callback("An error occured while retrieving the module '" + owner + "/" + name + "':" + err);
+        }
+
+        if (results.length == 0) {
+            return callback("No such module: " + owner + "/" + name);
         }
 
         var module = results[0];
