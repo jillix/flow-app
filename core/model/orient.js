@@ -62,21 +62,21 @@ exports.getUserOperation = function(module, method, userId, callback) {
 };
 
 
-exports.getModuleFile = function(miid, userId, callback) {
+exports.getModuleFile = function(appId, miid, userId, callback) {
 
-    getModule(miid, userId, false, callback);
-
-};
-
-
-exports.getModuleConfig = function(ownerName, moduleName, userId, callback) {
-
-    getModule(ownerName, moduleName, userId, true, callback);
+    getModule(appId, miid, userId, false, callback);
 
 };
 
 
-function getModule(miid, userId, withConfig, callback) {
+exports.getModuleConfig = function(appId, miid, userId, callback) {
+
+    getModule(appId, miid, userId, true, callback);
+
+};
+
+
+function getModule(appId, miid, userId, withConfig, callback) {
 
     // TODO add either a db.open or make the db.open call before any operation
     // TODO the cluster IDs should be searched for in the mono initialization phase where also the connection is opened
@@ -84,22 +84,20 @@ function getModule(miid, userId, withConfig, callback) {
 
     if (vuClusterId < 0) { return callback("Could not find the VUser cluster ID."); }
 
-    var configFields = !withConfig ? "" :
-        (", " +
-        "in[@class = 'EHasAccessTo'].config AS config, " +
-        "in[@class = 'EHasAccessTo'].html AS html, " +
-        "in[@class = 'EHasAccessTo'].css AS css "
-        );
+    var configFields = !withConfig ? "" : (", config, html, css ");
 
+    // TODO the link to the appId is missing
+    //      only miid's from this appId must be searched
     var command =
         "SELECT " +
-            "dir " + configFields +
+            "in.dir AS dir " + configFields +
         "FROM " +
-            "(TRAVERSE VUser.out, EMemberOf.in, VRole.out, EHasAccessTo.in FROM #" + vuClusterId + ":" + userId + ") " +
+            "(TRAVERSE VUser.out, EMemberOf.in, VRole.out FROM #" + vuClusterId + ":" + userId + ") " +
         "WHERE " +
-            "@class = 'VModule' AND " +
-            "name = '" + moduleName + "' AND " +
-            "owner = '" + ownerName + "'";
+            "@class = 'EHasAccessTo' AND " +
+            "miid = '" + miid + "'";
+            //"in.owner = '" + ownerName + "' AND " +
+            //"in.name = '" + moduleName + "'";
 
     sql(command, function(err, results) {
 
