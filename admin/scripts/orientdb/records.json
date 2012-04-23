@@ -189,7 +189,10 @@
             "@version": 0,
             "@class": "EHasAccessTo",
             "miid": "mono_editor_1",
-            "html": "mono.ch/ace",
+            "html": {
+                "type": "a",
+                "path": "ace"
+            },
             "css": ["ace"],
             "out": "#8:0",
             "in": "#10:1"
@@ -221,7 +224,10 @@
             "@version": 0,
             "@class": "EHasAccessTo",
             "miid": "mono_stdl_list_1",
-            "html": "mono.ch/stdl/list/list",
+            "html": {
+                "type": "a",
+                "path": "stdl/list/list"
+            },
             "css": ["list", "def", "screen"],
             "out": "#8:0",
             "in": "#10:3"
@@ -232,7 +238,10 @@
             "@version": 0,
             "@class": "EHasAccessTo",
             "miid": "mono_temp_admin",
-            "html": "mono.ch/main",
+            "html": {
+                "type": "a",
+                "path": "main"
+            },
             "css": ["main"],
             "out": "#8:0",
             "in": "#10:4"
@@ -243,7 +252,10 @@
             "@version": 0,
             "@class": "EHasAccessTo",
             "miid": "mono_stdl_layout_1",
-            "html": "mono.ch/stdl/layout/layout",
+            "html": {
+                "type": "a",
+                "path": "stdl/layout/layout"
+            },
             "css": ["def", "screen"],
             "out": "#8:0",
             "in": "#10:6"

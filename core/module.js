@@ -46,11 +46,9 @@ exports.getConfig = function(link) {
             return;
         }
 
-        if (module.html && module.html instanceof Array) {
+        if (module.html) {
 
-            // TODO this is duplicate directory name in the same file
-            // try some refactoring or a config option
-            var path = (module.html[0] === "a" ? "/apps/" + appid : "/modules/" + module.owner + "/" + module.name) + "/" + module.html[1] + ".html";
+            var path = (module.html.type === "a" ? "/apps/" + appid : "/modules/" + module.owner + "/" + module.name) + "/" + module.html.path + ".html";
 
             read(path, "utf8", function(err, html) {
 

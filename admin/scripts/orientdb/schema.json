@@ -321,7 +321,7 @@
                     },
                     {
                         "name": "html",
-                        "type": "STRING",
+                        "type": "EMBEDDEDMAP",
                         "mandatory": false,
                         "not-null": true
                     },
