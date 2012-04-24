@@ -602,9 +602,10 @@ var N = {
                 clone.miid = miid;
                 clone.module = module;
                 clone.$ = target;
+                clone.link = N.link;
                 
                 // TODO create observer with user defined id (only for GUI)
-                clone.obs = N.obs(miid)
+                clone.obs = N.obs(miid);
 
                 // TODO register module state
 
