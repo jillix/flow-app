@@ -1,6 +1,41 @@
+
+#mono_stdl_list_1 .container {
+    background-color: grey;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+#mono_stdl_list_1 .header {
+    background-color: yellow;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 50px;
+}
+
+#mono_stdl_list_1 .middle {
+    background-color: pink;
+    overflow-y: auto;
+    position: absolute;
+    top: 50px;
+    left: 0;
+    right: 0;
+    bottom: 50px;
+}
+
+#mono_stdl_list_1 .footer {
+    background-color: fuchsia;
+    position: absolute;
+    height: 50px;
+    left: 0;
+    right: 0;
+    bottom: 0px;
+}
+
 /* jxlist */
 .jxlist {
-
     width: 250px;
     top: 0;
     bottom: 0;
@@ -9,31 +44,26 @@
 }
 
 .jxlist > .search {
-
     background: silver;
     padding: 5px;
 }
 
 .jxlist > .list > li {
-
     border-bottom: 1px #999 solid;
     padding: 5px;
     cursor: pointer;
 }
 
 .jxlist > .list > li:hover {
-
     background: #eee;
 }
 
 .jxlist > .list > li.selected {
-
     background: #66e;
 }
 
 /* jxdetail */
 .jxdetail {
-
     left: 250px;
     right: 0;
     top: 0;
@@ -42,39 +72,33 @@
 }
 
 .jxdetail h1 {
-
     font-weight: bold;
     font-size: 20px;
     margin-bottom: 20px;
 }
 
 .jxdetail .inserable {
-
     color: #e66;
     font-weight: bold;
 	cursor: pointer;
 }
 
 .jxdetail .editable {
-
     color: #66e;
     font-weight: bold;
 	cursor: pointer;
 }
 
 .jxdetail > .detail {
-
     display: none;
     margin: 20px;
 }
 
 .jxdetail .row {
-
     width: 300px;
 }
 
 .jxdetail .btn {
-
     width: 16px;
     height: 16px;
     text-align: center;

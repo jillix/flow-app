@@ -228,7 +228,7 @@
                 "type": "a",
                 "path": "stdl/list/list"
             },
-            "css": ["list", "def", "screen"],
+            "css": ["def", "screen", "list"],
             "out": "#8:0",
             "in": "#10:3"
         },
