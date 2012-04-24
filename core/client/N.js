@@ -2,7 +2,7 @@
 
 /**
  * @fileoverview N-client: build and render components.
- * @author adrian@ottiker.com (Adrian Ottiker)
+ * @author adi@ottiker.com (Adrian Ottiker)
  */
 
 // extend Object prototype with clone function
@@ -80,6 +80,11 @@ var N = {
         O.prototype = obj;
         return new O();
     },*/
+    
+    err: function(msg) {
+        
+        throw new Error(msg);  
+    },
 
     // !------------------------------ N.obs
     /**
@@ -196,7 +201,7 @@ var N = {
 
             if(value) {
 
-                this.setAttribute( attributes, value);
+                this.setAttribute(attributes, value);
             }
             else for (var name in attributes) {
 
@@ -388,21 +393,38 @@ var N = {
      *
      * options: {
      *
-     *        url:      {string}    the url
+     *        path:     {string}    the url
+     *        data:     {object}    post data
      *        sync:     {boolean}   if true the request will block all other browser actions
      *        upload:   {function}  first argument: percent of loaded data, second argument: XMLHttpRequestProgressEvent
      *        download: {function}  first argument: percent of loaded data, second argument: XMLHttpRequestProgressEvent
      * }
      */
-    link: function(options, callback) {
+    
+    link: function(method, options, callback) {
+        
+        if (typeof method !== "string") {
+            
+            N.err("Operation Method is mandatory");
+        }
+        
+        if (typeof options === "function") {
+            
+            callback = options;
+            options = {};
+        }
+        
+        if (!options.miid && !this.miid) {
+            
+            N.err("Module Instance ID (miid) is mandatory");
+        }
+        
+        var link = new XMLHttpRequest(); //create new link
 
-        var self = this,
-            link = new XMLHttpRequest(); //create new link
-
-        if (link && options && options.url) {
+        if (link) {
 
             //open the connection
-            link.open(options.data ? "post" : "get", N.ok + options.url, !options.sync);
+            link.open(options.data ? "post" : "get", N.ok + "/" + (this.miid || options.miid) + "/" + method + "/" + (options.path || ""), !options.sync);
 
             //set session id in http header
             if (window.name) {
@@ -429,7 +451,7 @@ var N = {
                     //fire callback with error
                     if (callback) {
 
-                        callback(err);
+                        N.err(err);
                     }
 
                     //exit function
@@ -438,15 +460,15 @@ var N = {
             }
 
             //attach callback to upload progress event
-            if (link.upload && options.up) {
+            if (link.upload && options.upload) {
 
-                link.upload.onprogress = options.up;
+                link.upload.onprogress = options.upload;
             }
 
             //attach callback to download progress event
-            if (options.down) {
+            if (options.downlaod) {
 
-                link.onprogress = options.down;
+                link.onprogress = options.download;
             }
 
             //request complete callback
@@ -547,7 +569,7 @@ var N = {
         }
 
         //get module
-        N.link({ url: "/core/getConfig/" + miid }, function(err, response) {
+        N.link("getConfig", {miid: "core", path: miid}, function(err, response) {
 
             //error checks
             if (err || !response) {
@@ -556,6 +578,9 @@ var N = {
             }
 
             target.style.display = "none";
+            
+            //add miid to html
+            N.dom.addAttr(target, "id", miid);
 
             //TODO show loader
 
@@ -574,11 +599,13 @@ var N = {
                 
                 var clone = module.clone();
                 
+                clone.miid = miid;
                 clone.module = module;
                 clone.$ = target;
+                clone.link = N.link;
                 
                 // TODO create observer with user defined id (only for GUI)
-                clone.obs = N.obs(miid)
+                clone.obs = N.obs(miid);
 
                 // TODO register module state
 
@@ -645,7 +672,7 @@ var N = {
     })()
 };
 
-// TODO: send error to server
+// TODO send error to server
 window.onerror = function(error, url, line) {
 
     console.log( error + "\n" + url + "\n" + line );

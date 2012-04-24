@@ -17,10 +17,14 @@ define(["jillix/ace/ace", "jillix/ace/mode/javascript", "jillix/ace/theme/textma
         save        = N.dom.findOne(cssNs + "ul#bar li#save"),
         status      = N.dom.findOne(cssNs + "ul#bar li#status"),
         settings    = N.dom.findOne(cssNs + "div#settings"),
-        aceWrapper  = N.dom.findOne(cssNs + "div#aceWrapper");
+        aceWrapper  = N.dom.findOne(cssNs + "div#aceWrapper"),
+        openSettings = N.dom.findOne("#openSettings");
     
     //set initial status text
-    status.innerHTML = statusText[2];
+    if (status) {
+        
+        status.innerHTML = statusText[2];
+    }
     
     //check status before window close
     window.onbeforeunload = function() {
@@ -37,19 +41,22 @@ define(["jillix/ace/ace", "jillix/ace/mode/javascript", "jillix/ace/theme/textma
     };
     
     //show/hide editor settings
-    N.dom.findOne("#openSettings").addEventListener("click", function() {
-        
-        if (settings.getAttribute("class") == "open") {
+    if (openSettings) {
+    
+        openSettings.addEventListener("click", function() {
             
-            aceWrapper.removeAttribute("class");
-            settings.removeAttribute("class");
-        }
-        else {
-            
-            aceWrapper.setAttribute("class", "lean");
-            settings.setAttribute("class", "open");
-        }
-    });
+            if (settings.getAttribute("class") == "open") {
+                
+                aceWrapper.removeAttribute("class");
+                settings.removeAttribute("class");
+            }
+            else {
+                
+                aceWrapper.setAttribute("class", "lean");
+                settings.setAttribute("class", "open");
+            }
+        });
+    }
     
     function saveDocument(value) {
                 

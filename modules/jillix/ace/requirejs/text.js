@@ -48,7 +48,7 @@ define(function (require, exports, module) {
     
     exports.load = function (name, req, onLoad, config) {
         if (req.isBrowser)
-            require("ace/lib/net").get(req.toUrl(name), onLoad);
+            require("../lib/net").get(req.toUrl(name), onLoad);
         else
             //Using special require.nodeRequire, something added by r.js.
             globalRequire.nodeRequire('fs').readFileSync(req.toUrl(name), 'utf8');
