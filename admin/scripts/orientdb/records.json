@@ -191,7 +191,7 @@
             "miid": "mono_editor_1",
             "html": {
                 "type": "a",
-                "path": "ace"
+                "path": "stdl/ace/ace"
             },
             "css": ["ace"],
             "out": "#8:0",
