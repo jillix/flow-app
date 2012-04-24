@@ -1,6 +1,5 @@
 /* general */
 body {
-
 	font-family: Arial;
 	font-size: 14px;
     line-height: 20px;
@@ -13,7 +12,6 @@ body {
 
 /* nav */
 #nav {
-
 	width: 250px;
 	top: 0;
 	bottom: 0;
@@ -24,31 +22,26 @@ body {
 }
 
 #nav > .search {
-
 	background: silver;
 	padding: 5px;
 }
 
 #nav > .list > li {
-
 	border-bottom: 1px #999 solid;
 	padding: 5px;
 	cursor: pointer;
 }
 
 #nav > .list > li:hover {
-
 	background: #eee;
 }
 
 #nav > .list > li.selected {
-
 	background: #66e;
 }
 
 /* details */
 .jxdetail {
-
 	left: 250px;
 	right: 0;
 	top: 0;
@@ -57,14 +50,12 @@ body {
 }
 
 .jxdetail h1 {
-
 	font-weight: bold;
 	font-size: 20px;
 	margin-bottom: 20px;
 }
 
 .jxdetail .editable {
-
 	color: #66e;
 	font-weight: bold;
 	cursor: pointer;
