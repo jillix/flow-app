@@ -14,11 +14,11 @@ define(["jillix/ace/ace", "jillix/ace/mode/javascript", "jillix/ace/theme/textma
         ],
         
         //document references
-        save        = N.dom.findOne(cssNs + "ul#bar li#save"),
-        status      = N.dom.findOne(cssNs + "ul#bar li#status"),
-        settings    = N.dom.findOne(cssNs + "div#settings"),
-        aceWrapper  = N.dom.findOne(cssNs + "div#aceWrapper"),
-        openSettings = N.dom.findOne("#openSettings");
+        save        = $(cssNs + "ul#bar li#save")[0],
+        status      = $(cssNs + "ul#bar li#status")[0],
+        settings    = $(cssNs + "div#settings")[0],
+        aceWrapper  = $(cssNs + "div#aceWrapper")[0],
+        openSettings = $("#openSettings")[0];
     
     //set initial status text
     if (status) {
