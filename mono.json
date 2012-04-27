@@ -5,7 +5,7 @@
     "operationKey"  : "@",
     "coreKey"       : "core",
     "adminEmail"    : "admin@jillix.com",
-
+    
     "monoServer"    : "server.js",
 
     "orient": {

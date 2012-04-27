@@ -118,7 +118,7 @@ exports.getClient = function(link){
 
 // ONLY PUBLIC FILES
 exports.getFile = function(link) {
-
+    
     var externalUrl = link.req.url,
         appid = link.host[1] + "." + link.host[0];
 

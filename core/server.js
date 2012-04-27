@@ -6,12 +6,10 @@ var parseUrl  = require("url").parse,
     operation = require(CONFIG.root + "/core/operator.js").operation,
     route     = require(CONFIG.root + "/core/router.js").route;
 
-
-var Server = exports.Server = function () {
-};
-
+var Server = exports.Server = function () {};
 
 Server.prototype.start = function() {
+
     var self = this;
 
     // start http server

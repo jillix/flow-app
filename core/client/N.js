@@ -6,7 +6,7 @@
  */
 
 // extend Object prototype with clone function
-Object.defineProperty(Object.prototype, "clone", {
+/*Object.defineProperty(Object.prototype, "clone", {
 
     //writeable: false, (default value)
     //enumerable: false, (default value)
@@ -17,69 +17,32 @@ Object.defineProperty(Object.prototype, "clone", {
         O.prototype = this;
         return new O();
     }
-});
+});*/
 
-//tell user, he should update his browser
-function UB(){ window.location = "/12/updateBrowser/"; }
+// TODO send error to server
+window.onerror = function(error, url, line) {
 
-// REMOVE WHEN IT GETS OBSOLETE
-//checks if browser supports JSON parsing and if querySelector is supported
-if (!window.JSON || !window.Element || !document.querySelector) { UB(); } else {
-
-// SUPPORTED IN IE9 > REMOVE WHEN IE8 HAS LOW MARKETSHARE
-if (!window.UIEvent) {
-
-    Event.prototype.stopPropagation = function(){ this.cancelBubble = true; };
-    Event.prototype.preventDefault = function(){ this.returnValue = false; };
-}
-if (!Element.prototype.addEventListener) {
-
-    window.addEventListener = Element.prototype.addEventListener = function ( event_name, listener) {
-
-        this.attachEvent( "on" + event_name, listener );
-    };
-
-    window.addEventListener = Element.prototype.removeEventListener = function (event_name, listener) {
-
-        this.detachEvent( "on" + event_name, listener );
-    };
-}
-// SUPPORTED IN IE9 > REMOVE WHEN IE8 HAS LOW MARKETSHARE
-if (!window.getComputedStyle) {
-
-    window.getComputedStyle = function( elm, pseudo ){
-
-        this.getPropertyValue = function( prop ){
-
-            if (prop == "width" ) return elm.offsetWidth;
-
-            return elm.currentStyle[ prop ];
-        };
-
-        return this;
-    };
-}
-
-//to avoid errors, define a global FormData object
-if (!window.FormData ) FormData = Function;
+    //console.log( error + "\n" + url + "\n" + line );
+};
 
 //reset session store
-if (!window.name || window.name == "undefined" ) window.name = "";
+if (!window.name || window.name == "undefined") {
+    
+    window.name = "";
+};
 
 /**
  * Main Namespace
  * @type {class}
  */
 var N = {
-
-    //SUPPORTED IN IE9 > CHANGE TO defineProperty WHEN IE8 HAS LOW MARKETSHARE
-    //https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object/defineProperty
-    /*clone: function(obj) {
+    
+    clone: function(obj){
 
         function O(){}
         O.prototype = obj;
         return new O();
-    },*/
+    },
     
     err: function(msg) {
         
@@ -168,219 +131,13 @@ var N = {
             }
             else {
 
-                var obs = Observer.clone();
+                var obs = N.clone(Observer);
                 obs.e = {};
 
                 return name ? observers[name] = obs : obs;
             }
         };
     })(),
-
-    // !------------------------------ N.dom
-    /**
-     * Mini DOM-Library
-     */
-    dom: (function(win, doc, element_prototype) {
-
-        //add bind methode to all HTML Elements
-        win.bind = element_prototype.bind = function(event_name, handler) {
-
-            this.addEventListener(event_name, handler, false);
-            return this;
-        };
-
-        //add unbind method to all HTML Elements
-        win.unbind = element_prototype.unbind = function( event_name, handler) {
-
-            this.removeEventListener(event_name, handler, false);
-            return this;
-        };
-
-        //add attribute to element
-        element_prototype.addAttr = function(attributes, value) {
-
-            if(value) {
-
-                this.setAttribute(attributes, value);
-            }
-            else for (var name in attributes) {
-
-                if (attributes[name].split) {
-
-                    attributes[name] = attributes[name].split(" ");
-                }
-
-                value = this.getAttribute(name) || "";
-
-                for (var i = 0, l = attributes[name].length; i < l; ++i) {
-
-                    if (value.indexOf(attributes[name][i]) < 0) {
-
-                        value += (value.length > 0 ? " " : "") + attributes[name][i];
-                    }
-                }
-
-                this.setAttribute(name, value);
-            }
-
-            return this;
-        };
-
-        //remove attribute from element
-        element_prototype.rmAttr = function(attributes, value) {
-
-            if (typeof attributes == "string") {
-
-                this.removeAttribute(attributes);
-            }
-            else for (var name in attributes) {
-
-                if (attributes[name].split) {
-
-                    attributes[name] = attributes[name].split(" ");
-                }
-
-                value = (this.getAttribute(name) || "").split(" ");
-
-                for (var i = 0, l = value.length, new_value = [], ok; i < l; ++i) {
-
-                    ok = 1;
-
-                    for (var n = 0, c = attributes[name].length; n < c; ++n) {
-
-                        if (value[i] == attributes[name][n]) {
-
-                            ok = 0;
-                        }
-                    }
-
-                    if (ok) {
-
-                        new_value.push(value[i]);
-                    }
-                }
-
-                if (!new_value.length) {
-
-                    this.removeAttribute(name);
-                }
-                else {
-
-                    this.setAttribute(name, new_value.length < 2 ? value[0] : new_value.join(" "));
-                }
-            }
-
-            return this;
-        };
-
-        function fill(item, content, text) {
-
-            if (item.type == "checkbox" || item.type == "radio") {
-
-                item.checked = content ? true : false;
-            }
-            else if(item.tagName.toLowerCase() == "input") {
-
-                item.value = content;
-            }
-            else try {
-
-                if (text) {
-
-                    //NOT SUPPORTED IN IE8
-                    item.textContent = content;
-                }
-                else {
-
-                    item.innerHTML = content;
-                }
-            }
-            catch( e ){}
-        }
-
-        return {
-
-            find: function(query, element) {
-
-                return (element || doc).querySelectorAll(query);
-            },
-
-            findOne: function(query, element) {
-
-                return (element || doc).querySelector(query);
-            },
-
-            elm: function(element_name, attrs) {
-
-                var elm = doc.createElement(element_name);
-
-                if (attrs) {
-
-                    for (var name in attrs) {
-
-                        elm.setAttribute(name, attrs[name]);
-                    }
-                }
-
-                return elm;
-            },
-
-            set: function(dom, content, text) {
-
-                if (dom) {
-
-                    if (dom[0] instanceof Element) {
-
-                        for (var i = 0, l = dom.length; i < l; ++i) {
-
-                            fill(dom[i], content, text);
-                        }
-                    }
-                    else {
-
-                        fill(dom, content, text);
-                    }
-                }
-            },
-
-            addAttr: function(dom, attrs, value) {
-
-                if (dom) {
-
-                    if (dom[0] instanceof Element) {
-
-                        for (var i = 0, l = dom.length; i < l; ++i) {
-
-                            dom[i].addAttr(attrs, value);
-                        }
-                    }
-                    else {
-
-                        dom.addAttr(attrs, value);
-                    }
-                }
-            },
-
-            rmAttr: function(dom, attrs) {
-
-                if (dom) {
-
-                    if (dom[0] instanceof Element) {
-
-                        for(var i = 0, l = dom.length; i < l; ++i) {
-
-                            dom[i].rmAttr(attrs);
-                        }
-                    }
-                    else {
-
-                        dom.rmAttr(attrs);
-                    }
-                }
-            }
-        };
-
-    })(window, document, Element.prototype),
 
     // !------------------------------ N.link
     /**
@@ -432,8 +189,8 @@ var N = {
                 link.setRequestHeader("x-sid", window.name);
             }
 
-            //handle FormData
-            if (options.data && options.data instanceof FormData === false) {
+            //handle data
+            if (options.data && !(typeof FormData !== "undefined" && data instanceof FormData)) {
 
                 try {
 
@@ -539,32 +296,37 @@ var N = {
     css: function(file) {
 
         //create link and append it to the DOM
-        N.dom.findOne("head").appendChild(
-
-            N.dom.elm("link", {
+        var head = document.getElementsByTagName("head")[0],
+            link = document.createElement("link"),
+            attr = {
                 rel:    "stylesheet",
                 type:   "text/css",
                 href:   N.ok + "/core/getFile/" + file
-            })
-        );
+            };
+        
+        for (var name in attr) {
+            
+            link.setAttribute(name, attr[name]);
+        }
+        
+        head.appendChild(link);
     },
 
     // !------------------------------ N.comp
     /**
      * Create Instances of Modules
      */
-    // TODO Module Instace ID
     mod: function(target, miid, callback) {
 
         //default argument values
         callback = (typeof callback == "function" ? callback : function() {});
-        target = (typeof target == "string" ? N.dom.findOne(target) : target);
+        target = (typeof target == "string" ? document.getElementById(target) : target);
 
         //error checks
         if (!target) {
             return callback("Target not found or undefined.");
         }
-        if (typeof miid === "undefined") {
+        if (!miid) {
             return callback("Component ID undefined.");
         }
 
@@ -573,14 +335,14 @@ var N = {
 
             //error checks
             if (err || !response) {
-                callback("A problem occurred while getting module.");
-                return;
+            
+                return callback(err || "Empty response");
             }
 
             target.style.display = "none";
             
             //add miid to html
-            N.dom.addAttr(target, "id", miid);
+            target.setAttribute("id", miid);
 
             //TODO show loader
 
@@ -597,7 +359,7 @@ var N = {
             // load, clone and init modules
             require([response[0].owner + "/" + response[0].name + "/main"], function(module) {
                 
-                var clone = module.clone();
+                var clone = N.clone(module);
                 
                 clone.miid = miid;
                 clone.module = module;
@@ -671,10 +433,3 @@ var N = {
         };
     })()
 };
-
-// TODO send error to server
-window.onerror = function(error, url, line) {
-
-    console.log( error + "\n" + url + "\n" + line );
-};
-}
