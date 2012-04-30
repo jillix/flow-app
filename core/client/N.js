@@ -317,11 +317,11 @@ var N = {
      * Create Instances of Modules
      */
     mod: function(target, miid, callback) {
-
+        
         //default argument values
         callback = (typeof callback == "function" ? callback : function() {});
-        target = (typeof target == "string" ? document.getElementById(target) : target);
-
+        target = (typeof target === "string" ? document.getElementById(target) : target);
+        
         //error checks
         if (!target) {
             return callback("Target not found or undefined.");
@@ -341,15 +341,20 @@ var N = {
 
             target.style.display = "none";
             
+            var div = document.createElement("div");
+            
             //add miid to html
-            target.setAttribute("id", miid);
-
+            div.setAttribute("id", miid);
+            
             //TODO show loader
 
             // render html from response[1]
             if (response[1]) {
-                target.innerHTML = response[1];
+                div.innerHTML = response[1];
             }
+            
+            //append div to dom
+            target.appendChild(div);
 
             // load css from response[2]
             for (var i in response[2]) {
@@ -370,7 +375,7 @@ var N = {
                 clone.obs = N.obs(miid);
 
                 // TODO register module state
-
+                
                 // init module
                 if (clone.init) {
                     clone.init(response[0]);
@@ -378,7 +383,7 @@ var N = {
 
                 // TODO: hide loader
                 // TODO: init state
-
+                
                 target.style.display = "block";
 
                 callback(null, clone);

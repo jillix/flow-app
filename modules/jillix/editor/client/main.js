@@ -127,7 +127,10 @@ define(["jillix/ace/ace", "jillix/ace/mode/javascript", "jillix/ace/theme/textma
             });
             
             //handle save button
-            save.addEventListener("click", saveDocument);
+            if (save) {
+            
+                save.addEventListener("click", saveDocument);
+            }
             
             // !TODO: settings
             // !TODO: minify js with google closure compiler via REST API

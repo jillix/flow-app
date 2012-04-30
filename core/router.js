@@ -3,7 +3,7 @@ var send = require(CONFIG.root + "/core/send").send;
 // TODO get routing tables from db (mongodb)
 var table = {
     
-    "/": "mono_editor_1",
+    "/": "mono_stdl_layout_1",//"mono_editor_1",
     "stdl": "mono_stdl_list_1",
     /*,
     "users": {

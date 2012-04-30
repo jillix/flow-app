@@ -256,7 +256,14 @@
                 "type": "a",
                 "path": "stdl/layout/layout"
             },
-            "css": ["def", "screen"],
+            "config": {
+                "title": "Test Title",
+                "modules": {
+                    "myList": "mono_stdl_list_1",
+                    "myEditor": "mono_editor_1"
+                }    
+            },
+            "css": ["layout"],
             "out": "#8:0",
             "in": "#10:6"
         },
