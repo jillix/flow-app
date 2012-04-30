@@ -4,3 +4,6 @@
 [submodule "modules/gabipetrovay/stdl.tab"]
 	path = modules/gabipetrovay/stdl.tab
 	url = git@github.com:gabipetrovay/stdl.tab.git
+[submodule "modules/adioo/stdl.layout"]
+	path = modules/adioo/stdl.layout
+	url = git@github.com:adioo/stdl.layout.git
