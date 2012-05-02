@@ -36,40 +36,45 @@ exports.getConfig = function(link) {
 
     // get the module instance id
     var miid = link.path[0].replace(/[^0-9a-z_\-\.]/gi, "");
-
-    model.getModuleConfig(link.appid, miid, link.session.uid, function(err, module) {
-
-        // error checks
-        if (err || !module) {
-            send.notfound(link, err || "No module found");
-            return;
-        }
-
-        if (module.html) {
-
-            var path = (module.html.type === "a" ? "/apps/" + link.appid : "/modules/" + module.owner + "/" + module.name) + "/" + module.html.path + ".html";
-
-            read(path, "utf8", function(err, html) {
-
-                if (err) {
-
-                    // TODO let the module define it's missing module placeholder
-                    html = "<p>An error occurred while retrieving this module HTML.</p>";
-
-                    if (CONFIG.dev) {
-                        html += "<p>Error: " + err + "</p>"
+    
+    model.getAppId(link.host, function(err, appid) {
+        
+        if (err || !appid) { return send.internalservererror(link, err); }
+        
+        model.getModuleConfig(appid, miid, link.session.uid, function(err, module) {
+        
+            // error checks
+            if (err || !module) {
+                send.notfound(link, err || "No module found");
+                return;
+            }
+        
+            if (module.html) {
+        
+                var path = (module.html.type === "a" ? "/apps/" + appid : "/modules/" + module.owner + "/" + module.name) + "/" + module.html.path + ".html";
+        
+                read(path, "utf8", function(err, html) {
+        
+                    if (err) {
+        
+                        // TODO let the module define it's missing module placeholder
+                        html = "<p>An error occurred while retrieving this module HTML.</p>";
+        
+                        if (CONFIG.dev) {
+                            html += "<p>Error: " + err + "</p>"
+                        }
                     }
-                }
-
-                module.html = html;
-
+        
+                    module.html = html;
+        
+                    send.ok(link.res, buildModule(module));
+                });
+            }
+            else {
+        
                 send.ok(link.res, buildModule(module));
-            });
-        }
-        else {
-
-            send.ok(link.res, buildModule(module));
-        }
+            }
+        });
     });
 };
 
@@ -111,7 +116,7 @@ exports.getModule = function(link) {
 exports.getClient = function(link){
 
     link.req.url = link.path[0];
-
+    
     client.serve(link.req, link.res);
 };
 
@@ -119,17 +124,19 @@ exports.getClient = function(link){
 exports.getFile = function(link) {
     
     var externalUrl = link.req.url;
-
-    if (link.appid) {
-
+    
+    model.getAppId(link.host, function(err, appid) {
+        
+        if (err || !appid) { return send.internalservererror(link, err); }
+        
         // change the request URL to the internal one
-        link.req.url = link.appid + "/pub/" + link.path.join("/").replace(/[^a-z0-9\/\.\-_]|\.\.\//gi, "");
-
+        link.req.url = appid + "/pub/" + link.path.join("/").replace(/[^a-z0-9\/\.\-_]|\.\.\//gi, "");
+        
         files.serve(link.req, link.res, function(err, data) {
-
+        
             // TODO one can hook stats in here
             if (!err) return;
-
+        
             switch (err.status) {
                 case 404:
                     send.notfound(link, "File not found: " + externalUrl);
@@ -138,8 +145,5 @@ exports.getFile = function(link) {
                     send.internalservererror(link, err);
             }
         });
-    }
-    else {
-        send.forbidden(link);
-    }
+    });
 };

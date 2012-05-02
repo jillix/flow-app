@@ -188,12 +188,6 @@ var N = {
 
                 link.setRequestHeader("x-sid", window.name);
             }
-            
-            //set app id in http header
-            if (N.appid) {
-                
-                link.setRequestHeader("x-appid", N.appid);
-            }
 
             //handle data
             if (options.data && !(typeof FormData !== "undefined" && data instanceof FormData)) {

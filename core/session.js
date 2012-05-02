@@ -73,7 +73,7 @@ this.get = function(link, callback) {
     }
     // if no session-id is defined create public session
     else {
-        model.getDomainPublicUser(link.host[1] + "." + link.host[0], function(err, userId) {
+        model.getDomainPublicUser(link.host, function(err, userId) {
         
             if (err) {
                 return callback(err);

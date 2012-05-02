@@ -26,7 +26,7 @@ function requestHandler(req, res) {
             res:        res,
             query:      url.query || {},
             pathname:   url.pathname,
-            host:       req.headers.host.split(":")[0].split(".").reverse()
+            host:       req.headers.host
         };
 
     link.res.headers = {};
@@ -37,8 +37,6 @@ function requestHandler(req, res) {
         
             return send.badrequest(link, "incorrect operation url");
         }
-        
-        link.appid = link.req.headers['x-appid'];
         
         link.operation = {
             

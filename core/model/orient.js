@@ -42,7 +42,7 @@ exports.getAppId = function(domain, callback) {
                 return callback("Missing application ID: " + JSON.stringify(application));
             }
 
-            callback(null, application);
+            callback(null, application.appId);
         });
     });
 };
