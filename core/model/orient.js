@@ -5,24 +5,24 @@ var orient = require("orientdb"),
 var server = new Server(CONFIG.orient.server),
     db = new Db(CONFIG.orient.db.database_name, server, CONFIG.orient.db);
 
-exports.getDomainRoutes = function(domain, callback) {
-
+exports.getAppId = function(domain, callback) {
+    
     db.open(function(err, result) {
 
         if (err) { return callback(err); }
 
         var command =
             "SELECT " +
-                "name AS appId, routes " +
+                "name AS appId " +
             "FROM " +
-                "VApplication" +
+                "VApplication " +
             "WHERE " +
                 "name = '" + domain + "'";
 
         sql(command, function(err, results) {
 
             if (err) {
-                return callback("An error occurred while retrieving the routing table for domain '" + domain + "': " + err);
+                return callback("An error occurred while retrieving the application ID for domain '" + domain + "': " + JSON.stringify(err));
             }
 
             // if there is no result
@@ -38,11 +38,53 @@ exports.getDomainRoutes = function(domain, callback) {
             var application = results[0];
 
             // if the application does not have the required fields
-            if (!application || !application.appId || !application.routes) {
-                return callback("The application object is not complete. Check that both appId and routes are present: " + JSON.stringify(application));
+            if (!application || !application.appId) {
+                return callback("Missing application ID: " + JSON.stringify(application));
             }
 
             callback(null, application);
+        });
+    });
+};
+
+exports.getDomainRoutes = function(domain, callback) {
+
+    db.open(function(err, result) {
+
+        if (err) { return callback(err); }
+
+        var command =
+            "SELECT " +
+                "routes " +
+            "FROM " +
+                "VApplication " +
+            "WHERE " +
+                "name = '" + domain + "'";
+
+        sql(command, function(err, results) {
+
+            if (err) {
+                return callback("An error occurred while retrieving the routing table for domain '" + domain + "': " + JSON.stringify(err));
+            }
+
+            // if there is no result
+            if (!results || results.length == 0) {
+                return callback("Domain not found: " + domain);
+            }
+
+            // if there are too many results
+            if (results.length > 1) {
+                return callback("Could not uniquely determine the application ID for domain: " + domain);
+            }
+
+            var application = results[0];
+
+            // if the application does not have the required fields
+            if (!application || !application.routes) {
+                return callback("The application object is not complete. Check if the routes are present: " + JSON.stringify(application));
+            }
+
+            callback(null, application.routes);
         });
     });
 };
