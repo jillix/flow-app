@@ -11,7 +11,6 @@ Object.defineProperty(Object.prototype, "clone", {
     }
 });
 
-
 // the mono configuration as global object
 CONFIG = require(process.argv[2] || "./config.js");
 
@@ -21,4 +20,3 @@ var Server = new require("./core/server").Server;
     server = new Server();
 
 server.start();
-

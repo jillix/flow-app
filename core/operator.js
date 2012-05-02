@@ -159,4 +159,3 @@ function handlePostRequest(link, resume) {
 
     resume();
 }
-

@@ -44,7 +44,6 @@ function initScripts(module, ie7) {
         "</html>";
 }
 
-
 exports.route = function(link) {
 
     // TODO add a favicon
@@ -67,7 +66,6 @@ exports.route = function(link) {
         send.notfound(link);
     }
 };
-
 
 /*
     borrowed logic from https://github.com/flatiron/director/blob/master/lib/director/router.js
@@ -104,4 +102,3 @@ function traverse(path, routes, current, result, exact, match) {
     
     return false;
 };
-

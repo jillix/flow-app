@@ -52,4 +52,3 @@ function requestHandler(req, res) {
         route(link);
     }
 }
-

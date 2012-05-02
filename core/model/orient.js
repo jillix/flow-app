@@ -5,7 +5,6 @@ var orient = require("orientdb"),
 var server = new Server(CONFIG.orient.server),
     db = new Db(CONFIG.orient.db.database_name, server, CONFIG.orient.db);
 
-
 exports.getDomainRoutes = function(domain, callback) {
 
     db.open(function(err, result) {
@@ -47,7 +46,6 @@ exports.getDomainRoutes = function(domain, callback) {
         });
     });
 };
-
 
 exports.getUserOperation = function(miid, method, userId, callback) {
 
@@ -103,7 +101,6 @@ exports.getUserOperation = function(miid, method, userId, callback) {
         });
     });
 };
-
 
 exports.getModuleConfig = function(appId, miid, userId, callback) {
 
@@ -181,7 +178,6 @@ exports.getModuleFile = function(owner, name, userId, callback) {
     });
 }
 
-
 this.getDomainPublicUser = function(domain, callback) {
 
     db.open(function(err, result) {
@@ -225,4 +221,3 @@ function sql(command, callback) {
     //console.log(command);
     db.command(command, callback);
 }
-

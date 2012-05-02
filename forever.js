@@ -44,7 +44,6 @@ child.on("restart", function() {
 // start the child process
 child.start();
 
-
 function sendEmail(subject, error) {
 
     if (config.adminEmail) {
@@ -64,4 +63,3 @@ function sendEmail(subject, error) {
         });
     }
 }
-
