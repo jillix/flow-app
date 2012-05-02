@@ -1,24 +1,7 @@
-var send = require(CONFIG.root + "/core/send").send;
+var send = require(CONFIG.root + "/core/send").send,
+    getDomainRoutes = require(CONFIG.root + "/core/model/orient").getDomainRoutes;
 
-// TODO get routing tables from db (mongodb)
-var table = {
-    
-    "/": "mono_stdl_layout_1",//"mono_editor_1",
-    "stdl": "mono_stdl_list_1",
-    /*,
-    "users": {
-        
-        "public.*": 10,
-        "admin": {
-
-            "editor": 0
-        }
-    },
-    "roles": 71
-    */
-};
-
-function initScripts(module, ie7) {
+function initScripts(module, appid, ie7) {
 
     var baseUrl = "/" + CONFIG.operationKey + "/core/getModule";
     var nl = (CONFIG.dev ? "\r\n" : "");
@@ -32,6 +15,7 @@ function initScripts(module, ie7) {
             "baseUrl:'" + baseUrl + "'" + nl +
         "};" + nl +
         "window.onload=function(){" + nl +
+            "N.appid='"+ appid  + "';" + nl +
             "N.ok='/"+ CONFIG.operationKey  + "';" + nl +
             "N.mod(document.getElementsByTagName('body')[0],'" + module + "')" + nl +
         "}" + nl +
@@ -52,19 +36,28 @@ exports.route = function(link) {
         return;
     }
     
-    var module = traverse(link.pathname != "/" ? link.pathname.replace(/\/$/, "") : link.pathname, table, "");
-    
-    if (typeof module == "string") {
-
-        // set headers
-        link.res.headers["content-style-type"] = "text/css";
-        link.res.headers["content-type"]       = "text/html; charset=utf-8";
+    getDomainRoutes(link.host[1] + "." + link.host[0], function(err, result) {
         
-        send.ok(link.res, initScripts(module, (link.req.headers['user-agent'].indexOf("MSIE 7.0") > -1 ? true : false)));
-    }
-    else {
-        send.notfound(link);
-    }
+        if (err || !result.routes || !result.appid) {
+            
+            send.notfound(link, err || "No routing table found");
+            return;
+        }
+        
+        var module = traverse(link.pathname != "/" ? link.pathname.replace(/\/$/, "") : link.pathname, result.routes, "");
+        
+        if (typeof module == "string") {
+        
+            // set headers
+            link.res.headers["content-style-type"] = "text/css";
+            link.res.headers["content-type"]       = "text/html; charset=utf-8";
+            
+            send.ok(link.res, initScripts(module, result.appid, (link.req.headers['user-agent'].indexOf("MSIE 7.0") > -1 ? true : false)));
+        }
+        else {
+            send.notfound(link);
+        }
+    });
 };
 
 /*

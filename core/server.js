@@ -38,6 +38,8 @@ function requestHandler(req, res) {
             return send.badrequest(link, "incorrect operation url");
         }
         
+        link.appid = link.req.headers['x-appid'];
+        
         link.operation = {
             
             module: path[1],

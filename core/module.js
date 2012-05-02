@@ -6,7 +6,7 @@ var send = require(CONFIG.root + "/core/send.js").send,
     modules = new stat(CONFIG.root + "/modules"),
     files = new stat(CONFIG.root + "/apps");
 
-function buildComp(module) {
+function buildModule(module) {
 
     var response = [
 
@@ -35,10 +35,9 @@ function buildComp(module) {
 exports.getConfig = function(link) {
 
     // get the module instance id
-    var miid = link.path[0].replace(/[^0-9a-z_\-\.]/gi, ""),
-        appid = link.host[1] + "." + link.host[0];
+    var miid = link.path[0].replace(/[^0-9a-z_\-\.]/gi, "");
 
-    model.getModuleConfig(appid, miid, link.session.uid, function(err, module) {
+    model.getModuleConfig(link.appid, miid, link.session.uid, function(err, module) {
 
         // error checks
         if (err || !module) {
@@ -48,7 +47,7 @@ exports.getConfig = function(link) {
 
         if (module.html) {
 
-            var path = (module.html.type === "a" ? "/apps/" + appid : "/modules/" + module.owner + "/" + module.name) + "/" + module.html.path + ".html";
+            var path = (module.html.type === "a" ? "/apps/" + link.appid : "/modules/" + module.owner + "/" + module.name) + "/" + module.html.path + ".html";
 
             read(path, "utf8", function(err, html) {
 
@@ -64,12 +63,12 @@ exports.getConfig = function(link) {
 
                 module.html = html;
 
-                send.ok(link.res, buildComp(module));
+                send.ok(link.res, buildModule(module));
             });
         }
         else {
 
-            send.ok(link.res, buildComp(module));
+            send.ok(link.res, buildModule(module));
         }
     });
 };
@@ -119,13 +118,12 @@ exports.getClient = function(link){
 // ONLY PUBLIC FILES
 exports.getFile = function(link) {
     
-    var externalUrl = link.req.url,
-        appid = link.host[1] + "." + link.host[0];
+    var externalUrl = link.req.url;
 
-    if (appid) {
+    if (link.appid) {
 
         // change the request URL to the internal one
-        link.req.url = appid + "/pub/" + link.path.join("/").replace(/[^a-z0-9\/\.\-_]|\.\.\//gi, "");
+        link.req.url = link.appid + "/pub/" + link.path.join("/").replace(/[^a-z0-9\/\.\-_]|\.\.\//gi, "");
 
         files.serve(link.req, link.res, function(err, data) {
 
