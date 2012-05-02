@@ -5,6 +5,48 @@ var orient = require("orientdb"),
 var server = new Server(CONFIG.orient.server),
     db = new Db(CONFIG.orient.db.database_name, server, CONFIG.orient.db);
 
+exports.getDomainRoutes = function(domain, callback) {
+
+    db.open(function(err, result) {
+
+        if (err) { return callback(err); }
+
+        var command =
+            "SELECT " +
+                "name AS appId, routes " +
+            "FROM " +
+                "VApplication" +
+            "WHERE " +
+                "name = '" + domain + "'";
+
+        sql(command, function(err, results) {
+
+            if (err) {
+                return callback("An error occurred while retrieving the routing table for domain '" + domain + "': " + err);
+            }
+
+            // if there is no result
+            if (!results || results.length == 0) {
+                return callback("Domain not found: " + domain);
+            }
+
+            // if there are too many results
+            if (results.length > 1) {
+                return callback("Could not uniquely determine the application ID for domain: " + domain);
+            }
+
+            var application = results[0];
+
+            // if the application does not have the required fields
+            if (!application || !application.appId || !application.routes) {
+                return callback("The application object is not complete. Check that both appId and routes are present: " + JSON.stringify(application));
+            }
+
+            callback(null, application);
+        });
+    });
+};
+
 exports.getUserOperation = function(miid, method, userId, callback) {
 
     db.open(function(err, result) {
@@ -49,6 +91,7 @@ exports.getUserOperation = function(miid, method, userId, callback) {
                 return callback("The operation object is not complete. Missing: operation.file");
             }
 
+            // TODO is this stil necessary?
             // if the operation has parameters, parse them as JSON
             if (operation.params) {
                 operation.params = JSON.parse(operation.params);
