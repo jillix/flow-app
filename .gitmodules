@@ -7,3 +7,6 @@
 [submodule "modules/adioo/stdl.layout"]
 	path = modules/adioo/stdl.layout
 	url = git@github.com:adioo/stdl.layout.git
+[submodule "modules/ajaxorg/ace"]
+	path = modules/ajaxorg/ace
+	url = https://github.com/ajaxorg/ace.git
