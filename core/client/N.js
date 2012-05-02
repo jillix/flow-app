@@ -185,7 +185,7 @@ var N = {
 
             //set session id in http header
             if (window.name) {
-
+                
                 link.setRequestHeader("x-sid", window.name);
             }
 
