@@ -13,9 +13,9 @@ exports.getAppId = function(domain, callback) {
 
         var command =
             "SELECT " +
-                "name AS appId " +
+                "application.id AS appId " +
             "FROM " +
-                "VApplication " +
+                "VDomain " +
             "WHERE " +
                 "name = '" + domain + "'";
 
@@ -55,9 +55,9 @@ exports.getDomainRoutes = function(domain, callback) {
 
         var command =
             "SELECT " +
-                "routes " +
+                "application.routes AS routes " +
             "FROM " +
-                "VApplication " +
+                "VDomain " +
             "WHERE " +
                 "name = '" + domain + "'";
 
@@ -226,7 +226,13 @@ this.getDomainPublicUser = function(domain, callback) {
 
         if (err) { return callback(err); }
 
-        var command = "SELECT publicUser FROM VApplication WHERE name = 'mono.ch'";
+        var command =
+            "SELECT " +
+                "application.publicUser AS publicUser " +
+            "FROM " +
+                "VDomain " +
+            "WHERE " +
+                "name = '" + domain + "'";
 
         sql(command, function(err, results) {
 

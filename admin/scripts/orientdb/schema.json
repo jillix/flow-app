@@ -277,7 +277,7 @@
                 "super-class": "OGraphVertex",
                 "properties": [
                     {
-                        "name": "name",
+                        "name": "id",
                         "type": "STRING",
                         "mandatory": true,
                         "not-null": true
