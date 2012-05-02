@@ -29,6 +29,11 @@
             "@version": 0,
             "@class": "VApplication",
             "name": "mono.ch",
+            "routes": {
+                "/": "mono_stdl_layout_1",
+                "stdl": "mono_stdl_list_1",
+                "liqshop": "liqshop_layout"
+            },
             "publicUser": "#7:0",
             "roles": [
                 "#8:0",
@@ -147,6 +152,39 @@
             "name": "stdl.layout",
             "in": [
                 "#6:10"
+            ]
+        },
+        {
+            "@type": "d",
+            "@rid": "#10:7",
+            "@version": 0,
+            "@class": "VModule",
+            "owner": "jillix",
+            "name": "liqshopLayout",
+            "in": [
+                "#6:14"
+            ]
+        },
+        {
+            "@type": "d",
+            "@rid": "#10:8",
+            "@version": 0,
+            "@class": "VModule",
+            "owner": "jillix",
+            "name": "liqshopOrderList",
+            "in": [
+                "#6:15"
+            ]
+        },
+        {
+            "@type": "d",
+            "@rid": "#10:9",
+            "@version": 0,
+            "@class": "VModule",
+            "owner": "jillix",
+            "name": "liqshopOrderDetails",
+            "in": [
+                "#6:16"
             ]
         },
         {
@@ -276,6 +314,48 @@
             "miid": "mono_stdl_list_1",
             "out": "#8:0",
             "in": "#9:3"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:14",
+            "@version": 0,
+            "@class": "EHasAccessTo",
+            "miid": "liqshop_layout",
+            "html": {
+                "type": "a",
+                "path": "main"
+            },
+            "css": ["main"],
+            "out": "#8:0",
+            "in": "#10:7"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:15",
+            "@version": 0,
+            "@class": "EHasAccessTo",
+            "miid": "liqshop_order_list",
+            "html": {
+                "type": "a",
+                "path": "main"
+            },
+            "css": ["main"],
+            "out": "#8:0",
+            "in": "#10:8"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:16",
+            "@version": 0,
+            "@class": "EHasAccessTo",
+            "miid": "liqshop_order_details",
+            "html": {
+                "type": "a",
+                "path": "main"
+            },
+            "css": ["main"],
+            "out": "#8:0",
+            "in": "#10:9"
         }
     ]
 }

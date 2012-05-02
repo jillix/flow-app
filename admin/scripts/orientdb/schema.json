@@ -278,6 +278,12 @@
                         "not-null": true
                     },
                     {
+                        "name": "routes",
+                        "type": "EMBEDMAP",
+                        "mandatory": true,
+                        "not-null": true
+                    },
+                    {
                         "name": "roles",
                         "type": "LINKSET",
                         "mandatory": false,
