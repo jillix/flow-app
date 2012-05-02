@@ -104,7 +104,7 @@ exports.getModule = function(link) {
 
         // now serve the module file
         link.req.url = owner + "/" + name + "/" + (module.dir ? module.dir + "/" : "") + link.path.slice(2).join("/").replace(/[^a-z0-9\/\.\-_]|\.\.\//gi, "");
-
+        console.log(link.req.url);
         modules.serve(link.req, link.res);
     });
 };

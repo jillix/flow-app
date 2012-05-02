@@ -1,4 +1,4 @@
-define(["jillix/ace/ace", "jillix/ace/mode/javascript", "jillix/ace/theme/textmate", "https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"], function(ace, jsMode, theme) {
+define(["ajaxorg/ace/ace", "ajaxorg/ace/mode/javascript", "ajaxorg/ace/theme/textmate", "https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"], function(ace, jsMode, theme) {
     
     //status
     var cssNs = "div.editor ",

@@ -178,7 +178,7 @@ this.getDomainPublicUser = function(domain, callback) {
 };
 
 function sql(command, callback) {
-    console.log(command);
+    //console.log(command);
     db.command(command, callback);
 }
 

@@ -108,8 +108,9 @@
             "@rid": "#10:2",
             "@version": 0,
             "@class": "VModule",
-            "owner": "jillix",
+            "owner": "ajaxorg",
             "name": "ace",
+            "dir": "lib/ace",
             "in": [
                 "#6:8"
             ]
