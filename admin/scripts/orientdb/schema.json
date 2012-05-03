@@ -294,6 +294,13 @@
                         "mandatory": false,
                         "not-null": false,
                         "linked-class": "VRole"
+                    },
+                    {
+                        "name": "publicUser",
+                        "type": "LINK",
+                        "mandatory": true,
+                        "not-null": true,
+                        "linked-class": "VUser"
                     }
                 ]
             },
