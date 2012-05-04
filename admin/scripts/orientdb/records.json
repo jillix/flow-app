@@ -29,6 +29,7 @@
             "@version": 0,
             "@class": "VApplication",
             "id": "6ecad3c29a3a629280e686cf0c3f5d5a",
+            "name": "Mono Dev App",
             "routes": {
                 "/": "mono_stdl_layout_1",
                 "stdl": "mono_stdl_list_1",
@@ -45,7 +46,7 @@
             "@rid": "#12:0",
             "@version": 0,
             "@class": "VDomain",
-            "name": "mono.ch:8000",
+            "name": "mono.ch",
             "application": "#11:0"
         },
         {

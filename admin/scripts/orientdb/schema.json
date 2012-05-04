@@ -283,6 +283,12 @@
                         "not-null": true
                     },
                     {
+                        "name": "name",
+                        "type": "STRING",
+                        "mandatory": true,
+                        "not-null": true
+                    },
+                    {
                         "name": "routes",
                         "type": "EMBEDDEDMAP",
                         "mandatory": true,

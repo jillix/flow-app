@@ -26,7 +26,7 @@ function requestHandler(req, res) {
             res:        res,
             query:      url.query || {},
             pathname:   url.pathname,
-            host:       req.headers.host
+            host:       CONFIG.dev ? req.headers.host.split(":")[0] : req.headers.host
         };
 
     link.res.headers = {};
