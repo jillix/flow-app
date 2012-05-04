@@ -360,6 +360,13 @@ var N = {
             for (var i in response[2]) {
                 N.css(response[2][i]);
             }
+            
+            // TODO handle requirejs errors
+            /*require.onError = function(){
+                
+                target.style.display = "block";
+                callback(null, clone);
+            };*/
 
             // load, clone and init modules
             require([response[0].owner + "/" + response[0].name + "/main"], function(module) {
