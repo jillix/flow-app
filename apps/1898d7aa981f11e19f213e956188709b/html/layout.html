@@ -15,117 +15,11 @@
         <div class="hpane box">
             <div class="hpane pane first"
                  style="min-width: 300px; right: 1136px;">
-                <div class="wrapper">
-                    <ul class="bar top">
-                        <li>
-                            <span class="labBranch">Filiale</span>: <select name="customer.branch"
-                                id="orders_filter_branch">
-                                <option value="TWT">
-                                    TM | Winterthur
-                                </option>
-                                <option value="TZA">
-                                    TM | Z&Atilde;&frac14;rich
-                                </option>
-                            </select>
-                        </li>
-                        <li>
-                            <span class="labShow">Zeige</span>: <select name="archive"
-                                id="orders_filter_archive">
-                                <option value="0"
-                                        class="labNew">
-                                    Neu
-                                </option>
-                                <option value="1"
-                                        class="labArchive">
-                                    Archiviert
-                                </option>
-                            </select>
-                        </li>
-                        <li class="right">
-                            <input type="search"
-                                id="orders_search"
-                                placeholder="Search" />
-                        </li>
-                    </ul><img id="spinnerOrders"
-                         src="/file/front/spinner.gif" />
-                    <ul class="list orders"
-                        id="orders_list"
-                        style="display: block;">
-                        <li>
-                            <span class="orderdate">07.05.2012 - 07:09:12</span> | <span class="ordernr">BOLJ7ATGRE</span>
-                        </li>
-                        <li class="active">
-                            <span class="orderdate">01.04.2012 - 20:50:47</span> | <span class="ordernr">GFTZOONGS5</span>
-                        </li>
-                    </ul>
-                    <ul class="bar bottom">
-                        <li class="right"
-                            id="orders_forward"
-                            style="display: block;">&gt;
-                        </li>
-                        <li class="right deactive">
-                            <span id="orders_page">1</span> <span>/</span> <span id="orders_of">3</span>
-                        </li>
-                        <li class="right"
-                            id="orders_back"
-                            style="display: block;">&lt;
-                        </li>
-                    </ul>
-                </div>
+                <div class="wrapper" id="orderList"></div>
             </div>
             <div class="hpane pane last detail"
                  style="min-width: 500px; left: 543px;">
-                <div class="wrapper">
-                    <div id="noItmSel"
-                         class="labNoOrderSelected"
-                         style="display: none;">
-                        Keine Bestellung selektiert
-                    </div>
-                    <div id="orderDetail"
-                         style="display: block;">
-                        <label class="labOrderNr">Bestell-Nr.</label><span id="orderNr">GFTZOONGS5</span><br />
-                        <label class="labTime">Bestelleingang</label><span id="orderTime">01.04.2012 - 20:50:47</span><br />
-                        <label class="labArchive">Archiviert</label><span id="archive">-</span><br />
-                        <br />
-                        <hr />
-                        <br />
-                        <label class="title labCustomer">Kunde</label><br />
-                        <div class="customer">
-                            <label class="labCompany">Firma</label><span id="orderCompany">Garage Team Saeba</span><br />
-                            <label class="labName">Name</label><span id="orderName">-</span><br />
-                            <label class="labZip">PLZ</label><span id="orderZip">-</span><br />
-                            <label class="labCity">Ort</label><span id="orderCity">-</span><br />
-                            <label class="labCustomerNr">Kunden-Nr.</label><span id="orderCnr">4400816</span><br />
-                            <label class="labBranch">Filiale</label><span id="orderBranch">TSI</span>
-                        </div><br />
-                        <hr />
-                        <br />
-                        <label class="title labItems">Artikel</label><br />
-                        <div class="orderItems">
-                            <div>
-                                <label class="labCaption">Bezeichnung</label><span class="caption">Ruban isolant 19x25 rouge</span><br />
-                                <label class="labArticleNr">Artikel-Nr.</label><span class="nr">39200-1925 ROT</span><br />
-                                <label class="labNetto">Netto</label><span class="currency labCHF">CHF</span> <span class="netto">0.90</span><br />
-                                <label class="labAmount">Menge</label><span class="number">10</span>
-                            </div>
-                            <div>
-                                <label class="labCaption">Bezeichnung</label><span class="caption">Ruban isolant 19x25 bleu</span><br />
-                                <label class="labArticleNr">Artikel-Nr.</label><span class="nr">39200-1925 BLAU</span><br />
-                                <label class="labNetto">Netto</label><span class="currency labCHF">CHF</span> <span class="netto">0.90</span><br />
-                                <label class="labAmount">Menge</label><span class="number">10</span>
-                            </div>
-                            <div>
-                                <label class="labCaption">Bezeichnung</label><span class="caption">Ruban isolant 19x25 vert</span><br />
-                                <label class="labArticleNr">Artikel-Nr.</label><span class="nr">39200-1925 GRUEN</span><br />
-                                <label class="labNetto">Netto</label><span class="currency labCHF">CHF</span> <span class="netto">0.90</span><br />
-                                <label class="labAmount">Menge</label><span class="number">10</span>
-                            </div>
-                        </div><br />
-                        <hr />
-                        <br />
-                        <label>Total:</label><span class="currency labCHF">CHF</span> <span id="orderTotal">136.00</span>
-                    </div>
-                </div>
+                <div class="wrapper" id="orderDetails"></div>
                 <ul class="bar top"></ul>
                 <ul class="bar bottom">
                     <li class="labToArchive"

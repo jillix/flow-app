@@ -1,31 +1,56 @@
 <ul class="bar top">
-    <li><span class="labBranch"></span>: <select name="customer.branch" id="orders_filter_branch">
-            <option value="null"></option>
+    <li>
+        <span class="labBranch">Filiale</span>: <select name="customer.branch"
+            id="orders_filter_branch">
+            <option value="TWT">
+                TM | Winterthur
+            </option>
+            <option value="TZA">
+                TM | Z&Atilde;&frac14;rich
+            </option>
         </select>
     </li>
-    <li><span class="labShow"></span>: <select name="archive" id="orders_filter_archive">
-            <option value="0" class="labNew"></option>
-            <option value="1" class="labArchive"></option>
+    <li>
+        <span class="labShow">Zeige</span>: <select name="archive"
+            id="orders_filter_archive">
+            <option value="0"
+                    class="labNew">
+                Neu
+            </option>
+            <option value="1"
+                    class="labArchive">
+                Archiviert
+            </option>
         </select>
     </li>
     <li class="right">
-        <input type="search" id="orders_search" placeholder="Search"/>
+        <input type="search"
+            id="orders_search"
+            placeholder="Search" />
     </li>
-</ul>
-
-<img id='spinnerOrders' src='/file/front/spinner.gif'/>
-<ul class="list orders" id="orders_list">
+</ul><img id="spinnerOrders"
+     src="/file/front/spinner.gif" />
+<ul class="list orders"
+    id="orders_list"
+    style="display: block;">
     <li>
-        <span class="orderdate"></span> | <span class="ordernr"></span>
+        <span class="orderdate">07.05.2012 - 07:09:12</span> | <span class="ordernr">BOLJ7ATGRE</span>
+    </li>
+    <li class="active">
+        <span class="orderdate">01.04.2012 - 20:50:47</span> | <span class="ordernr">GFTZOONGS5</span>
+    </li>
+</ul>
+<ul class="bar bottom">
+    <li class="right"
+        id="orders_forward"
+        style="display: block;">&gt;
+    </li>
+    <li class="right deactive">
+        <span id="orders_page">1</span> <span>/</span> <span id="orders_of">3</span>
+    </li>
+    <li class="right"
+        id="orders_back"
+        style="display: block;">&lt;
     </li>
 </ul>
 
-<ul class="bar bottom">
-    <li class="right" id="orders_forward">&gt;</li>
-    <li class="right deactive">
-        <span id="orders_page">1</span>
-        <span> / </span>
-        <span id="orders_of"></span>
-    </li>
-    <li class="right" id="orders_back">&lt;</li>
-</ul>

@@ -1,0 +1,25 @@
+@font-face {
+    
+    font-family: 'dinot';
+	src: url('fonts/DINOTregular/DINOTregular.eot');
+	src: url('fonts/DINOTregular/DINOTregular.woff') format('woff'), url('fonts/DINOTregularDINOTregular.ttf') format('truetype'), url('fonts/DINOTregular/DINOTregular.svg') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+    
+    font-family: 'dinot';
+	src: url('fonts/DINOTbold/DINOTbold.eot');
+	src: url('fonts/DINOTbold/DINOTbold.woff') format('woff'), url('fonts/DINOTbold/DINOTbold.ttf') format('truetype'), url('fonts/DINOTbold/DINOTbold.svg') format('svg');
+	font-weight: bold;
+	font-style: normal;
+}
+
+html, body { font-family: dinot, verdana; font-size:13px; }
+body { overflow:hidden; }
+
+#noItemSelected { margin-left:10px; margin-top:1px; }
+.labDetails { font-size:15px; font-weight:bold; }
+.hpane.middle > .wrapper { position:absolute; left:0; right:0; top:34px; bottom:0; overflow-y:auto; min-width:750px; }
+.hpane.last > .wrapper { position:absolute; left:0; right:0; top:0; bottom:34px; overflow-y:auto; }
+.spinner { position:absolute; left:0; right:0; top:100px; margin:auto; }

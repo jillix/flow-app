@@ -53,6 +53,7 @@
                 "/": "liqshop_layout"
             },
             "publicUser": "#7:0",
+            "publicDir": "public",
             "roles": [
                 "#8:0",
                 "#8:1"

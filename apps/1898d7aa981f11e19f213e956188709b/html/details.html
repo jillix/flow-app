@@ -1,41 +1,49 @@
-<div id="noItmSel" class="labNoOrderSelected"></div>
-<div id="orderDetail">
-    <label class="labOrderNr"></label><span id="orderNr"></span><br/>
-    <label class="labTime"></label><span id="orderTime"></span><br/>
-    <label class="labArchive"></label><span id="archive"></span><br/>
-    <br/>
-    <hr/>
-    <br/>
-    <label class="title labCustomer"></label><br/>
+<div id="noItmSel"
+     class="labNoOrderSelected"
+     style="display: none;">
+    Keine Bestellung selektiert
+</div>
+<div id="orderDetail"
+     style="display: block;">
+    <label class="labOrderNr">Bestell-Nr.</label><span id="orderNr">GFTZOONGS5</span><br />
+    <label class="labTime">Bestelleingang</label><span id="orderTime">01.04.2012 - 20:50:47</span><br />
+    <label class="labArchive">Archiviert</label><span id="archive">-</span><br />
+    <br />
+    <hr />
+    <br />
+    <label class="title labCustomer">Kunde</label><br />
     <div class="customer">
-        <label class="labCompany"></label><span id="orderCompany"></span><br/>
-        <label class="labName"></label><span id="orderName"></span><br/>
-        <label class="labZip"></label><span id="orderZip"></span><br/>
-        <label class="labCity"></label><span id="orderCity"></span><br/>
-        <label class="labCustomerNr"></label><span id="orderCnr"></span><br/>
-        <label class="labBranch"></label><span id="orderBranch"></span>
-    </div>
-    <br/>
-    <hr/>
-    <br/>
-    <label class="title labItems"></label></br>
+        <label class="labCompany">Firma</label><span id="orderCompany">Garage Team Saeba</span><br />
+        <label class="labName">Name</label><span id="orderName">-</span><br />
+        <label class="labZip">PLZ</label><span id="orderZip">-</span><br />
+        <label class="labCity">Ort</label><span id="orderCity">-</span><br />
+        <label class="labCustomerNr">Kunden-Nr.</label><span id="orderCnr">4400816</span><br />
+        <label class="labBranch">Filiale</label><span id="orderBranch">TSI</span>
+    </div><br />
+    <hr />
+    <br />
+    <label class="title labItems">Artikel</label><br />
     <div class="orderItems">
         <div>
-            <label class="labCaption"></label><span class="caption"></span><br/>
-            <label class="labArticleNr"></label><span class="nr"></span><br/>
-            <label class="labNetto"></label><span class="currency labCHF"></span> <span class="netto"></span><br/>
-            <label class="labAmount"></label><span class="number"></span>
+            <label class="labCaption">Bezeichnung</label><span class="caption">Ruban isolant 19x25 rouge</span><br />
+            <label class="labArticleNr">Artikel-Nr.</label><span class="nr">39200-1925 ROT</span><br />
+            <label class="labNetto">Netto</label><span class="currency labCHF">CHF</span> <span class="netto">0.90</span><br />
+            <label class="labAmount">Menge</label><span class="number">10</span>
         </div>
-    </div>
-    <br/>
-    <hr/>
-    <br/>
-    <label>Total:</label><span class="currency labCHF"></span> <span id="orderTotal"></span>
+        <div>
+            <label class="labCaption">Bezeichnung</label><span class="caption">Ruban isolant 19x25 bleu</span><br />
+            <label class="labArticleNr">Artikel-Nr.</label><span class="nr">39200-1925 BLAU</span><br />
+            <label class="labNetto">Netto</label><span class="currency labCHF">CHF</span> <span class="netto">0.90</span><br />
+            <label class="labAmount">Menge</label><span class="number">10</span>
+        </div>
+        <div>
+            <label class="labCaption">Bezeichnung</label><span class="caption">Ruban isolant 19x25 vert</span><br />
+            <label class="labArticleNr">Artikel-Nr.</label><span class="nr">39200-1925 GRUEN</span><br />
+            <label class="labNetto">Netto</label><span class="currency labCHF">CHF</span> <span class="netto">0.90</span><br />
+            <label class="labAmount">Menge</label><span class="number">10</span>
+        </div>
+    </div><br />
+    <hr />
+    <br />
+    <label>Total:</label><span class="currency labCHF">CHF</span> <span id="orderTotal">136.00</span>
 </div>
-<ul class="bar top"></ul>
-<ul class="bar bottom">
-    <li class="labToArchive" id="orderDetailArchive"></li>
-    <li class="labToUnarchive" id="orderDetailUnarchive" style="display:none"></li>
-    <li class="labCancel" id="orderDetailCancel"></li>
-</ul>
-
