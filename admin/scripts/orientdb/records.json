@@ -31,7 +31,8 @@
             "id": "6ecad3c29a3a629280e686cf0c3f5d5a",
             "name": "Mono Dev App",
             "routes": {
-                "/": "mono_stdl_layout_1",
+                "/": "mono_admin",
+                "editor": "mono_editor_1"
                 "stdl": "mono_stdl_list_1",
                 "liqshop": "liqshop_layout"
             },
@@ -147,7 +148,8 @@
             "@version": 0,
             "owner": "jillix",
             "@class": "VModule",
-            "name": "tempAdmin",
+            "name": "admin",
+            "dir": "client",
             "in": [
                 "#6:11"
             ]
@@ -285,7 +287,7 @@
             "@rid": "#6:11",
             "@version": 0,
             "@class": "EHasAccessTo",
-            "miid": "mono_temp_admin",
+            "miid": "mono_admin",
             "html": {
                 "type": "a",
                 "path": "main"
