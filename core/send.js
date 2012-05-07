@@ -1,6 +1,7 @@
 var util = require("util"),
     files = new (require("node-static").Server)(CONFIG.root + "/apps"),
-    getDomainApplication = require(CONFIG.root + "/core/model/orient").getDomainApplication;
+    getDomainApplication = require(CONFIG.root + "/core/model/orient").getDomainApplication,
+    self = this;
 
 
 this.send = (function(){
@@ -172,8 +173,9 @@ function log(level, message) {
 
 this.publicFiles = function(link, appId, publicDir) {
     
+    var send = self.send;
     var externalUrl = link.req.url;
-        
+    
     if (!appId) { return send.internalservererror(link, err); }
     
     // change the request URL to the internal one
