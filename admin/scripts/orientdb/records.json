@@ -51,6 +51,14 @@
         },
         {
             "@type": "d",
+            "@rid": "#12:1",
+            "@version": 0,
+            "@class": "VDomain",
+            "name": "127.0.0.1",
+            "application": "#11:0"
+        },
+        {
+            "@type": "d",
             "@rid": "#8:0",
             "@version": 0,
             "@class": "VRole",
