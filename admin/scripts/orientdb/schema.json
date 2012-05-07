@@ -307,6 +307,12 @@
                         "mandatory": true,
                         "not-null": true,
                         "linked-class": "VUser"
+                    },
+                    {
+                        "name": "publicDir",
+                        "type": "STRING",
+                        "mandatory": false,
+                        "not-null": false
                     }
                 ]
             },

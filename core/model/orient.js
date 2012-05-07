@@ -47,7 +47,7 @@ exports.getAppId = function(domain, callback) {
     });
 };
 
-exports.getDomainRoutes = function(domain, callback) {
+exports.getDomainApplication = function(domain, callback) {
 
     db.open(function(err, result) {
 
@@ -55,7 +55,7 @@ exports.getDomainRoutes = function(domain, callback) {
 
         var command =
             "SELECT " +
-                "application.routes AS routes " +
+                "application.id as appId, application.routes AS routes, application.publicDir AS publicDir " +
             "FROM " +
                 "VDomain " +
             "WHERE " +
@@ -80,11 +80,11 @@ exports.getDomainRoutes = function(domain, callback) {
             var application = results[0];
 
             // if the application does not have the required fields
-            if (!application || !application.routes) {
-                return callback("The application object is not complete. Check if the routes are present: " + JSON.stringify(application));
+            if (!application || !application.appId || !application.routes) {
+                return callback("The application object is not complete. Check if the application ID and the routes are present: " + JSON.stringify(application));
             }
 
-            callback(null, application.routes);
+            callback(null, application);
         });
     });
 };
@@ -266,6 +266,6 @@ this.getDomainPublicUser = function(domain, callback) {
 };
 
 function sql(command, callback) {
-    //console.log(command);
+    console.log(command);
     db.command(command, callback);
 }

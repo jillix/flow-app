@@ -1,0 +1,31 @@
+<ul class="bar top">
+    <li><span class="labBranch"></span>: <select name="customer.branch" id="orders_filter_branch">
+            <option value="null"></option>
+        </select>
+    </li>
+    <li><span class="labShow"></span>: <select name="archive" id="orders_filter_archive">
+            <option value="0" class="labNew"></option>
+            <option value="1" class="labArchive"></option>
+        </select>
+    </li>
+    <li class="right">
+        <input type="search" id="orders_search" placeholder="Search"/>
+    </li>
+</ul>
+
+<img id='spinnerOrders' src='/file/front/spinner.gif'/>
+<ul class="list orders" id="orders_list">
+    <li>
+        <span class="orderdate"></span> | <span class="ordernr"></span>
+    </li>
+</ul>
+
+<ul class="bar bottom">
+    <li class="right" id="orders_forward">&gt;</li>
+    <li class="right deactive">
+        <span id="orders_page">1</span>
+        <span> / </span>
+        <span id="orders_of"></span>
+    </li>
+    <li class="right" id="orders_back">&lt;</li>
+</ul>

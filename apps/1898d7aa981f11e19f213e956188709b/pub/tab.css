@@ -1,0 +1,9 @@
+div.tab { display:block; position:absolute; top:0px; bottom:0px; left:0px; right:0px; }
+div.tab > .bar { background:url(topbar.png) !important; height:44px; }
+div.tab > .bar > li:hover { background:url(topbarHover.png) !important; }
+div.tab > .bar > li.active { background:url(topbarActive.png) !important; }
+div.tab > .bar:hover { color:#fff !important; }
+div.tab div.content { display:block; position:absolute; top:44px; bottom:0px; left:0px; right:0px; }
+div.tab div.active { display: block; }
+div.tab > .bar > .comp { color:#eee; }
+div.tab > .bar .right .caption { color:#eee; }
