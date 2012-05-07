@@ -1,6 +1,6 @@
 var send = require(CONFIG.root + "/core/send").send,
-    files = new (require("node-static").Server)(CONFIG.root + "/apps"),
-    getDomainApplication = require(CONFIG.root + "/core/model/orient").getDomainApplication;
+    publicFiles = require(CONFIG.root + "/core/send").publicFiles;
+    getDomainApplication = require(CONFIG.root + "/core/model/orient.js").getDomainApplication;
 
 function initScripts(module, ie7) {
 
@@ -36,7 +36,7 @@ exports.route = function(link) {
         return;
     }
     
-    getDomainApplication(link.host, function(err, result) {
+    getDomainApplication(link.host, true, function(err, result) {
         
         if (err || !result.routes) {
             
@@ -56,21 +56,7 @@ exports.route = function(link) {
         }
         else {
             
-            link.req.url = result.appId + "/" + (result.publicDir ? result.publicDir + "/" : "") + link.path.join("/").replace(/[^a-z0-9\/\.\-_]|\.\.\//gi, "");
-            
-            files.serve(link.req, link.res, function(err, data) {
-        
-                // TODO one can hook stats in here
-                if (!err) return;
-        
-                switch (err.status) {
-                    case 404:
-                        send.notfound(link, "File not found: " + link.path.join("/"));
-                        return;
-                    default:
-                        send.internalservererror(link, err);
-                }
-            });
+            publicFiles(link, result.appId, result.publicDir);
         }
     });
 };

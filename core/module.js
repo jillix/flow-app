@@ -4,7 +4,8 @@ var send = require(CONFIG.root + "/core/send.js").send,
     model = require(CONFIG.root + "/core/model/orient.js"),
     client = new stat(CONFIG.root + "/core/client"),
     modules = new stat(CONFIG.root + "/modules"),
-    files = new stat(CONFIG.root + "/apps");
+    publicFiles = require(CONFIG.root + "/core/send").publicFiles;
+    //files = new stat(CONFIG.root + "/apps");
 
 function buildModule(module) {
 
@@ -123,27 +124,14 @@ exports.getClient = function(link){
 // ONLY PUBLIC FILES
 exports.getFile = function(link) {
     
-    var externalUrl = link.req.url;
-    
-    model.getAppId(link.host, function(err, appid) {
+    model.getDomainApplication(link.host, false, function(err, result) {
         
-        if (err || !appid) { return send.internalservererror(link, err); }
+        if (err || !result) {
+            
+            send.notfound(link, "File not found: " + link.req.url);
+            return;
+        }
         
-        // change the request URL to the internal one
-        link.req.url = appid + "/pub/" + link.path.join("/").replace(/[^a-z0-9\/\.\-_]|\.\.\//gi, "");
-        
-        files.serve(link.req, link.res, function(err, data) {
-        
-            // TODO one can hook stats in here
-            if (!err) return;
-        
-            switch (err.status) {
-                case 404:
-                    send.notfound(link, "File not found: " + externalUrl);
-                    return;
-                default:
-                    send.internalservererror(link, err);
-            }
-        });
+        publicFiles(link, result.appId, result.publicDir);
     });
 };
