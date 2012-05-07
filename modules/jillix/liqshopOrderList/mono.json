@@ -1,0 +1,8 @@
+{
+    main: "main.js",
+    operations: [
+        { path: "oerations.js", function: "getOrders" },
+        { path: "oerations.js", function: "getBranches" }
+    ]
+}
+

@@ -87,7 +87,6 @@
                 "#6:1"
             ],
             "out": [
-                "#6:9",
                 "#6:13",
 
                 "#6:6",
@@ -95,6 +94,9 @@
                 "#6:10",
                 "#6:11",
                 "#6:12",
+
+                "#6:9",
+                "#6:17",
 
                 "#6:14",
                 "#6:15",
@@ -122,6 +124,30 @@
             "method": "getData",
             "in": [
                 "#6:13"
+            ]
+        },
+        {
+            "@type": "d",
+            "@rid": "#9:4",
+            "@version": 0,
+            "@class": "VOperation",
+            "module": "jillix/liqshopOrderList",
+            "file": "operations.js",
+            "method": "getOrders",
+            "in": [
+                "#6:9"
+            ]
+        },
+        {
+            "@type": "d",
+            "@rid": "#9:5",
+            "@version": 0,
+            "@class": "VOperation",
+            "module": "jillix/liqshopOrderList",
+            "file": "operations.js",
+            "method": "getBranches",
+            "in": [
+                "#6:17"
             ]
         },
         {
@@ -279,12 +305,9 @@
             "@rid": "#6:9",
             "@version": 0,
             "@class": "ECanPerform",
-            "miid": "mono_core_module",
-            "params": {
-                "dir": "mono.ch/pub/"
-            },
+            "miid": "liqshop_order_list",
             "out": "#8:0",
-            "in": "#9:2"
+            "in": "#9:4"
         },
         {
             "@type": "d",
@@ -392,6 +415,15 @@
             "css": [],
             "out": "#8:0",
             "in": "#10:9"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:17",
+            "@version": 0,
+            "@class": "ECanPerform",
+            "miid": "liqshop_order_list",
+            "out": "#8:0",
+            "in": "#9:5"
         }
     ]
 }
