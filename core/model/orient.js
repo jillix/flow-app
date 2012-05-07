@@ -47,15 +47,16 @@ exports.getAppId = function(domain, callback) {
     });
 };
 
-exports.getDomainApplication = function(domain, callback) {
+exports.getDomainApplication = function(domain, withRoutes, callback) {
 
     db.open(function(err, result) {
 
         if (err) { return callback(err); }
 
+        var routeField = withRoutes ? "application.routes AS routes, " : "";
         var command =
             "SELECT " +
-                "application.id as appId, application.routes AS routes, application.publicDir AS publicDir " +
+                "application.id as appId, " + routeField + "application.publicDir AS publicDir " +
             "FROM " +
                 "VDomain " +
             "WHERE " +
@@ -266,6 +267,6 @@ this.getDomainPublicUser = function(domain, callback) {
 };
 
 function sql(command, callback) {
-    console.log(command);
+    //console.log(command);
     db.command(command, callback);
 }
