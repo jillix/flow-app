@@ -43,14 +43,6 @@
         },
         {
             "@type": "d",
-            "@rid": "#12:0",
-            "@version": 0,
-            "@class": "VDomain",
-            "name": "mono.ch",
-            "application": "#11:0"
-        },
-        {
-            "@type": "d",
             "@rid": "#12:1",
             "@version": 0,
             "@class": "VDomain",
