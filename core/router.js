@@ -56,7 +56,7 @@ exports.route = function(link) {
         }
         else {
             
-            link.req.url = result.appId + "/" + (result.publicDir + "/" || "") + link.path.join("/").replace(/[^a-z0-9\/\.\-_]|\.\.\//gi, "");
+            link.req.url = result.appId + "/" + (result.publicDir ? result.publicDir + "/" : "") + link.path.join("/").replace(/[^a-z0-9\/\.\-_]|\.\.\//gi, "");
             
             files.serve(link.req, link.res, function(err, data) {
         
