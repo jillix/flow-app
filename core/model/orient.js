@@ -81,8 +81,12 @@ exports.getDomainApplication = function(domain, withRoutes, callback) {
             var application = results[0];
 
             // if the application does not have the required fields
-            if (!application || !application.appId || !application.routes) {
-                return callback("The application object is not complete. Check if the application ID and the routes are present: " + JSON.stringify(application));
+            if (!application || !application.appId) {
+                return callback("The application object is not complete. Check if the application ID is present: " + JSON.stringify(application));
+            }
+
+            if (withRoutes && !application.routes) {
+                return callback("The application object is not complete. Missing application routing table: " + JSON.stringify(application));
             }
 
             callback(null, application);
