@@ -49,6 +49,9 @@ function requestHandler(req, res) {
         operation(link);
     }
     else {
+        
+        link.path = path;
+        
         route(link);
     }
 }
