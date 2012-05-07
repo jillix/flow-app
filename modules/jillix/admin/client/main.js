@@ -1,4 +1,4 @@
-define(["faeb187/stdl.list"]function(list) {
+define(["faeb187/stdl.list/main"], function(list) {
     
     var Vertex = (function(V) {
         
@@ -15,17 +15,16 @@ define(["faeb187/stdl.list"]function(list) {
             
             return vertex;
         };
-        
     })();
     
-    var Edge = (function(E){
+    var Edge = (function(E) {
         
         E = {
             
             
         };
         
-        return function(config){
+        return function(config) {
             
             var edge = N.clone(E);
             
@@ -39,7 +38,35 @@ define(["faeb187/stdl.list"]function(list) {
         
         init: function(config) {
             
-            
+            config = {
+                
+                className: {
+                    
+                    link1: {
+                        
+                        type: "link",
+                        linkedClass: "className"
+                    },
+                    
+                    link2: {
+                        
+                        type: "linkset",
+                        linkedClass: "className"
+                    },
+                    
+                    edge: {
+                        
+                        type: "edge",
+                        edgeClass: "className"
+                        linkedClass: "className"
+                    },
+                    
+                    field1: {
+                        
+                        type: "string"
+                    }
+                }
+            }
         }
     }
 });
