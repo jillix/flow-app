@@ -1,5 +1,6 @@
 var send = require(CONFIG.root + "/core/send").send,
-    getDomainRoutes = require(CONFIG.root + "/core/model/orient").getDomainRoutes;
+    files = new (require("node-static").Server)(CONFIG.root + "/apps"),
+    getDomainApplication = require(CONFIG.root + "/core/model/orient").getDomainApplication;
 
 function initScripts(module, ie7) {
 
@@ -35,15 +36,15 @@ exports.route = function(link) {
         return;
     }
     
-    getDomainRoutes(link.host, function(err, routes) {
+    getDomainApplication(link.host, function(err, result) {
         
-        if (err || !routes) {
+        if (err || !result.routes) {
             
             send.notfound(link, err || "No routing table found");
             return;
         }
         
-        var module = traverse(link.pathname != "/" ? link.pathname.replace(/\/$/, "") : link.pathname, routes, "");
+        var module = traverse(link.pathname != "/" ? link.pathname.replace(/\/$/, "") : link.pathname, result.routes, "");
         
         if (typeof module == "string") {
         
@@ -54,7 +55,22 @@ exports.route = function(link) {
             send.ok(link.res, initScripts(module, (link.req.headers['user-agent'].indexOf("MSIE 7.0") > -1 ? true : false)));
         }
         else {
-            send.notfound(link);
+            
+            link.req.url = result.appId + "/" + (result.publicDir || "") + link.path.join("/").replace(/[^a-z0-9\/\.\-_]|\.\.\//gi, "");
+            
+            files.serve(link.req, link.res, function(err, data) {
+        
+                // TODO one can hook stats in here
+                if (!err) return;
+        
+                switch (err.status) {
+                    case 404:
+                        send.notfound(link, "File not found: " + link.path.join("/"));
+                        return;
+                    default:
+                        send.internalservererror(link, err);
+                }
+            });
         }
     });
 };
