@@ -190,7 +190,7 @@ var N = {
             }
 
             //handle data
-            if (options.data && !(typeof FormData !== "undefined" && data instanceof FormData)) {
+            if (options.data && !(typeof FormData !== "undefined" && options.data instanceof FormData)) {
 
                 try {
 
@@ -374,9 +374,10 @@ var N = {
                 var clone = N.clone(module);
                 
                 clone.miid = miid;
-                clone.module = module;
+                //clone.module = module;
                 clone.$ = target;
                 clone.link = N.link;
+                clone.config = response[0];
                 
                 // TODO create observer with user defined id (only for GUI)
                 clone.obs = N.obs(miid);
