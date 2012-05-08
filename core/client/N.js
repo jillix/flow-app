@@ -179,9 +179,11 @@ var N = {
         var link = new XMLHttpRequest(); //create new link
 
         if (link) {
-
+            
+            var url = N.ok + "/" + (this.miid || options.miid) + "/" + method + (options.path || options.path === "" ? "/" + options.path : "") + (options.query || "");
+            
             //open the connection
-            link.open(options.data ? "post" : "get", N.ok + "/" + (this.miid || options.miid) + "/" + method + "/" + (options.path || ""), !options.sync);
+            link.open(options.data ? "post" : "get", url, !options.sync);
 
             //set session id in http header
             if (window.name) {
@@ -190,7 +192,7 @@ var N = {
             }
 
             //handle data
-            if (options.data && !(typeof FormData !== "undefined" && data instanceof FormData)) {
+            if (options.data && !(typeof FormData !== "undefined" && options.data instanceof FormData)) {
 
                 try {
 
@@ -374,9 +376,10 @@ var N = {
                 var clone = N.clone(module);
                 
                 clone.miid = miid;
-                clone.module = module;
+                //clone.module = module;
                 clone.$ = target;
                 clone.link = N.link;
+                clone.config = response[0];
                 
                 // TODO create observer with user defined id (only for GUI)
                 clone.obs = N.obs(miid);
