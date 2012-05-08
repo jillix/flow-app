@@ -179,9 +179,11 @@ var N = {
         var link = new XMLHttpRequest(); //create new link
 
         if (link) {
-
+            
+            var url = N.ok + "/" + (this.miid || options.miid) + "/" + method + (options.path || options.path === "" ? "/" + options.path : "") + (options.query || "");
+            
             //open the connection
-            link.open(options.data ? "post" : "get", N.ok + "/" + (this.miid || options.miid) + "/" + method + "/" + (options.path || ""), !options.sync);
+            link.open(options.data ? "post" : "get", url, !options.sync);
 
             //set session id in http header
             if (window.name) {
