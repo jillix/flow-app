@@ -97,6 +97,7 @@
 
                 "#6:9",
                 "#6:17",
+                "#6:18",
 
                 "#6:14",
                 "#6:15",
@@ -148,6 +149,18 @@
             "method": "getBranches",
             "in": [
                 "#6:17"
+            ]
+        },
+        {
+            "@type": "d",
+            "@rid": "#9:6",
+            "@version": 0,
+            "@class": "VOperation",
+            "module": "jillix/liqshopOrderDetails",
+            "file": "operations.js",
+            "method": "archiveItem",
+            "in": [
+                "#6:18"
             ]
         },
         {
@@ -424,6 +437,15 @@
             "miid": "liqshop_order_list",
             "out": "#8:0",
             "in": "#9:5"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:18",
+            "@version": 0,
+            "@class": "ECanPerform",
+            "miid": "liqshop_order_details",
+            "out": "#8:0",
+            "in": "#9:6"
         }
     ]
 }

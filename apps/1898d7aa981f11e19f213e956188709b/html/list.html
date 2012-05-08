@@ -1,17 +1,12 @@
 <ul class="bar top">
     <li>
-        <span class="labBranch">Filiale</span>: <select name="customer.branch"
+        <span class="labBranch">Filiale</span>: <select name="customer.branch" class="filter"
             id="orders_filter_branch">
-            <option value="TWT">
-                TM | Winterthur
-            </option>
-            <option value="TZA">
-                TM | Zürich
-            </option>
+            <option value="0">Alle</option>
         </select>
     </li>
     <li>
-        <span class="labShow">Zeige</span>: <select name="archive"
+        <span class="labShow">Zeige</span>: <select name="archive" class="filter"
             id="orders_filter_archive">
             <option value="0"
                     class="labNew">
@@ -33,12 +28,6 @@
 <ul class="list orders"
     id="orders_list"
     style="display: block;">
-    <li>
-        <span class="orderdate">07.05.2012 - 07:09:12</span> | <span class="ordernr">BOLJ7ATGRE</span>
-    </li>
-    <li class="active">
-        <span class="orderdate">01.04.2012 - 20:50:47</span> | <span class="ordernr">GFTZOONGS5</span>
-    </li>
 </ul>
 <ul class="bar bottom">
     <li class="right"

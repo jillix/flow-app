@@ -82,7 +82,7 @@ exports.operation = function(link) {
             }
 
             if (resume) {
-                handlePostRequest(link, resume);
+                handlePostRequest(link, method, resume);
             }
             else {
                 method(link);
@@ -92,7 +92,7 @@ exports.operation = function(link) {
 };
 
 
-function handlePostRequest(link, resume) {
+function handlePostRequest(link, method, resume) {
 
     var contentType = link.req.headers['content-type'] || "";
 
@@ -112,7 +112,7 @@ function handlePostRequest(link, resume) {
 
             try {
                 // try to parse response to Object
-                jsonString = jsonString ? JSON.parse(jsonString) : {};
+                link.data = jsonString ? JSON.parse(jsonString) : {};
             }
             catch (parseError) {
                 err = parseError;

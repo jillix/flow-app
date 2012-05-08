@@ -6,28 +6,51 @@ var url = require("url"),
     qs  = require("querystring");
 
 
-exports.getBranches = function(link) {
+exports.archiveItem = function(link) {
 
-    mongo("sag", "branch", function(err, db) {
+    mongo("sag", "orders_new", function(err, db) {
 
         if (err) {
             send.internalservererror(link, err);
             return;
         }
-
-        // all users
-        if (link.path.length == 0) {
-
-            db.find({ "companyName" : { $exists : true }}).toArray(function(err, docs) {
-
-                if (err) {
-                    send.internalservererror(link, err);
-                    return;
-                }
-
-                send.ok(link.res, docs);
-            });
+        
+        if (!link.data) {
+            send.badrequest(link, "Invalid operation data");
+            return;
         }
+
+        var setUnset = {};
+
+        if (link.data.archive) {
+            var x = new Date();
+            var month = x.getMonth() + 1;
+            var day = x.getDate();
+            var date = "" + x.getFullYear() + (month < 10 ? "0" : "") + month + (day < 10 ? "0" : "") + day;
+            setUnset = { $set: { "items.$.archived": date } };
+        } else {
+            setUnset = { $unset: { "items.$.archived": 1 } }
+        }
+
+        var mongoQuery = {
+            "_c": link.data.order,
+            "items.nr": link.data.item
+        };
+
+        var options = {
+            upsert: false,
+            multi: true
+        };
+
+        db.update(mongoQuery, setUnset, options, function(err, docs) {
+
+            if (err) {
+                send.internalservererror(link, err);
+                return;
+            }
+
+            send.ok(link.res, docs);
+        });
     });
 };
 

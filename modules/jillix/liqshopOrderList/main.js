@@ -1,36 +1,109 @@
 define(["./jquery.min"], function() {
 
-    var items = null;
     var config = {
         label: function(item) {
             return item._c;
         }
     };
 
+    var self;
+    var ul, branches, archived;
+
+    var cachedOrders = {};
+
     function init() {
 
-        var ul = $("#" + this.miid).find(".list");
-        var branches = $("select[name='customer.branch']");
+        self = this;
+
+        N.obs("liqshop_order_details").l("archived", refresh);
+
+        ul = $("#" + this.miid).find(".list");
+        branches = $("#orders_filter_branch");
+        archived = $("#orders_filter_archive");
+
+        ul.on("click", "li", function() {
+            select($(this));
+        });
+
+        $(".filter").on("change", refresh);
+
+        fetchBranches();
+    }
+
+
+    function refresh() {
+        unselect();
+        fetchData();
+    }
+
+
+    function unselect() {
+
+        // deactivate in UI
+        ul.find("li.active").removeClass("active");
+
+        // fire the unselected event
+        self.obs.f("unselected");
+    }
+
+
+    function select(orderElem) {
+
+        // if the itel is already selected, unselect it
+        if (orderElem.hasClass("active")) {
+            unselect();
+            return;
+        }
+
+        // activate in UI
+        ul.find("li").removeClass("active");
+        orderElem.addClass("active");
+
+        // fire the selected event
+        self.obs.f("selected", orderElem[0].order);
+    }
+
+
+    function fetchBranches() {
 
         // get the branch list
-        this.link("getBranches", function(err, results) {
+        self.link("getBranches", function(err, items) {
 
-            items = results;
             branches.empty();
+            branches.append("<option value='0'>Alle</option>");
 
             for (var i in items) {
                 branches.append("<option value='" + items[i].short + "'>" + items[i].companyName + "</option>");
             }
+
+            // get the order list
+            fetchData();
         });
+    }
 
-        // get the user list
-        this.link("getOrders", function(err, results) {
+    function fetchData() {
 
-            items = results;
+        var queryStr = "?archive=" + archived.val() + "&branch=" + branches.val();
+
+        // get the order list
+        self.link("getOrders", { query: queryStr  }, function(err, orders) {
+
             ul.empty();
 
-            for (var i in items) {
-                ul.append("<li>" + config.label(items[i]) + "</li>");
+            for (var i in orders) {
+
+                var orderId = 
+
+                $("<li>")
+                    .append(
+                        "<span class='orderdate'>" +
+                            orders[i].time +
+                        "</span> | " +
+                        "<span class='ordernr'>" +
+                            orders[i]._c +
+                        "</span>")
+                    .appendTo(ul)
+                    [0].order = orders[i];
             }
         });
     }
@@ -38,101 +111,6 @@ define(["./jquery.min"], function() {
     return {
         init: init    
     };
-
-var nav = {
-
-    /**
-        inits cnr list
-        @author: faeb187
-    */
-    init: function(){
-
-        var self = this,
-            $nav = $( '#nav' );
-
-        //reference to list
-        self.$ul = $( '.list', $nav );
-
-        //search
-        $( '.search > input', $nav ).keyup( function(){
-
-            var cnrs = [];
-
-            //search field empty
-            if( !this.value ) cnrs = self.cnrs.slice( 0 );
-
-            else for( var i = 0, l = self.cnrs.length; i < l; ++i ){
-
-                var cnr = self.cnrs[ i ];
-
-                if( cnr.indexOf( this.value ) > -1 )
-
-                    cnrs.push( cnr );
-            }
-
-            self.update( cnrs );
-        });
-
-        //html5 'x' in search field has no event yet
-        $( '.search > input', $nav ).click( function(){
-
-            $( this ).trigger( "keyup" );
-        });
-
-        //click event for list items
-        $( 'li', self.$ul ).live( "click", function( e ){
-
-            e.stopPropagation();
-
-            var li = this;
-            details.update( this.innerHTML );
-
-            $( '.selected', li.parentNode ).removeClass( "selected" );
-            $( li ).addClass( "selected" );
-        });
-
-        //click outside list element
-        $nav.click( function(){
-
-            details.reset();
-            $( 'li', $nav ).removeClass( "selected" );
-        });
-
-        self.cnrs = [];
-
-        // get the user list
-        N.link({ url: "/3" }, function(err, results) {
-
-            for (var i in results) {
-
-                if (!results[i].system || !results[i].system.cnr) {
-                    continue;
-                }
-
-                self.cnrs.push(results[i].system.cnr);
-            }
-
-            // show list
-            self.update(self.cnrs);
-        });
-
-    },
-
-    /**
-        updates cnr list
-        @author: faeb187
-    */
-    update: function(cnrs){
-
-        this.$ul.empty();
-
-        for (var i in cnrs) {
-            this.$ul.append( "<li>" + cnrs[i] + "</li>" );
-        }
-    }
-};
-
-return nav;
 
 });
 

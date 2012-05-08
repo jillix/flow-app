@@ -32,3 +32,13 @@
 
     font-weight:bold;
 }
+
+.orderItemTemplate {
+    display: none;
+}
+
+.archiveCheck {
+    width: 20px;
+    height: 20px;
+}
+
