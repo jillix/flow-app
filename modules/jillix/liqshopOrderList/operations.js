@@ -69,6 +69,14 @@ exports.getOrders = function(link) {
             };
         }
 
+        // search filtering
+        var search = (queryObj.search || "").toLowerCase().trim();
+        var searchWords = search === "" ? [] : search.split(" ");
+
+        // paging
+        var skip = queryObj.skip || 0;
+        var limit = queryObj.limit || 0;
+
         var mongoQuery = {
             "_s.n": "orders",
             "_l": "de_CH",
@@ -92,6 +100,27 @@ exports.getOrders = function(link) {
             for (var i in docs) {
                 
                 var order = docs[i];
+
+                // filter only the mathing orders
+                if (searchWords.length) {
+
+                    var meta = order.meta || [],
+                        metaLength = meta.length;
+                    var found = false;
+
+                    for (var k = 0; k < metaLength && !found; k++) {
+                        for (var l = 0; l < searchWords.length && !found; l++) {
+                            if (meta[k].indexOf(searchWords[l]) != -1) {
+                                found = true;
+                            }
+                        }
+                    }
+
+                    if (!found) {
+                        continue;
+                    }
+                }
+
                 var items = [];
 
                 for (var j in order.items) {
@@ -111,6 +140,9 @@ exports.getOrders = function(link) {
                 }
             }
 
+            var length = orders.length;
+            orders = orders.splice(skip, limit || length);
+            orders.unshift(length);
             send.ok(link.res, orders);
         });
     });

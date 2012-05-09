@@ -1,10 +1,7 @@
-<div id="noItmSel"
-     class="labNoOrderSelected"
-     style="display: none;">
+<div id="noItmSel" class="labNoOrderSelected" style="display: block;">
     Keine Bestellung selektiert
 </div>
-<div id="orderDetail"
-     style="display: block;">
+<div id="orderDetail" style="display: none;">
     <label class="labOrderNr">Bestell-Nr.</label><span id="orderNr" class="orderField" data-field="_c">-</span><br />
     <label class="labTime">Bestelleingang</label><span id="orderTime" class="orderField" data-field="time">-</span><br />
     <br />
@@ -22,19 +19,56 @@
     <br />
     <hr />
     <br />
-    <label class="title labItems">Artikel</label><br />
+    <label class="title labItems">Unbearbeitete Artikel</label><br />
+    <br />
+    <a href="#" id="archiveAll" class="bulkArchive">
+        <label class="labAmount">Alle Artikel archivieren >></label>
+    </a>
+    <br />
     <br />
     <table id="orderItems">
         <tr>
             <td><label class="labArticleNr">Artikel-Nr.</label></td>
             <td><label class="labCaption">Bezeichnung</label></td>
+            <td><label class="labCaption">Filiale</label></td>
             <td><label class="labNetto">Netto</label></td>
             <td><label class="labAmount">Menge</label></td>
+            <td><label class="labAmount">Archivieren</label></td>
             <td></td>
         </tr>
         <tr class="orderItemTemplate">
             <td><label class="itemField" data-field="nr">-</label></td>
             <td><label class="itemField" data-field="caption">-</label></td>
+            <td><label class="itemField" data-field="branch">-</label></td>
+            <td><label class="itemField" data-field="netto">-</label></td>
+            <td><label class="itemField" data-field="number">-</label></td>
+            <td><input type="checkbox" class="archiveCheck"/></td>
+        </tr>
+    <table>
+    <br />
+    <hr />
+    <br />
+    <label class="title labItems">Bearbeitete Artikel</label><br />
+    <br />
+    <a href="#" id="unarchiveAll" class="bulkArchive">
+        <label class="labAmount">Alle Artikel dearchivieren >></label>
+    </a>
+    <br />
+    <br />
+    <table id="orderItemsDone">
+        <tr>
+            <td><label class="labArticleNr">Artikel-Nr.</label></td>
+            <td><label class="labCaption">Bezeichnung</label></td>
+            <td><label class="labCaption">Filiale</label></td>
+            <td><label class="labNetto">Netto</label></td>
+            <td><label class="labAmount">Menge</label></td>
+            <td><label class="labAmount">Dearchivieren</label></td>
+            <td></td>
+        </tr>
+        <tr class="orderItemTemplate">
+            <td><label class="itemField" data-field="nr">-</label></td>
+            <td><label class="itemField" data-field="caption">-</label></td>
+            <td><label class="itemField" data-field="branch">-</label></td>
             <td><label class="itemField" data-field="netto">-</label></td>
             <td><label class="itemField" data-field="number">-</label></td>
             <td><input type="checkbox" class="archiveCheck"/></td>

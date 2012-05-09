@@ -1,15 +1,13 @@
 define(["./jquery.min"], function() {
 
-    var config = {
-        label: function(item) {
-            return item._c;
-        }
-    };
-
     var self;
-    var ul, branches, archived;
+
+    var ul, branches, archived, search;
 
     var cachedOrders = {};
+    var page = 1;
+    var pageSize = 25;
+    var maxPage = 0;
 
     function init() {
 
@@ -20,14 +18,58 @@ define(["./jquery.min"], function() {
         ul = $("#" + this.miid).find(".list");
         branches = $("#orders_filter_branch");
         archived = $("#orders_filter_archive");
+        search = $("#orders_search");
 
         ul.on("click", "li", function() {
             select($(this));
         });
 
         $(".filter").on("change", refresh);
+        $(".pageHandle").on("click", pageRequest);
 
         fetchBranches();
+    }
+
+
+    function pageRequest() {
+
+        var up = this.id === "orders_forward" ? true : false;
+
+        if (!maxPage || !up && page == 1 || up && page == maxPage) {
+            return;
+        }
+
+        up ? ++page : --page;
+
+        refresh();
+    }
+
+
+    function clientFilter() {
+
+        unselect();
+
+        var text = $.trim($(this).val()).toLowerCase();
+
+        if (text === "") {
+            ul.find("li").show();
+            return;
+        }
+
+        ul.find("li").each(function() {
+
+            var li = $(this);
+            var meta = this.order.meta || [];
+            var found = false;
+
+            for (var i in meta) {
+                if (meta[i] === text) {
+                    found = true;
+                }
+            }
+
+            found ? li.show() : li.hide();
+        });
     }
 
 
@@ -83,16 +125,26 @@ define(["./jquery.min"], function() {
 
     function fetchData() {
 
-        var queryStr = "?archive=" + archived.val() + "&branch=" + branches.val();
+        var text = $.trim(search.val()).toLowerCase();
+        var queryStr =
+            "?archive=" + archived.val() +
+            "&branch=" + branches.val() +
+            (text === "" ? "" : "&search=" + encodeURIComponent(text)) +
+            "&skip=" + ((page - 1) * pageSize) + "&limit=" + pageSize;
 
         // get the order list
         self.link("getOrders", { query: queryStr  }, function(err, orders) {
 
             ul.empty();
 
-            for (var i in orders) {
+            // page computations
+            maxPage = ((orders.shift() - 1) / pageSize) + 1;
 
-                var orderId = 
+            $("#orders_of").text(maxPage || "-");
+            $("#orders_page").text(maxPage ? page : "-");
+
+            // display items
+            for (var i = 0; i < pageSize && i < orders.length; i++) {
 
                 $("<li>")
                     .append(

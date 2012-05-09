@@ -1,27 +1,17 @@
 <ul class="bar top">
     <li>
-        <span class="labBranch">Filiale</span>: <select name="customer.branch" class="filter"
-            id="orders_filter_branch">
+        <span class="labBranch">Filiale</span>: <select name="customer.branch" class="filter" id="orders_filter_branch">
             <option value="0">Alle</option>
         </select>
     </li>
     <li>
-        <span class="labShow">Zeige</span>: <select name="archive" class="filter"
-            id="orders_filter_archive">
-            <option value="0"
-                    class="labNew">
-                Neu
-            </option>
-            <option value="1"
-                    class="labArchive">
-                Archiviert
-            </option>
+        <span class="labShow">Zeige</span>: <select name="archive" class="filter" id="orders_filter_archive">
+            <option value="0" class="labNew">Neu</option>
+            <option value="1" class="labArchive">Archiviert</option>
         </select>
     </li>
     <li class="right">
-        <input type="search"
-            id="orders_search"
-            placeholder="Search" />
+        <input type="search" id="orders_search" placeholder="Search" class="filter"/>
     </li>
 </ul><img id="spinnerOrders"
      src="/file/front/spinner.gif" />
@@ -30,16 +20,12 @@
     style="display: block;">
 </ul>
 <ul class="bar bottom">
-    <li class="right"
-        id="orders_forward"
-        style="display: block;">&gt;
-    </li>
+    <li class="right pageHandle" id="orders_forward" style="display: block;">&gt;</li>
     <li class="right deactive">
-        <span id="orders_page">1</span> <span>/</span> <span id="orders_of">3</span>
+        <span id="orders_page">-</span>
+        <span>/</span>
+        <span id="orders_of">-</span>
     </li>
-    <li class="right"
-        id="orders_back"
-        style="display: block;">&lt;
-    </li>
+    <li class="right pageHandle" id="orders_back" style="display: block;">&lt;</li>
 </ul>
 
