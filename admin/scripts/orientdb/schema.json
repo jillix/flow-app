@@ -37,7 +37,7 @@
             "type": "PHYSICAL"
         },
         {
-            "name": "ographvertex",
+            "name": "orids",
             "id": 5,
             "type": "PHYSICAL"
         },
@@ -74,6 +74,11 @@
         {
             "name": "vdomain",
             "id": 12,
+            "type": "PHYSICAL"
+        },
+        {
+            "name": "ographvertex",
+            "id": 13,
             "type": "PHYSICAL"
         }
     ],
@@ -135,8 +140,8 @@
             },
             {
                 "name": "OGraphVertex",
-                "default-cluster-id": 5,
-                "cluster-ids": [5],
+                "default-cluster-id": 13,
+                "cluster-ids": [13],
                 "short-name": "V",
                 "properties": [
                     {
