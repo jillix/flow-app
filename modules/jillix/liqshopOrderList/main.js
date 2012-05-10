@@ -138,7 +138,7 @@ define(["./jquery.min"], function() {
             ul.empty();
 
             // page computations
-            maxPage = ((orders.shift() - 1) / pageSize) + 1;
+            maxPage = Math.floor((orders.shift() - 1) / pageSize) + 1;
 
             $("#orders_of").text(maxPage || "-");
             $("#orders_page").text(maxPage ? page : "-");
