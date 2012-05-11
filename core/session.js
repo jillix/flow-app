@@ -1,6 +1,6 @@
 var self = this,
-	uuid = require( CONFIG.root + "/core/util" ).uuid,
-	queries = require( CONFIG.root + "/db/queries" ),
+	uuid = require(CONFIG.root + "/core/util" ).uuid,
+	queries = require(CONFIG.root + "/db/queries"),
 	model = require(CONFIG.root + "/core/model/orient.js"),
 	expire_time = 9,
 	
@@ -36,7 +36,7 @@ var self = this,
 
 //remove old sessions
 // TODO: run this in a separate process ( cron )
-setInterval(function(){
+/*setInterval(function(){
 	
 	//var now = Math.round( new Date().getTime() / 86400000 );
 	
@@ -46,6 +46,7 @@ setInterval(function(){
 	});
 		
 }, 1800000); //30 min
+*/
 
 //------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------
@@ -73,6 +74,7 @@ this.get = function(link, callback) {
     }
     // if no session-id is defined create public session
     else {
+    
         model.getDomainPublicUser(link.host, function(err, userId) {
         
             if (err) {
