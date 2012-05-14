@@ -332,14 +332,14 @@ var N = {
             return callback("Component ID undefined.");
         }
         
-        if (N.em) {
-        
-            miid += "/" + N.em;
-            delete N.em;
-        }
-        
         //get module
-        N.link("getConfig", {miid: "core", path: miid}, function(err, response) {
+        N.link("getConfig", {miid: "core", path: (N.em ? miid + "/" + N.em : miid)}, function(err, response) {
+            
+            if (N.em) {
+            
+                miid = N.em;
+                delete N.em;
+            }
             
             //error checks
             if (err || !response) {
