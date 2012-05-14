@@ -36,46 +36,65 @@ function buildModule(module) {
 exports.getConfig = function(link) {
 
     // get the module instance id
-    var miid = link.path[0].replace(/[^0-9a-z_\-\.]/gi, "");
+    var miid = link.path[0] ? link.path[0].replace(/[^0-9a-z_\-\.]/gi, "") : null,
+        errMiid = link.path[1] ? link.path[1].replace(/[^0-9a-z_\-\.]/gi, "") : null;
+    
+    if (!miid) {
+        
+        send.badrequest(link, "No miid defined");
+        return;
+    }
     
     model.getAppId(link.host, function(err, appid) {
         
         if (err || !appid) { return send.internalservererror(link, err); }
         
-        model.getModuleConfig(appid, miid, link.session.uid, function(err, module) {
+        var getModuleConfig = function(miid) {
         
-            // error checks
-            if (err || !module) {
-                send.notfound(link, err || "No module found");
-                return;
-            }
-        
-            if (module.html) {
-        
-                var path = (module.html.type === "a" ? "/apps/" + appid : "/modules/" + module.owner + "/" + module.name) + "/" + module.html.path + ".html";
-        
-                read(path, "utf8", function(err, html) {
-        
-                    if (err) {
-        
-                        // TODO let the module define it's missing module placeholder
-                        html = "<p>An error occurred while retrieving this module HTML.</p>";
-        
-                        if (CONFIG.dev) {
-                            html += "<p>Error: " + err + "</p>"
-                        }
+            model.getModuleConfig(appid, miid, link.session.uid, function(err, module) {
+            
+                // error checks
+                if (err || !module) {
+                
+                    if (errMiid) {
+                        
+                        getModuleConfig(errMiid);
+                        return;
                     }
-        
-                    module.html = html;
-        
+                    
+                    send.notfound(link, err || "No module found");
+                    return;
+                }
+            
+                if (module.html) {
+            
+                    var path = (module.html.type === "a" ? "/apps/" + appid : "/modules/" + module.owner + "/" + module.name) + "/" + module.html.path + ".html";
+            
+                    read(path, "utf8", function(err, html) {
+            
+                        if (err) {
+            
+                            // TODO let the module define it's missing module placeholder
+                            html = "<p>An error occurred while retrieving this module HTML.</p>";
+            
+                            if (CONFIG.dev) {
+                                html += "<p>Error: " + err + "</p>"
+                            }
+                        }
+            
+                        module.html = html;
+            
+                        send.ok(link.res, buildModule(module));
+                    });
+                }
+                else {
+            
                     send.ok(link.res, buildModule(module));
-                });
-            }
-            else {
+                }
+            });
+        };
         
-                send.ok(link.res, buildModule(module));
-            }
-        });
+        getModuleConfig(miid);
     });
 };
 
