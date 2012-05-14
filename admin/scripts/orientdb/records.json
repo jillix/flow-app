@@ -7,6 +7,9 @@
             "@class": "VUser",
             "username": "anonymous",
             "password": "",
+            "data": {
+                "fullname": "MonoAdmin Public User"
+            },
             "out": [
                 "#6:0"
             ]
@@ -18,9 +21,56 @@
             "@class": "VUser",
             "username": "admin",
             "password": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
+            "data": {
+                "fullname": "MonoAdmin Admin"
+            },
             "out": [
                 "#6:1",
                 "#6:2"
+            ]
+        },
+        {
+            "@type": "d",
+            "@rid": "#7:2",
+            "@version": 0,
+            "@class": "VUser",
+            "username": "anonymous",
+            "data": {
+                "fullname": "Liqshop Public User"
+            },
+            "out": [
+                "#6:19"
+            ]
+        },
+        {
+            "@type": "d",
+            "@rid": "#7:3",
+            "@version": 0,
+            "@class": "VUser",
+            "username": "ddaarau",
+            "password": "",
+            "data": {
+                "fullname": "DD | Aarau"
+            },
+            "out": [
+                "#6:20",
+                "#6:21"
+            ]
+        },
+        {
+            "@type": "d",
+            "@rid": "#7:4",
+            "@version": 0,
+            "@class": "VUser",
+            "username": "sag-admin",
+            "password": "",
+            "data": {
+                "fullname": "Liqshop Admin"
+            },
+            "out": [
+                "#6:22",
+                "#6:23",
+                "#6:24"
             ]
         },
         {
@@ -52,11 +102,13 @@
             "routes": {
                 "/": "liqshop_layout"
             },
-            "publicUser": "#7:0",
+            "publicUser": "#7:2",
             "publicDir": "public",
+            "error": "liqshop_order_login",
             "roles": [
-                "#8:0",
-                "#8:1"
+                "#8:2",
+                "#8:3",
+                "#8:4"
             ]
         },
         {
@@ -93,15 +145,7 @@
                 "#6:8",
                 "#6:10",
                 "#6:11",
-                "#6:12",
-
-                "#6:9",
-                "#6:17",
-                "#6:18",
-
-                "#6:14",
-                "#6:15",
-                "#6:16"
+                "#6:12"
             ]
         },
         {
@@ -113,6 +157,56 @@
             "app": "#11:0",
             "in": [
                 "#6:2"
+            ]
+        },
+        {
+            "@type": "d",
+            "@rid": "#8:2",
+            "@version": 0,
+            "@class": "VRole",
+            "name": "Liqshop Public Role",
+            "app": "#11:1",
+            "in": [
+                "#6:19",
+                "#6:20",
+                "#6:22"
+            ],
+            "out": [
+                "#6:26",
+
+                "#6:25"
+            ]
+        },
+        {
+            "@type": "d",
+            "@rid": "#8:3",
+            "@version": 0,
+            "@class": "VRole",
+            "name": "Liqshop Branch Role",
+            "app": "#11:1",
+            "in": [
+                "#6:21",
+                "#6:23"
+            ],
+            "out": [
+                "#6:9",
+                "#6:17",
+                "#6:18",
+
+                "#6:14",
+                "#6:15",
+                "#6:16"
+            ]
+        },
+        {
+            "@type": "d",
+            "@rid": "#8:4",
+            "@version": 0,
+            "@class": "VRole",
+            "name": "Liqshop Admin Role",
+            "app": "#11:1",
+            "in": [
+                "#6:24"
             ]
         },
         {
@@ -161,6 +255,18 @@
             "method": "archiveItem",
             "in": [
                 "#6:18"
+            ]
+        },
+        {
+            "@type": "d",
+            "@rid": "#9:7",
+            "@version": 0,
+            "@class": "VOperation",
+            "module": "jillix/liqshopOrderLogin",
+            "file": "operations.js",
+            "method": "login",
+            "in": [
+                "#6:26"
             ]
         },
         {
@@ -268,6 +374,17 @@
         },
         {
             "@type": "d",
+            "@rid": "#10:10",
+            "@version": 0,
+            "@class": "VModule",
+            "owner": "jillix",
+            "name": "liqshopOrderLogin",
+            "in": [
+                "#6:25"
+            ]
+        },
+        {
+            "@type": "d",
             "@rid": "#6:0",
             "@version": 0,
             "@class": "EMemberOf",
@@ -319,7 +436,7 @@
             "@version": 0,
             "@class": "ECanPerform",
             "miid": "liqshop_order_list",
-            "out": "#8:0",
+            "out": "#8:3",
             "in": "#9:4"
         },
         {
@@ -398,7 +515,7 @@
                 }    
             },
             "css": ["reset-min", "main", "tab", "hpane", "bar", "list", "form", "table", "orderDetail"],
-            "out": "#8:0",
+            "out": "#8:3",
             "in": "#10:6"
         },
         {
@@ -412,7 +529,7 @@
                 "path": "html/list"
             },
             "css": [],
-            "out": "#8:0",
+            "out": "#8:3",
             "in": "#10:8"
         },
         {
@@ -426,7 +543,7 @@
                 "path": "html/details"
             },
             "css": [],
-            "out": "#8:0",
+            "out": "#8:3",
             "in": "#10:9"
         },
         {
@@ -435,7 +552,7 @@
             "@version": 0,
             "@class": "ECanPerform",
             "miid": "liqshop_order_list",
-            "out": "#8:0",
+            "out": "#8:3",
             "in": "#9:5"
         },
         {
@@ -444,8 +561,79 @@
             "@version": 0,
             "@class": "ECanPerform",
             "miid": "liqshop_order_details",
-            "out": "#8:0",
+            "out": "#8:3",
             "in": "#9:6"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:19",
+            "@version": 0,
+            "@class": "EMemberOf",
+            "out": "#7:2",
+            "in": "#8:2"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:20",
+            "@version": 0,
+            "@class": "EMemberOf",
+            "out": "#7:3",
+            "in": "#8:2"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:21",
+            "@version": 0,
+            "@class": "EMemberOf",
+            "out": "#7:3",
+            "in": "#8:3"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:22",
+            "@version": 0,
+            "@class": "EMemberOf",
+            "out": "#7:4",
+            "in": "#8:2"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:23",
+            "@version": 0,
+            "@class": "EMemberOf",
+            "out": "#7:4",
+            "in": "#8:3"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:24",
+            "@version": 0,
+            "@class": "EMemberOf",
+            "out": "#7:4",
+            "in": "#8:4"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:25",
+            "@version": 0,
+            "@class": "EHasAccessTo",
+            "miid": "liqshop_order_login",
+            "html": {
+                "type": "a",
+                "path": "html/login"
+            },
+            "css": ["login"],
+            "out": "#8:2",
+            "in": "#10:10"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:26",
+            "@version": 0,
+            "@class": "ECanPerform",
+            "miid": "liqshop_order_login",
+            "out": "#8:2",
+            "in": "#9:7"
         }
     ]
 }

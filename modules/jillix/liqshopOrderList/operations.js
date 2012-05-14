@@ -1,5 +1,4 @@
-var model = require(CONFIG.root + "/core/model/orient"),
-    send  = require(CONFIG.root + "/core/send.js").send,
+var send  = require(CONFIG.root + "/core/send.js").send,
     mongo = require(CONFIG.root + "/db/mongo").db;
 
 var url = require("url"),

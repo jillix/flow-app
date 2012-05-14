@@ -53,10 +53,12 @@ exports.getDomainApplication = function(domain, withRoutes, callback) {
 
         if (err) { return callback(err); }
 
-        var routeField = withRoutes ? "application.routes AS routes, " : "";
         var command =
             "SELECT " +
-                "application.id as appId, " + routeField + "application.publicDir AS publicDir " +
+                "application.id as appId, " +
+                (withRoutes ? "application.routes AS routes, " : "") +
+                "application.publicDir AS publicDir, " +
+                "application.error AS errorMiid " +
             "FROM " +
                 "VDomain " +
             "WHERE " +
