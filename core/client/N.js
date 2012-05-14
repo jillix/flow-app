@@ -337,7 +337,14 @@ var N = {
 
             //error checks
             if (err || !response) {
-            
+                
+                if (N.em) {
+                    
+                    N.mod(target, N.em);
+                    delete N.em;
+                    return;
+                }
+                
                 return callback(err || "Empty response");
             }
 

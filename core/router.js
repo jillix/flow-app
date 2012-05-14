@@ -2,8 +2,8 @@ var send = require(CONFIG.root + "/core/send").send,
     publicFiles = require(CONFIG.root + "/core/send").publicFiles;
     getDomainApplication = require(CONFIG.root + "/core/model/orient.js").getDomainApplication;
 
-function initScripts(module, ie7) {
-
+function initScripts(module, errMiid, ie7) {
+    
     var baseUrl = "/" + CONFIG.operationKey + "/core/getModule";
     var nl = (CONFIG.dev ? "\r\n" : "");
     
@@ -17,6 +17,7 @@ function initScripts(module, ie7) {
         "};" + nl +
         "window.onload=function(){" + nl +
             "N.ok='/"+ CONFIG.operationKey  + "';" + nl +
+            "N.em = '" + (errMiid || 0) + "';" +
             "N.mod(document.getElementsByTagName('body')[0],'" + module + "')" + nl +
         "}" + nl +
         "</script>" + nl +
@@ -52,7 +53,7 @@ exports.route = function(link) {
             link.res.headers["content-style-type"] = "text/css";
             link.res.headers["content-type"]       = "text/html; charset=utf-8";
             
-            send.ok(link.res, initScripts(module, (link.req.headers['user-agent'].indexOf("MSIE 7.0") > -1 ? true : false)));
+            send.ok(link.res, initScripts(module, result.errorMiid, (link.req.headers['user-agent'].indexOf("MSIE 7.0") > -1 ? true : false)));
         }
         else {
             
