@@ -11,6 +11,7 @@ ORIENTDB_ROOT=bin/orientdb
 ORIENTDB_VERSION=`curl --silent https://oss.sonatype.org/content/repositories/releases/com/orientechnologies/orientdb/maven-metadata.xml | grep "release" | cut -d ">" -f 2 | cut -d "<" -f 1`
 ORIENTDB_ROOT_USER=root
 ORIENTDB_MONO_SQL=mono.sql
+ORIENTDB_MONO_DROP_SQL=mono_drop.sql
 
 
 function download_orientdb {
@@ -69,6 +70,17 @@ function install_orientdb {
 
     echo "Configuring OrientDB mono SQL file: $SCRIPT_DIR/$ORIENTDB_MONO_SQL"
     sed -e "s/@ORIENTDB_ROOT_PASSWORD@/$ORIENTDB_ROOT_PASSWORD/" "$SCRIPT_DIR/$ORIENTDB_MONO_SQL" > "$TMP_DIR/$ORIENTDB_MONO_SQL"
+
+    ORIENTDB_MONO_DB_DIR=$ORIENTDB_ROOT/databases/mono
+    if [ -d "$ORIENTDB_MONO_DB_DIR" ]
+    then
+        echo "Dropping existing mono database from: $ORIENTDB_MONO_DB_DIR"
+
+        echo "Configuring OrientDB mono drop SQL file: $SCRIPT_DIR/$ORIENTDB_MONO_DROP_SQL"
+        sed -e "s/@ORIENTDB_ROOT_PASSWORD@/$ORIENTDB_ROOT_PASSWORD/" "$SCRIPT_DIR/$ORIENTDB_MONO_DROP_SQL" > "$TMP_DIR/$ORIENTDB_MONO_DROP_SQL"
+
+        $ORIENTDB_ROOT/bin/console.sh "$TMP_DIR/$ORIENTDB_MONO_DROP_SQL" 2>&1 > /dev/null
+    fi
 
     echo "Installing the OrientDB database from: $TMP_DIR/$ORIENTDB_MONO_SQL"
     IMPORT_LOG=$TMP_DIR/$ORIENTDB_MONO_SQL.log

@@ -1,4 +1,3 @@
-drop database remote:localhost/mono root @ORIENTDB_ROOT_PASSWORD@;
 create database remote:localhost/mono root @ORIENTDB_ROOT_PASSWORD@ local;
 
 import database admin/scripts/orientdb/schema.json;
