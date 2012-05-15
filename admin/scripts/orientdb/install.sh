@@ -9,6 +9,7 @@ mkdir -p "$TMP_DIR"
 
 ORIENTDB_ROOT=bin/orientdb
 ORIENTDB_VERSION=`curl --silent https://oss.sonatype.org/content/repositories/releases/com/orientechnologies/orientdb/maven-metadata.xml | grep "release" | cut -d ">" -f 2 | cut -d "<" -f 1`
+ORIENTDB_VERSION=1.0rc9
 ORIENTDB_ROOT_USER=root
 ORIENTDB_MONO_SQL=mono.sql
 ORIENTDB_MONO_DROP_SQL=mono_drop.sql
@@ -28,7 +29,11 @@ function download_orientdb {
         curl -o "$TMP_DIR/$ORIENTDB_ARCHIVE" "http://orient.googlecode.com/files/$ORIENTDB_ARCHIVE" --silent
     fi
 
+    echo "Removing old OrientDB installation..."
+    rm -Rf "$ORIENTDB_ROOT"
+
     echo "Unpacking OrientDB in: $ORIENTDB_ROOT"
+    mkdir -p "$ORIENTDB_ROOT"
     unzip -o -q -d "$ORIENTDB_ROOT" "$TMP_DIR/$ORIENTDB_ARCHIVE"
     chmod +x bin/orientdb/bin/*sh
 }
@@ -40,19 +45,16 @@ function install_orientdb {
     then
         ORIENTDB_INSTALLED_VERSION=`grep "VERSION" bin/orientdb/history.txt -m 1 | cut -d " " -f 2`
         echo "Found OrientDB (version $ORIENTDB_INSTALLED_VERSION) in: $ORIENTDB_ROOT"
-        
+
         if [ "$ORIENTDB_INSTALLED_VERSION" == "$ORIENTDB_VERSION" ]
         then
             echo "Keeping the found OrientDB installation: $ORIENTDB_VERSION"
         else
-            ORIENTDB_VERSION=$ORIENTDB_INSTALLED_VERSION
             echo "Updating the OrientDB installation: $ORIENTDB_VERSION"
             download_orientdb
         fi
     else
         echo "Installing OrientDB in: $ORIENTDB_ROOT"
-        rm -Rf $ORIENTDB_ROOT
-        mkdir -p $ORIENTDB_ROOT
         download_orientdb
     fi
 
