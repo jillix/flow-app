@@ -10,3 +10,6 @@
 [submodule "modules/ajaxorg/ace"]
 	path = modules/ajaxorg/ace
 	url = https://github.com/ajaxorg/ace.git
+[submodule "modules/adioo/bind"]
+	path = modules/adioo/bind
+	url = git@github.com:adioo/bind.git

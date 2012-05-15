@@ -17,7 +17,7 @@ function initScripts(module, errMiid, ie7) {
         "};" + nl +
         "window.onload=function(){" + nl +
             "N.ok='/"+ CONFIG.operationKey  + "';" + nl +
-            "N.em = '" + (errMiid || 0) + "';" +
+            (errMiid ? "N.em = '" + errMiid + "';" : "") +
             "N.mod(document.getElementsByTagName('body')[0],'" + module + "')" + nl +
         "}" + nl +
         "</script>" + nl +
