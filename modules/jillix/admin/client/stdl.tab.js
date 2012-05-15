@@ -1,4 +1,4 @@
-define(function(){
+define(["adioo/bind/main"], function(){
     
     var Tab = {
         
