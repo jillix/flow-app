@@ -109,7 +109,8 @@ exports.getModule = function(link) {
 
     // get the module instance id
     var owner = link.path[0].replace(/[^0-9a-z_\-\.]/gi, ""),
-        name = link.path[1].replace(/[^0-9a-z_\-\.]/gi, "");
+        name = link.path[1].replace(/[^0-9a-z_\-\.]/gi, ""),
+        path = link.path.slice(2).join("/").replace(/[^a-z0-9\/\.\-_]|\.\.\//gi, "");
 
     // the module name must be almost alphanumeric
     if (owner.length != link.path[0].length || name.length != link.path[1].length) {
@@ -127,7 +128,7 @@ exports.getModule = function(link) {
         }
 
         // now serve the module file
-        link.req.url = owner + "/" + name + "/" + (module.dir ? module.dir + "/" : "") + link.path.slice(2).join("/").replace(/[^a-z0-9\/\.\-_]|\.\.\//gi, "");
+        link.req.url = owner + "/" + name + "/" + (module.dir ? module.dir + "/" : "") + path;
         
         modules.serve(link.req, link.res);
     });
