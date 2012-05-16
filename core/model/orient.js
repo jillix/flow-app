@@ -5,8 +5,59 @@ var orient = require("orientdb"),
 var server = new Server(CONFIG.orient.server),
     db = new Db(CONFIG.orient.db.database_name, server, CONFIG.orient.db);
 
+
+exports.getUser = function(appId, userName, callback) {
+
+    db.open(function(err, result) {
+
+        if (err) { return callback(err); }
+
+        var command =
+            "SELECT " +
+                "@rid AS uid, " +
+                "password " +
+            "FROM " +
+                "(TRAVERSE roles, VRole.in, EMemberOf.out FROM (SELECT FROM VApplication WHERE id = '" + appId + "')) " +
+            "WHERE " +
+                "@class = 'VUser' AND " +
+                "username = '" + userName + "'";
+
+        sql(command, function(err, results) {
+
+            if (err) {
+                return callback("An error occurred while retrieving the user information for user '" + userName + "': " + JSON.stringify(err));
+            }
+
+            // if there is no result
+            if (!results || results.length == 0) {
+                return callback(null, null);
+            }
+
+            // if there are too many results
+            if (results.length > 1) {
+                return callback("Could not uniquely determine the user with username: " + userName);
+            }
+
+            var user = results[0];
+
+            // if the user does not have the required fields
+            if (!user || !user.uid) {
+                return callback("Missing user ID: " + JSON.stringify(user.uid));
+            }
+            var uid = idFromRid(user.uid);
+            if (uid === null) {
+                return callback("Missing user ID: " + JSON.stringify(user.uid));
+            }
+
+            user.uid = uid;
+
+            callback(null, { uid: uid, password: user.password });
+        });
+    });
+};
+
 exports.getAppId = function(domain, callback) {
-    
+
     db.open(function(err, result) {
 
         if (err) { return callback(err); }
@@ -235,7 +286,8 @@ this.getDomainPublicUser = function(domain, callback) {
 
         var command =
             "SELECT " +
-                "application.publicUser AS publicUser " +
+                "application.publicUser AS publicUser, " +
+                "application.id AS appId " +
             "FROM " +
                 "VDomain " +
             "WHERE " +
@@ -256,21 +308,35 @@ this.getDomainPublicUser = function(domain, callback) {
                 return callback("There can be only one domain: " + domain + ". Found: " + results.length);
             }
 
-            if (!results[0] || !results[0].publicUser) {
+            var app = results[0];
+
+            if (!app || !app.publicUser) {
                 return callback("The domain '" + domain + "' has no public user.");
             }
 
-            var rid = results[0].publicUser;
-            var id = parseInt(rid.split(":")[1]);
+            var rid = app.publicUser;
+            var id = idFromRid(rid);
 
-            if (isNaN(id)) {
-                return callback("Invalid public user id for domain '" + domain + "': " + rid);
+            if (id === null || !app.appId) {
+                return callback("Invalid public user ID or application ID for domain '" + domain + "': " + id);
             }
 
-            callback(null, id);
+            callback(null, { uid: id, appid: app.appId });
         });
     });
 };
+
+
+function idFromRid(rid) {
+    if (typeof rid === "string") {
+        var number = parseInt(rid.split(":")[1]);
+        if (!isNaN(number)) {
+            return number;
+        }
+    }
+    return null;
+}
+
 
 function sql(command, callback) {
     //console.log(command);

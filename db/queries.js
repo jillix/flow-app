@@ -290,31 +290,6 @@ this.removeUIElement = function( compID, callback ){
 
 // !----------------------------------------------------------------------------------------
 
-this.getSession = function( sessionID, now, expire, callback ){
-	
-	mongo( CONFIG.mongoDB.name, "sessions", function( err, db ){
-		
-		if( err ) callback( err );
-		else db.findAndModify(
-			
-			{ sid: sessionID, exp: { $gt: now } },
-			[],
-			{ exp: expire },
-			{ fields: { _id: 0, uid: 1, data: 1 } },
-			callback
-		);
-	});
-};
-
-this.startSession = function( session, callback ){
-	
-	mongo( CONFIG.mongoDB.name, "sessions", function( err, db ){
-		
-		if( err ) callback( err );
-		else db.insert( session, callback );
-	});
-};
-
 this.updateSession = function( sessionID, doc, callback ){
 	
 	mongo( CONFIG.mongoDB.name, "sessions", function( err, db ){

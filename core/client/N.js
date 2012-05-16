@@ -290,6 +290,36 @@ var N = {
         }
     },
 
+    // !------------------------------ N.login
+    /**
+     * Wrapper for link with login core operation
+     * @param {string} user name
+     * @param {string} password
+     * @param {function} callback
+     */
+    login: function(username, password, callback) {
+
+        var linkData = {
+            miid: "core",
+            data: {
+                user: username,
+                pass: password
+            }
+        };
+
+        N.link("login", linkData, callback);
+    },
+
+    // !------------------------------ N.logout
+    /**
+     * Wrapper for link with logout core operation
+     * @param {function} callback
+     */
+    logout: function(callback) {
+
+        N.link("logout", { miid: "core" }, callback);
+    },
+
     // !------------------------------ N.css
     /**
      * Load css Files
