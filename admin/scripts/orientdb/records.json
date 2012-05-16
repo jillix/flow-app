@@ -146,7 +146,8 @@
                 "#6:8",
                 "#6:10",
                 "#6:11",
-                "#6:12"
+                "#6:12",
+                "#6:27"
             ]
         },
         {
@@ -382,6 +383,17 @@
             "name": "liqshopOrderLogin",
             "in": [
                 "#6:25"
+            ]
+        },
+        {
+            "@type": "d",
+            "@rid": "#10:11",
+            "@version": 0,
+            "@class": "VModule",
+            "owner": "adioo",
+            "name": "bind",
+            "in": [
+                "#6:27"
             ]
         },
         {
@@ -635,6 +647,15 @@
             "miid": "liqshop_order_login",
             "out": "#8:2",
             "in": "#9:7"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:27",
+            "@version": 0,
+            "@class": "EHasAccessTo",
+            "miid": "mono_bind_1",
+            "out": "#8:0",
+            "in": "#10:11"
         }
     ]
 }
