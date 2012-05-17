@@ -149,7 +149,7 @@ var N = {
      * @return {XMLHttpRequest}
      *
      * options: {
-     *
+     *        miid:     {string}    module instance id
      *        path:     {string}    the url
      *        data:     {object}    post data
      *        sync:     {boolean}   if true the request will block all other browser actions
@@ -390,9 +390,6 @@ var N = {
             if (response[1]) {
                 div.innerHTML = response[1];
             }
-            
-            //append div to dom
-            target.appendChild(div);
 
             // load css from response[2]
             for (var i in response[2]) {
@@ -412,8 +409,7 @@ var N = {
                 var clone = N.clone(module);
                 
                 clone.miid = miid;
-                //clone.module = module;
-                clone.$ = target;
+                clone.$ = div;
                 clone.link = N.link;
                 clone.config = response[0];
                 
@@ -430,6 +426,7 @@ var N = {
                 // TODO: hide loader
                 // TODO: init state
                 
+                target.appendChild(div);
                 target.style.display = "block";
 
                 callback(null, clone);
