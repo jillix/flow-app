@@ -18,9 +18,9 @@ exports.operation = function(link) {
     }
 
     getSession(link, function(err, session) {
-
+        
         // if no session or an error getting it
-        if (err || !session || !session.uid || !session.appid) {
+        if (err || !session || typeof session.uid !== "number" || typeof session.appid !== "string") {
 
             if (resume) {
                 resume(true);
