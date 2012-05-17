@@ -24,16 +24,16 @@ define(["./jquery.min"], function() {
 
     function login(user, pass) {
 
-        self.link("login", { data: { user: user, pass: pass } },  function(err, ok) {
+        N.login(user, pass, function(err, ok) {
 
             if (err) {
+                $(".error").text(err).show();
                 passInput.val("");
                 userInput.focus().select();
                 return;
             }
 
-            alert(ok);
-
+            window.location.reload();
         });
     }
 

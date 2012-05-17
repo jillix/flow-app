@@ -28,6 +28,7 @@
         "framework"
     ],
     "dependencies" : {
+        "cookies"       : "*",
         "forever"       : "*",
         "formidable"    : "*",
         "orientdb"      : "0.x",

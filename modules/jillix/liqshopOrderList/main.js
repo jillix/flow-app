@@ -9,6 +9,7 @@ define(["./jquery.min"], function() {
     var pageSize = 25;
     var maxPage = 0;
 
+
     function init() {
 
         self = this;
@@ -19,6 +20,13 @@ define(["./jquery.min"], function() {
         branches = $("#orders_filter_branch");
         archived = $("#orders_filter_archive");
         search = $("#orders_search");
+
+        // TODO temporarily put logout button hadler here
+        $("#logout").click(function() {
+            N.logout(function() {
+                window.location.reload();
+            });
+        });
 
         ul.on("click", "li", function() {
             select($(this));

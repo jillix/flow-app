@@ -2,6 +2,7 @@ var formidable      = require("formidable"),
     util            = require(CONFIG.root + "/core/util.js"),
     send            = require(CONFIG.root + "/core/send.js").send,
     mods            = require(CONFIG.root + "/core/module.js"),
+    auth            = require(CONFIG.root + "/core/auth.js"),
     getSession      = require(CONFIG.root + "/core/session.js").get,
     getOperation    = require(CONFIG.root + "/core/model/orient.js").getUserOperation;
 
@@ -19,7 +20,7 @@ exports.operation = function(link) {
     getSession(link, function(err, session) {
 
         // if no session or an error getting it
-        if (err || !session) {
+        if (err || !session || !session.uid || !session.appid) {
 
             if (resume) {
                 resume(true);
@@ -32,16 +33,11 @@ exports.operation = function(link) {
         link.session = session;
 
         if (link.operation.module === CONFIG.coreKey) {
-            
-            if (mods[link.operation.method]) {
-                
-                mods[link.operation.method](link);
-            }
-            else {
-                
-                send.badrequest(link, "Core method does not exists: " + link.operation.method);
-            }
-            
+
+            var methodName = link.operation.method;
+            var method = mods[methodName] || auth[methodName];
+
+            checkAndCallFunction(link, resume, method);
             return;
         }
 
@@ -67,29 +63,35 @@ exports.operation = function(link) {
             var file = CONFIG.root + "/modules/" + operation.module + "/" + operation.file;
             var method = util.load(file, link.operation.method);
 
-            if (typeof method !== "function") {
-
-                if (resume) {
-                    resume(true);
-                }
-
-                send.notfound(link, "Method must be a function");
-                return;
-            }
-
-            if (operation.params) {
-                link.params = operation.params;
-            }
-
-            if (resume) {
-                handlePostRequest(link, method, resume);
-            }
-            else {
-                method(link);
-            }
+            checkAndCallFunction(link, resume, method, operation.params);
         });
     });
 };
+
+
+function checkAndCallFunction(link, resume, method, params) {
+
+    if (typeof method !== "function") {
+
+        if (resume) {
+            resume(true);
+        }
+
+        send.notfound(link, "Method must be a function");
+        return;
+    }
+
+    if (params) {
+        link.params = params;
+    }
+
+    if (resume) {
+        handlePostRequest(link, method, resume);
+    }
+    else {
+        method(link);
+    }
+}
 
 
 function handlePostRequest(link, method, resume) {
