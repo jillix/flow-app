@@ -34,9 +34,7 @@ define(["./stdl.tab", "./stdl.list", "./stdl.form"], function(list) {
         };
     })();
     
-    var vertexClassMenu = document.getElementById("vertexClassMenu");
-    var vertexes = document.getElementById("vertexes");
-    var noVertexSelected = document.getElementById("noVertexSelected");
+    var vertexClassMenu, vertexes, noVertexSelected;
     
     return {
         
@@ -44,6 +42,10 @@ define(["./stdl.tab", "./stdl.list", "./stdl.form"], function(list) {
             
             var self = this;
             
+            vertexClassMenu = this.$.querySelector("#vertexClassMenu");
+            vertexes = this.$.querySelector("#vertexes");
+            noVertexSelected = this.$.querySelector("#noVertexSelected");
+    
             this.config = {
                 
                 Domains: {
