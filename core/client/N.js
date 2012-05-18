@@ -1,4 +1,4 @@
-// Copyright Adrian Ottiker. All Rights Reserved.
+//Copyright Adrian Ottiker. All Rights Reserved.
 
 /**
  * @fileoverview N-client: build and render components.
@@ -8,10 +8,7 @@
 // extend Object prototype with clone function
 /*Object.defineProperty(Object.prototype, "clone", {
 
-    //writeable: false, (default value)
-    //enumerable: false, (default value)
-    //configurable: false, (default value)
-    value: function(){
+    value: function() {
 
         function O(){}
         O.prototype = this;
@@ -25,15 +22,9 @@ window.onerror = function(error, url, line) {
     //console.log( error + "\n" + url + "\n" + line );
 };
 
-//reset session store
-if (!window.name || window.name == "undefined") {
-    
-    window.name = "";
-};
-
 /**
  * Main Namespace
- * @type {class}
+ * @type {object}
  */
 var N = {
     
@@ -149,12 +140,12 @@ var N = {
      * @return {XMLHttpRequest}
      *
      * options: {
-     *        miid:     {string}    module instance id
-     *        path:     {string}    the url
-     *        data:     {object}    post data
-     *        sync:     {boolean}   if true the request will block all other browser actions
-     *        upload:   {function}  first argument: percent of loaded data, second argument: XMLHttpRequestProgressEvent
-     *        download: {function}  first argument: percent of loaded data, second argument: XMLHttpRequestProgressEvent
+     *      miid:     {string}    module instance id
+     *      path:     {string}    the url
+     *      data:     {object}    post data
+     *      sync:     {boolean}   if true the request will block all other browser actions
+     *      upload:   {function}  first argument: percent of loaded data, second argument: XMLHttpRequestProgressEvent
+     *      download: {function}  first argument: percent of loaded data, second argument: XMLHttpRequestProgressEvent
      * }
      */
     
@@ -184,13 +175,7 @@ var N = {
             
             //open the connection
             link.open(options.data ? "post" : "get", url, !options.sync);
-
-            //set session id in http header
-            if (window.name) {
-                
-                link.setRequestHeader("x-sid", window.name);
-            }
-
+            
             //handle data
             if (options.data && !(typeof FormData !== "undefined" && options.data instanceof FormData)) {
 
@@ -237,17 +222,10 @@ var N = {
                 if (link.readyState == 4) {
 
                     //get error message
-                    var err = link.A ? "A" : link.status < 400 ? null : link.responseText || "E",
-                        sid = link.getResponseHeader("x-sid");
+                    var err = link.A ? "A" : link.status < 400 ? null : link.responseText || "E";
 
                     //reset abort status
                     link.A = 0;
-
-                    //set/reset session id on client
-                    if (sid) {
-
-                        window.name = sid == "N" ? "" : sid;
-                    }
 
                     if (callback) {
 
@@ -432,11 +410,11 @@ var N = {
                 callback(null, clone);
             });
         });
-    },
-
+    }/*,
+    
     state: (function() {
 
-        /*
+        
             1. register all module states to N.states or whatever..
             2. onchange go through all module states
             3. handle browser history
@@ -466,11 +444,11 @@ var N = {
                     viewStates: ["listEmpty"]
                 }
             }
-        */
+        
 
         var states = {
 
-            /*URI: [state]*/
+            //URI: [state]
         };
 
         return function() {
@@ -480,4 +458,5 @@ var N = {
             //viewstates
         };
     })()
+    */
 };
