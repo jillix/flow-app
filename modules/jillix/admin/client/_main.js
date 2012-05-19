@@ -1,212 +1,189 @@
-define(function(list) {
+define(["./stdl.tab", "./stdl.list", "./stdl.form"], function(list) {
+    
+    var Vertex = (function(V) {
         
-        //collect dom references
-    var cssNs = "div.adminMain",
-        refUsers = N.dom.findOne(cssNs + " #users"),
-        refRoles = N.dom.findOne(cssNs + " #roles"),
-        refOperations = N.dom.findOne(cssNs + " #operations"),
-        refModules = N.dom.findOne(cssNs + " #modules"),
-        refLeftMessage = N.dom.findOne(cssNs + ">div#itemsLeft>div.message"),
-        refItemList = N.dom.findOne(cssNs + ">div#itemsLeft>ul.list"),
-        refItemSearch = N.dom.findOne(cssNs + ">div#itemsLeft ul.second"),
-        refItemAdd = N.dom.findOne(cssNs + ">div#itemsLeft>ul.bottom>li.add"),
-        refItemRemove = N.dom.findOne(cssNs + ">div#itemsLeft>ul.bottom>li.remove"),
-        refItemPaging = N.dom.findOne(cssNs + ">div#itemsLeft>ul.bottom>li.paging"),
-        refDetailForm = N.dom.findOne(cssNs + ">div#itemDetail>div.detail"),
-        refDetailMessage = N.dom.findOne(cssNs + ">div#itemDetail>div.noDetail"),
-        refDetailCancel = N.dom.findOne(cssNs + ">div#itemDetail>ul.bottom>li.cancel"),
-        
-        // TODO: bind viewstates to events
-        viewStates = {
+        V = {
             
-            category: [
-                {
-                    elm: refLeftMessage,
-                    style: "display",
-                    value: "none"
-                },
-                {
-                    elm: refItemList,
-                    style: "display",
-                    value: "block"
-                },
-                {
-                    elm: refItemAdd,
-                    style: "display",
-                    value: "block"
-                },
-                {
-                    elm: refItemRemove,
-                    style: "display",
-                    value: "block"
-                }
-            ],
-            noCategory: [
-                {
-                    elm: refLeftMessage,
-                    style: "display",
-                    value: "block"
-                },
-                {
-                    elm: refItemList,
-                    style: "display",
-                    value: "none"
-                },
-                {
-                    elm: refItemAdd,
-                    style: "display",
-                    value: "none"
-                },
-                {
-                    elm: refItemRemove,
-                    style: "display",
-                    value: "none"
-                },
-                {
-                    elm: refItemPaging,
-                    style: "display",
-                    value: "none"
-                }
-            ],
-            items: [
-                {
-                    elm: refLeftMessage,
-                    style: "display",
-                    value: "none"
-                },
-                {
-                    elm: refItemList,
-                    style: "display",
-                    value: "block"
-                },
-                {
-                    elm: refItemSearch,
-                    style: "display",
-                    value: "block"
-                },
-                {
-                    elm: refItemPaging,
-                    style: "display",
-                    value: "block"
-                }
-            ],
-            noItems: [
-                {
-                    elm: refLeftMessage,
-                    style: "display",
-                    value: "block"
-                },
-                {
-                    elm: refItemList,
-                    style: "display",
-                    value: "none"
-                },
-                {
-                    elm: refItemSearch,
-                    style: "display",
-                    value: "none"
-                },
-                {
-                    elm: refItemPaging,
-                    style: "display",
-                    value: "none"
-                }
-            ],
-            detail: [
-                {
-                    elm: refDetailForm,
-                    style: "display",
-                    value: "block"
-                },
-                {
-                    elm: refDetailMessage,
-                    style: "display",
-                    value: "none"
-                },
-                {
-                    elm: refDetailCancel,
-                    style: "display",
-                    value: "block"
-                }
-            ],
-            noDetail: [
-                {
-                    elm: refDetailForm,
-                    style: "display",
-                    value: "none"
-                },
-                {
-                    elm: refDetailMessage,
-                    style: "display",
-                    value: "block"
-                },
-                {
-                    elm: refDetailCancel,
-                    style: "display",
-                    value: "none"
-                }
-            ]
+            
         };
-    
-    function showViewState(name) {
         
-        if (viewStates && viewStates[name]) {
+        return function(config) {
             
-            for (var i = 0, l = viewStates[name].length; i < l; ++i) {
-                
-                if (viewStates[name][i].elm instanceof HTMLElement) {
-                    
-                    viewStates[name][i].elm.style[viewStates[name][i].style] = viewStates[name][i].value;
-                }
-            }
-        }
-    }
+            var vertex = N.clone(V);
+            
+            // TODO configure vertex
+            
+            return vertex;
+        };
+    })();
     
-    showViewState("noItems");
-    showViewState("noCategory");
-    showViewState("noDetail");
-    
-    refUsers.bind("click", function() {
+    var Edge = (function(E) {
         
-        showViewState("category");
-        showViewState("noItems");
-    });
-    
-    refRoles.bind("click", function() {
+        E = {
+            
+            
+        };
         
-        showViewState("category");
-        showViewState("items");
-    });
+        return function(config) {
+            
+            var edge = N.clone(E);
+            
+            // TODO configure edge
+            
+            return edge;
+        };
+    })();
     
-    refOperations.bind("click", function() {
-        
-        showViewState("category");
-        showViewState("noItems");
-    });
-    
-    refModules.bind("click", function() {
-        
-        showViewState("category");
-        showViewState("items");
-    });
+    var vertexClassMenu, vertexes, noVertexSelected;
     
     return {
         
-        init: function(config) {
+        init: function() {
             
-            console.log(config);
+            var self = this;
+            
+            vertexClassMenu = this.$.querySelector("#vertexClassMenu");
+            vertexes = this.$.querySelector("#vertexes");
+            noVertexSelected = this.$.querySelector("#noVertexSelected");
+    
+            this.config = {
+                
+                Domains: {
+                    
+                    trucken: {
+                        
+                        type: "link",
+                        linkedClass: "className"
+                    },
+                    
+                    link2: {
+                        
+                        type: "linkset",
+                        linkedClass: "className"
+                    },
+                    
+                    edge: {
+                        
+                        type: "edge",
+                        edgeClass: "className",
+                        linkedClass: "className"
+                    },
+                    
+                    field1: {
+                        
+                        type: "string"
+                    }
+                },
+                
+                Apps: {
+                    
+                    feschter: {
+                        
+                        type: "link",
+                        linkedClass: "className"
+                    },
+                    
+                    link2: {
+                        
+                        type: "linkset",
+                        linkedClass: "className"
+                    },
+                    
+                    edge: {
+                        
+                        type: "edge",
+                        edgeClass: "className",
+                        linkedClass: "className"
+                    },
+                    
+                    field1: {
+                        
+                        type: "string"
+                    }
+                },
+                
+                Users: {},
+                Roles: {},
+                Modules: {},
+                Operations: {}
+            }
+            
+            this.obs.l("showVertexBox", function(vertexClass){
+                    
+                for (var ref in self.vertexBoxRefs) {
+                    
+                    if (ref !== vertexClass) {
+                        
+                        self.vertexBoxRefs[ref].style.display = "none";
+                    }
+                }
+                    
+                if (self.vertexBoxRefs[vertexClass]) {
+                
+                    noVertexSelected.style.display = "none";
+                    
+                    self.vertexBoxRefs[vertexClass].style.display = "block";
+                }
+                else {
+                    
+                    noVertexSelected.style.display = "block";
+                }
+            });
+            
+            this.createMenuBar();
+            this.createVertexBoxes();
         },
         
-        //test function 1
-        fn1: function() {
+        vertexBoxRefs: {},
+        
+        addEventToMenuBarItem: function(element, vertexClass) {
             
-            console.log(arguments);
+            var self = this;
+            
+            element.addEventListener("mouseup", function(){
+                
+                self.obs.f("showVertexBox", vertexClass);
+                
+            }, false);
         },
         
-        //test function 2
-        fn2: function() {
+        createMenuBar: function(config) {
             
-            console.log(arguments);
+            for (var vertexClass in this.config) {   
+                
+                var li = document.createElement("li");
+                
+                li.setAttribute("id", vertexClass);
+                li.innerHTML = vertexClass;
+                
+                this.addEventToMenuBarItem(li, vertexClass);
+                
+                vertexClassMenu.appendChild(li);
+            }
+        },
+        
+        createVertexBoxes: function(config) {
+            
+            for (var vertexClass in this.config) {
+                
+                var div = document.createElement("div");
+                div.setAttribute("id", vertexClass);
+                div.setAttribute("class", "vertexBox");
+                
+                // TODO create vertex box
+                var temp = "Trucken";
+                
+                for (var field in this.config[vertexClass]) {
+                    
+                    temp += field + "<br/>";
+                }
+                
+                div.innerHTML = temp;
+                
+                this.vertexBoxRefs[vertexClass] = div;
+                
+                vertexes.appendChild(div);
+            }
         }
-    };
+    }
 });
