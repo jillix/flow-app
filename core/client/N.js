@@ -29,8 +29,10 @@ window.onerror = function(error, url, line) {
 var N = {
     
     clone: function(obj){
-
-        function O(){}
+        
+        // TODO don't iterate through cloned objects
+        obj.__clone__ = true;
+        function O(){};
         O.prototype = obj;
         return new O();
     },
@@ -38,6 +40,58 @@ var N = {
     err: function(msg) {
         
         throw new Error(msg);  
+    },
+    
+    merge: function(prio1, prio2) {
+    
+        for (var key in prio2) {
+            
+            if (prio2.hasOwnProperty(key)) {
+                
+                if (typeof prio1[key] === "object" || typeof prio1[key] === "undefined") {
+                    
+                    // TODO don't iterate through cloned objects
+                    if (!(prio2[key] instanceof Node) && !prio2[key].__clone__ && typeof prio2[key] === "object") {
+                        
+                        if (prio1[key] instanceof Array) {
+                            
+                            if (prio2[key] instanceof Array) {
+                            
+                                for (var i = 0, l = prio2[key].length; i < l; ++i) {
+                                    
+                                    prio1[key].push(prio2[key][i]);
+                                }
+                            }
+                            else {
+                                
+                                prio1[key].push(prio2[key]);
+                            }
+                        }
+                        else if (prio2[key] instanceof Array) {
+                            
+                            prio2[key].push(prio1[key]);
+                            
+                            prio1[key] = prio2[key];
+                        }
+                        else {
+                            
+                            if (!prio1[key]) {
+                                
+                                prio1[key] = {};
+                            }
+                            
+                            N.merge(prio1[key], prio2[key]);
+                        }
+                    }
+                    else if (typeof prio1[key] === "undefined") {
+                        
+                        prio1[key] = prio2[key];
+                    }
+                }
+            }
+        }
+        
+        return prio1;
     },
 
     // !------------------------------ N.obs
@@ -147,19 +201,35 @@ var N = {
      *      upload:   {function}  first argument: percent of loaded data, second argument: XMLHttpRequestProgressEvent
      *      download: {function}  first argument: percent of loaded data, second argument: XMLHttpRequestProgressEvent
      * }
+     *
+     * source: {
+     *      name: "operationName",
+     *      //N.link options
+     * }
      */
     
     link: function(method, options, callback) {
         
-        if (typeof method !== "string") {
+        if (typeof method === "object") {
             
-            N.err("Operation Method is mandatory");
+            options = method;
+            method = options.name;
+            delete options.name;
         }
         
         if (typeof options === "function") {
             
             callback = options;
             options = {};
+        }
+        else if (!options) {
+            
+            options = {};
+        }
+        
+        if (typeof method !== "string") {
+            
+            N.err("Operation Method is mandatory");
         }
         
         if (!options.miid && !this.miid) {
