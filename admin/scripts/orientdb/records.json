@@ -146,8 +146,7 @@
                 "#6:8",
                 "#6:10",
                 "#6:11",
-                "#6:12",
-                "#6:27"
+                "#6:12"
             ]
         },
         {
@@ -273,23 +272,13 @@
         },
         {
             "@type": "d",
-            "@rid": "#10:0",
-            "@version": 0,
-            "@class": "VModule",
-            "owner": "core",
-            "name": "module",
-            "in": [
-                "#6:5"
-            ]
-        },
-        {
-            "@type": "d",
             "@rid": "#10:1",
             "@version": 0,
             "@class": "VModule",
             "owner": "jillix",
             "name": "editor",
             "dir": "client",
+            "library": false,
             "in": [
                 "#6:6"
             ]
@@ -302,9 +291,7 @@
             "owner": "ajaxorg",
             "name": "ace",
             "dir": "lib/ace",
-            "in": [
-                "#6:8"
-            ]
+            "library": true
         },
         {
             "@type": "d",
@@ -314,6 +301,7 @@
             "owner": "faeb187",
             "name": "stdl.list",
             "dir": "js/client",
+            "library": false,
             "in": [
                 "#6:10"
             ]
@@ -326,8 +314,20 @@
             "@class": "VModule",
             "name": "admin",
             "dir": "client",
+            "library": false,
             "in": [
                 "#6:11"
+            ]
+        },
+        {
+            "@type": "d",
+            "@rid": "#10:5",
+            "@version": 0,
+            "@class": "VModule",
+            "owner": "adioo",
+            "name": "list",
+            "library": false,
+            "in": [
             ]
         },
         {
@@ -336,9 +336,11 @@
             "@version": 0,
             "@class": "VModule",
             "owner": "adioo",
-            "name": "stdl.layout",
+            "name": "layout",
+            "library": false,
             "in": [
-                "#6:10"
+                "#6:12",
+                "#6:14"
             ]
         },
         {
@@ -346,10 +348,10 @@
             "@rid": "#10:7",
             "@version": 0,
             "@class": "VModule",
-            "owner": "gabipetrovay",
-            "name": "stdl.tab",
+            "owner": "adioo",
+            "name": "form",
+            "library": false,
             "in": [
-                "#6:10"
             ]
         },
         {
@@ -359,6 +361,7 @@
             "@class": "VModule",
             "owner": "jillix",
             "name": "liqshopOrderList",
+            "library": false,
             "in": [
                 "#6:15"
             ]
@@ -370,6 +373,7 @@
             "@class": "VModule",
             "owner": "jillix",
             "name": "liqshopOrderDetails",
+            "library": false,
             "in": [
                 "#6:16"
             ]
@@ -381,6 +385,7 @@
             "@class": "VModule",
             "owner": "jillix",
             "name": "liqshopOrderLogin",
+            "library": false,
             "in": [
                 "#6:25"
             ]
@@ -392,9 +397,7 @@
             "@class": "VModule",
             "owner": "adioo",
             "name": "bind",
-            "in": [
-                "#6:27"
-            ]
+            "library": true
         },
         {
             "@type": "d",
@@ -433,15 +436,6 @@
             "css": ["ace"],
             "out": "#8:0",
             "in": "#10:1"
-        },
-        {
-            "@type": "d",
-            "@rid": "#6:8",
-            "@version": 0,
-            "@class": "EHasAccessTo",
-            "miid": "mono_ace_1",
-            "out": "#8:0",
-            "in": "#10:2"
         },
         {
             "@type": "d",
@@ -647,15 +641,6 @@
             "miid": "liqshop_order_login",
             "out": "#8:2",
             "in": "#9:7"
-        },
-        {
-            "@type": "d",
-            "@rid": "#6:27",
-            "@version": 0,
-            "@class": "EHasAccessTo",
-            "miid": "mono_bind_1",
-            "out": "#8:0",
-            "in": "#10:11"
         }
     ]
 }

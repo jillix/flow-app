@@ -272,6 +272,12 @@
                         "type": "STRING",
                         "mandatory": false,
                         "not-null": true
+                    },
+                    {
+                        "name": "library",
+                        "type": "BOOLEAN",
+                        "mandatory": true,
+                        "not-null": true
                     }
                 ]
             },
