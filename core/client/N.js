@@ -30,7 +30,7 @@ var N = {
     
     clone: function(obj){
         
-        // TODO don't iterate through cloned objects
+        // TODO don't iterate over cloned objects
         obj.__clone__ = true;
         function O(){};
         O.prototype = obj;
@@ -50,7 +50,7 @@ var N = {
                 
                 if (typeof prio1[key] === "object" || typeof prio1[key] === "undefined") {
                     
-                    // TODO don't iterate through cloned objects
+                    // TODO don't iterate over cloned objects
                     if (!(prio2[key] instanceof Node) && !prio2[key].__clone__ && typeof prio2[key] === "object") {
                         
                         if (prio1[key] instanceof Array) {
