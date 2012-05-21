@@ -13,3 +13,18 @@
 [submodule "modules/adioo/bind"]
 	path = modules/adioo/bind
 	url = git@github.com:adioo/bind.git
+[submodule "modules/adioo/layout"]
+	path = modules/adioo/layout
+	url = git@github.com:adioo/layout.git
+[submodule "modules/adioo/form"]
+	path = modules/adioo/form
+	url = git@github.com:adioo/form.git
+[submodule "modules/adioo/list"]
+	path = modules/adioo/list
+	url = git@github.com:adioo/list.git
+[submodule "modules/adioo/tab"]
+	path = modules/adioo/tab
+	url = git@github.com:adioo/tab.git
+[submodule "modules/adioo/table"]
+	path = modules/adioo/table
+	url = git@github.com:adioo/table.git

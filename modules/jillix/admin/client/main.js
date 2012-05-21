@@ -1,10 +1,10 @@
-define(["adioo/bind/menu", "adioo/bind/list"], function(Menu, List) {
+define(["adioo/bind/tab"], function(Menu) {
     
     return {
         
         init: function(config) {
             
-            var list = List({
+            var tab = Menu({
                 
                 inst: this,
                 target: this.$.querySelector("#vertexClassMenu"),
@@ -14,38 +14,24 @@ define(["adioo/bind/menu", "adioo/bind/list"], function(Menu, List) {
                     name: "operationName",
                     path: "ich/bin/de/ruedi",
                     data: {hoi:"ruedi"}
+                },
+                bind: {
+                    
+                    events: 
                 }
             });
             
-            list.render([
+            tab.render([
                 
-                [
-                    {val: "Domains"},
-                    {val: "domains", attr: "id"}
-                ],
-                [
-                    {val: "Apps"},
-                    {val: "apps", attr: "id"}
-                ],
-                [
-                    {val: "Users"},
-                    {val: "users", attr: "id"}
-                ],
-                [
-                    {val: "Roles"},
-                    {val: "roles", attr: "id"}
-                ],
-                [
-                    {val: "Modules"},
-                    {val: "modules", attr: "id"}
-                ],
-                [
-                    {val: "Operations"},
-                    {val: "operations", attr: "id"}
-                ]
+                [{val: "Domains"}],
+                [{val: "Apps"}],
+                [{val: "Users"}],
+                [{val: "Roles"}],
+                [{val: "Modules"}],
+                [{val: "Operations"}]
             ]);
             
-            //list.fetch();
+            //tab.fetch();
         }
     }
 });
