@@ -1,4 +1,4 @@
-define(["adioo/bind/tab"], function(Menu) {
+define(["adioo/tab/main"], function(Menu) {
     
     return {
         
@@ -14,10 +14,6 @@ define(["adioo/bind/tab"], function(Menu) {
                     name: "operationName",
                     path: "ich/bin/de/ruedi",
                     data: {hoi:"ruedi"}
-                },
-                bind: {
-                    
-                    events: 
                 }
             });
             
