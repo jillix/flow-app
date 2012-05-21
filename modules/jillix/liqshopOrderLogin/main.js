@@ -8,10 +8,10 @@ define(["./jquery.min"], function() {
 
         self = this;
 
-        userInput = $("#pub");
-        passInput = $("#pwd");
+        userInput = $("#pub", self.$);
+        passInput = $("#pwd", self.$);
 
-        $("#btn").click(function() {
+        $("#btn", self.$).click(function() {
 
             var user = userInput.val();
             var pass = passInput.val();
@@ -27,7 +27,7 @@ define(["./jquery.min"], function() {
         N.login(user, pass, function(err, ok) {
 
             if (err) {
-                $(".error").text(err).show();
+                $(".error", self.$).text(err).show();
                 passInput.val("");
                 userInput.focus().select();
                 return;

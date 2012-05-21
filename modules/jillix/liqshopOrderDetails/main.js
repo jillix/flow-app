@@ -14,16 +14,16 @@ define(["./jquery.min"], function() {
 
         self = this;
 
-        itemTable = $("#orderItems");
-        itemTableDone = $("#orderItemsDone");
+        itemTable = $("#orderItems", self.$);
+        itemTableDone = $("#orderItemsDone", self.$);
 
         N.obs("liqshop_order_list").l("selected", orderSelected);
         N.obs("liqshop_order_list").l("unselected", orderUnselected);
 
-        $("#orderDetail").on("change", ".archiveCheck", function() {
+        $("#orderDetail", self.$).on("change", ".archiveCheck", function() {
             itemArchiveCheck(this);
         });
-        $("#orderDetails").on("click", ".bulkArchive", function() {
+        $("#orderDetail", self.$).on("click", ".bulkArchive", function() {
 
             if (this.id === "archiveAll") {
                 bulkOperation(true);

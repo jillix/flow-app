@@ -54,6 +54,7 @@ exports.logout = function(link) {
 
     if (link.session && typeof link.session.end === "function") {
 
+debugger;
         // TODO somthing is wrong here
         link.session.end(function() {
             cookies = new Cookies(link.req, link.res);

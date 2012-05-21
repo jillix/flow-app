@@ -16,10 +16,10 @@ define(["./jquery.min"], function() {
 
         N.obs("liqshop_order_details").l("archived", refresh);
 
-        ul = $("#" + this.miid).find(".list");
-        branches = $("#orders_filter_branch");
-        archived = $("#orders_filter_archive");
-        search = $("#orders_search");
+        ul = $(self.$).find(".list");
+        branches = $("#orders_filter_branch", self.$);
+        archived = $("#orders_filter_archive", self.$);
+        search = $("#orders_search", self.$);
 
         // TODO temporarily put logout button hadler here
         $("#logout").click(function() {
@@ -32,8 +32,8 @@ define(["./jquery.min"], function() {
             select($(this));
         });
 
-        $(".filter").on("change", refresh);
-        $(".pageHandle").on("click", pageRequest);
+        $(".filter", self.$).on("change", refresh);
+        $(".pageHandle", self.$).on("click", pageRequest);
 
         fetchBranches();
     }
@@ -148,8 +148,8 @@ define(["./jquery.min"], function() {
             // page computations
             maxPage = Math.floor((orders.shift() - 1) / pageSize) + 1;
 
-            $("#orders_of").text(maxPage || "-");
-            $("#orders_page").text(maxPage ? page : "-");
+            $("#orders_of", self.$).text(maxPage || "-");
+            $("#orders_page", self.$).text(maxPage ? page : "-");
 
             // display items
             for (var i = 0; i < pageSize && i < orders.length; i++) {

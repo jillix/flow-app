@@ -317,7 +317,7 @@ this.endSessions = function( now, callback ){
 	});
 };
 
-this.endSession = function( sessionID ){
+this.endSession = function( sessionID, callback ){
 	
 	mongo( CONFIG.mongoDB.name, "sessions", function( err, db ){
 		
