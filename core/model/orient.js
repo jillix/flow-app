@@ -256,9 +256,9 @@ exports.getModuleFile = function(owner, name, userId, callback) {
         "SELECT " +
             "dir, owner, name " +
         "FROM " +
-            "(TRAVERSE VUser.out, EMemberOf.in, VRole.out, EHasAccessTo.in FROM #" + vuClusterId + ":" + userId + ") " +
+            "VModule " +
         "WHERE " +
-            "@class = 'VModule' AND " +
+            "library = true AND " +
             "owner = '" + owner + "' AND " +
             "name = '" + name + "'";
 
@@ -269,12 +269,38 @@ exports.getModuleFile = function(owner, name, userId, callback) {
             return callback("An error occured while retrieving the module '" + owner + "/" + name + "':" + err);
         }
 
-        if (results.length == 0) {
-            return callback("No such module: " + owner + "/" + name);
+        if (results.length != 0) {
+            var module = results[0];
+            return callback(null, results[0]);
         }
 
-        var module = results[0];
-        callback(null, module);
+        // TODO the link to the appId is missing
+        //      only miid's from this appId must be searched
+        var command =
+            "SELECT " +
+                "dir, owner, name " +
+            "FROM " +
+                "(TRAVERSE VUser.out, EMemberOf.in, VRole.out, EHasAccessTo.in FROM #" + vuClusterId + ":" + userId + ") " +
+            "WHERE " +
+                "@class = 'VModule' AND " +
+                "owner = '" + owner + "' AND " +
+                "name = '" + name + "'";
+
+        sql(command, function(err, results) {
+
+            // error checks
+            if (err) {
+                return callback("An error occured while retrieving the module '" + owner + "/" + name + "':" + err);
+            }
+
+            if (results.length == 0) {
+                return callback("No such module: " + owner + "/" + name);
+            }
+
+            var module = results[0];
+            callback(null, module);
+        });
+
     });
 }
 
