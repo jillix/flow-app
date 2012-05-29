@@ -1,9 +1,4 @@
-//Copyright Adrian Ottiker. All Rights Reserved.
-
-/**
- * @fileoverview N-client: build and render components.
- * @author adi@ottiker.com (Adrian Ottiker)
- */
+//Copyright Adrian Ottiker (adrian@ottiker.com). All Rights Reserved.
 
 // extend Object prototype with clone function
 /*Object.defineProperty(Object.prototype, "clone", {
@@ -15,6 +10,8 @@
         return new O();
     }
 });*/
+
+"use strict";
 
 // TODO send error to server
 window.onerror = function(error, url, line) {
@@ -28,13 +25,40 @@ window.onerror = function(error, url, line) {
  */
 var N = {
     
-    clone: function(obj){
+    clone: function(object, inherit, newO) {
         
-        // TODO don't iterate over cloned objects
-        obj.__clone__ = true;
         function O(){};
-        O.prototype = obj;
-        return new O();
+        
+        if (inherit) {
+            
+            if (!inherit.__proto__) {
+                
+                newO = N.clone(inherit);
+                
+                for (var key in object) {
+                    
+                    if (object.hasOwnProperty(key)) {
+                        
+                        newO[key] = object[key];
+                    }
+                }
+                
+                newO = N.clone(newO);
+            }
+            else {
+                
+                newO = N.clone(object);
+                newO.__proto__.__proto__ = inherit;
+            }
+            
+            return newO;
+        }
+        
+        else {
+            
+            O.prototype = object;
+            return new O();
+        }
     },
     
     err: function(msg) {
@@ -50,8 +74,8 @@ var N = {
                 
                 if (typeof prio1[key] === "object" || typeof prio1[key] === "undefined") {
                     
-                    // TODO don't iterate over cloned objects
-                    if (!(prio2[key] instanceof Node) && !prio2[key].__clone__ && typeof prio2[key] === "object") {
+                    // TODO don't iterate over cloned objects: find a better solution
+                    if (!(prio2[key] instanceof Node) && key !== "scope" && typeof prio2[key] === "object") {
                         
                         if (prio1[key] instanceof Array) {
                             
@@ -94,12 +118,11 @@ var N = {
         return prio1;
     },
 
-    // !------------------------------ N.obs
     /**
      * simple observer class
      * @retrun {Observer} instance of the observer Class
      */
-    obs: (function(){
+    obs: (function() {
 
         //Class
         var Observer = {
@@ -184,7 +207,6 @@ var N = {
         };
     })(),
 
-    // !------------------------------ N.link
     /**
      * handles asynchronous/synchronous binary or text-based communication
      * Returns a configured Link
@@ -212,6 +234,7 @@ var N = {
         
         if (typeof method === "object") {
             
+            callback = options;
             options = method;
             method = options.name;
             delete options.name;
@@ -287,7 +310,7 @@ var N = {
 
             //request complete callback
             link.onreadystatechange = function() {
-
+            
                 //check if request is complete
                 if (link.readyState == 4) {
 
@@ -337,8 +360,7 @@ var N = {
             };
         }
     },
-
-    // !------------------------------ N.login
+    
     /**
      * Wrapper for link with login core operation
      * @param {string} user name
@@ -357,8 +379,7 @@ var N = {
 
         N.link("login", linkData, callback);
     },
-
-    // !------------------------------ N.logout
+    
     /**
      * Wrapper for link with logout core operation
      * @param {function} callback
@@ -367,8 +388,7 @@ var N = {
 
         N.link("logout", { miid: "core" }, callback);
     },
-
-    // !------------------------------ N.css
+    
     /**
      * Load css Files
      * @param {string} url to css file
@@ -391,10 +411,9 @@ var N = {
         
         head.appendChild(link);
     },
-
-    // !------------------------------ N.comp
+    
     /**
-     * Create Instances of Modules
+     * load module instances
      */
     mod: function(target, miid, callback) {
         
@@ -445,30 +464,28 @@ var N = {
             }
             
             // TODO handle requirejs errors
-            /*require.onError = function(){
+            require.onError = function(err){
                 
                 target.style.display = "block";
-                callback(null, clone);
-            };*/
+                callback(err, null);
+            };
 
             // load, clone and init modules
             require([response[0].owner + "/" + response[0].name + "/main"], function(module) {
                 
-                var clone = N.clone(module);
-                
-                clone.miid = miid;
-                clone.$ = div;
-                clone.link = N.link;
-                clone.config = response[0];
-                
-                // TODO create observer with user defined id (only for GUI)
-                clone.obs = N.obs(miid);
-
-                // TODO register module state
+                // TODO register module states
                 
                 // init module
-                if (clone.init) {
-                    clone.init(response[0]);
+                if (typeof module === "function") {
+                    
+                    module({
+                        
+                        dom:    div,
+                        obs:    N.obs(miid),
+                        miid:   miid,
+                        link:   N.link
+                        
+                    }, response[0]);
                 }
 
                 // TODO: hide loader
@@ -477,7 +494,7 @@ var N = {
                 target.appendChild(div);
                 target.style.display = "block";
 
-                callback(null, clone);
+                callback(null);
             });
         });
     }/*,
