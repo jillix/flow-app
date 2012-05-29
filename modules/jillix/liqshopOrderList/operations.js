@@ -77,8 +77,6 @@ exports.getOrders = function(link) {
         var limit = queryObj.limit || 0;
 
         var mongoQuery = {
-            "_s.n": "orders",
-            "_l": "de_CH",
             "items": archiveFilter
         }
 

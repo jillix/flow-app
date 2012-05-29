@@ -154,8 +154,8 @@ define(["./jquery.min"], function() {
             // display items
             for (var i = 0; i < pageSize && i < orders.length; i++) {
 
-                $("<li>")
-                    .append(
+                var litm = $("<li>");
+                litm.append(
                         "<span class='orderdate'>" +
                             orders[i].time +
                         "</span> | " +
@@ -164,6 +164,10 @@ define(["./jquery.min"], function() {
                         "</span>")
                     .appendTo(ul)
                     [0].order = orders[i];
+
+                if (orders[i]._c.length == 8) {
+                    litm.addClass("red");
+                }
             }
         });
     }

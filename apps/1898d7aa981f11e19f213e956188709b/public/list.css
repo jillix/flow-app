@@ -45,3 +45,6 @@ ul.list li:hover {
     color:   #000;
     background-color: rgb( 220, 220, 220 );
 }
+ul.list li.red {
+    color: red
+}
