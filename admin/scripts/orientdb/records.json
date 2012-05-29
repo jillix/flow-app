@@ -310,10 +310,9 @@
             "@type": "d",
             "@rid": "#10:4",
             "@version": 0,
-            "owner": "jillix",
+            "owner": "adioo",
             "@class": "VModule",
-            "name": "admin",
-            "dir": "client",
+            "name": "tab",
             "library": false,
             "in": [
                 "#6:11"
@@ -469,6 +468,12 @@
             "html": {
                 "type": "a",
                 "path": "main"
+            },
+            "config": {
+                
+                "source": {
+                    "name": "getData"
+                }
             },
             "css": ["main"],
             "out": "#8:0",
