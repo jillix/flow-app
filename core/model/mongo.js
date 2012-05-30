@@ -21,7 +21,7 @@ exports.getSession = function(sessionId, now, expire, callback) {
 exports.startSession = function(session, callback) {
 
 	mongo(CONFIG.mongoDB.name, "sessions", function(err, db) {
-
+        console.log(err);
         if (err) { return callback(err) };
 
         db.insert(session, { safe: true },  callback);
