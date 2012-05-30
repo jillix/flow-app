@@ -483,7 +483,7 @@ var N = {
                 // init module
                 if (typeof module === "function") {
                     
-                    module({
+                    module.call({
                         
                         dom:    div,
                         obs:    N.obs(miid),
