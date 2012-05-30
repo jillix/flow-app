@@ -10,16 +10,16 @@ define(["./jquery.min"], function() {
     var maxPage = 0;
 
 
-    function init() {
+    function init(config) {
 
         self = this;
 
         N.obs("liqshop_order_details").l("archived", refresh);
 
-        ul = $(self.$).find(".list");
-        branches = $("#orders_filter_branch", self.$);
-        archived = $("#orders_filter_archive", self.$);
-        search = $("#orders_search", self.$);
+        ul = $(self.dom).find(".list");
+        branches = $("#orders_filter_branch", self.dom);
+        archived = $("#orders_filter_archive", self.dom);
+        search = $("#orders_search", self.dom);
 
         // TODO temporarily put logout button hadler here
         $("#logout").click(function() {
@@ -32,8 +32,8 @@ define(["./jquery.min"], function() {
             select($(this));
         });
 
-        $(".filter", self.$).on("change", refresh);
-        $(".pageHandle", self.$).on("click", pageRequest);
+        $(".filter", self.dom).on("change", refresh);
+        $(".pageHandle", self.dom).on("click", pageRequest);
 
         fetchBranches();
     }
@@ -148,8 +148,8 @@ define(["./jquery.min"], function() {
             // page computations
             maxPage = Math.floor((orders.shift() - 1) / pageSize) + 1;
 
-            $("#orders_of", self.$).text(maxPage || "-");
-            $("#orders_page", self.$).text(maxPage ? page : "-");
+            $("#orders_of", self.dom).text(maxPage || "-");
+            $("#orders_page", self.dom).text(maxPage ? page : "-");
 
             // display items
             for (var i = 0; i < pageSize && i < orders.length; i++) {
@@ -172,9 +172,7 @@ define(["./jquery.min"], function() {
         });
     }
 
-    return {
-        init: init    
-    };
+    return init;
 
 });
 

@@ -10,20 +10,20 @@ define(["./jquery.min"], function() {
     var itemTable, itemTableDone;
 
 
-    function init() {
+    function init(config) {
 
         self = this;
 
-        itemTable = $("#orderItems", self.$);
-        itemTableDone = $("#orderItemsDone", self.$);
+        itemTable = $("#orderItems", self.dom);
+        itemTableDone = $("#orderItemsDone", self.dom);
 
         N.obs("liqshop_order_list").l("selected", orderSelected);
         N.obs("liqshop_order_list").l("unselected", orderUnselected);
 
-        $("#orderDetail", self.$).on("change", ".archiveCheck", function() {
+        $("#orderDetail", self.dom).on("change", ".archiveCheck", function() {
             itemArchiveCheck(this);
         });
-        $("#orderDetail", self.$).on("click", ".bulkArchive", function() {
+        $("#orderDetail", self.dom).on("click", ".bulkArchive", function() {
 
             if (this.id === "archiveAll") {
                 bulkOperation(true);
@@ -216,9 +216,7 @@ define(["./jquery.min"], function() {
     }
 
 
-    return {
-        init: init    
-    };
+    return init;
 
 });
 
