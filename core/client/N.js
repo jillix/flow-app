@@ -25,45 +25,33 @@ window.onerror = function(error, url, line) {
  */
 var N = {
     
-    clone: function(object, inherit, newO) {
+    module: function(Inherit) {
         
-        function O(){};
-        
-        if (inherit) {
+        if (Inherit) {
             
-            if (!inherit.__proto__) {
+            //handy but non-standart
+            if (!Inherit.__proto__) {
                 
-                newO = N.clone(inherit);
-                
-                for (var key in object) {
-                    
-                    if (object.hasOwnProperty(key)) {
-                        
-                        newO[key] = object[key];
-                    }
-                }
-                
-                newO = N.clone(newO);
+                this.__proto__.__proto__ = inherit;
             }
             else {
                 
-                newO = N.clone(object);
-                newO.__proto__.__proto__ = inherit;
+                var inherit = N.clone(Inherit);
+                
+                for (var key in this) {
+                    
+                    inherit[key] = this[key];
+                }
+                
+                return N.clone(inherit);
             }
-            
-            return newO;
-        }
-        
-        else {
-            
-            O.prototype = object;
-            return new O();
         }
     },
     
-    err: function(msg) {
+    clone: function(object, inherit) {
         
-        throw new Error(msg);  
+        N.module.prototype = object;
+        return new N.module(inherit);
     },
     
     merge: function(prio1, prio2) {
@@ -74,8 +62,7 @@ var N = {
                 
                 if (typeof prio1[key] === "object" || typeof prio1[key] === "undefined") {
                     
-                    // TODO don't iterate over cloned objects: find a better solution
-                    if (!(prio2[key] instanceof Node) && key !== "scope" && typeof prio2[key] === "object") {
+                    if (!(prio2[key] instanceof Node) && !(prio2[key] instanceof N.module) && typeof prio2[key] === "object") {
                         
                         if (prio1[key] instanceof Array) {
                             
@@ -116,6 +103,11 @@ var N = {
         }
         
         return prio1;
+    },
+    
+    err: function(msg) {
+        
+        throw new Error(msg);  
     },
 
     /**
