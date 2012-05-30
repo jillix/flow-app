@@ -149,13 +149,11 @@
             ],
             "out": [
                 "#6:13",
-
                 "#6:6",
                 "#6:8",
                 "#6:10",
                 "#6:11",
                 "#6:12",
-                
                 "#6:27"
             ]
         },
@@ -494,8 +492,14 @@
             "config": {
                 
                 "source": {
+                
                     "name": "getData"
-                }
+                },
+                "target": "#vertexClassMenu",
+                "itemTag": "li",
+                "tabTag": "div",
+                "tabContainer": "#vertexes",
+                "noTabSelected": "#noVertexSelected"
             },
             "css": ["main"],
             "out": "#8:0",
