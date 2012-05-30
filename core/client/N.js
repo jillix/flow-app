@@ -25,33 +25,46 @@ window.onerror = function(error, url, line) {
  */
 var N = {
     
-    module: function(Inherit) {
+    module: function(inherit, properties, clone) {
         
-        if (Inherit) {
+        if (inherit) {
             
             //handy but non-standart
-            if (!Inherit.__proto__) {
+            if (inherit.__proto__) {
                 
                 this.__proto__.__proto__ = inherit;
             }
             else {
                 
-                var inherit = N.clone(Inherit);
+                clone = N.clone(inherit);
                 
                 for (var key in this) {
                     
-                    inherit[key] = this[key];
+                    clone[key] = this[key];
                 }
                 
-                return N.clone(inherit);
+                clone = N.clone(clone);
             }
+        }
+        
+        if (properties) {
+            
+            for (var property in properties) {
+                
+                (clone || this)[property] = properties[property];
+            }
+        }
+        
+        if (clone) {
+            
+            return clone;
         }
     },
     
-    clone: function(object, inherit) {
+    clone: function(object, inherit, properties) {
         
         N.module.prototype = object;
-        return new N.module(inherit);
+        return new N.module(inherit, properties);
     },
     
     merge: function(prio1, prio2) {
@@ -462,7 +475,7 @@ var N = {
                 callback(err, null);
             };
 
-            // load, clone and init modules
+            // load and init module
             require([response[0].owner + "/" + response[0].name + "/main"], function(module) {
                 
                 // TODO register module states
