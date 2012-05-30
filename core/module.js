@@ -9,24 +9,22 @@ var send = require(CONFIG.root + "/core/send.js").send,
 
 function buildModule(module) {
 
-    var response = [
-
-        module.config || {},
-        module.html || ""
-    ];
-
-    response[0].owner = module.owner;
-    response[0].name = module.name;
+    var response = {
+        '0': module.owner,
+        '1': module.name,
+        '2': module.config || {},
+        '3': module.html || ""
+    };
 
     if (module.css) {
 
-        response[2] = [];
+        response[4] = [];
 
         // add the module css in the third response object
         for (var i in module.css) {
 
             // TODO append D/ for domain css and M/ for module css
-            response[2].push(module.css[i] + ".css");
+            response[4].push(module.css[i] + ".css");
         }
     }
 
