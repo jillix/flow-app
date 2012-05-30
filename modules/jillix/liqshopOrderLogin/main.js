@@ -4,14 +4,14 @@ define(["./jquery.min"], function() {
 
     var userInput, passInput;
 
-    function init() {
+    function init(config) {
 
         self = this;
 
-        userInput = $("#pub", self.$);
-        passInput = $("#pwd", self.$);
+        userInput = $("#pub", self.dom);
+        passInput = $("#pwd", self.dom);
 
-        $("#btn", self.$).click(function() {
+        $("#btn", self.dom).click(function() {
 
             var user = userInput.val();
             var pass = passInput.val();
@@ -27,7 +27,7 @@ define(["./jquery.min"], function() {
         N.login(user, pass, function(err, ok) {
 
             if (err) {
-                $(".error", self.$).text(err).show();
+                $(".error", self.dom).text(err).show();
                 passInput.val("");
                 userInput.focus().select();
                 return;
@@ -37,9 +37,6 @@ define(["./jquery.min"], function() {
         });
     }
 
-    return {
-        init: init    
-    };
-
+    return init;
 });
 

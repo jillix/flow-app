@@ -130,6 +130,14 @@
         },
         {
             "@type": "d",
+            "@rid": "#12:2",
+            "@version": 0,
+            "@class": "VDomain",
+            "name": "o.happybonus.ch",
+            "application": "#11:1"
+        },
+        {
+            "@type": "d",
             "@rid": "#8:0",
             "@version": 0,
             "@class": "VRole",
