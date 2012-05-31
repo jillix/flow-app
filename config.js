@@ -1,6 +1,11 @@
 // load the mono configuration file
 var config = module.exports = require("./mono");
 
+function throwError(message) {
+    throw new Error("ERROR: " + message);
+}
+
+
 // configure the root directory
 config.root = __dirname;
 
@@ -9,6 +14,7 @@ config.root = __dirname;
 
 // log level
 //      One of: error, warning, info, debug, none
+//
 if (!config.logLevel) {
 
     if (config.dev) {
@@ -42,7 +48,14 @@ if (config.adminEmail) {
     var filter = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
     
     if (!filter.test(config.adminEmail)) {
-        throw new Error("Error: Notification set active, but no valid mail has been set!");
+        throw new Error("ERROR: Notification set active, but no valid mail has been set!");
     }
 }
+
+
+// OrientDB connection
+//
+config.orient || throwError("The OrientDB configuration is missing");
+config.orient.server || throwError("The OrientDB configuration is missing the server key");
+config.orient.db || throwError("The OrientDB configuration is missing the db key");
 

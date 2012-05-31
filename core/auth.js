@@ -54,8 +54,6 @@ exports.logout = function(link) {
 
     if (link.session && typeof link.session.end === "function") {
 
-debugger;
-        // TODO somthing is wrong here
         link.session.end(function() {
             cookies = new Cookies(link.req, link.res);
             cookies.set("sid");
@@ -65,20 +63,7 @@ debugger;
         return;
     }
 
-    throw 123123123132;
-
+    send.badrequest(link, "Tried to logout session " + session.sid + " but session.end was not a function.");
     return;
-
-    var uid = link.session.uid;
-    var appId = link.session.appid;
-
-    session.end(uid, appId, function(err, session) {
-
-        if (err) {
-            send.internalservererror(link, err);
-            return;
-        }
-
-    });
 };
 

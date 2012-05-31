@@ -1,66 +1,51 @@
-var orient = require("orientdb"),
-    Db = orient.Db,
-    Server = orient.Server;
-
-var server = new Server(CONFIG.orient.server),
-    db = new Db(CONFIG.orient.db.database_name, server, CONFIG.orient.db);
-
 
 exports.getUser = function(appId, userName, callback) {
 
-    db.open(function(err, result) {
+    var command =
+        "SELECT " +
+            "@rid AS uid, " +
+            "password " +
+        "FROM " +
+            "(TRAVERSE roles, VRole.in, EMemberOf.out FROM (SELECT FROM VApplication WHERE id = '" + appId + "')) " +
+        "WHERE " +
+            "@class = 'VUser' AND " +
+            "username = '" + userName + "'";
 
-        if (err) { return callback(err); }
+    sql(command, function(err, results) {
 
-        var command =
-            "SELECT " +
-                "@rid AS uid, " +
-                "password " +
-            "FROM " +
-                "(TRAVERSE roles, VRole.in, EMemberOf.out FROM (SELECT FROM VApplication WHERE id = '" + appId + "')) " +
-            "WHERE " +
-                "@class = 'VUser' AND " +
-                "username = '" + userName + "'";
+        if (err) {
+            return callback("An error occurred while retrieving the user information for user '" + userName + "': " + JSON.stringify(err));
+        }
 
-        sql(command, function(err, results) {
+        // if there is no result
+        if (!results || results.length == 0) {
+            return callback(null, null);
+        }
 
-            if (err) {
-                return callback("An error occurred while retrieving the user information for user '" + userName + "': " + JSON.stringify(err));
-            }
+        // if there are too many results
+        if (results.length > 1) {
+            return callback("Could not uniquely determine the user with username: " + userName);
+        }
 
-            // if there is no result
-            if (!results || results.length == 0) {
-                return callback(null, null);
-            }
+        var user = results[0];
 
-            // if there are too many results
-            if (results.length > 1) {
-                return callback("Could not uniquely determine the user with username: " + userName);
-            }
+        // if the user does not have the required fields
+        if (!user || !user.uid) {
+            return callback("Missing user ID: " + JSON.stringify(user.uid));
+        }
+        var uid = idFromRid(user.uid);
+        if (uid === null) {
+            return callback("Missing user ID: " + JSON.stringify(user.uid));
+        }
 
-            var user = results[0];
+        user.uid = uid;
 
-            // if the user does not have the required fields
-            if (!user || !user.uid) {
-                return callback("Missing user ID: " + JSON.stringify(user.uid));
-            }
-            var uid = idFromRid(user.uid);
-            if (uid === null) {
-                return callback("Missing user ID: " + JSON.stringify(user.uid));
-            }
-
-            user.uid = uid;
-
-            callback(null, { uid: uid, password: user.password });
-        });
+        callback(null, { uid: uid, password: user.password });
     });
 };
 
+
 exports.getAppId = function(domain, callback) {
-
-    db.open(function(err, result) {
-
-        if (err) { return callback(err); }
 
         var command =
             "SELECT " +
@@ -95,118 +80,107 @@ exports.getAppId = function(domain, callback) {
 
             callback(null, application.appId);
         });
-    });
 };
+
 
 exports.getDomainApplication = function(domain, withRoutes, callback) {
 
-    db.open(function(err, result) {
+    var command =
+        "SELECT " +
+            "application.id as appId, " +
+            (withRoutes ? "application.routes AS routes, " : "") +
+            "application.publicDir AS publicDir, " +
+            "application.error AS errorMiid " +
+        "FROM " +
+            "VDomain " +
+        "WHERE " +
+            "name = '" + domain + "'";
 
-        if (err) { return callback(err); }
+    sql(command, function(err, results) {
 
-        var command =
-            "SELECT " +
-                "application.id as appId, " +
-                (withRoutes ? "application.routes AS routes, " : "") +
-                "application.publicDir AS publicDir, " +
-                "application.error AS errorMiid " +
-            "FROM " +
-                "VDomain " +
-            "WHERE " +
-                "name = '" + domain + "'";
+        if (err) {
+            return callback("An error occurred while retrieving the routing table for domain '" + domain + "': " + JSON.stringify(err));
+        }
 
-        sql(command, function(err, results) {
+        // if there is no result
+        if (!results || results.length == 0) {
+            return callback("Domain not found: " + domain);
+        }
 
-            if (err) {
-                return callback("An error occurred while retrieving the routing table for domain '" + domain + "': " + JSON.stringify(err));
-            }
+        // if there are too many results
+        if (results.length > 1) {
+            return callback("Could not uniquely determine the application ID for domain: " + domain);
+        }
 
-            // if there is no result
-            if (!results || results.length == 0) {
-                return callback("Domain not found: " + domain);
-            }
+        var application = results[0];
 
-            // if there are too many results
-            if (results.length > 1) {
-                return callback("Could not uniquely determine the application ID for domain: " + domain);
-            }
+        // if the application does not have the required fields
+        if (!application || !application.appId) {
+            return callback("The application object is not complete. Check if the application ID is present: " + JSON.stringify(application));
+        }
 
-            var application = results[0];
+        if (withRoutes && !application.routes) {
+            return callback("The application object is not complete. Missing application routing table: " + JSON.stringify(application));
+        }
 
-            // if the application does not have the required fields
-            if (!application || !application.appId) {
-                return callback("The application object is not complete. Check if the application ID is present: " + JSON.stringify(application));
-            }
-
-            if (withRoutes && !application.routes) {
-                return callback("The application object is not complete. Missing application routing table: " + JSON.stringify(application));
-            }
-
-            callback(null, application);
-        });
+        callback(null, application);
     });
 };
+
 
 exports.getUserOperation = function(miid, method, userId, callback) {
 
-    db.open(function(err, result) {
+    var vuClusterId = CONFIG.orient.DB.getClusterIdByClass("VUser");
 
-        if (err) { return callback(err); }
+    if (vuClusterId < 0) { return callback("Could not find the VUser cluster ID."); }
 
-        // TODO the cluster IDs should be searched for in the mono initialization phase where also the connection is opened
-        var vuClusterId = db.getClusterIdByClass("VUser");
+    var command =
+        "SELECT " +
+            "in.module AS module, in.file AS file, params " +
+        "FROM " +
+            "(TRAVERSE VUser.out, EMemberOf.in, VRole.out FROM #" + vuClusterId + ":" + userId + ") " +
+        "WHERE " +
+            "@class = 'ECanPerform' AND " +
+            "miid = '" + miid + "' AND " +
+            "in.method = '" + method + "'";
 
-        if (vuClusterId < 0) { return callback("Could not find the VUser cluster ID."); }
+    sql(command, function(err, results) {
 
-        var command =
-            "SELECT " +
-                "in.module AS module, in.file AS file, params " +
-            "FROM " +
-                "(TRAVERSE VUser.out, EMemberOf.in, VRole.out FROM #" + vuClusterId + ":" + userId + ") " +
-            "WHERE " +
-                "@class = 'ECanPerform' AND " +
-                "miid = '" + miid + "' AND " +
-                "in.method = '" + method + "'";
+        if (err) {
+            return callback("An error occurred while retrieving the user's operation: " + err);
+        }
 
-        sql(command, function(err, results) {
+        // if there is no result
+        if (!results || results.length == 0) {
+            return callback("Operation not found");
+        }
 
-            if (err) {
-                return callback("An error occurred while retrieving the user's operation: " + err);
-            }
+        // if there are too many results
+        if (results.length > 1) {
+            return callback("Could not uniquely determine the operation");
+        }
 
-            // if there is no result
-            if (!results || results.length == 0) {
-                return callback("Operation not found");
-            }
+        var operation = results[0];
 
-            // if there are too many results
-            if (results.length > 1) {
-                return callback("Could not uniquely determine the operation");
-            }
+        // is the operation does not have the required fields or an error occurred while retrieving it
+        if (!operation || !operation.file) {
+            return callback("The operation object is not complete. Missing: operation.file");
+        }
 
-            var operation = results[0];
+        // TODO is this stil necessary?
+        // if the operation has parameters, parse them as JSON
+        if (operation.params) {
+            operation.params = JSON.parse(operation.params);
+        }
 
-            // is the operation does not have the required fields or an error occurred while retrieving it
-            if (!operation || !operation.file) {
-                return callback("The operation object is not complete. Missing: operation.file");
-            }
-
-            // TODO is this stil necessary?
-            // if the operation has parameters, parse them as JSON
-            if (operation.params) {
-                operation.params = JSON.parse(operation.params);
-            }
-
-            callback(null, operation);
-        });
+        callback(null, operation);
     });
 };
 
+
 exports.getModuleConfig = function(appId, miid, userId, callback) {
 
-    // TODO add either a db.open or make the db.open call before any operation
-    // TODO the cluster IDs should be searched for in the mono initialization phase where also the connection is opened
-    var vuClusterId = db.getClusterIdByClass("VUser");
+    var vuClusterId = CONFIG.orient.DB.getClusterIdByClass("VUser");
 
     if (vuClusterId < 0) { return callback("Could not find the VUser cluster ID."); }
 
@@ -244,9 +218,7 @@ exports.getModuleConfig = function(appId, miid, userId, callback) {
 
 exports.getModuleFile = function(owner, name, userId, callback) {
 
-    // TODO add either a db.open or make the db.open call before any operation
-    // TODO the cluster IDs should be searched for in the mono initialization phase where also the connection is opened
-    var vuClusterId = db.getClusterIdByClass("VUser");
+    var vuClusterId = CONFIG.orient.DB.getClusterIdByClass("VUser");
 
     if (vuClusterId < 0) { return callback("Could not find the VUser cluster ID."); }
 
@@ -304,51 +276,47 @@ exports.getModuleFile = function(owner, name, userId, callback) {
     });
 }
 
-this.getDomainPublicUser = function(domain, callback) {
 
-    db.open(function(err, result) {
+exports.getDomainPublicUser = function(domain, callback) {
 
-        if (err) { return callback(err); }
+    var command =
+        "SELECT " +
+            "application.publicUser AS publicUser, " +
+            "application.id AS appId " +
+        "FROM " +
+            "VDomain " +
+        "WHERE " +
+            "name = '" + domain + "'";
 
-        var command =
-            "SELECT " +
-                "application.publicUser AS publicUser, " +
-                "application.id AS appId " +
-            "FROM " +
-                "VDomain " +
-            "WHERE " +
-                "name = '" + domain + "'";
+    sql(command, function(err, results) {
 
-        sql(command, function(err, results) {
+        // error checks
+        if (err) {
+            return callback("An error occured while retrieving the public user for domain '" + domain + "':" + err);
+        }
 
-            // error checks
-            if (err) {
-                return callback("An error occured while retrieving the public user for domain '" + domain + "':" + err);
-            }
+        if (results.length == 0) {
+            return callback("No such domain: " + domain);
+        }
 
-            if (results.length == 0) {
-                return callback("No such domain: " + domain);
-            }
+        if (results.length > 1) {
+            return callback("There can be only one domain: " + domain + ". Found: " + results.length);
+        }
 
-            if (results.length > 1) {
-                return callback("There can be only one domain: " + domain + ". Found: " + results.length);
-            }
+        var app = results[0];
 
-            var app = results[0];
+        if (!app || !app.publicUser) {
+            return callback("The domain '" + domain + "' has no public user.");
+        }
 
-            if (!app || !app.publicUser) {
-                return callback("The domain '" + domain + "' has no public user.");
-            }
+        var rid = app.publicUser;
+        var id = idFromRid(rid);
 
-            var rid = app.publicUser;
-            var id = idFromRid(rid);
+        if (id === null || !app.appId) {
+            return callback("Invalid public user ID or application ID for domain '" + domain + "': " + id);
+        }
 
-            if (id === null || !app.appId) {
-                return callback("Invalid public user ID or application ID for domain '" + domain + "': " + id);
-            }
-
-            callback(null, { uid: id, appid: app.appId });
-        });
+        callback(null, { uid: id, appid: app.appId });
     });
 };
 
@@ -366,5 +334,5 @@ function idFromRid(rid) {
 
 function sql(command, callback) {
     //console.log(command);
-    db.command(command, callback);
+    CONFIG.orient.DB.command(command, callback);
 }

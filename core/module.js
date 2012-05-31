@@ -5,7 +5,7 @@ var send = require(CONFIG.root + "/core/send.js").send,
     client = new stat(CONFIG.root + "/core/client"),
     modules = new stat(CONFIG.root + "/modules"),
     publicFiles = require(CONFIG.root + "/core/send").publicFiles;
-    //files = new stat(CONFIG.root + "/apps");
+
 
 function buildModule(module) {
 
@@ -36,62 +36,66 @@ exports.getConfig = function(link) {
     // get the module instance id
     var miid = link.path[0] ? link.path[0].replace(/[^0-9a-z_\-\.]/gi, "") : null,
         errMiid = link.path[1] ? link.path[1].replace(/[^0-9a-z_\-\.]/gi, "") : null;
-    
+
     if (!miid) {
-        
         send.badrequest(link, "No miid defined");
         return;
     }
-    
+
     model.getAppId(link.host, function(err, appid) {
-        
-        if (err || !appid) { return send.internalservererror(link, err); }
-        
+
+        if (err || !appid) {
+            send.internalservererror(link, err || "Missing appid");
+            return;
+        }
+
         var getModuleConfig = function(miid) {
-        
+
             model.getModuleConfig(appid, miid, link.session.uid, function(err, module) {
-            
+
                 // error checks
+                // TODO what if the user defines an error module but there is an error retrieveing the module?
+                //      this will cause: RangeError: Maximum call stack size exceeded
+                //      because getModuleConfig() will always be called
                 if (err || !module) {
-                
+
                     if (errMiid) {
-                        
                         getModuleConfig(errMiid);
                         return;
                     }
-                    
+
                     send.notfound(link, err || "No module found");
                     return;
                 }
-            
+
                 if (module.html) {
-            
+
                     var path = (module.html.type === "a" ? "/apps/" + appid : "/modules/" + module.owner + "/" + module.name) + "/" + module.html.path + ".html";
-            
+
                     read(path, "utf8", function(err, html) {
-            
+
                         if (err) {
-            
+
                             // TODO let the module define it's missing module placeholder
                             html = "<p>An error occurred while retrieving this module HTML.</p>";
-            
+
                             if (CONFIG.dev) {
                                 html += "<p>Error: " + err + "</p>"
                             }
                         }
-            
+
                         module.html = html;
-            
+
                         send.ok(link.res, buildModule(module));
                     });
                 }
                 else {
-            
+
                     send.ok(link.res, buildModule(module));
                 }
             });
         };
-        
+
         getModuleConfig(miid);
     });
 };
@@ -127,7 +131,7 @@ exports.getModule = function(link) {
 
         // now serve the module file
         link.req.url = owner + "/" + name + "/" + (module.dir ? module.dir + "/" : "") + path;
-        
+
         modules.serve(link.req, link.res);
     });
 };
@@ -135,21 +139,21 @@ exports.getModule = function(link) {
 exports.getClient = function(link){
 
     link.req.url = link.path[0];
-    
+
     client.serve(link.req, link.res);
 };
 
 // ONLY PUBLIC FILES
 exports.getFile = function(link) {
-    
+
     model.getDomainApplication(link.host, false, function(err, result) {
-        
+
         if (err || !result) {
-            
+
             send.notfound(link, "File not found: " + link.req.url);
             return;
         }
-        
+
         publicFiles(link, result.appId, result.publicDir);
     });
 };
