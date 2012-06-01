@@ -154,7 +154,20 @@
                 "#6:10",
                 "#6:11",
                 "#6:12",
-                "#6:27"
+                "#6:27",
+                "#6:28",
+                "#6:29",
+                "#6:30",
+                "#6:31",
+                "#6:32",
+                "#6:33",
+                "#6:34",
+                "#6:35",
+                "#6:36",
+                "#6:37",
+                "#6:38",
+                "#6:39",
+                "#6:40"
             ]
         },
         {
@@ -501,7 +514,7 @@
                 "tabContainer": "#vertexes",
                 "noTabSelected": "#noVertexSelected"
             },
-            "css": ["main"],
+            "css": ["main", "vertex"],
             "out": "#8:0",
             "in": "#10:4"
         },
@@ -681,7 +694,274 @@
             "miid": "mono_admin",
             "out": "#8:0",
             "in": "#9:8"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:28",
+            "@version": 0,
+            "@class": "EHasAccessTo",
+            "miid": "domain_manager",
+            "html": {
+                "type": "a",
+                "path": "vertex"
+            },
+            "config": {
+                
+                "title": "Mono Admin - Domains",
+                "modules": {
+                    
+                    "vertexList": "domain_list",
+                    "vertexDetail": "vertex_detail"
+                }
+            },
+            "out": "#8:0",
+            "in": "#10:6"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:29",
+            "@version": 0,
+            "@class": "EHasAccessTo",
+            "miid": "app_manager",
+            "html": {
+                "type": "a",
+                "path": "vertex"
+            },
+            "config": {
+            
+                "title": "Mono Admin - Apps",
+                "modules": {
+                    
+                    "vertexList": "app_list",
+                    "vertexDetail": "vertex_detail"
+                }
+            },
+            "out": "#8:0",
+            "in": "#10:6"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:30",
+            "@version": 0,
+            "@class": "EHasAccessTo",
+            "miid": "user_manager",
+            "html": {
+                "type": "a",
+                "path": "vertex"
+            },
+            "config": {
+                
+                "title": "Mono Admin - Users",
+                "modules": {
+                    
+                    "vertexList": "user_list",
+                    "vertexDetail": "vertex_detail"
+                }
+            },
+            "out": "#8:0",
+            "in": "#10:6"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:31",
+            "@version": 0,
+            "@class": "EHasAccessTo",
+            "miid": "role_manager",
+            "html": {
+                "type": "a",
+                "path": "vertex"
+            },
+            "config": {
+                
+                "title": "Mono Admin - Roles",
+                "modules": {
+                    
+                    "vertexList": "role_list",
+                    "vertexDetail": "vertex_detail"
+                }
+            },
+            "out": "#8:0",
+            "in": "#10:6"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:32",
+            "@version": 0,
+            "@class": "EHasAccessTo",
+            "miid": "module_manager",
+            "html": {
+                "type": "a",
+                "path": "vertex"
+            },
+            "config": {
+                
+                "title": "Mono Admin - Modules",
+                "modules": {
+                    
+                    "vertexList": "module_list",
+                    "vertexDetail": "vertex_detail"
+                }
+            },
+            "out": "#8:0",
+            "in": "#10:6"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:33",
+            "@version": 0,
+            "@class": "EHasAccessTo",
+            "miid": "operation_manager",
+            "html": {
+                "type": "a",
+                "path": "vertex"
+            },
+            "config": {
+                
+                "title": "Mono Admin - Operations",
+                "modules": {
+                    
+                    "vertexList": "operation_list",
+                    "vertexDetail": "vertex_detail"
+                }
+            },
+            "out": "#8:0",
+            "in": "#10:6"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:34",
+            "@version": 0,
+            "@class": "EHasAccessTo",
+            "miid": "vertex_detail",
+            "html": {
+                "type": "a",
+                "path": "detail"
+            },
+            "config": {
+                
+            },
+            "out": "#8:0",
+            "in": "#10:7"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:35",
+            "@version": 0,
+            "@class": "EHasAccessTo",
+            "miid": "domain_list",
+            "html": {
+                "type": "a",
+                "path": "list"
+            },
+            "config": {
+                
+                "source": {
+                    
+                    "name": "getData"
+                }
+            },
+            "out": "#8:0",
+            "in": "#10:5"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:36",
+            "@version": 0,
+            "@class": "EHasAccessTo",
+            "miid": "app_list",
+            "html": {
+                "type": "a",
+                "path": "list"
+            },
+            "config": {
+                
+                "source": {
+                    
+                    "name": "getData"
+                }
+            },
+            "out": "#8:0",
+            "in": "#10:5"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:37",
+            "@version": 0,
+            "@class": "EHasAccessTo",
+            "miid": "user_list",
+            "html": {
+                "type": "a",
+                "path": "list"
+            },
+            "config": {
+                
+                "source": {
+                    
+                    "name": "getData"
+                }
+            },
+            "out": "#8:0",
+            "in": "#10:5"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:38",
+            "@version": 0,
+            "@class": "EHasAccessTo",
+            "miid": "role_list",
+            "html": {
+                "type": "a",
+                "path": "list"
+            },
+            "config": {
+                
+                "source": {
+                    
+                    "name": "getData"
+                }
+            },
+            "out": "#8:0",
+            "in": "#10:5"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:39",
+            "@version": 0,
+            "@class": "EHasAccessTo",
+            "miid": "module_list",
+            "html": {
+                "type": "a",
+                "path": "list"
+            },
+            "config": {
+                
+                "source": {
+                    
+                    "name": "getData"
+                }
+            },
+            "out": "#8:0",
+            "in": "#10:5"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:40",
+            "@version": 0,
+            "@class": "EHasAccessTo",
+            "miid": "operation_list",
+            "html": {
+                "type": "a",
+                "path": "list"
+            },
+            "config": {
+                
+                "source": {
+                    
+                    "name": "getData"
+                }
+            },
+            "out": "#8:0",
+            "in": "#10:5"
         }
     ]
 }
-
