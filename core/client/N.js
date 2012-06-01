@@ -269,7 +269,7 @@ var N = {
 
         if (link) {
             
-            var url = N.ok + "/" + (this.miid || options.miid) + "/" + method + (options.path || options.path === "" ? "/" + options.path : "") + (options.query || "");
+            var url = N.ok + "/" + (options.miid || this.miid) + "/" + method + (options.path || options.path === "" ? "/" + options.path : "") + (options.query || "");
             
             //open the connection
             link.open(options.data ? "post" : "get", url, !options.sync);
@@ -420,6 +420,7 @@ var N = {
     /**
      * load module instances
      */
+    modCache: {},
     mod: function(target, miid, callback) {
         
         //default argument values
@@ -434,9 +435,9 @@ var N = {
             return callback("Component ID undefined.");
         }
         
-        //get module
-        N.link("getConfig", {miid: "core", path: (N.em ? miid + "/" + N.em : miid)}, function(err, response) {
-            
+        var self = this;
+        var getConfigCallback = function(err, response) {
+        
             if (N.em) {
             
                 miid = N.em;
@@ -448,7 +449,10 @@ var N = {
                 
                 return callback(err || "Empty response");
             }
-
+            
+            //cache result
+            self.modCache[miid] = response;
+            
             target.style.display = "none";
             
             var div = document.createElement("div");
@@ -500,7 +504,19 @@ var N = {
 
                 callback(null);
             });
-        });
+        };
+        
+        if (!self.modCache[miid]) {
+            
+            // TODO buffer module loading calls if getConfig has no result yet
+            
+            //get module
+            N.link("getConfig", {miid: "core", path: (N.em ? miid + "/" + N.em : miid)}, getConfigCallback);
+        }
+        else {
+            
+            getConfigCallback(null, self.modCache[miid]);
+        }
     }/*,
     
     state: (function() {
