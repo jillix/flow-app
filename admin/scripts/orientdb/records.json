@@ -167,7 +167,8 @@
                 "#6:37",
                 "#6:38",
                 "#6:39",
-                "#6:40"
+                "#6:40",
+                "#6:41"
             ]
         },
         {
@@ -301,6 +302,18 @@
             "method": "getData",
             "in": [
                 "#6:27"
+            ]
+        },
+        {
+            "@type": "d",
+            "@rid": "#9:9",
+            "@version": 0,
+            "@class": "VOperation",
+            "module": "adioo/list",
+            "file": "operations.js",
+            "method": "getData",
+            "in": [
+                "#6:41"
             ]
         },
         {
@@ -835,10 +848,11 @@
             "miid": "vertex_detail",
             "html": {
                 "type": "a",
-                "path": "detail"
+                "path": "detail_domain"
             },
             "config": {
                 
+                "fillForm": "showDetails"
             },
             "out": "#8:0",
             "in": "#10:7"
@@ -858,7 +872,9 @@
                 "source": {
                     
                     "name": "getData"
-                }
+                },
+                "target": "#domain_list ul",
+                "itemTag": "li"
             },
             "out": "#8:0",
             "in": "#10:5"
@@ -962,6 +978,15 @@
             },
             "out": "#8:0",
             "in": "#10:5"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:41",
+            "@version": 0,
+            "@class": "ECanPerform",
+            "miid": "domain_list",
+            "out": "#8:0",
+            "in": "#9:9"
         }
     ]
 }
