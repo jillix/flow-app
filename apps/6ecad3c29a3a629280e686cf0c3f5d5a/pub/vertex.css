@@ -1,3 +1,10 @@
+@import url(http://fonts.googleapis.com/css?family=Open+Sans:400,300,600);
+
+* {
+
+    font-family: 'Open Sans', sans-serif;
+}
+
 #vertexList {
     
     display: block;
@@ -21,4 +28,46 @@
     left: 300px;
     bottom: 0;
     right: 0;
+}
+
+#vertexList ul {
+    
+    display: block;
+    position: absolute;
+    
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    
+    overflow-y: scroll;
+    
+    margin: 0;
+    padding: 0;
+}
+
+#vertexList li {
+    
+    list-style: none;
+    
+    display: block;
+    position: relative;
+    
+    left: 0;
+    right: 0;
+    
+    height: 33px;
+    
+    padding: 7px 10px 0 10px;
+    
+    border-bottom: solid 1px #ddd;
+    
+    cursor: pointer;
+    
+    font-weight: 300;
+}
+
+#vertexList li:hover {
+    
+    background-color: #eee;
 }
