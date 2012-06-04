@@ -166,13 +166,7 @@ exports.getUserOperation = function(miid, method, userId, callback) {
         if (!operation || !operation.file) {
             return callback("The operation object is not complete. Missing: operation.file");
         }
-
-        // TODO is this stil necessary?
-        // if the operation has parameters, parse them as JSON
-        if (operation.params) {
-            operation.params = JSON.parse(operation.params);
-        }
-
+        
         callback(null, operation);
     });
 };
