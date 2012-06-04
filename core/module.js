@@ -7,14 +7,21 @@ var send = require(CONFIG.root + "/core/send.js").send,
     publicFiles = require(CONFIG.root + "/core/send").publicFiles;
 
 
-function buildModule(module) {
+function buildModule(link, module) {
 
     var response = {
-        '0': module.owner,
-        '1': module.name,
-        '2': module.config || {},
-        '3': module.html || ""
+        language: link.session.loc,
+        0: module.owner,
+        1: module.name
     };
+
+    if (module.config) {
+        response[2] = module.config;
+    }
+
+    if (module.html) {
+        response[3] = module.html;
+    }
 
     if (module.css) {
 
@@ -86,12 +93,12 @@ exports.getConfig = function(link) {
 
                         module.html = html;
 
-                        send.ok(link.res, buildModule(module));
+                        send.ok(link.res, buildModule(link, module));
                     });
                 }
                 else {
 
-                    send.ok(link.res, buildModule(module));
+                    send.ok(link.res, buildModule(link, module));
                 }
             });
         };

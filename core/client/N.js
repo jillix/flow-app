@@ -470,6 +470,9 @@ var N = {
             for (var i in response[4]) {
                 N.css(response[4][i]);
             }
+
+            // get the language of this module
+            var language = response.language || "en";
             
             // TODO handle requirejs errors
             require.onError = function(err){
@@ -491,6 +494,7 @@ var N = {
                         dom:    div,
                         obs:    N.obs(miid),
                         miid:   miid,
+                        lang:   language,
                         link:   N.link
                         
                     }, response[2]);
