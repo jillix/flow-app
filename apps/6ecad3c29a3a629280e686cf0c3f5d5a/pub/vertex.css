@@ -19,17 +19,6 @@
     border-right: solid 2px #ddd;
 }
 
-#vertexDetail {
-    
-    display: block;
-    position: absolute;
-    
-    top: 0;
-    left: 300px;
-    bottom: 0;
-    right: 0;
-}
-
 #vertexList ul {
     
     display: block;
@@ -70,4 +59,29 @@
 #vertexList li:hover {
     
     background-color: #eee;
+}
+
+#vertexDetail {
+    
+    display: block;
+    position: absolute;
+    
+    top: 0;
+    left: 300px;
+    bottom: 0;
+    right: 0;
+}
+
+#vertexDetail form {
+    
+    padding: 10px;
+}
+
+#vertexDetail form label {
+    
+    display: block;
+    position: relative;
+    min-width: 100px;
+    
+    float: left;
 }
