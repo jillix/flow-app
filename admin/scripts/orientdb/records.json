@@ -168,7 +168,23 @@
                 "#6:38",
                 "#6:39",
                 "#6:40",
-                "#6:41"
+                "#6:41",
+                "#6:42",
+                "#6:43",
+                "#6:44",
+                "#6:45",
+                "#6:46",
+                "#6:47",
+                "#6:48",
+                "#6:49",
+                "#6:50",
+                "#6:51",
+                "#6:52",
+                "#6:53",
+                "#6:54",
+                "#6:55",
+                "#6:56",
+                "#6:57"
             ]
         },
         {
@@ -309,11 +325,21 @@
             "@rid": "#9:9",
             "@version": 0,
             "@class": "VOperation",
+            "module": "adioo/form",
+            "file": "operations.js",
+            "method": "saveData",
+            "in": []
+        },
+        {
+            "@type": "d",
+            "@rid": "#9:10",
+            "@version": 0,
+            "@class": "VOperation",
             "module": "adioo/list",
             "file": "operations.js",
             "method": "getData",
             "in": [
-                "#6:41"
+                "#6:42"
             ]
         },
         {
@@ -724,7 +750,7 @@
                 "modules": {
                     
                     "vertexList": "domain_list",
-                    "vertexDetail": "vertex_detail"
+                    "vertexDetail": "domain_detail"
                 }
             },
             "out": "#8:0",
@@ -746,7 +772,7 @@
                 "modules": {
                     
                     "vertexList": "app_list",
-                    "vertexDetail": "vertex_detail"
+                    "vertexDetail": "app_detail"
                 }
             },
             "out": "#8:0",
@@ -768,7 +794,7 @@
                 "modules": {
                     
                     "vertexList": "user_list",
-                    "vertexDetail": "vertex_detail"
+                    "vertexDetail": "user_detail"
                 }
             },
             "out": "#8:0",
@@ -790,7 +816,7 @@
                 "modules": {
                     
                     "vertexList": "role_list",
-                    "vertexDetail": "vertex_detail"
+                    "vertexDetail": "role_detail"
                 }
             },
             "out": "#8:0",
@@ -812,7 +838,7 @@
                 "modules": {
                     
                     "vertexList": "module_list",
-                    "vertexDetail": "vertex_detail"
+                    "vertexDetail": "module_detail"
                 }
             },
             "out": "#8:0",
@@ -834,7 +860,7 @@
                 "modules": {
                     
                     "vertexList": "operation_list",
-                    "vertexDetail": "vertex_detail"
+                    "vertexDetail": "operation_detail"
                 }
             },
             "out": "#8:0",
@@ -845,14 +871,14 @@
             "@rid": "#6:34",
             "@version": 0,
             "@class": "EHasAccessTo",
-            "miid": "vertex_detail",
+            "miid": "domain_detail",
             "html": {
                 "type": "a",
                 "path": "detail_domain"
             },
             "config": {
                 
-                "fillForm": "showDetails"
+                "fill": "showDetails"
             },
             "out": "#8:0",
             "in": "#10:7"
@@ -894,7 +920,9 @@
                 "source": {
                     
                     "name": "getData"
-                }
+                },
+                "target": "#app_list ul",
+                "itemTag": "li"
             },
             "out": "#8:0",
             "in": "#10:5"
@@ -914,7 +942,9 @@
                 "source": {
                     
                     "name": "getData"
-                }
+                },
+                "target": "#user_list ul",
+                "itemTag": "li"
             },
             "out": "#8:0",
             "in": "#10:5"
@@ -934,7 +964,9 @@
                 "source": {
                     
                     "name": "getData"
-                }
+                },
+                "target": "#role_list ul",
+                "itemTag": "li"
             },
             "out": "#8:0",
             "in": "#10:5"
@@ -954,7 +986,9 @@
                 "source": {
                     
                     "name": "getData"
-                }
+                },
+                "target": "#module_list ul",
+                "itemTag": "li"
             },
             "out": "#8:0",
             "in": "#10:5"
@@ -974,7 +1008,9 @@
                 "source": {
                     
                     "name": "getData"
-                }
+                },
+                "target": "#operation_list ul",
+                "itemTag": "li"
             },
             "out": "#8:0",
             "in": "#10:5"
@@ -984,7 +1020,233 @@
             "@rid": "#6:41",
             "@version": 0,
             "@class": "ECanPerform",
+            "miid": "domain_detail",
+            "out": "#8:0",
+            "in": "#9:9"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:42",
+            "@version": 0,
+            "@class": "ECanPerform",
             "miid": "domain_list",
+            "params": {
+                
+                "nameField": "name",
+                "query": "select name, application.name from vdomain",
+                "obsName": "domain_detail",
+                "eventName": "showDetails"
+            },
+            "out": "#8:0",
+            "in": "#9:10"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:43",
+            "@version": 0,
+            "@class": "ECanPerform",
+            "miid": "app_list",
+            "params": {
+                
+                "nameField": "name",
+                "query": "select id, name, routes, publicUser, publicDir from vapplication",
+                "obsName": "app_detail",
+                "eventName": "showDetails"
+            },
+            "out": "#8:0",
+            "in": "#9:10"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:44",
+            "@version": 0,
+            "@class": "ECanPerform",
+            "miid": "user_list",
+            "params": {
+                
+                "nameField": "username",
+                "query": "select username, password from vuser",
+                "obsName": "user_detail",
+                "eventName": "showDetails"
+            },
+            "out": "#8:0",
+            "in": "#9:10"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:45",
+            "@version": 0,
+            "@class": "ECanPerform",
+            "miid": "role_list",
+            "params": {
+                
+                "nameField": "name",
+                "query": "select name, app from vrole",
+                "obsName": "role_detail",
+                "eventName": "showDetails"
+            },
+            "out": "#8:0",
+            "in": "#9:10"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:46",
+            "@version": 0,
+            "@class": "ECanPerform",
+            "miid": "module_list",
+            "params": {
+                
+                "nameField": "name",
+                "query": "select owner, name, dir, library from vmodule",
+                "obsName": "module_detail",
+                "eventName": "showDetails"
+            },
+            "out": "#8:0",
+            "in": "#9:10"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:47",
+            "@version": 0,
+            "@class": "ECanPerform",
+            "miid": "operation_list",
+            "params": {
+                
+                "nameField": "module",
+                "query": "select module, file, method from voperation",
+                "obsName": "operation_detail",
+                "eventName": "showDetails"
+            },
+            "out": "#8:0",
+            "in": "#9:10"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:48",
+            "@version": 0,
+            "@class": "EHasAccessTo",
+            "miid": "app_detail",
+            "html": {
+                "type": "a",
+                "path": "detail_app"
+            },
+            "config": {
+                
+                "fill": "showDetails"
+            },
+            "out": "#8:0",
+            "in": "#10:7"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:49",
+            "@version": 0,
+            "@class": "ECanPerform",
+            "miid": "app_detail",
+            "out": "#8:0",
+            "in": "#9:9"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:50",
+            "@version": 0,
+            "@class": "EHasAccessTo",
+            "miid": "user_detail",
+            "html": {
+                "type": "a",
+                "path": "detail_user"
+            },
+            "config": {
+                
+                "fill": "showDetails"
+            },
+            "out": "#8:0",
+            "in": "#10:7"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:51",
+            "@version": 0,
+            "@class": "ECanPerform",
+            "miid": "user_detail",
+            "out": "#8:0",
+            "in": "#9:9"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:52",
+            "@version": 0,
+            "@class": "EHasAccessTo",
+            "miid": "role_detail",
+            "html": {
+                "type": "a",
+                "path": "detail_role"
+            },
+            "config": {
+                
+                "fill": "showDetails"
+            },
+            "out": "#8:0",
+            "in": "#10:7"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:53",
+            "@version": 0,
+            "@class": "ECanPerform",
+            "miid": "role_detail",
+            "out": "#8:0",
+            "in": "#9:9"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:54",
+            "@version": 0,
+            "@class": "EHasAccessTo",
+            "miid": "module_detail",
+            "html": {
+                "type": "a",
+                "path": "detail_module"
+            },
+            "config": {
+                
+                "fill": "showDetails"
+            },
+            "out": "#8:0",
+            "in": "#10:7"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:55",
+            "@version": 0,
+            "@class": "ECanPerform",
+            "miid": "module_detail",
+            "out": "#8:0",
+            "in": "#9:9"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:56",
+            "@version": 0,
+            "@class": "EHasAccessTo",
+            "miid": "operation_detail",
+            "html": {
+                "type": "a",
+                "path": "detail_operation"
+            },
+            "config": {
+                
+                "fill": "showDetails"
+            },
+            "out": "#8:0",
+            "in": "#10:7"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:57",
+            "@version": 0,
+            "@class": "ECanPerform",
+            "miid": "operation_detail",
             "out": "#8:0",
             "in": "#9:9"
         }
