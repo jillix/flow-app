@@ -7,6 +7,8 @@ var url = require("url"),
 
 exports.getBranches = function(link) {
 
+console.log(JSON.stringify(link.session));
+
     mongo("sag", "branch", function(err, db) {
 
         if (err) {
@@ -17,7 +19,14 @@ exports.getBranches = function(link) {
         // all users
         if (link.path.length == 0) {
 
-            db.find({ "companyName" : { $exists : true }}).toArray(function(err, docs) {
+            var branchFilter = {};
+            var sessionData = link.session.data || {};
+
+            if (sessionData.branch) {
+                branchFilter = { "short" : sessionData.branch.toString() };
+            }
+
+            db.find(branchFilter).toArray(function(err, docs) {
 
                 if (err) {
                     send.internalservererror(link, err);
@@ -43,20 +52,23 @@ exports.getOrders = function(link) {
         var urlObj = url.parse(link.req.url);
         var queryObj = qs.parse(urlObj.query);
  
-        var mongoQuery = {
-            "_s.n": "orders",
-            "_l": "de_CH"
-        }
-
         var archiveFilter = {
             "$elemMatch": {
                 "archived": { $exists: 0 }
             }
         };
 
+        // if this user has a branch in his session, always use it as filter
+        var sessionData = link.session.data || {};
+        var userBranch = "";
+
+        if (sessionData.branch) {
+            userBranch = sessionData.branch.toString();
+        }
+
         // branch filtering
-        var branch = queryObj.branch;
-        if (branch !== "0") {
+        var branch = userBranch || (queryObj.branch !== "0" ? queryObj.branch : "");
+        if (branch) {
             archiveFilter["$elemMatch"].branch = branch;
         }
 
@@ -124,7 +136,7 @@ exports.getOrders = function(link) {
 
                     var item  = order.items[j];
 
-                    if (branch === "0" || branch !== "0" && item.branch === branch) {
+                    if (!branch || branch && item.branch === branch) {
                         items.push(item);
                     }
                 }

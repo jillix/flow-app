@@ -36,8 +36,9 @@ exports.login = function(link) {
         }
 
         var language = user.data.language || "fr";
+        var extraData = user.data.session || {};
 
-        session.start(user.uid, appId, language, function(err, session) {
+        session.start(user.uid, appId, language, extraData, function(err, session) {
 
             if (err) {
                 send.internalservererror(link, err);

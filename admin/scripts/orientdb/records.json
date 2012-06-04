@@ -52,7 +52,10 @@
             "password": "3cc849279ba298b587a34cabaeffc5ecb3a044bbf97c516fab7ede9d1af77cfa",
             "data": {
                 "fullname": "DD | Aarau",
-                "language": "de"
+                "language": "de",
+                "session": {
+                    "branch": "AA"
+                }
             },
             "out": [
                 "#6:20",
@@ -64,10 +67,11 @@
             "@rid": "#7:4",
             "@version": 0,
             "@class": "VUser",
-            "username": "sag-admin",
-            "password": "",
+            "username": "sagadmin",
+            "password": "3cc849279ba298b587a34cabaeffc5ecb3a044bbf97c516fab7ede9d1af77cfa",
             "data": {
-                "fullname": "Liqshop Admin"
+                "fullname": "Liqshop Admin",
+                "language": "en"
             },
             "out": [
                 "#6:22",

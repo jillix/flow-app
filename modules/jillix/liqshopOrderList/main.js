@@ -120,7 +120,9 @@ define(["./jquery.min"], function() {
         self.link("getBranches", function(err, items) {
 
             branches.empty();
-            branches.append("<option value='0'>Alle</option>");
+            if (items.length > 1) {
+                branches.append("<option value='0'>Alle</option>");
+            }
 
             for (var i in items) {
                 branches.append("<option value='" + items[i].short + "'>" + items[i].companyName + "</option>");
