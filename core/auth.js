@@ -34,8 +34,10 @@ exports.login = function(link) {
             send.forbidden(link, "Invalid user or password");
             return;
         }
-         
-        session.start(user.uid, appId, "de", function(err, session) {
+
+        var language = user.data.language || "fr";
+
+        session.start(user.uid, appId, language, function(err, session) {
 
             if (err) {
                 send.internalservererror(link, err);

@@ -4,7 +4,8 @@ exports.getUser = function(appId, userName, callback) {
     var command =
         "SELECT " +
             "@rid AS uid, " +
-            "password " +
+            "password, " +
+            "data " +
         "FROM " +
             "(TRAVERSE roles, VRole.in, EMemberOf.out FROM (SELECT FROM VApplication WHERE id = '" + appId + "')) " +
         "WHERE " +
@@ -40,7 +41,7 @@ exports.getUser = function(appId, userName, callback) {
 
         user.uid = uid;
 
-        callback(null, { uid: uid, password: user.password });
+        callback(null, { uid: uid, password: user.password, data: user.data || {} });
     });
 };
 

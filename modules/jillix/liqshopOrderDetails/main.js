@@ -33,6 +33,8 @@ define(["./jquery.min"], function() {
 
             return false;
         });
+
+        i18n(this.lang);
     }
 
 
@@ -212,6 +214,69 @@ define(["./jquery.min"], function() {
             }
 
             elem.text(typeof data === "object" ? JSON.stringify(data) : data);
+        });
+    }
+
+
+    var translations = {
+        // list
+        branch: { en: "Branch", de: "Filiale", fr: "Branche" },
+        show:   { en: "Show", de: "Zeige", fr: "Voir" },
+        all:    { en: "All", de: "Alle", fr: "Tous" },
+        new:    { en: "New", de: "Neu", fr: "Nouveaux" },
+        archived: { en: "Archived", de: "Archiviert", fr: "Archivés" },
+
+        // details
+        orderNr:    { en: "Order No.", de: "Bestell-Nr", fr: "Numéro d'ordre" },
+        orderDate:  { en: "Order Date", de: "Bestelleingang", fr: "Date d'ordre" },
+        customer:   { en: "Customer", de: "Kunde", fr: "Client" },
+        company:    { en: "Company", de: "Firma", fr: "Entreprise" },
+        name:       { en: "Name", de: "Name", fr: "Nom" },
+        zip:        { en: "ZIP", de: "PLZ", fr: "ZIP" },
+        city:       { en: "City", de: "Ort", fr: "Ville" },
+        customerNo: { en: "Customer No.", de: "Kunden-Nr.", fr: "Numéro de client" },
+        unprocessedItems: { en: "Unprocessed Items", de: "Unbearbeitete Artikel", fr: "Articles non traités" },
+        processedItems: { en: "Processed Items", de: "Bearbeitete Artikel", fr: "Articles traités" },
+        archiveAll: { en: "Archive all articles", de: "Alle Artikel archivieren", fr: "Archiver tous les articles" },
+        unarchiveAll: { en: "Unarchive all articles", de: "Alle Artikel dearchivieren", fr: "Désarchiver tous les articles" },
+        itemNr:     { en: "Item Nr.", de: "Artikel-Nr.", fr: "Numéro d'article" },
+        description: { en: "Description", de: "Bezeichnung", fr: "Désignation" },
+        netto:      { en: "Net", de: "Netto", fr: "Net" },
+        quantity:   { en: "Quantity", de: "Menge", fr: "Quantité" },
+        archive:    { en: "Archive", de: "Archivieren", fr: "Archiver" },
+        unarchive:  { en: "Unarchive", de: "Dearchivieren", fr: "Désarchiver" },
+
+        // layout
+        logout:     { en: "Logout", de: "Abmelden", fr: "Déconnecter" },
+        orders:     { en: "Orders", de: "Bestellungen", fr: "Ordres" }
+    };
+
+    function i18n(language) {
+
+        var prefix = "%";
+
+        function translate(target) {
+            var key = target.attr("data-i18n");
+            var missing = prefix + key + prefix;
+
+            // if there is a translation for this key
+            if (translations && translations[key]) {
+                var text = translations[key][language] || (missing);
+                target.text(text);
+            }
+            else {
+                if (!target.text()) {
+                    target.text(missing) ;
+                }
+            }
+        }
+
+        $("[data-i18n]").each(function() {
+            translate($(this));
+        });
+
+        $("[data-i18n]", self.dom).each(function() {
+            translate($(this));
         });
     }
 

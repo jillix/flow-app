@@ -11,7 +11,7 @@ exports.getSession = function(sessionId, now, expire, callback) {
             { sid: sessionId, exp: { $gt: now } },
             [],
             { $set: { exp: expire } },
-            { fields: { _id: 0, uid: 1, appid: 1, data: 1 } },
+            { fields: { _id: 0, uid: 1, appid: 1, data: 1, loc: 1 } },
             callback
         );
     });

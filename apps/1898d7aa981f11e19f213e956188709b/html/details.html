@@ -2,38 +2,38 @@
     Keine Bestellung selektiert
 </div>
 <div id="orderDetail" style="display: none;">
-    <label class="labOrderNr">Bestell-Nr.</label><span id="orderNr" class="orderField" data-field="_c">-</span><br />
-    <label class="labTime">Bestelleingang</label><span id="orderTime" class="orderField" data-field="time">-</span><br />
+    <label class="labOrderNr" data-i18n="orderNr">Bestell-Nr.</label><span id="orderNr" class="orderField" data-field="_c">-</span><br />
+    <label class="labTime" data-i18n="orderDate">Bestelleingang</label><span id="orderTime" class="orderField" data-field="time">-</span><br />
     <br />
     <hr />
     <br />
-    <label class="title labCustomer">Kunde</label><br />
+    <label class="title labCustomer" data-i18n="customer">Kunde</label><br />
     <div class="customer">
-        <label class="labCompany">Firma</label><span id="orderCompany" class="orderField" data-field="adress.company">-</span><br />
-        <label class="labName">Name</label><span id="orderName" class="orderField" data-field="">-</span><br />
-        <label class="labZip">PLZ</label><span id="orderZip" class="orderField" data-field="adress.zip">-</span><br />
-        <label class="labCity">Ort</label><span id="orderCity" class="orderField" data-field="adress.city">-</span><br />
-        <label class="labCustomerNr">Kunden-Nr.</label><span id="orderCnr" class="orderField" data-field="customer.cnr">-</span><br />
-        <label class="labBranch">Filiale</label><span id="orderBranch" class="orderField" data-field="customer.branch">-</span>
+        <label class="labCompany" data-i18n="company">Firma</label><span id="orderCompany" class="orderField" data-field="adress.company">-</span><br />
+        <label class="labName" data-i18n="name">Name</label><span id="orderName" class="orderField" data-field="">-</span><br />
+        <label class="labZip" data-i18n="zip">PLZ</label><span id="orderZip" class="orderField" data-field="adress.zip">-</span><br />
+        <label class="labCity" data-i18n="city">Ort</label><span id="orderCity" class="orderField" data-field="adress.city">-</span><br />
+        <label class="labCustomerNr" data-i18n="customerNo">Kunden-Nr.</label><span id="orderCnr" class="orderField" data-field="customer.cnr">-</span><br />
+        <label class="labBranch" data-i18n="branch">Filiale</label><span id="orderBranch" class="orderField" data-field="customer.branch">-</span>
     </div>
     <br />
     <hr />
     <br />
-    <label class="title labItems">Unbearbeitete Artikel</label><br />
+    <label class="title labItems" data-i18n="unprocessedItems">Unbearbeitete Artikel</label><br />
     <br />
     <a href="#" id="archiveAll" class="bulkArchive">
-        <label class="labAmount">Alle Artikel archivieren >></label>
+        <label class="labAmount" data-i18n="archiveAll">Alle Artikel archivieren >></label>
     </a>
     <br />
     <br />
     <table id="orderItems">
         <tr>
-            <td><label class="labArticleNr">Artikel-Nr.</label></td>
-            <td><label class="labCaption">Bezeichnung</label></td>
-            <td><label class="labCaption">Filiale</label></td>
-            <td><label class="labNetto">Netto</label></td>
-            <td><label class="labAmount">Menge</label></td>
-            <td><label class="labAmount">Archivieren</label></td>
+            <td><label class="labArticleNr" data-i18n="itemNr">Artikel-Nr.</label></td>
+            <td><label class="labCaption" data-i18n="description">Bezeichnung</label></td>
+            <td><label class="labCaption" data-i18n="branch">Filiale</label></td>
+            <td><label class="labNetto" data-i18n="netto">Netto</label></td>
+            <td><label class="labAmount" data-i18n="quantity">Menge</label></td>
+            <td><label class="labAmount" data-i18n="archive">Archivieren</label></td>
             <td></td>
         </tr>
         <tr class="orderItemTemplate">
@@ -48,21 +48,21 @@
     <br />
     <hr />
     <br />
-    <label class="title labItems">Bearbeitete Artikel</label><br />
+    <label class="title labItems" data-i18n="processedItems">Bearbeitete Artikel</label><br />
     <br />
     <a href="#" id="unarchiveAll" class="bulkArchive">
-        <label class="labAmount">Alle Artikel dearchivieren >></label>
+        <label class="labAmount" data-i18n="unarchiveAll">Alle Artikel dearchivieren >></label>
     </a>
     <br />
     <br />
     <table id="orderItemsDone">
         <tr>
-            <td><label class="labArticleNr">Artikel-Nr.</label></td>
-            <td><label class="labCaption">Bezeichnung</label></td>
-            <td><label class="labCaption">Filiale</label></td>
-            <td><label class="labNetto">Netto</label></td>
-            <td><label class="labAmount">Menge</label></td>
-            <td><label class="labAmount">Dearchivieren</label></td>
+            <td><label class="labArticleNr" data-i18n="itemNr">Artikel-Nr.</label></td>
+            <td><label class="labCaption" data-i18n="description">Bezeichnung</label></td>
+            <td><label class="labCaption" data-i18n="branch">Filiale</label></td>
+            <td><label class="labNetto" data-i18n="netto">Netto</label></td>
+            <td><label class="labAmount" data-i18n="quantity">Menge</label></td>
+            <td><label class="labAmount" data-i18n="unarchive">Dearchivieren</label></td>
             <td></td>
         </tr>
         <tr class="orderItemTemplate">
