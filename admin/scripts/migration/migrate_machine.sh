@@ -5,6 +5,16 @@ ADMINNAME=$SUDO_USER
 SOURCE_USERNAME=webadmin
 SOURCE_SERVER=machine14.abc4it.com
 
+if [ "$1" = "-n" ]
+then
+    NO_DATA=true
+fi
+
+if [ "$1" = "-c" ]
+then
+    COMPLETE=$1
+fi
+
 
 function checks {
 
@@ -194,18 +204,35 @@ function install_software {
 
 function import_legacy_databases {
 
+    if [ "$NO_DATA" == "true" ]
+    then
+        return
+    fi
+
     echo "*** Importing the legacy databases from machine14 ***"
     rm -Rf dump*
 
     # perform a mongo dump on the old machine14
     scp /home/$USERNAME/legacy/scripts/shell/migration/export_mongo.sh $SOURCE_USERNAME@$SOURCE_SERVER:/home/$SOURCE_USERNAME/
-    ssh -o StrictHostKeyChecking=no $SOURCE_USERNAME@$SOURCE_SERVER "~/export_mongo.sh"
+    ssh -o StrictHostKeyChecking=no $SOURCE_USERNAME@$SOURCE_SERVER "~/export_mongo.sh $COMPLETE"
 
     # bring the mongo dump locally 
     scp $SOURCE_USERNAME@$SOURCE_SERVER:/home/$SOURCE_USERNAME/dump.zip .
 
     # unzip, restore, and cleanup
     unzip dump.zip
+
+    # do we need to correct liqshop roles?
+    if [ -f "/home/$USERNAME/legacy/scripts/shell/migration/liqshop_roles.bson" ]
+    then
+        cp /home/$USERNAME/legacy/scripts/shell/migration/liqshop_roles.bson dump/sag/roles.bson
+    fi
+
+    # do we need to correct liqshop content?
+    if [ -f "/home/$USERNAME/legacy/scripts/shell/migration/liqshop_content.bson" ]
+    then
+        cp /home/$USERNAME/legacy/scripts/shell/migration/liqshop_content.bson dump/liqshop/content.bson
+    fi
 
     # now that we have a new dup, clean up the old databases in this dump
     DB_DIRS=dump/*
@@ -218,6 +245,13 @@ function import_legacy_databases {
 
     # now restore all databases
     mongorestore dump
+
+    # do we need to add liqshop extra users?
+    if [ -f "/home/$USERNAME/legacy/scripts/shell/migration/liqshop_extra_users.json" ]
+    then
+        mongo --eval 'db.users.remove({ "auth.pub": { $in: [ "sag", "dd-ch", "dd-at", "tm-ch" ] } })' sag
+        mongoimport -d sag -c users /home/$USERNAME/legacy/scripts/shell/migration/liqshop_extra_users.json --upsert
+    fi
 
     rm -Rf dump*
 }
