@@ -74,6 +74,7 @@
 
 #vertexDetail form {
     
+    display: none;
     padding: 10px;
 }
 
@@ -84,4 +85,21 @@
     min-width: 100px;
     
     float: left;
+}
+
+#vertexDetail .noVertexSelected {
+    
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgb(228, 228, 228);
+    font-family: 'Oleo Script', sans-serif;
+    padding: 200px 0;
+    font-size: 44px;
+    color: rgb(180, 180, 180);
+    text-align: center;
+    text-shadow: 1px 1px #eee, -1px -1px #aaa;
 }
