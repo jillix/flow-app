@@ -5,6 +5,11 @@ ADMINNAME=$SUDO_USER
 SOURCE_USERNAME=webadmin
 SOURCE_SERVER=machine14.abc4it.com
 
+if [ "$1" = "-c" ]
+then
+    COMPLETE=$1
+fi
+
 
 function checks {
 
@@ -199,9 +204,7 @@ function import_legacy_databases {
 
     # perform a mongo dump on the old machine14
     scp /home/$USERNAME/legacy/scripts/shell/migration/export_mongo.sh $SOURCE_USERNAME@$SOURCE_SERVER:/home/$SOURCE_USERNAME/
-    # add -c options to the export script if a complete DB migrasion is needed
-    ssh -o StrictHostKeyChecking=no $SOURCE_USERNAME@$SOURCE_SERVER "~/export_mongo.sh"
-    #ssh -o StrictHostKeyChecking=no $SOURCE_USERNAME@$SOURCE_SERVER "~/export_mongo.sh -c"
+    ssh -o StrictHostKeyChecking=no $SOURCE_USERNAME@$SOURCE_SERVER "~/export_mongo.sh $COMPLETE"
 
     # bring the mongo dump locally 
     scp $SOURCE_USERNAME@$SOURCE_SERVER:/home/$SOURCE_USERNAME/dump.zip .
