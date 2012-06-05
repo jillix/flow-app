@@ -5,6 +5,11 @@ ADMINNAME=$SUDO_USER
 SOURCE_USERNAME=webadmin
 SOURCE_SERVER=machine14.abc4it.com
 
+if [ "$1" = "-n" ]
+then
+    NO_DATA=true
+fi
+
 if [ "$1" = "-c" ]
 then
     COMPLETE=$1
@@ -198,6 +203,11 @@ function install_software {
 }
 
 function import_legacy_databases {
+
+    if [ "$NO_DATA" == "true" ]
+    then
+        return
+    fi
 
     echo "*** Importing the legacy databases from machine14 ***"
     rm -Rf dump*
