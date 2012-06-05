@@ -65,9 +65,9 @@ function install_orientdb {
     ./server.sh > /dev/null 2>&1 &
     cd "$TMP_CUR_DIR"
 
-    # wating until the server starts (max 10 seconds)
+    # wating until the server starts (max 20 seconds)
     x=0
-    while [ $x -le 10 ]
+    while [ $x -le 20 ]
     do
         echo "Waiting for the OrientDB server to start..."
         SERVER_PID=`lsof -iTCP:2424 -sTCP:LISTEN -t`
