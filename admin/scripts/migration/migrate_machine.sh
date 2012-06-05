@@ -229,13 +229,12 @@ function install_legacy_software {
 
 function initialize_legacy {
     echo "*** Initializing legacy projects ***"
-    sudo -u $USERNAME bash -c "cd /home/$USERNAME/legacy ; npm install"
+    HOME=/home/$USERNAME sudo -u $USERNAME sh -c "cd /home/$USERNAME/legacy ; npm install"
 }
 
 function initialize_mono {
     echo "*** Initializing mono projects ***"
-    HOME=/home/mono sudo -u mono sh -c "cd /home/mono/legacy ; npm install"
-    #HOME=/home/$USERNAME sudo -u $USERNAME sh -c "cd /home/$USERNAME/legacy ; npm install"
+    HOME=/home/$USERNAME sudo -u $USERNAME sh -c "cd /home/$USERNAME/mono ; npm install"
 }
 
 
