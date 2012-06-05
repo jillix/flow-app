@@ -91,10 +91,17 @@ function checkout_mono {
 
     # cloning mono in a temp directory
     git clone git@github.com:adioo/mono.git ~/mono_tmp
+
+    # did the migration script change?
+    check_latest_script
+
+    # initialize and update the submodules
     cd ~/mono_tmp
     git submodule init
     git submodule update
     cd ~
+
+    # now give this to the mono user
     chown -R $USERNAME:$USERNAME ~/mono_tmp
     mv ~/mono_tmp /home/$USERNAME/mono
 }
@@ -239,9 +246,6 @@ install_software
 
 # checkout mono code
 checkout_mono
-
-# did the migration script change?
-check_latest_script
 
 # initialize mono
 #initialize_mono
