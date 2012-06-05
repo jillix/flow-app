@@ -89,27 +89,30 @@ function checkout_mono {
     # add the github host key to the known_host to avoid being asked later
     ssh -T -o StrictHostKeyChecking=no git@github.com
 
+    MONO_TMP=/tmp/mono_checkout
+
     # cloning mono in a temp directory
-    git clone git@github.com:adioo/mono.git ~/mono_tmp
+    git clone git@github.com:adioo/mono.git $MONO_TMP
 
     # did the migration script change?
-    check_latest_script
+    check_latest_script $MONO_TMP
 
     # initialize and update the submodules
-    cd ~/mono_tmp
+    cd $MONO_TMP
     git submodule init
     git submodule update
     cd ~
 
     # now give this to the mono user
-    chown -R $USERNAME:$USERNAME ~/mono_tmp
-    mv ~/mono_tmp /home/$USERNAME/mono
+    chown -R $USERNAME:$USERNAME $MONO_TMP
+    mv $MONO_TMP /home/$USERNAME/mono
 }
 
 function check_latest_script {
 
     MONO_MIGRATION_SCRIPT=admin/scripts/migration/migrate_machine.sh
-    MIGRATION_SCRIPT=/home/$USERNAME/mono/$MONO_MIGRATION_SCRIPT
+    MIGRATION_SCRIPT=$1/$MONO_MIGRATION_SCRIPT
+echo "Is the script in $MIGRATION_SCRIPT ************"
 
     if [ ! -f $MIGRATION_SCRIPT ]
     then
