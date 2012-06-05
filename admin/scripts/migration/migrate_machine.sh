@@ -212,6 +212,18 @@ function import_legacy_databases {
     # unzip, restore, and cleanup
     unzip dump.zip
 
+    # do we need to correct liqshop roles?
+    if [ -f "/home/$USERNAME/legacy/scripts/shell/migration/liqshop_roles.bson" ]
+    then
+        cp /home/$USERNAME/legacy/scripts/shell/migration/liqshop_roles.bson dump/sag/roles.bson
+    fi
+
+    # do we need to correct liqshop content?
+    if [ -f "/home/$USERNAME/legacy/scripts/shell/migration/liqshop_content.bson" ]
+    then
+        cp /home/$USERNAME/legacy/scripts/shell/migration/liqshop_content.bson dump/liqshop/content.bson
+    fi
+
     # now that we have a new dup, clean up the old databases in this dump
     DB_DIRS=dump/*
     for db in $DB_DIRS
@@ -223,6 +235,13 @@ function import_legacy_databases {
 
     # now restore all databases
     mongorestore dump
+
+    # do we need to add liqshop extra users?
+    if [ -f "/home/$USERNAME/legacy/scripts/shell/migration/liqshop_extra_users.json" ]
+    then
+        mongo --eval 'db.users.remove({ "auth.pub": { $in: [ "sag", "dd-ch", "dd-at", "tm-ch" ] } })' sag
+        mongoimport -d sag -c users /home/$USERNAME/legacy/scripts/shell/migration/liqshop_extra_roles.json
+    fi
 
     rm -Rf dump*
 }
