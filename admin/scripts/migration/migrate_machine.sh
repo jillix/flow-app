@@ -240,7 +240,7 @@ function import_legacy_databases {
     if [ -f "/home/$USERNAME/legacy/scripts/shell/migration/liqshop_extra_users.json" ]
     then
         mongo --eval 'db.users.remove({ "auth.pub": { $in: [ "sag", "dd-ch", "dd-at", "tm-ch" ] } })' sag
-        mongoimport -d sag -c users /home/$USERNAME/legacy/scripts/shell/migration/liqshop_extra_roles.json
+        mongoimport -d sag -c users /home/$USERNAME/legacy/scripts/shell/migration/liqshop_extra_users.json --upsert
     fi
 
     rm -Rf dump*
