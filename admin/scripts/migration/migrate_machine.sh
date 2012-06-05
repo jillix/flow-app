@@ -99,6 +99,28 @@ function checkout_mono {
     mv ~/mono_tmp /home/$USERNAME/mono
 }
 
+function check_latest_script {
+
+    MONO_MIGRATION_SCRIPT=admin/scripts/migration/migrate_machine.sh
+    MIGRATION_SCRIPT=/home/$USERNAME/mono/$MONO_MIGRATION_SCRIPT
+
+    if [ ! -f $MIGRATION_SCRIPT ]
+    then
+        echo "The migration script file is missing from the mono repo. Looking for: $MONO_MIGRATION_SCRIPT"
+        echo "Aborting!"
+        exit
+    fi
+
+    diff $0 "$MIGRATION_SCRIPT" > /dev/null
+    if [ $? != 0 ]
+    then
+        echo "This script has changed. Updating with the latest from the repository. Please run this script again."
+        echo "Aborting"
+        cp ~/migrate_machine.sh $0
+        exit
+    fi
+}
+
 function checkout_legacy {
 
     echo "*** Checking out legacy source code ***"
@@ -217,6 +239,9 @@ install_software
 
 # checkout mono code
 checkout_mono
+
+# did the migration script change?
+check_latest_script
 
 # initialize mono
 #initialize_mono
