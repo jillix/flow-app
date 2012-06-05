@@ -90,6 +90,7 @@ function checkout_mono {
     ssh -T -o StrictHostKeyChecking=no git@github.com
 
     MONO_TMP=/tmp/mono_checkout
+    rm -Rf $MONO_TMP
 
     # cloning mono in a temp directory
     git clone git@github.com:adioo/mono.git $MONO_TMP
@@ -126,7 +127,7 @@ echo "Is the script in $MIGRATION_SCRIPT ************"
     then
         echo "This script has changed. Updating with the latest from the repository. Please run this script again."
         echo "Aborting"
-        cp ~/migrate_machine.sh $0
+        cp "$MIGRATION_SCRIPT" $0
         exit
     fi
 }
