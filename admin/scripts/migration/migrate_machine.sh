@@ -251,7 +251,7 @@ install_software
 checkout_mono
 
 # initialize mono
-#initialize_mono
+initialize_mono
 
 # install legacy software
 install_legacy_software
