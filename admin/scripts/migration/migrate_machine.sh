@@ -223,8 +223,11 @@ function import_legacy_databases {
 }
 
 function install_legacy_software {
-    # install java runtime if not present
+    # install nginx for proxying to legacy processes
     install_nginx
+
+    # install ftp for nightly sag impot jobs
+    install vsftpd
 }
 
 function initialize_legacy {
