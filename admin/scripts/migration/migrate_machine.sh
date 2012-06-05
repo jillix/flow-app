@@ -234,7 +234,7 @@ function initialize_legacy {
 
 function initialize_mono {
     echo "*** Initializing mono projects ***"
-    sudo -u $USERNAME bash -c "cd /home/$USERNAME/mono ; npm install"
+    HOME=/home/$USERNAME sudo -u $USERNAME sh -c "cd /home/$USERNAME/legacy ; npm install"
 }
 
 
@@ -263,5 +263,5 @@ checkout_legacy
 import_legacy_databases
 
 # initialize legacy
-#initialize_legacy
+initialize_legacy
 
