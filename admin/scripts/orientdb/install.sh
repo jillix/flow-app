@@ -65,8 +65,27 @@ function install_orientdb {
     ./server.sh > /dev/null 2>&1 &
     cd "$TMP_CUR_DIR"
 
-    # TODO wait for the server to start (find a better sollution)
-    sleep 4
+    # wating until the server starts (max 10 seconds)
+    x=0
+    while [ $x -le 10 ]
+    do
+        echo "Waiting for the OrientDB server to start..."
+        SERVER_PID=`lsof -iTCP:2424 -sTCP:LISTEN -t`
+        if [ "$SERVER_PID" != "" ]
+        then
+            echo "Hearing OrientDB server!"
+            break
+        fi
+        sleep 1
+        x=$(( $x + 1 ))
+    done
+
+    if [ $x -eq 10 ]
+    then
+        echo "Could not start the OrientDB server. Try again or do this shit manually."
+        echo "Aborting!"
+        exit 1
+    fi
 
     ORIENTDB_ROOT_PASSWORD=`grep "name=\"$ORIENTDB_ROOT_USER\"" $ORIENTDB_ROOT/config/orientdb-server-config.xml | cut -d \" -f 4`
 
