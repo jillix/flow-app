@@ -173,15 +173,10 @@ function checkout_legacy {
 
 function setup_user {
     # TODO for test purposes only
-    if [ -d /home/$USERNAME/images ]
+    MONO_IMG_MNT=`mount | grep /home/$USERNAME/images`
+    if [ "$MONO_IMG_MNT" != "" ]
     then
         umount /home/$USERNAME/images
-        if [ "$?" != "" ]
-        then
-            echo "Something went wrong with the image volume unmounting"
-            echo "Aborting!"
-            exit 6
-        fi
     fi
     userdel -r $USERNAME
 
