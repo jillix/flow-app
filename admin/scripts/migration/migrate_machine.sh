@@ -22,7 +22,7 @@ function checks {
     then
         echo "This script must be run as super user. Use:"
         echo "    sudo -E $0"
-        exit
+        exit 1
     fi
 
     if [ "$SSH_AUTH_SOCK" = "" ]
@@ -31,7 +31,7 @@ function checks {
         echo "For this you must:"
         echo "    - connect to this server using the ssh -A option and"
         echo "    - run this script with sudo -E option to preserve the environement variables"
-        exit
+        exit 2
     fi
 
 }
@@ -40,8 +40,9 @@ function install {
 
     if [ "$1" = "" ]
     then
-        echo "install called with no arguments. Exiting!"
-        exit
+        echo "install called with no arguments."
+        echo "Aborting!"
+        exit 3
     fi
 
     PACKAGE=$1
@@ -141,16 +142,16 @@ function check_latest_script {
     then
         echo "The migration script file is missing from the mono repo. Looking for: $MONO_MIGRATION_SCRIPT"
         echo "Aborting!"
-        exit
+        exit 4
     fi
 
     diff $0 "$MIGRATION_SCRIPT" > /dev/null
     if [ $? != 0 ]
     then
         echo "This script has changed. Updating with the latest from the repository. Please run this script again."
-        echo "Aborting"
+        echo "Aborting!"
         cp "$MIGRATION_SCRIPT" $0
-        exit
+        exit 5
     fi
 }
 
@@ -172,6 +173,16 @@ function checkout_legacy {
 
 function setup_user {
     # TODO for test purposes only
+    if [ -d /home/$USERNAME/images ]
+    then
+        umount /home/$USERNAME/images
+        if [ "$?" != "" ]
+        then
+            echo "Something went wrong with the image volume unmounting"
+            echo "Aborting!"
+            exit 6
+        fi
+    fi
     userdel -r $USERNAME
 
     # create user account
