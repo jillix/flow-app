@@ -292,6 +292,20 @@ function initialize_legacy {
 function initialize_mono {
     echo "*** Initializing mono projects ***"
     HOME=/home/$USERNAME sudo -u $USERNAME sh -c "cd /home/$USERNAME/mono ; npm install"
+
+    mkdir -p /home/mono/images
+    mount /dev/xvdi1 /home/$USERNAME/images
+
+    echo "####################################"
+    echo "############### TODO ###############"
+    echo "####################################"
+    echo "ln --symbolic /home/mono/images/happy /home/$USERNAME/legacy/projects/happybonus/mods/article/img"
+    echo "ln --symbolic /home/mono/images/liqshop /home/$USERNAME/legacy/projects/liqshop/files/pub/articles"
+    echo "####################################"
+    echo "####################################"
+    echo "####################################"
+
+    chown -R mono:mono /home/$USERNAME/images
 }
 
 
