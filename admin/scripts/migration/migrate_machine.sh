@@ -74,6 +74,19 @@ function install_nginx {
     install nginx
 }
 
+function configure_nginx {
+
+    if [ ! -f /home/$USERNAME/legacy/scripts/shell/migration/nginx.conf ]
+    then
+        return
+    fi
+
+    echo "*** Installing nginx ***"
+    cp /home/$USERNAME/legacy/scripts/shell/migration/nginx.conf /etc/nginx/nginx.conf
+
+    nginx -s reload
+}
+
 function install_nodejs {
 
     EXEC=`which npm`
@@ -259,6 +272,7 @@ function import_legacy_databases {
 function install_legacy_software {
     # install nginx for proxying to legacy processes
     install_nginx
+    configure_nginx
 
     # install ftp for nightly sag impot jobs
     install vsftpd
@@ -290,11 +304,11 @@ checkout_mono
 # initialize mono
 initialize_mono
 
-# install legacy software
-install_legacy_software
-
 # checkout legacy code
 checkout_legacy
+
+# install legacy software
+install_legacy_software
 
 # import old databases
 import_legacy_databases
