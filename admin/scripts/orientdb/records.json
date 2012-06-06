@@ -556,7 +556,7 @@
                 "itemTag": "li",
                 "tabTag": "div",
                 "tabContainer": "#vertexes",
-                "noTabSelected": "#noVertexSelected"
+                "noTabSelected": "#noClassSelected"
             },
             "css": ["main", "vertex"],
             "out": "#8:0",
