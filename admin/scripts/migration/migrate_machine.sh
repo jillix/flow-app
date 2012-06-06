@@ -22,7 +22,7 @@ function checks {
     then
         echo "This script must be run as super user. Use:"
         echo "    sudo -E $0"
-        exit
+        exit 1
     fi
 
     if [ "$SSH_AUTH_SOCK" = "" ]
@@ -31,7 +31,7 @@ function checks {
         echo "For this you must:"
         echo "    - connect to this server using the ssh -A option and"
         echo "    - run this script with sudo -E option to preserve the environement variables"
-        exit
+        exit 2
     fi
 
 }
@@ -40,8 +40,9 @@ function install {
 
     if [ "$1" = "" ]
     then
-        echo "install called with no arguments. Exiting!"
-        exit
+        echo "install called with no arguments."
+        echo "Aborting!"
+        exit 3
     fi
 
     PACKAGE=$1
@@ -72,6 +73,19 @@ function install_nginx {
     apt-get -y -q update
 
     install nginx
+}
+
+function configure_nginx {
+
+    if [ ! -f /home/$USERNAME/legacy/scripts/shell/migration/nginx.conf ]
+    then
+        return
+    fi
+
+    echo "*** Installing nginx ***"
+    cp /home/$USERNAME/legacy/scripts/shell/migration/nginx.conf /etc/nginx/nginx.conf
+
+    nginx -s reload
 }
 
 function install_nodejs {
@@ -128,16 +142,16 @@ function check_latest_script {
     then
         echo "The migration script file is missing from the mono repo. Looking for: $MONO_MIGRATION_SCRIPT"
         echo "Aborting!"
-        exit
+        exit 4
     fi
 
     diff $0 "$MIGRATION_SCRIPT" > /dev/null
     if [ $? != 0 ]
     then
         echo "This script has changed. Updating with the latest from the repository. Please run this script again."
-        echo "Aborting"
+        echo "Aborting!"
         cp "$MIGRATION_SCRIPT" $0
-        exit
+        exit 5
     fi
 }
 
@@ -159,6 +173,11 @@ function checkout_legacy {
 
 function setup_user {
     # TODO for test purposes only
+    MONO_IMG_MNT=`mount | grep /home/$USERNAME/images`
+    if [ "$MONO_IMG_MNT" != "" ]
+    then
+        umount /home/$USERNAME/images
+    fi
     userdel -r $USERNAME
 
     # create user account
@@ -262,6 +281,7 @@ function import_legacy_databases {
 function install_legacy_software {
     # install nginx for proxying to legacy processes
     install_nginx
+    configure_nginx
 
     # install ftp for nightly sag impot jobs
     install vsftpd
@@ -275,6 +295,20 @@ function initialize_legacy {
 function initialize_mono {
     echo "*** Initializing mono projects ***"
     HOME=/home/$USERNAME sudo -u $USERNAME sh -c "cd /home/$USERNAME/mono ; npm install"
+
+    mkdir -p /home/mono/images
+    mount /dev/xvdi1 /home/$USERNAME/images
+
+    echo "####################################"
+    echo "############### TODO ###############"
+    echo "####################################"
+    echo "ln --symbolic /home/mono/images/happy /home/$USERNAME/legacy/projects/happybonus/mods/article/img"
+    echo "ln --symbolic /home/mono/images/liqshop /home/$USERNAME/legacy/projects/liqshop/files/pub/articles"
+    echo "####################################"
+    echo "####################################"
+    echo "####################################"
+
+    chown -R mono:mono /home/$USERNAME/images
 }
 
 
@@ -293,11 +327,11 @@ checkout_mono
 # initialize mono
 initialize_mono
 
-# install legacy software
-install_legacy_software
-
 # checkout legacy code
 checkout_legacy
+
+# install legacy software
+install_legacy_software
 
 # import old databases
 import_legacy_databases

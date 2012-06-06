@@ -7,8 +7,6 @@ var url = require("url"),
 
 exports.getBranches = function(link) {
 
-console.log(JSON.stringify(link.session));
-
     mongo("sag", "branch", function(err, db) {
 
         if (err) {
