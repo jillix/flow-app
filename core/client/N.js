@@ -67,57 +67,6 @@ var N = {
         return new N.module(inherit, properties);
     },
     
-    merge: function(prio1, prio2) {
-    
-        for (var key in prio2) {
-            
-            if (prio2.hasOwnProperty(key)) {
-                
-                if (typeof prio1[key] === "object" || typeof prio1[key] === "undefined") {
-                    
-                    if (!(prio2[key] instanceof Node) && !(prio2[key] instanceof N.module) && typeof prio2[key] === "object") {
-                        
-                        if (prio1[key] instanceof Array) {
-                            
-                            if (prio2[key] instanceof Array) {
-                            
-                                for (var i = 0, l = prio2[key].length; i < l; ++i) {
-                                    
-                                    prio1[key].push(prio2[key][i]);
-                                }
-                            }
-                            else {
-                                
-                                prio1[key].push(prio2[key]);
-                            }
-                        }
-                        else if (prio2[key] instanceof Array) {
-                            
-                            prio2[key].push(prio1[key]);
-                            
-                            prio1[key] = prio2[key];
-                        }
-                        else {
-                            
-                            if (!prio1[key]) {
-                                
-                                prio1[key] = {};
-                            }
-                            
-                            N.merge(prio1[key], prio2[key]);
-                        }
-                    }
-                    else if (typeof prio1[key] === "undefined") {
-                        
-                        prio1[key] = prio2[key];
-                    }
-                }
-            }
-        }
-        
-        return prio1;
-    },
-    
     err: function(msg) {
         
         throw new Error(msg);  
