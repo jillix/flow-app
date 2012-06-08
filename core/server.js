@@ -28,8 +28,6 @@ Server.prototype.start = function() {
             // start http server
             self.server = http.createServer(requestHandler);
             self.server.listen(CONFIG.dev ? CONFIG.devPort : CONFIG.port);
-            
-            console.log("server started...");
         });
     };
     
