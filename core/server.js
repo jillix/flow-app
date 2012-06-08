@@ -5,25 +5,50 @@ var parseUrl  = require("url").parse,
     send      = require(CONFIG.root + "/core/send.js").send,
     operation = require(CONFIG.root + "/core/operator.js").operation,
     route     = require(CONFIG.root + "/core/router.js").route,
-    orient     = require(CONFIG.root + "/core/db/orient.js");
+    orient    = require(CONFIG.root + "/core/db/orient.js"),
+    exec      = require("child_process").exec;
 
 var Server = exports.Server = function () {};
 
 Server.prototype.start = function() {
 
     var self = this;
-
-    // establish the database connection
-    orient.connect(CONFIG.orient, function(err, db) {
-
-        if (err) { throw new Error(JSON.stringify(err)); }
-
-        CONFIG.orient.DB = db;
-
-        // start http server
-        self.server = http.createServer(requestHandler);
-        self.server.listen(CONFIG.dev ? CONFIG.devPort : CONFIG.port);
-    });
+    var startHTTPServer = function() {
+        
+        // establish the database connection
+        orient.connect(CONFIG.orient, function(err, db) {
+            
+            if (err) {
+                
+                throw new Error(JSON.stringify(err));
+            }
+            
+            CONFIG.orient.DB = db;
+                    
+            // start http server
+            self.server = http.createServer(requestHandler);
+            self.server.listen(CONFIG.dev ? CONFIG.devPort : CONFIG.port);
+            
+            console.log("server started...");
+        });
+    };
+    
+    // start DB in dev mode
+    if (CONFIG.dev) {
+        
+        // start db server
+        exec(CONFIG.orient.exec);
+        
+        setTimeout(function() {
+            
+            startHTTPServer();
+        
+        }, CONFIG.orient.startTime);
+    }
+    else {
+        
+        startHTTPServer();
+    }
 };
 
 function requestHandler(req, res) {
