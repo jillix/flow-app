@@ -883,7 +883,11 @@
             },
             "config": {
                 
-                "fill": "showDetails"
+                "fill": "showDetails",
+                "items": {
+                    
+                    
+                }
             },
             "out": "#8:0",
             "in": "#10:7"
