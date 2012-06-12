@@ -9,7 +9,6 @@ mkdir -p "$TMP_DIR"
 
 ORIENTDB_ROOT=bin/orientdb
 ORIENTDB_VERSION=`curl --silent https://oss.sonatype.org/content/repositories/releases/com/orientechnologies/orientdb/maven-metadata.xml | grep "release" | cut -d ">" -f 2 | cut -d "<" -f 1`
-ORIENTDB_VERSION=1.0rc9
 ORIENTDB_ROOT_USER=root
 ORIENTDB_MONO_SQL=mono.sql
 ORIENTDB_MONO_DROP_SQL=mono_drop.sql
