@@ -131,15 +131,15 @@ exports.getDomainApplication = function(domain, withRoutes, callback) {
 
 exports.getUserOperation = function(miid, method, userId, callback) {
 
-    var vuClusterId = CONFIG.orient.DB.getClusterIdByClass("VUser");
+    var vuCluster = CONFIG.orient.DB.getClusterByClass("VUser");
 
-    if (vuClusterId < 0) { return callback("Could not find the VUser cluster ID."); }
+    if (!vuCluster) { return callback("Could not find the VUser cluster ID."); }
 
     var command =
         "SELECT " +
             "in.module AS module, in.file AS file, params " +
         "FROM " +
-            "(TRAVERSE VUser.out, EMemberOf.in, VRole.out FROM #" + vuClusterId + ":" + userId + ") " +
+            "(TRAVERSE VUser.out, EMemberOf.in, VRole.out FROM #" + vuCluster.id + ":" + userId + ") " +
         "WHERE " +
             "@class = 'ECanPerform' AND " +
             "miid = '" + miid + "' AND " +
@@ -175,9 +175,10 @@ exports.getUserOperation = function(miid, method, userId, callback) {
 
 exports.getModuleConfig = function(appId, miid, userId, callback) {
 
-    var vuClusterId = CONFIG.orient.DB.getClusterIdByClass("VUser");
+debugger;
+    var vuCluster = CONFIG.orient.DB.getClusterByClass("VUser");
 
-    if (vuClusterId < 0) { return callback("Could not find the VUser cluster ID."); }
+    if (!vuCluster) { return callback("Could not find the VUser cluster ID."); }
 
     // TODO the link to the appId is missing
     //      only miid's from this appId must be searched
@@ -185,7 +186,7 @@ exports.getModuleConfig = function(appId, miid, userId, callback) {
         "SELECT " +
             "in.owner AS owner, in.name AS name, config, html, css " +
         "FROM " +
-            "(TRAVERSE VUser.out, EMemberOf.in, VRole.out FROM #" + vuClusterId + ":" + userId + ") " +
+            "(TRAVERSE VUser.out, EMemberOf.in, VRole.out FROM #" + vuCluster.id + ":" + userId + ") " +
         "WHERE " +
             "@class = 'EHasAccessTo' AND " +
             "miid = '" + miid + "'";
@@ -213,9 +214,9 @@ exports.getModuleConfig = function(appId, miid, userId, callback) {
 
 exports.getModuleFile = function(owner, name, userId, callback) {
 
-    var vuClusterId = CONFIG.orient.DB.getClusterIdByClass("VUser");
+    var vuCluster = CONFIG.orient.DB.getClusterByClass("VUser");
 
-    if (vuClusterId < 0) { return callback("Could not find the VUser cluster ID."); }
+    if (!vuCluster) { return callback("Could not find the VUser cluster ID."); }
 
     // TODO the link to the appId is missing
     //      only miid's from this appId must be searched
@@ -247,7 +248,7 @@ exports.getModuleFile = function(owner, name, userId, callback) {
             "SELECT " +
                 "dir, owner, name " +
             "FROM " +
-                "(TRAVERSE VUser.out, EMemberOf.in, VRole.out, EHasAccessTo.in FROM #" + vuClusterId + ":" + userId + ") " +
+                "(TRAVERSE VUser.out, EMemberOf.in, VRole.out, EHasAccessTo.in FROM #" + vuCluster.id + ":" + userId + ") " +
             "WHERE " +
                 "@class = 'VModule' AND " +
                 "owner = '" + owner + "' AND " +
