@@ -219,6 +219,9 @@ function install_software {
 
     # install java runtime if not present
     install openjdk-7-jre-headless java
+    
+    # install graphicsmagick
+    install graphicsmagick gm
 }
 
 function import_legacy_databases {

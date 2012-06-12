@@ -19,7 +19,9 @@
             "database_name" : "mono",
             "user_name"     : "admin",
             "user_password" : "admin"
-        }
+        },
+        "exec": "./bin/orientdb/bin/server.sh",
+        "startTime": 3000
     },
 
     "orientDB": {

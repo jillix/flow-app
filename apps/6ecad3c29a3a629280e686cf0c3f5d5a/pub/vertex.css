@@ -87,6 +87,17 @@
     float: left;
 }
 
+#vertexDetail form input {
+    
+    min-width: 200px;
+}
+
+#vertexDetail form textarea {
+    
+    min-height: 100px;
+    min-width: 200px;
+}
+
 #vertexDetail .noVertexSelected {
     
     display: block;
