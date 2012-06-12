@@ -189,7 +189,9 @@
                 "#6:54",
                 "#6:55",
                 "#6:56",
-                "#6:57"
+                "#6:57",
+                "#6:58",
+                "#6:59"
             ]
         },
         {
@@ -887,6 +889,10 @@
                 "items": {
                     
                     
+                },
+                "modules": {
+                    
+                    "applicationList": "domain_detail_applist"
                 }
             },
             "out": "#8:0",
@@ -1258,6 +1264,45 @@
             "miid": "operation_detail",
             "out": "#8:0",
             "in": "#9:9"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:58",
+            "@version": 0,
+            "@class": "EHasAccessTo",
+            "miid": "domain_detail_applist",
+            "html": {
+                "type": "a",
+                "path": "list"
+            },
+            "config": {
+                
+                "source": {
+                    
+                    "name": "getData"
+                },
+                "target": "ul",
+                "itemTag": "li",
+                "defaultArgs": ["application"]
+            },
+            "out": "#8:0",
+            "in": "#10:5"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:59",
+            "@version": 0,
+            "@class": "ECanPerform",
+            "miid": "domain_detail_applist",
+            "params": {
+                
+                "nameField": "name",
+                "query": "select id, name from vapplication",
+                "obsName": "domain_detail",
+                "eventName": "set"
+            },
+            "out": "#8:0",
+            "in": "#9:10"
         }
     ]
 }
