@@ -1,0 +1,31 @@
+@import url(http://fonts.googleapis.com/css?family=Lobster);
+
+.title {
+    display: block;
+    font-family: "Lobster", cursive;
+    font-size: 140px;
+    line-height: 140px;
+    color: #EEE;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, .42);
+    margin-bottom: 100px;
+}
+
+#throbber {
+    width: 30px;
+    height: 30px;
+    margin: auto;
+}
+
+.centered {
+    margin: auto;
+    width: auto;
+}
+
+#ghuser {
+    height: 27px;
+    font-size: 18px;
+}
+
+#modules, #versions, #throbber {
+    display: none;
+}
