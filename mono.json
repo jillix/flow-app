@@ -38,7 +38,7 @@
         "port"  : 27017
     },
 
-    "forever"       : {
+    "forever": {
         "max"           : 3,
         "minUptime"     : 2000,
         "spinSleepTime" : 1000,

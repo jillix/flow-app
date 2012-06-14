@@ -145,6 +145,12 @@ function log(level, message) {
 
     switch (CONFIG.logLevel) {
 
+        case "verbose":
+            if (level === "verbose") {
+                util.log("VERBOSE: " + message);
+                break;
+            }
+
         case "debug":
             if (level === "debug") {
                 util.log("DEBUG: " + message);

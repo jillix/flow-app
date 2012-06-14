@@ -1,10 +1,39 @@
+// use optimist to parse the command line options
+var argv = require("optimist")
+    .default("config", __dirname + "/mono.json")
+    .argv;
+
 // load the mono configuration file
-var config = module.exports = require("./mono");
+var config = module.exports = require(argv.config);
+
+if (argv.dev === true || config.dev === true) {
+    console.log("Using configuration file: " + argv.config);
+}
+
+config.log = config.log || {};
 
 function throwError(message) {
     throw new Error("ERROR: " + message);
 }
 
+// process command line parameters
+for (var i in argv) {
+    switch (i) {
+        case "_":
+        case "$0":
+            continue;
+        case "log":
+            var splits = argv[i].toString().split(",");
+            for (var j in splits) {
+                config.log[splits[j].trim()] = true;
+                //console.log("log." + splits[j] + "=true");
+            }
+            break;
+        default:
+            config[i] = true;
+            //console.log(i + "=" + argv[i]);
+    }
+}
 
 // configure the root directory
 config.root = __dirname;
@@ -13,10 +42,10 @@ config.root = __dirname;
 
 
 // log level
-//      One of: error, warning, info, debug, none
+//      One of: none, error, warning, info, debug, verbose
 //
+config.logLevel = argv.logLevel || config.logLevel;
 if (!config.logLevel) {
-
     if (config.dev) {
         config.logLevel = "debug";
     }
@@ -25,13 +54,13 @@ if (!config.logLevel) {
     }
 }
 else {
-
     switch (config.logLevel) {
+        case "none":
         case "error":
         case "warning":
         case "info":
         case "debug":
-        case "none":
+        case "verbose":
             break;
         default:
             throw new Error(config.logLevel + " is not a supported log level.");

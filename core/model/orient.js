@@ -175,7 +175,6 @@ exports.getUserOperation = function(miid, method, userId, callback) {
 
 exports.getModuleConfig = function(appId, miid, userId, callback) {
 
-debugger;
     var vuCluster = CONFIG.orient.DB.getClusterByClass("VUser");
 
     if (!vuCluster) { return callback("Could not find the VUser cluster ID."); }
@@ -329,6 +328,8 @@ function idFromRid(rid) {
 
 
 function sql(command, callback) {
-    //console.log(command);
+    if (CONFIG.log.orientQueries || CONFIG.logLevel === "verbose") {
+        console.log(command);
+    }
     CONFIG.orient.DB.command(command, callback);
 }

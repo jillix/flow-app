@@ -31,10 +31,13 @@
         "cookies"       : "*",
         "forever"       : "*",
         "formidable"    : "*",
+        "github"        : "*",
+        "optimist"      : "*",
         "orientdb"      : "0.x",
         "mongodb"       : "*",
         "node-static"   : "*",
-        "nodemailer"    : "*"
+        "nodemailer"    : "*",
+        "request"       : "*"
     },
     "devDependencies": {
         "tap"           : "*"
