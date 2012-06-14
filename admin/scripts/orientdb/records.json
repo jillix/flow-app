@@ -90,7 +90,7 @@
                 "fullname": "Github Public User"
             },
             "out": [
-                "#6:58"
+                "#6:60"
             ]
         },
         {
@@ -227,7 +227,9 @@
                 "#6:54",
                 "#6:55",
                 "#6:56",
-                "#6:57"
+                "#6:57",
+                "#6:58",
+                "#6:59"
             ]
         },
         {
@@ -299,12 +301,12 @@
             "name": "Github Role",
             "app": "#11:2",
             "in": [
-                "#6:58"
+                "#6:60"
             ],
             "out": [
-                "#6:59",
-                "#6:60",
-                "#6:61"
+                "#6:61",
+                "#6:62",
+                "#6:63"
             ]
         },
         {
@@ -962,6 +964,10 @@
                 "items": {
                     
                     
+                },
+                "modules": {
+                    
+                    "applicationList": "domain_detail_applist"
                 }
             },
             "out": "#8:0",
@@ -1338,13 +1344,52 @@
             "@type": "d",
             "@rid": "#6:58",
             "@version": 0,
+            "@class": "EHasAccessTo",
+            "miid": "domain_detail_applist",
+            "html": {
+                "type": "a",
+                "path": "list"
+            },
+            "config": {
+                
+                "source": {
+                    
+                    "name": "getData"
+                },
+                "target": "ul",
+                "itemTag": "li",
+                "defaultArgs": ["application"]
+            },
+            "out": "#8:0",
+            "in": "#10:5"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:59",
+            "@version": 0,
+            "@class": "ECanPerform",
+            "miid": "domain_detail_applist",
+            "params": {
+                
+                "nameField": "name",
+                "query": "select id, name from vapplication",
+                "obsName": "domain_detail",
+                "eventName": "set"
+            },
+            "out": "#8:0",
+            "in": "#9:10"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:60",
+            "@version": 0,
             "@class": "EMemberOf",
             "out": "#7:5",
             "in": "#8:5"
         },
         {
             "@type": "d",
-            "@rid": "#6:59",
+            "@rid": "#6:61",
             "@version": 0,
             "@class": "EHasAccessTo",
             "miid": "github_layout",
@@ -1364,7 +1409,7 @@
         },
         {
             "@type": "d",
-            "@rid": "#6:60",
+            "@rid": "#6:62",
             "@version": 0,
             "@class": "EHasAccessTo",
             "miid": "github_display",
@@ -1378,7 +1423,7 @@
         },
         {
             "@type": "d",
-            "@rid": "#6:61",
+            "@rid": "#6:63",
             "@version": 0,
             "@class": "ECanPerform",
             "miid": "github_display",
