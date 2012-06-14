@@ -30,4 +30,4 @@
 	url = git@github.com:adioo/table.git
 [submodule "modules/gabipetrovay/github_display"]
 	path = modules/gabipetrovay/github_display
-	url = https://github.com/gabipetrovay/github_display.git
+	url = git@github.com:gabipetrovay/github_display.git
