@@ -411,17 +411,14 @@ var N = {
             
             //TODO show loader
 
-            if (response[3]) {
-                div.innerHTML = response[3];
+            if (response[4]) {
+                div.innerHTML = response[4];
             }
 
             // load css from response[2]
-            for (var i in response[4]) {
-                N.css(response[4][i]);
+            for (var i in response[5]) {
+                N.css(response[5][i]);
             }
-
-            // get the language of this module
-            var language = response.language || "en";
             
             // TODO handle requirejs errors
             require.onError = function(err){
@@ -443,10 +440,11 @@ var N = {
                         dom:    div,
                         obs:    N.obs(miid),
                         miid:   miid,
-                        lang:   language,
+                        // get the language of this module
+                        lang:   response[2],
                         link:   N.link
                         
-                    }, response[2]);
+                    }, response[3]);
                 }
 
                 // TODO: hide loader

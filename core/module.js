@@ -10,31 +10,31 @@ var send = require(CONFIG.root + "/core/send.js").send,
 function buildModule(link, module) {
 
     var response = {
-        language: link.session.loc,
         0: module.owner,
-        1: module.name
+        1: module.name,
+        2: link.session.loc || "en"
     };
 
     if (module.config) {
-        response[2] = module.config;
+        response[3] = module.config;
     }
 
     if (module.html) {
-        response[3] = module.html;
+        response[4] = module.html;
     }
 
     if (module.css) {
 
-        response[4] = [];
+        response[5] = [];
 
         // add the module css in the third response object
         for (var i in module.css) {
 
             // TODO append D/ for domain css and M/ for module css
-            response[4].push(module.css[i] + ".css");
+            response[5].push(module.css[i] + ".css");
         }
     }
-
+    
     return response;
 }
 
@@ -115,7 +115,7 @@ exports.getModule = function(link) {
         send.badrequest(link, "Module name missing");
         return;
     }
-
+    
     // get the module instance id
     var owner = link.path[0].replace(/[^0-9a-z_\-\.]/gi, ""),
         name = link.path[1].replace(/[^0-9a-z_\-\.]/gi, ""),
@@ -126,7 +126,7 @@ exports.getModule = function(link) {
         send.badrequest(link, "Incorrect module instance in request URL");
         return;
     }
-
+    
     // find the module in the database
     model.getModuleFile(owner, name, link.session.uid, function(err, module) {
 
