@@ -26,6 +26,32 @@
     font-size: 18px;
 }
 
-#modules, #versions, #throbber {
+.template {
     display: none;
+}
+
+#errorMessage {
+    display: none;
+}
+
+.left {
+    float: left;
+}
+
+.right {
+    float: right;
+}
+
+.space {
+    margin-bottom: 20px;
+}
+
+#navTitle {
+    text-align: center;
+    width: 100%;
+    display: inline-block;
+}
+
+#backSpan {
+    margin-left: 5px;
 }

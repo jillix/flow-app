@@ -81,6 +81,20 @@
         },
         {
             "@type": "d",
+            "@rid": "#7:5",
+            "@version": 0,
+            "@class": "VUser",
+            "username": "public",
+            "password": "",
+            "data": {
+                "fullname": "Github Public User"
+            },
+            "out": [
+                "#6:58"
+            ]
+        },
+        {
+            "@type": "d",
             "@rid": "#11:0",
             "@version": 0,
             "@class": "VApplication",
@@ -119,6 +133,22 @@
         },
         {
             "@type": "d",
+            "@rid": "#11:2",
+            "@version": 0,
+            "@class": "VApplication",
+            "id": "5849564d3d426d7278683d283f3c5d37",
+            "name": "Github Admin",
+            "routes": {
+                "modules": "github_layout"
+            },
+            "publicUser": "#7:5",
+            "publicDir": "public",
+            "roles": [
+                "#8:5"
+            ]
+        },
+        {
+            "@type": "d",
             "@rid": "#12:0",
             "@version": 0,
             "@class": "VDomain",
@@ -140,6 +170,14 @@
             "@class": "VDomain",
             "name": "orders.happybonus.ch",
             "application": "#11:1"
+        },
+        {
+            "@type": "d",
+            "@rid": "#12:3",
+            "@version": 0,
+            "@class": "VDomain",
+            "name": "github.mono.ch",
+            "application": "#11:2"
         },
         {
             "@type": "d",
@@ -255,6 +293,22 @@
         },
         {
             "@type": "d",
+            "@rid": "#8:5",
+            "@version": 0,
+            "@class": "VRole",
+            "name": "Github Role",
+            "app": "#11:2",
+            "in": [
+                "#6:58"
+            ],
+            "out": [
+                "#6:59",
+                "#6:60",
+                "#6:61"
+            ]
+        },
+        {
+            "@type": "d",
             "@rid": "#9:3",
             "@version": 0,
             "@class": "VOperation",
@@ -334,6 +388,18 @@
             "file": "operations.js",
             "method": "saveData",
             "in": []
+        },
+        {
+            "@type": "d",
+            "@rid": "#9:11",
+            "@version": 0,
+            "@class": "VOperation",
+            "module": "gabipetrovay/github_display",
+            "file": "operations.js",
+            "method": "modules",
+            "in": [
+                "#6:61"
+            ]
         },
         {
             "@type": "d",
@@ -474,6 +540,15 @@
             "owner": "adioo",
             "name": "bind",
             "library": true
+        },
+        {
+            "@type": "d",
+            "@rid": "#10:12",
+            "@version": 0,
+            "@class": "VModule",
+            "owner": "gabipetrovay",
+            "name": "github_display",
+            "library": false
         },
         {
             "@type": "d",
@@ -1258,6 +1333,57 @@
             "miid": "operation_detail",
             "out": "#8:0",
             "in": "#9:9"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:58",
+            "@version": 0,
+            "@class": "EMemberOf",
+            "out": "#7:5",
+            "in": "#8:5"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:59",
+            "@version": 0,
+            "@class": "EHasAccessTo",
+            "miid": "github_layout",
+            "html": {
+                "type": "a",
+                "path": "html/layout"
+            },
+            "config": {
+                "title": "Github Admin",
+                "modules": {
+                    "githubDisplay": "github_display"
+                }    
+            },
+            "css": ["bootstrap/css/bootstrap", "github"],
+            "out": "#8:5",
+            "in": "#10:6"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:60",
+            "@version": 0,
+            "@class": "EHasAccessTo",
+            "miid": "github_display",
+            "html": {
+                "type": "a",
+                "path": "html/github"
+            },
+            "css": [],
+            "out": "#8:5",
+            "in": "#10:12"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:61",
+            "@version": 0,
+            "@class": "ECanPerform",
+            "miid": "github_display",
+            "out": "#8:5",
+            "in": "#9:11"
         }
     ]
 }
