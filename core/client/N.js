@@ -25,46 +25,35 @@ window.onerror = function(error, url, line) {
  */
 var N = {
     
-    module: function(inherit, properties, clone) {
+    Module: function(properties) {
+        
+        if (typeof properties === "object") {
+        
+            for (var property in properties) {
+                
+                if (properties.hasOwnProperty(property)) {
+                    
+                    this[property] = properties[property];
+                }
+            }
+        }
+    },
+    
+    ext: function(object, inherit, properties) {
         
         if (inherit) {
             
-            //handy but non-standart
-            if (inherit.__proto__) {
-                
-                this.__proto__.__proto__ = inherit;
-            }
-            else {
-                
-                clone = N.clone(inherit);
-                
-                for (var key in this) {
-                    
-                    clone[key] = this[key];
-                }
-                
-                clone = N.clone(clone);
-            }
+            N.Module.prototype = inherit;
+            object = new N.Module(object);
         }
         
         if (properties) {
             
-            for (var property in properties) {
-                
-                (clone || this)[property] = properties[property];
-            }
+            N.Module.prototype = object;
+            return new N.Module(properties);
         }
         
-        if (clone) {
-            
-            return clone;
-        }
-    },
-    
-    clone: function(object, inherit, properties) {
-        
-        N.module.prototype = object;
-        return new N.module(inherit, properties);
+        return object;
     },
     
     err: function(msg) {
@@ -153,8 +142,7 @@ var N = {
             }
             else {
 
-                var obs = N.clone(Observer);
-                obs.e = {};
+                var obs = N.ext({e: {}},Observer);
 
                 return name ? observers[name] = obs : obs;
             }
@@ -440,7 +428,6 @@ var N = {
                         dom:    div,
                         obs:    N.obs(miid),
                         miid:   miid,
-                        // get the language of this module
                         lang:   response[2],
                         link:   N.link
                         
