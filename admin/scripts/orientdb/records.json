@@ -633,7 +633,14 @@
                 "itemTag": "li",
                 "tabTag": "div",
                 "tabContainer": "#vertexes",
-                "noTabSelected": "#noClassSelected"
+                "noTabSelected": "#noClassSelected",
+                "bindConf": {
+                    
+                    "eventProperties": {
+                        "event": "mouseup",
+                        "method": "show"
+                    }
+                }
             },
             "css": ["main", "vertex"],
             "out": "#8:0",
@@ -1401,7 +1408,7 @@
                 "title": "Github Admin",
                 "modules": {
                     "githubDisplay": "github_display"
-                }    
+                }
             },
             "css": ["bootstrap/css/bootstrap", "github"],
             "out": "#8:5",
