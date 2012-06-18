@@ -636,17 +636,19 @@
                 "path": "main"
             },
             "config": {
-                
+                "tabTag": "div",
+                "tabContainer": "#vertexes",
+                "noTabSelected": "#noClassSelected",
                 "source": {
                 
                     "name": "getData"
                 },
-                "target": "#vertexClassMenu",
-                "itemTag": "li",
-                "tabTag": "div",
-                "tabContainer": "#vertexes",
-                "noTabSelected": "#noClassSelected",
-                "bindConf": {
+                "repeater": {
+                    
+                    "itemTag": "li",
+                    "target": "#vertexClassMenu",
+                },
+                "bind": {
                     
                     "eventProperties": {
                         "event": "mouseup",
@@ -1008,8 +1010,14 @@
                     
                     "name": "getData"
                 },
-                "target": "#domain_list ul",
-                "itemTag": "li"
+                "tabConf": {
+                    
+                    "target": "#domain_list ul",
+                },
+                "repeaterConf": {
+                    
+                    "itemTag": "li"
+                }
             },
             "out": "#8:0",
             "in": "#10:5"
