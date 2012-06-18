@@ -422,6 +422,7 @@
             "@class": "VModule",
             "owner": "jillix",
             "name": "editor",
+            "version": "TODO",
             "dir": "client",
             "library": false,
             "in": [
@@ -435,6 +436,7 @@
             "@class": "VModule",
             "owner": "ajaxorg",
             "name": "ace",
+            "version": "TODO",
             "dir": "lib/ace",
             "library": true
         },
@@ -445,6 +447,7 @@
             "@class": "VModule",
             "owner": "faeb187",
             "name": "stdl.list",
+            "version": "TODO",
             "dir": "js/client",
             "library": false,
             "in": [
@@ -458,6 +461,7 @@
             "owner": "adioo",
             "@class": "VModule",
             "name": "tab",
+            "version": "af01304699aac7bbaa88553760caea97aa131e58",
             "library": false,
             "in": [
                 "#6:11"
@@ -470,6 +474,7 @@
             "@class": "VModule",
             "owner": "adioo",
             "name": "list",
+            "version": "d8b6a776c1698277bf270e2d2e65443dc6071059",
             "library": false,
             "in": [
             ]
@@ -481,6 +486,7 @@
             "@class": "VModule",
             "owner": "adioo",
             "name": "layout",
+            "version": "47ac820d36a4a2e5be393b2d67028d5acf827ad7",
             "library": false,
             "in": [
                 "#6:12",
@@ -494,6 +500,7 @@
             "@class": "VModule",
             "owner": "adioo",
             "name": "form",
+            "version": "c26cbd9cbd6b150d1e8f2c2c6ad6d3ce4dfac746",
             "library": false,
             "in": [
             ]
@@ -505,6 +512,7 @@
             "@class": "VModule",
             "owner": "jillix",
             "name": "liqshopOrderList",
+            "version": "TODO",
             "library": false,
             "in": [
                 "#6:15"
@@ -517,6 +525,7 @@
             "@class": "VModule",
             "owner": "jillix",
             "name": "liqshopOrderDetails",
+            "version": "TODO",
             "library": false,
             "in": [
                 "#6:16"
@@ -529,6 +538,7 @@
             "@class": "VModule",
             "owner": "jillix",
             "name": "liqshopOrderLogin",
+            "version": "TODO",
             "library": false,
             "in": [
                 "#6:25"
@@ -541,6 +551,7 @@
             "@class": "VModule",
             "owner": "adioo",
             "name": "bind",
+            "version": "bf98a5b73189be6c4670d97f97fc46f7d62d543a",
             "library": true
         },
         {
@@ -550,6 +561,7 @@
             "@class": "VModule",
             "owner": "gabipetrovay",
             "name": "github_display",
+            "version": "1f9d0e37881cd06342bff75dae6eae7ec104ebfa",
             "library": false
         },
         {

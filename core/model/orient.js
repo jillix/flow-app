@@ -1,4 +1,50 @@
 
+exports.insertModule = function(user, module, version, callback) {
+
+    var command =
+        "INSERT INTO VModule (" +
+            "owner, " +
+            "name, " +
+            "version, " +
+            "library" +
+        ") VALUES (" +
+            "'" + user + "', " +
+            "'" + module + "', " +
+            "'" + version + "', " +
+            "false" +
+        ")";
+
+    sql(command, function(err, results) {
+
+        if (err) {
+            return callback("An error occurred while inserting module '" + user + "/" + module + "/" + version + "': " + JSON.stringify(err));
+        }
+
+        callback(null);
+    });
+};
+
+
+exports.deleteModule = function(user, module, version, callback) {
+
+    var command =
+        "DELETE FROM VModule " +
+        "WHERE " +
+            "owner = '" + user + "' AND " +
+            "name = '" + module + "' AND " +
+            "version = '" + version + "'";
+
+    sql(command, function(err, results) {
+
+        if (err) {
+            return callback("An error occurred while deleting module '" + user + "/" + module + "/" + version + "': " + JSON.stringify(err));
+        }
+
+        callback(null);
+    });
+};
+
+
 exports.getUser = function(appId, userName, callback) {
 
     var command =
