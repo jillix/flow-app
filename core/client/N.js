@@ -429,9 +429,8 @@ var N = {
                         obs:    N.obs(miid),
                         miid:   miid,
                         lang:   response[2],
-                        link:   N.link,
-                        conf:   response[3]   
-                    });
+                        link:   N.link
+                    }, response[3]);
                 }
 
                 // TODO: hide loader
