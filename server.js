@@ -1,16 +1,3 @@
-// extend Object prototype with clone function
-Object.defineProperty(Object.prototype, "clone", {
-        
-    // writeable: false, (default value)
-    // enumerable: false, (default value)
-    // configurable: false, (default value)
-    value: function(){
-        function O(){}
-        O.prototype = this;
-        return new O();
-    }
-});
-
 // the mono configuration as global object
 CONFIG = require("./config");
 

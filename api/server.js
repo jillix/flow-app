@@ -39,7 +39,7 @@ function gitReset(repoDir, commit, callback) {
         }
 
         var options = {
-            cwd: repoDir + "/" + commit
+            cwd: repoDir
         };
         var revert = cp.spawn("git", ["reset", "--hard", commit], options);
 
@@ -52,20 +52,41 @@ function gitReset(repoDir, commit, callback) {
     });
 }
 
+function addModuleDir(user, module, callback) {
+    var options = {
+        cwd: CONFIG.root + "/modules"
+    };
+    var mkdir = cp.spawn("mkdir", ["-p", user + "/" + module], options);
+
+    mkdir.on("exit", function(code) {
+
+        if (code) {
+            return callback({ error: "Failed to create user module directory: " + user + "/" + module, code: 203 });
+        }
+        callback(null);
+    });
+}
+
+
 // ************** API **************
 
 function fetchModule(user, module, version, callback) {
 
-    var dirName = CONFIG.root + "/modules/" + user + "/" + module;
-    var url = "https://github.com/" + user + "/" + module + ".git";
+    addModuleDir(user, module, function(err) {
 
-    // clone the repo first
-    gitClone(url, dirName, version, function(err) {
+        if (err) { return callback(err); }
+    
+        var dirName = CONFIG.root + "/modules/" + user + "/" + module;
+        var url = "https://github.com/" + user + "/" + module + ".git";
 
-        if (err) { return callback(err) };
+        // clone the repo first
+        gitClone(url, dirName, version, function(err) {
 
-        // reset to this version (commit)
-        gitReset(dirName, version, callback);
+            if (err) { return callback(err) };
+
+            // reset to this version (commit)
+            gitReset(dirName + "/" + version, version, callback);
+        });
     });
 }
 

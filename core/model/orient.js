@@ -1,4 +1,23 @@
 
+exports.getModules = function(callback) {
+
+    var command =
+        "SELECT " +
+            "dir, owner, name, version " +
+        "FROM " +
+            "VModule";
+
+    sql(command, function(err, results) {
+
+        if (err) {
+            return callback("An error occurred while retrieving modules: " + JSON.stringify(err));
+        }
+
+        callback(null, results);
+    });
+};
+
+
 exports.insertModule = function(user, module, version, callback) {
 
     var command =
