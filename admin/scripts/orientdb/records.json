@@ -314,7 +314,7 @@
             "@rid": "#9:3",
             "@version": 0,
             "@class": "VOperation",
-            "module": "faeb187/stdl.list",
+            "module": "faeb187/stdl.list/94dcc61e7373a63fc26a29601690f91f7e01bee4",
             "file": "ops.js",
             "method": "getData",
             "in": [
@@ -326,7 +326,7 @@
             "@rid": "#9:4",
             "@version": 0,
             "@class": "VOperation",
-            "module": "jillix/liqshopOrderList",
+            "module": "jillix/liqshopOrderList/TODO",
             "file": "operations.js",
             "method": "getOrders",
             "in": [
@@ -338,7 +338,7 @@
             "@rid": "#9:5",
             "@version": 0,
             "@class": "VOperation",
-            "module": "jillix/liqshopOrderList",
+            "module": "jillix/liqshopOrderList/TODO",
             "file": "operations.js",
             "method": "getBranches",
             "in": [
@@ -350,7 +350,7 @@
             "@rid": "#9:6",
             "@version": 0,
             "@class": "VOperation",
-            "module": "jillix/liqshopOrderDetails",
+            "module": "jillix/liqshopOrderDetails/TODO",
             "file": "operations.js",
             "method": "archiveItem",
             "in": [
@@ -362,7 +362,7 @@
             "@rid": "#9:7",
             "@version": 0,
             "@class": "VOperation",
-            "module": "jillix/liqshopOrderLogin",
+            "module": "jillix/liqshopOrderLogin/TODO",
             "file": "operations.js",
             "method": "login",
             "in": [
@@ -374,7 +374,7 @@
             "@rid": "#9:8",
             "@version": 0,
             "@class": "VOperation",
-            "module": "adioo/tab",
+            "module": "adioo/tab/af01304699aac7bbaa88553760caea97aa131e58",
             "file": "operations.js",
             "method": "getData",
             "in": [
@@ -386,7 +386,7 @@
             "@rid": "#9:9",
             "@version": 0,
             "@class": "VOperation",
-            "module": "adioo/form",
+            "module": "adioo/form/c26cbd9cbd6b150d1e8f2c2c6ad6d3ce4dfac746",
             "file": "operations.js",
             "method": "saveData",
             "in": []
@@ -396,7 +396,7 @@
             "@rid": "#9:11",
             "@version": 0,
             "@class": "VOperation",
-            "module": "gabipetrovay/github_display",
+            "module": "gabipetrovay/github_display/74120a231807117c30f44efe80cc2b5a88fc39fe",
             "file": "operations.js",
             "method": "modules",
             "in": [
@@ -408,7 +408,7 @@
             "@rid": "#9:10",
             "@version": 0,
             "@class": "VOperation",
-            "module": "adioo/list",
+            "module": "adioo/list/d8b6a776c1698277bf270e2d2e65443dc6071059",
             "file": "operations.js",
             "method": "getData",
             "in": [
@@ -436,7 +436,7 @@
             "@class": "VModule",
             "owner": "ajaxorg",
             "name": "ace",
-            "version": "TODO",
+            "version": "f4b5a13855997e60abe8b57bfcc56755ea00dc7d",
             "dir": "lib/ace",
             "library": true
         },
@@ -561,7 +561,7 @@
             "@class": "VModule",
             "owner": "gabipetrovay",
             "name": "github_display",
-            "version": "1f9d0e37881cd06342bff75dae6eae7ec104ebfa",
+            "version": "74120a231807117c30f44efe80cc2b5a88fc39fe",
             "library": false
         },
         {

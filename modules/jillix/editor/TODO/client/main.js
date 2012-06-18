@@ -1,4 +1,4 @@
-define(["ajaxorg/ace/ace", "ajaxorg/ace/mode/javascript", "ajaxorg/ace/theme/textmate", "https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"], function(ace, jsMode, theme) {
+define(["ajaxorg/ace/f4b5a13855997e60abe8b57bfcc56755ea00dc7d/ace", "ajaxorg/ace/mode/f4b5a13855997e60abe8b57bfcc56755ea00dc7d/javascript", "ajaxorg/ace/f4b5a13855997e60abe8b57bfcc56755ea00dc7d/theme/textmate", "https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"], function(ace, jsMode, theme) {
     
     //status
     var cssNs = "div.editor ",

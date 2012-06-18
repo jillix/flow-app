@@ -229,7 +229,11 @@ exports.getModuleConfig = function(appId, miid, userId, callback) {
     //      only miid's from this appId must be searched
     var command =
         "SELECT " +
-            "in.owner AS owner, in.name AS name, config, html, css " +
+            "in.owner AS owner, " +
+            "in.name AS name, " +
+            "in.version AS version, " +
+            "config, html, " +
+            "css " +
         "FROM " +
             "(TRAVERSE VUser.out, EMemberOf.in, VRole.out FROM #" + vuCluster.id + ":" + userId + ") " +
         "WHERE " +
@@ -257,7 +261,7 @@ exports.getModuleConfig = function(appId, miid, userId, callback) {
 }
 
 
-exports.getModuleFile = function(owner, name, userId, callback) {
+exports.getModuleFile = function(owner, name, version, userId, callback) {
 
     var vuCluster = CONFIG.orient.DB.getClusterByClass("VUser");
 
@@ -267,13 +271,14 @@ exports.getModuleFile = function(owner, name, userId, callback) {
     //      only miid's from this appId must be searched
     var command =
         "SELECT " +
-            "dir, owner, name " +
+            "dir, owner, name, version " +
         "FROM " +
             "VModule " +
         "WHERE " +
             "library = true AND " +
             "owner = '" + owner + "' AND " +
-            "name = '" + name + "'";
+            "name = '" + name + "' AND " +
+            "version = '" + version + "'";
 
     sql(command, function(err, results) {
 
@@ -291,13 +296,14 @@ exports.getModuleFile = function(owner, name, userId, callback) {
         //      only miid's from this appId must be searched
         var command =
             "SELECT " +
-                "dir, owner, name " +
+                "dir, owner, name, version " +
             "FROM " +
                 "(TRAVERSE VUser.out, EMemberOf.in, VRole.out, EHasAccessTo.in FROM #" + vuCluster.id + ":" + userId + ") " +
             "WHERE " +
                 "@class = 'VModule' AND " +
                 "owner = '" + owner + "' AND " +
-                "name = '" + name + "'";
+                "name = '" + name + "' AND " +
+                "version = '" + version + "'";
 
         sql(command, function(err, results) {
 

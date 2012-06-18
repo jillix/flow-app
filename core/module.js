@@ -11,7 +11,7 @@ function buildModule(link, module) {
 
     var response = {
         0: module.owner,
-        1: module.name,
+        1: module.name + "/" + module.version,
         2: link.session.loc || "en"
     };
 
@@ -77,7 +77,7 @@ exports.getConfig = function(link) {
 
                 if (module.html) {
 
-                    var path = (module.html.type === "a" ? "/apps/" + appid : "/modules/" + module.owner + "/" + module.name) + "/" + module.html.path + ".html";
+                    var path = (module.html.type === "a" ? "/apps/" + appid : "/modules/" + module.owner + "/" + module.name + "/" + module.version) + "/" + module.html.path + ".html";
 
                     read(path, "utf8", function(err, html) {
 
@@ -119,16 +119,17 @@ exports.getModule = function(link) {
     // get the module instance id
     var owner = link.path[0].replace(/[^0-9a-z_\-\.]/gi, ""),
         name = link.path[1].replace(/[^0-9a-z_\-\.]/gi, ""),
-        path = link.path.slice(2).join("/").replace(/[^a-z0-9\/\.\-_]|\.\.\//gi, "");
+        version = link.path[2].replace(/[^0-9a-z_\-\.]/gi, ""),
+        path = link.path.slice(3).join("/").replace(/[^a-z0-9\/\.\-_]|\.\.\//gi, "");
 
     // the module name must be almost alphanumeric
     if (owner.length != link.path[0].length || name.length != link.path[1].length) {
         send.badrequest(link, "Incorrect module instance in request URL");
         return;
     }
-    
+
     // find the module in the database
-    model.getModuleFile(owner, name, link.session.uid, function(err, module) {
+    model.getModuleFile(owner, name, version, link.session.uid, function(err, module) {
 
         // error checks
         if (err || !module) {
@@ -137,7 +138,7 @@ exports.getModule = function(link) {
         }
 
         // now serve the module file
-        link.req.url = owner + "/" + name + "/" + (module.dir ? module.dir + "/" : "") + path;
+        link.req.url = owner + "/" + name + "/" + version + "/" + (module.dir ? module.dir + "/" : "") + path;
 
         modules.serve(link.req, link.res);
     });
