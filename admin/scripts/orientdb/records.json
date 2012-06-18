@@ -636,17 +636,19 @@
                 "path": "main"
             },
             "config": {
-                
+                "tabTag": "div",
+                "tabContainer": "#vertexes",
+                "noTabSelected": "#noClassSelected",
                 "source": {
                 
                     "name": "getData"
                 },
-                "target": "#vertexClassMenu",
-                "itemTag": "li",
-                "tabTag": "div",
-                "tabContainer": "#vertexes",
-                "noTabSelected": "#noClassSelected",
-                "bindConf": {
+                "repeater": {
+                    
+                    "itemTag": "li",
+                    "target": "#vertexClassMenu",
+                },
+                "bind": {
                     
                     "eventProperties": {
                         "event": "mouseup",
