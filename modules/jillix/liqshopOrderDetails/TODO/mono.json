@@ -1,7 +1,0 @@
-{
-    main: "main.js",
-    operations: [
-        { path: "operations.js", function: "archiveItem" }
-    ]
-}
-
