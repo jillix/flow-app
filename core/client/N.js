@@ -399,13 +399,13 @@ var N = {
             
             //TODO show loader
 
-            if (response[4]) {
-                div.innerHTML = response[4];
+            if (response[3]) {
+                div.innerHTML = response[3];
             }
 
             // load css from response[2]
-            for (var i in response[5]) {
-                N.css(response[5][i]);
+            for (var i in response[4]) {
+                N.css(response[4][i]);
             }
             
             // TODO handle requirejs errors
@@ -416,7 +416,7 @@ var N = {
             };
 
             // load and init module
-            require([response[0] + "/" + response[1] + "/main"], function(module) {
+            require([response[0] + "/main"], function(module) {
                 
                 // TODO register module states
                 
@@ -428,9 +428,10 @@ var N = {
                         dom:    div,
                         obs:    N.obs(miid),
                         miid:   miid,
-                        lang:   response[2],
-                        link:   N.link
-                    }, response[3]);
+                        lang:   response[1],
+                        link:   N.link,
+                        base:   response[0]
+                    }, response[2]);
                 }
 
                 // TODO: hide loader

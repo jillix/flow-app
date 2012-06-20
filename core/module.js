@@ -10,28 +10,27 @@ var send = require(CONFIG.root + "/core/send.js").send,
 function buildModule(link, module) {
 
     var response = {
-        0: module.owner,
-        1: module.name + "/" + module.version,
-        2: link.session.loc || "en"
+        0: module.owner + "/" + module.name + "/" + module.version,
+        1: link.session.loc || "en"
     };
 
     if (module.config) {
-        response[3] = module.config;
+        response[2] = module.config;
     }
 
     if (module.html) {
-        response[4] = module.html;
+        response[3] = module.html;
     }
 
     if (module.css) {
 
-        response[5] = [];
+        response[4] = [];
 
         // add the module css in the third response object
         for (var i in module.css) {
 
             // TODO append D/ for domain css and M/ for module css
-            response[5].push(module.css[i] + ".css");
+            response[4].push(module.css[i] + ".css");
         }
     }
     
