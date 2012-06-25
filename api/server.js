@@ -71,33 +71,33 @@ function addModuleDir(source, owner, module, callback) {
 
 // ************** API **************
 
-function fetchModule(source, owner, module, version, callback) {
+function fetchModule(module, callback) {
 
-    addModuleDir(source, owner, module, function(err) {
+    addModuleDir(module.source, module.owner, module.name, function(err) {
 
         if (err) { return callback(err); }
     
-        var dirName = CONFIG.root + "/modules/" + source + "/" + owner + "/" + module;
+        var dirName = CONFIG.root + "/modules/" + module.source + "/" + module.owner + "/" + module.name;
         var url = null;
-        switch (source) {
+        switch (module.source) {
             case "github":
-                url = "https://github.com/" + owner + "/" + module + ".git";
+                url = "https://github.com/" + module.owner + "/" + module.name + ".git";
                 break;
             case "bitbucket":
-                url = "git@bitbucket.org:" + owner + "/" + module.toLowerCase() + ".git";
+                url = "git@bitbucket.org:" + module.owner + "/" + module.name.toLowerCase() + ".git";
                 break;
             default:
-                callback({ error: "Invalid source: " + source, code: 204});
+                callback({ error: "Invalid source: " + module.source, code: 204});
                 return;
         }
 
         // clone the repo first
-        gitClone(url, dirName, version, function(err) {
+        gitClone(url, dirName, module.version, function(err) {
 
             if (err) { return callback(err) };
 
             // reset to this version (commit)
-            gitReset(dirName + "/" + version, version, callback);
+            gitReset(dirName + "/" + module.version, module.version, callback);
         });
     });
 }
@@ -117,15 +117,50 @@ function removeModule(source, owner, module, version, callback) {
     });
 }
 
-function installModule(source, owner, module, version, callback) {
+function getModuleOperations(module, callback) {
 
-    fetchModule(source, owner, module, version, function(err) {
+    fs.readFile(CONFIG.root + "/modules/" + module.relativePath() + "/mono.json", function (err, data) {
+
+        if (err) { return callback("Error while reading the mono.json file for module " + module.relativePath()) };
+
+        var mono = {};
+
+        try {
+            mono = JSON.parse(data);
+            operations = mono.operations;
+        } catch (err) {
+            callback("Invalid mono.json in module " + module.relativePath());
+        }
+
+        callback(null, mono.operations || []);
+    });
+}
+
+
+function installModule(source, owner, name, version, callback) {
+
+    var module = {
+        source: source,
+        owner: owner,
+        name: name,
+        version: version,
+        relativePath: function() { return source + "/" + owner + "/" + name + "/" + version; }
+    };
+
+    fetchModule(module, function(err) {
 
         if (err) {
             return callback(err);
         }
 
-        db.insertModuleVersion(source, owner, module, version, callback);
+        getModuleOperations(module, function(err, operations) {
+
+            if (err) { return callback(err) };
+
+            module.operations = operations;
+
+            db.insertModuleVersion(module, callback);
+        });
     });
 }
 

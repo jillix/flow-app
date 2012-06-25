@@ -79,14 +79,14 @@ exports.getModule = function(source, owner, name, callback) {
 
 exports.insertOperations = function(operations, callback) {
 
-    if (!operations.length) {
+    if (!operations || !operations.length) {
         return callback(null, []);
     }
 
     // build the INSERT VALUES string
     var opsStr = "";
     for (var i in operations) {
-        opsStr += "('" + operations[i].file + "', '" + operations[i].method + "'),";
+        opsStr += "('" + operations[i].file + "', '" + operations[i]["function"] + "'),";
     }
     opsStr = opsStr.slice(0, -1);
 
@@ -103,7 +103,7 @@ exports.insertOperations = function(operations, callback) {
 
 exports.insertBelongsTo = function(rid, version, operations, callback) {
 
-    if (!operations.length) {
+    if (!operations || !operations.length) {
         return callback(null, []);
     }
 
@@ -125,36 +125,24 @@ exports.insertBelongsTo = function(rid, version, operations, callback) {
 };
 
 
-exports.insertModuleVersion = function(source, owner, name, version, callback) {
+exports.insertModuleVersion = function(module, callback) {
 
     // find the module
-    exports.getModule(source, owner, name, function(err, module) {
+    exports.getModule(module.source, module.owner, module.name, function(err, mod) {
 
-        var rid = module['@rid'];
-
-        // TODO collect the operations from mono.json
-        var operations = [
-            {
-                file: "test.js",
-                method: "method1"
-            },
-            {
-                file: "test.js",
-                method: "method2"
-            }
-        ];
+        var rid = mod['@rid'];
 
         // insert the operations
-        exports.insertOperations(operations, function(err, inserted) {
+        exports.insertOperations(module.operations, function(err, inserted) {
         
             if (err) {
-                return callback("An error occurred while inserting module operations for module '" + source + "/" + owner + "/" + name + "': " + JSON.stringify(err));
+                return callback("An error occurred while inserting module operations for module '" + module.relativePath() + "': " + JSON.stringify(err));
             }
 
             // insert the EBelongsTo edge between operations and module
-            exports.insertBelongsTo(rid, version, inserted, function(err, inserted) {
+            exports.insertBelongsTo(rid, module.version, inserted, function(err, inserted) {
                 if (err) {
-                    return callback("An error occurred while inserting module operations edges for module '" + source + "/" + owner + "/" + name + "': " + JSON.stringify(err));
+                    return callback("An error occurred while inserting module operations edges for module '" + module.relativePath() + "': " + JSON.stringify(err));
                 }
 
                 // TODO insert the lings in the "in" list for the module
