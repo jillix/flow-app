@@ -60,7 +60,8 @@ exports.operation = function(link) {
                 return;
             }
 
-            var file = CONFIG.root + "/modules/" + operation.module + "/" + operation.file;
+            var modulePath = operation.source + "/" + operation.owner + "/" + operation.name + "/" + operation.version;
+            var file = CONFIG.root + "/modules/" + modulePath + "/" + operation.file;
             var method = util.load(file, link.operation.method);
 
             checkAndCallFunction(link, resume, method, operation.params);

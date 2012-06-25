@@ -80,6 +80,31 @@
             "name": "ographvertex",
             "id": 13,
             "type": "PHYSICAL"
+        },
+        {
+            "name": "ememberof",
+            "id": 14,
+            "type": "PHYSICAL"
+        },
+        {
+            "name": "eusesinstanceof",
+            "id": 15,
+            "type": "PHYSICAL"
+        },
+        {
+            "name": "ecanperform",
+            "id": 16,
+            "type": "PHYSICAL"
+        },
+        {
+            "name": "ehasaccessto",
+            "id": 17,
+            "type": "PHYSICAL"
+        },
+        {
+            "name": "ebelongsto",
+            "id": 18,
+            "type": "PHYSICAL"
         }
     ],
     "schema":{
@@ -230,12 +255,6 @@
                 "super-class": "OGraphVertex",
                 "properties": [
                     {
-                        "name": "module",
-                        "type": "STRING",
-                        "mandatory": true,
-                        "not-null": true
-                    },
-                    {
                         "name": "file",
                         "type": "STRING",
                         "mandatory": true,
@@ -268,7 +287,13 @@
                         "not-null": true
                     },
                     {
-                        "name": "version",
+                        "name": "source",
+                        "type": "STRING",
+                        "mandatory": true,
+                        "not-null": true
+                    },
+                    {
+                        "name": "latest",
                         "type": "STRING",
                         "mandatory": true,
                         "not-null": true
@@ -277,12 +302,6 @@
                         "name": "dir",
                         "type": "STRING",
                         "mandatory": false,
-                        "not-null": true
-                    },
-                    {
-                        "name": "library",
-                        "type": "BOOLEAN",
-                        "mandatory": true,
                         "not-null": true
                     }
                 ]
@@ -356,15 +375,15 @@
             },
             {
                 "name": "EMemberOf",
-                "default-cluster-id": 6,
-                "cluster-ids": [6],
+                "default-cluster-id": 14,
+                "cluster-ids": [14],
                 "super-class": "OGraphEdge",
                 "properties": []
             },
             {
-                "name": "ECanPerform",
-                "default-cluster-id": 6,
-                "cluster-ids": [6],
+                "name": "EUsesInstanceOf",
+                "default-cluster-id": 15,
+                "cluster-ids": [15],
                 "super-class": "OGraphEdge",
                 "properties": [
                     {
@@ -372,17 +391,9 @@
                         "type": "STRING",
                         "mandatory": true,
                         "not-null": true
-                    }
-                ]
-            },
-            {
-                "name": "EHasAccessTo",
-                "default-cluster-id": 6,
-                "cluster-ids": [6],
-                "super-class": "OGraphEdge",
-                "properties": [
+                    },
                     {
-                        "name": "miid",
+                        "name": "version",
                         "type": "STRING",
                         "mandatory": true,
                         "not-null": true
@@ -403,6 +414,48 @@
                         "name": "config",
                         "type": "EMBEDDEDMAP",
                         "mandatory": false,
+                        "not-null": true
+                    }
+                ]
+            },
+            {
+                "name": "ECanPerform",
+                "default-cluster-id": 16,
+                "cluster-ids": [16],
+                "super-class": "OGraphEdge",
+                "properties": [
+                    {
+                        "name": "miid",
+                        "type": "STRING",
+                        "mandatory": true,
+                        "not-null": true
+                    }
+                ]
+            },
+            {
+                "name": "EHasAccessTo",
+                "default-cluster-id": 17,
+                "cluster-ids": [17],
+                "super-class": "OGraphEdge",
+                "properties": [
+                    {
+                        "name": "version",
+                        "type": "STRING",
+                        "mandatory": true,
+                        "not-null": true
+                    }
+                ]
+            },
+            {
+                "name": "EBelongsTo",
+                "default-cluster-id": 18,
+                "cluster-ids": [18],
+                "super-class": "OGraphEdge",
+                "properties": [
+                    {
+                        "name": "version",
+                        "type": "STRING",
+                        "mandatory": true,
                         "not-null": true
                     }
                 ]

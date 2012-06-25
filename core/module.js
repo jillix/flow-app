@@ -10,7 +10,7 @@ var send = require(CONFIG.root + "/core/send.js").send,
 function buildModule(link, module) {
 
     var response = {
-        0: module.owner,
+        0: module.source + "/" + module.owner,
         1: module.name + "/" + module.version,
         2: link.session.loc || "en"
     };
@@ -77,7 +77,7 @@ exports.getConfig = function(link) {
 
                 if (module.html) {
 
-                    var path = (module.html.type === "a" ? "/apps/" + appid : "/modules/" + module.owner + "/" + module.name + "/" + module.version) + "/" + module.html.path + ".html";
+                    var path = (module.html.type === "a" ? "/apps/" + appid : "/modules/" + module.source + "/" + module.owner + "/" + module.name + "/" + module.version) + "/" + module.html.path + ".html";
 
                     read(path, "utf8", function(err, html) {
 
@@ -111,25 +111,26 @@ exports.getConfig = function(link) {
 exports.getModule = function(link) {
 
     // error checks
-    if (!link.path || typeof link.path[0] == "undefined" || typeof link.path[1] == "undefined") {
-        send.badrequest(link, "Module name missing");
+    if (!link.path || !link.path[0] || !link.path[1] || !link.path[2] || !link.path[3]) {
+        send.badrequest(link, "Incorrect module request URL format");
         return;
     }
     
     // get the module instance id
-    var owner = link.path[0].replace(/[^0-9a-z_\-\.]/gi, ""),
-        name = link.path[1].replace(/[^0-9a-z_\-\.]/gi, ""),
-        version = link.path[2].replace(/[^0-9a-z_\-\.]/gi, ""),
-        path = link.path.slice(3).join("/").replace(/[^a-z0-9\/\.\-_]|\.\.\//gi, "");
+    var source = link.path[0].replace(/[^0-9a-z_\-\.]/gi, ""),
+        owner = link.path[1].replace(/[^0-9a-z_\-\.]/gi, ""),
+        name = link.path[2].replace(/[^0-9a-z_\-\.]/gi, ""),
+        version = link.path[3].replace(/[^0-9a-z_\-\.]/gi, ""),
+        path = link.path.slice(4).join("/").replace(/[^a-z0-9\/\.\-_]|\.\.\//gi, "");
 
     // the module name must be almost alphanumeric
-    if (owner.length != link.path[0].length || name.length != link.path[1].length) {
-        send.badrequest(link, "Incorrect module instance in request URL");
+    if (source.length != link.path[0].length || owner.length != link.path[1].length || name.length != link.path[2].length || version.length != link.path[3].length) {
+        send.badrequest(link, "Incorrect data in module request URL");
         return;
     }
 
     // find the module in the database
-    model.getModuleFile(owner, name, version, link.session.uid, function(err, module) {
+    model.getModuleFile(source, owner, name, link.session.uid, function(err, module) {
 
         // error checks
         if (err || !module) {
@@ -138,7 +139,7 @@ exports.getModule = function(link) {
         }
 
         // now serve the module file
-        link.req.url = owner + "/" + name + "/" + version + "/" + (module.dir ? module.dir + "/" : "") + path;
+        link.req.url = source + "/" + owner + "/" + name + "/" + version + "/" + (module.dir ? module.dir + "/" : "") + path;
 
         modules.serve(link.req, link.res);
     });

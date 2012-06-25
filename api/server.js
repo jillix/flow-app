@@ -52,16 +52,17 @@ function gitReset(repoDir, commit, callback) {
     });
 }
 
-function addModuleDir(user, module, callback) {
+function addModuleDir(source, owner, module, callback) {
+
     var options = {
         cwd: CONFIG.root + "/modules"
     };
-    var mkdir = cp.spawn("mkdir", ["-p", user + "/" + module], options);
+    var mkdir = cp.spawn("mkdir", ["-p", source + "/" + owner + "/" + module], options);
 
     mkdir.on("exit", function(code) {
 
         if (code) {
-            return callback({ error: "Failed to create user module directory: " + user + "/" + module, code: 203 });
+            return callback({ error: "Failed to create module directory: " + source + "/" + owner + "/" + module, code: 203 });
         }
         callback(null);
     });
@@ -70,14 +71,25 @@ function addModuleDir(user, module, callback) {
 
 // ************** API **************
 
-function fetchModule(user, module, version, callback) {
+function fetchModule(source, owner, module, version, callback) {
 
-    addModuleDir(user, module, function(err) {
+    addModuleDir(source, owner, module, function(err) {
 
         if (err) { return callback(err); }
     
-        var dirName = CONFIG.root + "/modules/" + user + "/" + module;
-        var url = "https://github.com/" + user + "/" + module + ".git";
+        var dirName = CONFIG.root + "/modules/" + source + "/" + owner + "/" + module;
+        var url = null;
+        switch (source) {
+            case "github":
+                url = "https://github.com/" + owner + "/" + module + ".git";
+                break;
+            case "bitbucket":
+                url = "git@bitbucket.org:" + owner + "/" + module.toLowerCase() + ".git";
+                break;
+            default:
+                callback({ error: "Invalid source: " + source, code: 204});
+                return;
+        }
 
         // clone the repo first
         gitClone(url, dirName, version, function(err) {
@@ -90,42 +102,42 @@ function fetchModule(user, module, version, callback) {
     });
 }
 
-function removeModule(user, module, version, callback) {
+function removeModule(source, owner, module, version, callback) {
 
     var options = {
-        cwd: CONFIG.root + "/modules/" + user + "/" + module + "/"
+        cwd: CONFIG.root + "/modules/" + source + "/" + owner + "/" + module + "/"
     };
     var git = cp.spawn("rm", ["-Rf", version], options);
 
     git.on("exit", function(code) {
         if (code) {
-            return callback("Could not remove module: " + user + "/" + module + "/" + version);
+            return callback("Could not remove module: " + source + "/" + owner + "/" + module + "/" + version);
         }
         callback(null);
     });
 }
 
-function installModule(user, module, version, callback) {
+function installModule(source, owner, module, version, callback) {
 
-    fetchModule(user, module, version, function(err) {
+    fetchModule(source, owner, module, version, function(err) {
 
         if (err) {
             return callback(err);
         }
 
-        db.insertModule(user, module, version, callback);
+        db.insertModuleVersion(source, owner, module, version, callback);
     });
 }
 
-function uninstallModule(user, module, version, callback) {
+function uninstallModule(source, owner, module, version, callback) {
 
-    removeModule(user, module, version, function(err) {
+    removeModule(source, owner, module, version, function(err) {
 
         if (err) {
             return callback(err);
         }
 
-        db.deleteModule(user, module, version, callback);
+        db.deleteModuleVersion(source, owner, module, version, callback);
     });
 }
 

@@ -1,6 +1,7 @@
 // the mono configuration as global object
 CONFIG = require(process.cwd() + "/config");
 
+var path = require('path');
 var cp = require('child_process');
 
 var orient = require(CONFIG.root + "/core/db/orient.js");
@@ -37,33 +38,31 @@ function openDbConnection(callback) {
 openDbConnection(function() {
 
     // add mono modules as submodules
-    model.getModules(function(err, modules) {
+    model.getModuleUsedVersions(function(err, modules) {
 
         var count = modules.length;
 
         for (var i in modules) {
 
-            // ignore the modules checked in the mono repo that have "TODO" as version
-            if (modules[i].version === "TODO") {
-
-                console.log("Skipping module: " + modules[i].owner + "/" + modules[i].name);
-
-                if (!--count) {
-                    close()
-                }
-
-                continue;
-            }
-
             (function(module) {
 
-                api.fetchModule(module.owner, module.name, module.version, function(err) {
+                var modulePath = module.source + "/" + module.owner + "/" + module.name + "/" + module.version;
+
+                // skip if the module folder already exists
+                if (path.existsSync(CONFIG.root + "/modules/" + modulePath)) {
+                    console.log("Skipping: " + modulePath);
+                    count--;
+                    return;
+                }
+
+                // try and fetch the module
+                api.fetchModule(module.source, module.owner, module.name, module.version, function(err) {
 
                     if (err) {
-                        console.log("Failed to install module: " + module.owner + "/" + module.name + "/" + module.version);
+                        console.log("Failed to install module: " + modulePath);
                         console.log(err);
                     } else {
-                        console.dir("Installed module: " + module.owner + "/" + module.name + "/" + module.version);
+                        console.dir("Installed module: " + modulePath);
                     }
 
                     if (!--count) {

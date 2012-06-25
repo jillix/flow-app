@@ -1,9 +1,46 @@
 
+exports.getModuleUsedVersions = function(callback) {
+
+    var command =
+        "SELECT " +
+            "in.source AS source, " +
+            "in.owner AS owner, " +
+            "in.name AS name, "+
+            "version " +
+        "FROM " +
+            "EHasAccessTo";
+
+    sql(command, function(err, results) {
+
+        if (err) {
+            return callback("An error occurred while retrieving module versions: " + JSON.stringify(err));
+        }
+
+        // duplicate ellimination
+        // TODO is there a better way to do this?
+        var versions = {};
+        for (var i in results) {
+            var version = results[i];
+            var key = version.source + "/" + version.owner + "/" + version.name + "/" + version.version;
+            versions[key] = version;
+        }
+
+        // transform back to array
+        results = [];
+        for (var i in versions) {
+            results.push(versions[i]);
+        }
+
+        callback(null, results);
+    });
+};
+
+
 exports.getModules = function(callback) {
 
     var command =
         "SELECT " +
-            "dir, owner, name, version " +
+            "source, owner, name " +
         "FROM " +
             "VModule";
 
@@ -18,48 +55,152 @@ exports.getModules = function(callback) {
 };
 
 
-exports.insertModule = function(user, module, version, callback) {
+exports.getModule = function(source, owner, name, callback) {
 
     var command =
-        "INSERT INTO VModule (" +
-            "owner, " +
-            "name, " +
-            "version, " +
-            "library" +
-        ") VALUES (" +
-            "'" + user + "', " +
-            "'" + module + "', " +
-            "'" + version + "', " +
-            "false" +
-        ")";
+        "SELECT " +
+        "FROM " +
+            "VModule " +
+        "WHERE " +
+            "source = '" + source + "' AND " +
+            "owner = '" + owner + "' AND " +
+            "name = '" + name + "'";
 
     sql(command, function(err, results) {
 
         if (err) {
-            return callback("An error occurred while inserting module '" + user + "/" + module + "/" + version + "': " + JSON.stringify(err));
+            return callback("An error occurred while retrieving module '" + source + "/" + owner + "/" + name + "': " + JSON.stringify(err));
         }
 
-        callback(null);
+        callback(null, results[0] || null);
     });
 };
 
 
-exports.deleteModule = function(user, module, version, callback) {
+exports.insertOperations = function(operations, callback) {
+
+    if (!operations.length) {
+        return callback(null, []);
+    }
+
+    // build the INSERT VALUES string
+    var opsStr = "";
+    for (var i in operations) {
+        opsStr += "('" + operations[i].file + "', '" + operations[i].method + "'),";
+    }
+    opsStr = opsStr.slice(0, -1);
 
     var command =
-        "DELETE FROM VModule " +
-        "WHERE " +
-            "owner = '" + user + "' AND " +
-            "name = '" + module + "' AND " +
-            "version = '" + version + "'";
+        "INSERT INTO VOperation (" +
+            "file, " +
+            "method" +
+        ") VALUES " +
+            opsStr;
 
-    sql(command, function(err, results) {
+    sql(command, callback);
+};
 
-        if (err) {
-            return callback("An error occurred while deleting module '" + user + "/" + module + "/" + version + "': " + JSON.stringify(err));
-        }
 
-        callback(null);
+exports.insertBelongsTo = function(rid, version, operations, callback) {
+
+    if (!operations.length) {
+        return callback(null, []);
+    }
+
+    var edgeStr = "";
+    for (var i in operations) {
+        edgeStr += "('" + version + "', " + operations[i]["@rid"] + ", " + rid + "),";
+    }
+    edgeStr = edgeStr.slice(0, -1);
+
+    var command =
+        "INSERT INTO EBelongsTo (" +
+            "version, " +
+            "out, " +
+            "in" +
+        ") VALUES " +
+            edgeStr;
+
+    sql(command, callback);
+};
+
+
+exports.insertModuleVersion = function(source, owner, name, version, callback) {
+
+    // find the module
+    exports.getModule(source, owner, name, function(err, module) {
+
+        var rid = module['@rid'];
+
+        // TODO collect the operations from mono.json
+        var operations = [
+            {
+                file: "test.js",
+                method: "method1"
+            },
+            {
+                file: "test.js",
+                method: "method2"
+            }
+        ];
+
+        // insert the operations
+        exports.insertOperations(operations, function(err, inserted) {
+        
+            if (err) {
+                return callback("An error occurred while inserting module operations for module '" + source + "/" + owner + "/" + name + "': " + JSON.stringify(err));
+            }
+
+            // insert the EBelongsTo edge between operations and module
+            exports.insertBelongsTo(rid, version, inserted, function(err, inserted) {
+                if (err) {
+                    return callback("An error occurred while inserting module operations edges for module '" + source + "/" + owner + "/" + name + "': " + JSON.stringify(err));
+                }
+
+                // TODO insert the lings in the "in" list for the module
+                //db.save(module);
+
+                callback(null);
+            });
+        });
+    });
+};
+
+
+exports.deleteModuleVersion = function(source, owner, module, version, callback) {
+
+    // find the module
+    exports.getModule(source, owner, module, function(err, mod) {
+
+        var rid = mod['@rid'];
+        var command = "TRAVERSE EHasAccessTo.out FROM (SELECT FROM EHasAccessTo WHERE in = " + rid + ") LIMIT 3";
+
+        sql(command, function(err, results) {
+
+            // TODO add results.length != 2 when checking user rights
+            if (err || !results) {
+                return callback("Could not delete module version: " + source + "/" + owner  + "/" + module + "/" + version);
+            }
+
+            var command =
+                "DELETE FROM " +
+                    "(TRAVERSE " +
+                        "EBelongsTo.out " +
+                    "FROM " +
+                        "(SELECT FROM EBelongsTo " +
+                        "WHERE " +
+                            "in = " + rid + " AND " +
+                            "version = '" + version + "'))";
+
+            sql(command, function(err, results) {
+
+                if (err) {
+                    return callback("An error occurred while deleting module version '" + source + "/" + owner + "/" + module + "/" + version + "': " + JSON.stringify(err));
+                }
+
+                callback(null);
+            });
+        });
     });
 };
 
@@ -202,7 +343,12 @@ exports.getUserOperation = function(miid, method, userId, callback) {
 
     var command =
         "SELECT " +
-            "in.module AS module, in.file AS file, params " +
+            "in.out[0].in.source AS source, " +
+            "in.out[0].in.owner AS owner, " +
+            "in.out[0].in.name AS name, " +
+            "in.out[0].version AS version, " +
+            "in.file AS file, " +
+            "params " +
         "FROM " +
             "(TRAVERSE VUser.out, EMemberOf.in, VRole.out FROM #" + vuCluster.id + ":" + userId + ") " +
         "WHERE " +
@@ -248,15 +394,16 @@ exports.getModuleConfig = function(appId, miid, userId, callback) {
     //      only miid's from this appId must be searched
     var command =
         "SELECT " +
+            "in.source AS source, " +
             "in.owner AS owner, " +
             "in.name AS name, " +
-            "in.version AS version, " +
+            "version, " +
             "config, html, " +
             "css " +
         "FROM " +
             "(TRAVERSE VUser.out, EMemberOf.in, VRole.out FROM #" + vuCluster.id + ":" + userId + ") " +
         "WHERE " +
-            "@class = 'EHasAccessTo' AND " +
+            "@class = 'EUsesInstanceOf' AND " +
             "miid = '" + miid + "'";
 
     sql(command, function(err, results) {
@@ -280,7 +427,7 @@ exports.getModuleConfig = function(appId, miid, userId, callback) {
 }
 
 
-exports.getModuleFile = function(owner, name, version, userId, callback) {
+exports.getModuleFile = function(source, owner, name, userId, callback) {
 
     var vuCluster = CONFIG.orient.DB.getClusterByClass("VUser");
 
@@ -290,55 +437,28 @@ exports.getModuleFile = function(owner, name, version, userId, callback) {
     //      only miid's from this appId must be searched
     var command =
         "SELECT " +
-            "dir, owner, name, version " +
+            "dir, source, owner, name, latest " +
         "FROM " +
-            "VModule " +
+            "(TRAVERSE VUser.out, EMemberOf.in, VRole.out, EHasAccessTo.in FROM #" + vuCluster.id + ":" + userId + ") " +
         "WHERE " +
-            "library = true AND " +
+            "@class = 'VModule' AND " +
+            "source = '" + source + "' AND " +
             "owner = '" + owner + "' AND " +
-            "name = '" + name + "' AND " +
-            "version = '" + version + "'";
+            "name = '" + name + "'";
 
     sql(command, function(err, results) {
 
         // error checks
         if (err) {
-            return callback("An error occured while retrieving the module '" + owner + "/" + name + "':" + err);
+            return callback("An error occured while retrieving the module '" + source + "/" + owner + "/" + name + "':" + err);
         }
 
-        if (results.length != 0) {
-            var module = results[0];
-            return callback(null, results[0]);
+        if (results.length == 0) {
+            return callback("No such module: " + source + "/" + owner + "/" + name);
         }
 
-        // TODO the link to the appId is missing
-        //      only miid's from this appId must be searched
-        var command =
-            "SELECT " +
-                "dir, owner, name, version " +
-            "FROM " +
-                "(TRAVERSE VUser.out, EMemberOf.in, VRole.out, EHasAccessTo.in FROM #" + vuCluster.id + ":" + userId + ") " +
-            "WHERE " +
-                "@class = 'VModule' AND " +
-                "owner = '" + owner + "' AND " +
-                "name = '" + name + "' AND " +
-                "version = '" + version + "'";
-
-        sql(command, function(err, results) {
-
-            // error checks
-            if (err) {
-                return callback("An error occured while retrieving the module '" + owner + "/" + name + "':" + err);
-            }
-
-            if (results.length == 0) {
-                return callback("No such module: " + owner + "/" + name);
-            }
-
-            var module = results[0];
-            callback(null, module);
-        });
-
+        var module = results[0];
+        callback(null, module);
     });
 }
 

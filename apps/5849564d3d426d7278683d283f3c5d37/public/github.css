@@ -10,6 +10,10 @@
     margin-bottom: 100px;
 }
 
+section {
+    padding-bottom: 30px;
+}
+
 #throbber {
     width: 30px;
     height: 30px;
@@ -55,3 +59,9 @@
 #backSpan {
     margin-left: 5px;
 }
+
+.providers {
+    margin: auto;
+    text-align: center;
+}
+
