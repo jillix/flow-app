@@ -360,11 +360,11 @@ var N = {
     modCache: {},
     mod: function(target, miid, callback) {
         
-        //default argument values
+        // default argument values
         callback = (typeof callback == "function" ? callback : function() {});
         target = (typeof target === "string" ? document.getElementById(target) : target);
         
-        //error checks
+        // error checks
         if (!target) {
             return callback("Target not found or undefined.");
         }
@@ -381,31 +381,31 @@ var N = {
                 delete N.em;
             }
             
-            //error checks
+            // error checks
             if (err || !response) {
                 
                 return callback(err || "Empty response");
             }
             
-            //cache result
+            // cache result
             self.modCache[miid] = response;
             
             target.style.display = "none";
             
             var div = document.createElement("div");
             
-            //add miid to html
+            // add miid to html
             div.setAttribute("id", miid);
             
-            //TODO show loader
+            // TODO show loader
 
-            if (response[4]) {
-                div.innerHTML = response[4];
+            if (response.html) {
+                div.innerHTML = response.html;
             }
 
-            // load css from response[2]
-            for (var i in response[5]) {
-                N.css(response[5][i]);
+            // load css
+            for (var i in response.css) {
+                N.css(response.css[i]);
             }
             
             // TODO handle requirejs errors
@@ -416,7 +416,7 @@ var N = {
             };
 
             // load and init module
-            require([response[0] + "/" + response[1] + "/main"], function(module) {
+            require([response.path + "/main"], function(module) {
                 
                 // TODO register module states
                 
@@ -428,9 +428,10 @@ var N = {
                         dom:    div,
                         obs:    N.obs(miid),
                         miid:   miid,
-                        lang:   response[2],
-                        link:   N.link
-                    }, response[3]);
+                        lang:   response.lang,
+                        link:   N.link,
+                        base:   response.path
+                    }, response.conf);
                 }
 
                 // TODO: hide loader
