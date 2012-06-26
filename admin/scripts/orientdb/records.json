@@ -475,7 +475,7 @@
             "source": "github",
             "owner": "adioo",
             "name": "layout",
-            "latest": "47ac820d36a4a2e5be393b2d67028d5acf827ad7"
+            "latest": "8ee9aa2646c59adea5a3242d5e0c0a11f3527f57"
         },
         {
             "@type": "d",
@@ -640,7 +640,7 @@
             "@version": 0,
             "@class": "EUsesInstanceOf",
             "miid": "mono_stdl_layout_1",
-            "version": "47ac820d36a4a2e5be393b2d67028d5acf827ad7",
+            "version": "8ee9aa2646c59adea5a3242d5e0c0a11f3527f57",
             "html": {
                 "type": "a",
                 "path": "stdl/layout/layout"
@@ -671,7 +671,7 @@
             "@version": 0,
             "@class": "EUsesInstanceOf",
             "miid": "liqshop_layout",
-            "version": "47ac820d36a4a2e5be393b2d67028d5acf827ad7",
+            "version": "8ee9aa2646c59adea5a3242d5e0c0a11f3527f57",
             "html": {
                 "type": "a",
                 "path": "html/layout"
@@ -822,7 +822,7 @@
             "@version": 0,
             "@class": "EUsesInstanceOf",
             "miid": "domain_manager",
-            "version": "47ac820d36a4a2e5be393b2d67028d5acf827ad7",
+            "version": "8ee9aa2646c59adea5a3242d5e0c0a11f3527f57",
             "html": {
                 "type": "a",
                 "path": "vertex"
@@ -845,7 +845,7 @@
             "@version": 0,
             "@class": "EUsesInstanceOf",
             "miid": "app_manager",
-            "version": "47ac820d36a4a2e5be393b2d67028d5acf827ad7",
+            "version": "8ee9aa2646c59adea5a3242d5e0c0a11f3527f57",
             "html": {
                 "type": "a",
                 "path": "vertex"
@@ -868,7 +868,7 @@
             "@version": 0,
             "@class": "EUsesInstanceOf",
             "miid": "user_manager",
-            "version": "47ac820d36a4a2e5be393b2d67028d5acf827ad7",
+            "version": "8ee9aa2646c59adea5a3242d5e0c0a11f3527f57",
             "html": {
                 "type": "a",
                 "path": "vertex"
@@ -891,7 +891,7 @@
             "@version": 0,
             "@class": "EUsesInstanceOf",
             "miid": "role_manager",
-            "version": "47ac820d36a4a2e5be393b2d67028d5acf827ad7",
+            "version": "8ee9aa2646c59adea5a3242d5e0c0a11f3527f57",
             "html": {
                 "type": "a",
                 "path": "vertex"
@@ -914,7 +914,7 @@
             "@version": 0,
             "@class": "EUsesInstanceOf",
             "miid": "module_manager",
-            "version": "47ac820d36a4a2e5be393b2d67028d5acf827ad7",
+            "version": "8ee9aa2646c59adea5a3242d5e0c0a11f3527f57",
             "html": {
                 "type": "a",
                 "path": "vertex"
@@ -937,7 +937,7 @@
             "@version": 0,
             "@class": "EUsesInstanceOf",
             "miid": "operation_manager",
-            "version": "47ac820d36a4a2e5be393b2d67028d5acf827ad7",
+            "version": "8ee9aa2646c59adea5a3242d5e0c0a11f3527f57",
             "html": {
                 "type": "a",
                 "path": "vertex"
@@ -1425,7 +1425,7 @@
             "@version": 0,
             "@class": "EUsesInstanceOf",
             "miid": "github_layout",
-            "version": "47ac820d36a4a2e5be393b2d67028d5acf827ad7",
+            "version": "8ee9aa2646c59adea5a3242d5e0c0a11f3527f57",
             "html": {
                 "type": "a",
                 "path": "html/layout"
@@ -1478,7 +1478,7 @@
             "@rid": "#17:2",
             "@version": 0,
             "@class": "EHasAccessTo",
-            "version": "47ac820d36a4a2e5be393b2d67028d5acf827ad7",
+            "version": "8ee9aa2646c59adea5a3242d5e0c0a11f3527f57",
             "out": "#8:5",
             "in": "#10:6"
         },
