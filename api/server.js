@@ -122,16 +122,16 @@ function getModuleOperations(module, callback) {
 
         if (err) { return callback("Error while reading the mono.json file for module " + module.relativePath()) };
 
-        var mono = {};
+        if (data.trim() === "") {
+            return callback(null, []);
+        }
 
         try {
-            mono = JSON.parse(data);
-            operations = mono.operations;
+            var mono = JSON.parse(data);
+            callback(null, mono.operations || []);
         } catch (err) {
             callback("Invalid mono.json in module " + module.relativePath());
         }
-
-        callback(null, mono.operations || []);
     });
 }
 
