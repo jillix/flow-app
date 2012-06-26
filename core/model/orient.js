@@ -155,10 +155,10 @@ exports.insertModuleVersion = function(module, callback) {
 };
 
 
-exports.deleteModuleVersion = function(source, owner, module, version, callback) {
+exports.deleteModuleVersion = function(module, callback) {
 
     // find the module
-    exports.getModule(source, owner, module, function(err, mod) {
+    exports.getModule(module.source, module.owner, module.name, function(err, mod) {
 
         var rid = mod['@rid'];
         var command = "TRAVERSE EHasAccessTo.out FROM (SELECT FROM EHasAccessTo WHERE in = " + rid + ") LIMIT 3";
@@ -167,7 +167,7 @@ exports.deleteModuleVersion = function(source, owner, module, version, callback)
 
             // TODO add results.length != 2 when checking user rights
             if (err || !results) {
-                return callback("Could not delete module version: " + source + "/" + owner  + "/" + module + "/" + version);
+                return callback("Could not delete module version: " + module.relativePath());
             }
 
             var command =
@@ -178,12 +178,12 @@ exports.deleteModuleVersion = function(source, owner, module, version, callback)
                         "(SELECT FROM EBelongsTo " +
                         "WHERE " +
                             "in = " + rid + " AND " +
-                            "version = '" + version + "'))";
+                            "version = '" + module.version + "'))";
 
             sql(command, function(err, results) {
 
                 if (err) {
-                    return callback("An error occurred while deleting module version '" + source + "/" + owner + "/" + module + "/" + version + "': " + JSON.stringify(err));
+                    return callback("An error occurred while deleting module version '" + module.relativePath() + "': " + JSON.stringify(err));
                 }
 
                 callback(null);

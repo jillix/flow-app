@@ -101,16 +101,16 @@ function fetchModule(module, callback) {
     });
 }
 
-function removeModule(source, owner, module, version, callback) {
+function removeModule(module, callback) {
 
     var options = {
-        cwd: CONFIG.root + "/modules/" + source + "/" + owner + "/" + module + "/"
+        cwd: CONFIG.root + "/modules/"
     };
-    var git = cp.spawn("rm", ["-Rf", version], options);
+    var git = cp.spawn("rm", ["-Rf", module.relativePath()], options);
 
     git.on("exit", function(code) {
         if (code) {
-            return callback("Could not remove module: " + source + "/" + owner + "/" + module + "/" + version);
+            return callback("Could not remove module: " + module.relativePath());
         }
         callback(null);
     });
@@ -159,7 +159,12 @@ function installModule(source, owner, name, version, callback) {
 
         getModuleOperations(module, function(err, operations) {
 
-            if (err) { return callback(err) };
+            if (err) {
+                removeModule(module, function(err1) {
+                    callback(err);
+                });
+                return
+            };
 
             module.operations = operations;
 
@@ -168,15 +173,21 @@ function installModule(source, owner, name, version, callback) {
     });
 }
 
-function uninstallModule(source, owner, module, version, callback) {
+function uninstallModule(source, owner, name, version, callback) {
 
-    removeModule(source, owner, module, version, function(err) {
+    var module = {
+        source: source,
+        owner: owner,
+        name: name,
+        version: version,
+        relativePath: function() { return source + "/" + owner + "/" + name + "/" + version; }
+    };
 
+    db.deleteModuleVersion(module, function(err) {
         if (err) {
             return callback(err);
         }
-
-        db.deleteModuleVersion(source, owner, module, version, callback);
+        removeModule(module, callback);
     });
 }
 
