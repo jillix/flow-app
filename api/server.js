@@ -122,10 +122,15 @@ function getModuleOperations(module, callback) {
 
         if (err) { return callback("Error while reading the mono.json file for module " + module.relativePath()) };
 
+        // transform from buffer to string
+        data = data.toString();
+
+        // an empty file is a valid file
         if (data.trim() === "") {
             return callback(null, []);
         }
 
+        // parse the file and find the operations, if any
         try {
             var mono = JSON.parse(data);
             callback(null, mono.operations || []);
