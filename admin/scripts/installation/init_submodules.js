@@ -51,7 +51,9 @@ openDbConnection(function() {
                 // skip if the module folder already exists
                 if (path.existsSync(CONFIG.root + "/modules/" + modulePath)) {
                     console.log("Skipping: " + modulePath);
-                    count--;
+                    if (!--count) {
+                        close();
+                    }
                     return;
                 }
 
@@ -76,9 +78,6 @@ openDbConnection(function() {
 
 
 function close() {
-console.log("closing db...");
-    CONFIG.orient.DB.close(function() {
-console.log("closing server...");
-        dbServer.kill();
-    });
+
+    CONFIG.orient.DB.server.shutdown();
 }
