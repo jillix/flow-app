@@ -56,7 +56,7 @@ openDbConnection(function() {
                 }
 
                 // try and fetch the module
-                api.fetchModule(module.source, module.owner, module.name, module.version, function(err) {
+                api.fetchModule(module, function(err) {
 
                     if (err) {
                         console.log("Failed to install module: " + modulePath);
