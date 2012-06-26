@@ -1,5 +1,4 @@
 var fs = require("fs"),
-    path = require('path'),
     cp = require('child_process');
 
 var db = require(CONFIG.root + "/core/model/orient.js");
@@ -10,7 +9,7 @@ var db = require(CONFIG.root + "/core/model/orient.js");
 */
 function gitClone(url, dirName, baseName, callback) {
 
-    path.exists(dirName + "/" + baseName, function(exists) {
+    fs.exists(dirName + "/" + baseName, function(exists) {
 
         if (exists) {
             return callback({ error: "Path already exists: " + dirName + "/" + baseName, code: 201 });
@@ -32,7 +31,7 @@ function gitClone(url, dirName, baseName, callback) {
 
 function gitReset(repoDir, commit, callback) {
 
-    path.exists(repoDir + "/.git", function(exists) {
+    fs.exists(repoDir + "/.git", function(exists) {
 
         if (!exists) {
             return callback({ error: "Path is not a git repository: " + repoDir, code: 202 });
