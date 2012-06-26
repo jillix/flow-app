@@ -44,6 +44,8 @@ this.uuid = function(len, uuid) {
  */
 this.pause = function(req) {
     
+    req.pause();
+
     var onData, onEnd,
         events = [];
     
@@ -60,21 +62,21 @@ this.pause = function(req) {
     });
     
     return function(abort) {
-        
-        req.removeListener('data', onData);
-        req.removeListener('end', onEnd);
-        
+
         if (abort) {
-            
             events = null;
         }
         else {
-            
-            for(var i = 0, l = events.length; i < l; ++i) {
-            
-                req.emit.apply(req, events[i]);
+
+            while (events.length) {
+                req.emit.apply(req, events.shift());
             }
-            
+
+            req.removeListener('data', onData);
+            req.removeListener('end', onEnd);
+
+            req.resume();
+
             events = null;
         }
     };

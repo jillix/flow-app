@@ -13,7 +13,6 @@ exports.operation = function(link) {
 
     // pause on POST requests (cache data until resume is called)
     if (link.req.method == "POST") {
-        link.req.pause();
         resume = util.pause(link.req);
     }
 
@@ -111,7 +110,6 @@ function handlePostRequest(link, method, resume) {
 
         // if all data are received 
         link.req.on("end", function() {
-
             try {
                 // try to parse response to Object
                 link.data = jsonString ? JSON.parse(jsonString) : {};
