@@ -1,8 +1,8 @@
 // the mono configuration as global object
 CONFIG = require(process.cwd() + "/config");
 
-var path = require('path');
 var cp = require('child_process');
+var fs = require('fs');
 
 var orient = require(CONFIG.root + "/core/db/orient.js");
 var api = require(CONFIG.root + "/api/server");
@@ -18,9 +18,6 @@ function openDbConnection(callback) {
         };
         // start db server
         dbServer = cp.spawn(options.cwd + "/server.sh", [], options);
-        dbServer.on('exit', function(){
-            console.log("server exited");
-        });
 
         setTimeout(function() {
             // connect to orient
@@ -49,7 +46,7 @@ openDbConnection(function() {
                 var modulePath = module.source + "/" + module.owner + "/" + module.name + "/" + module.version;
 
                 // skip if the module folder already exists
-                if (path.existsSync(CONFIG.root + "/modules/" + modulePath)) {
+                if (fs.existsSync(CONFIG.root + "/modules/" + modulePath)) {
                     console.log("Skipping: " + modulePath);
                     if (!--count) {
                         close();
@@ -78,6 +75,5 @@ openDbConnection(function() {
 
 
 function close() {
-
     CONFIG.orient.DB.server.shutdown();
 }
