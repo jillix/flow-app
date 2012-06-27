@@ -285,6 +285,7 @@ exports.getDomainApplication = function(domain, withRoutes, callback) {
             "application.id as appId, " +
             (withRoutes ? "application.routes AS routes, " : "") +
             "application.publicDir AS publicDir, " +
+            "application.scripts AS scripts, " +
             "application.error AS errorMiid " +
         "FROM " +
             "VDomain " +
@@ -317,6 +318,8 @@ exports.getDomainApplication = function(domain, withRoutes, callback) {
         if (withRoutes && !application.routes) {
             return callback("The application object is not complete. Missing application routing table: " + JSON.stringify(application));
         }
+
+        application.scripts = application.scripts || [];
 
         callback(null, application);
     });

@@ -2,14 +2,20 @@ var send = require(CONFIG.root + "/core/send").send,
     publicFiles = require(CONFIG.root + "/core/send").publicFiles;
     getDomainApplication = require(CONFIG.root + "/core/model/orient.js").getDomainApplication;
 
-function initScripts(module, errMiid, ie7) {
+function initScripts(module, application, ie7) {
     
     var baseUrl = "/" + CONFIG.operationKey + "/core/getModule";
     var nl = (CONFIG.dev ? "\r\n" : "");
-    
+
+    var appScripts = "";
+    for (var i in application.scripts) {
+        appScripts += "<script type='text/javascript' src='" + application.scripts[i] + "'></script>" + nl;
+    }
+
     return "<!DOCTYPE html>" + nl +
         "<html>" + nl +
         "<head>" + nl +
+        appScripts + 
         "<script type='text/javascript'>" + nl +
         (CONFIG.dev ? "// require.js reads this global property, if available" : "") + nl +
         "var require={" + nl +
@@ -17,7 +23,7 @@ function initScripts(module, errMiid, ie7) {
         "};" + nl +
         "window.onload=function(){" + nl +
             "N.ok='/"+ CONFIG.operationKey  + "';" + nl +
-            (errMiid ? "N.em = '" + errMiid + "';" : "") +
+            (application.errorMiid ? "N.em = '" + application.errorMiid + "';" : "") +
             "N.mod(document.getElementsByTagName('body')[0],'" + module + "')" + nl +
         "}" + nl +
         "</script>" + nl +
@@ -37,27 +43,25 @@ exports.route = function(link) {
         return;
     }
     
-    getDomainApplication(link.host, true, function(err, result) {
-        
-        if (err || !result.routes) {
-            
+    getDomainApplication(link.host, true, function(err, application) {
+
+        if (err || !application.routes) {
             send.notfound(link, err || "No routing table found");
             return;
         }
-        
-        var module = traverse(link.pathname != "/" ? link.pathname.replace(/\/$/, "") : link.pathname, result.routes, "");
-        
+
+        var module = traverse(link.pathname != "/" ? link.pathname.replace(/\/$/, "") : link.pathname, application.routes, "");
+
         if (typeof module == "string") {
-        
+
             // set headers
             link.res.headers["content-style-type"] = "text/css";
             link.res.headers["content-type"]       = "text/html; charset=utf-8";
             
-            send.ok(link.res, initScripts(module, result.errorMiid, (link.req.headers['user-agent'].indexOf("MSIE 7.0") > -1 ? true : false)));
+            send.ok(link.res, initScripts(module, application, (link.req.headers['user-agent'].indexOf("MSIE 7.0") > -1 ? true : false)));
         }
         else {
-            
-            publicFiles(link, result.appId, result.publicDir);
+            publicFiles(link, application.appId, application.publicDir);
         }
     });
 };
