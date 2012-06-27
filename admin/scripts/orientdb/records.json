@@ -95,6 +95,20 @@
         },
         {
             "@type": "d",
+            "@rid": "#7:6",
+            "@version": 0,
+            "@class": "VUser",
+            "username": "anonymous",
+            "password": "",
+            "data": {
+                "fullname": "CRM Public User"
+            },
+            "out": [
+                "#14:70"
+            ]
+        },
+        {
+            "@type": "d",
             "@rid": "#11:0",
             "@version": 0,
             "@class": "VApplication",
@@ -142,8 +156,31 @@
             },
             "publicUser": "#7:5",
             "publicDir": "public",
+            "scripts": [
+                "/jquery.js",
+                "/bootstrap/js/bootstrap-button.js"
+            ],
             "roles": [
                 "#8:5"
+            ]
+        },
+        {
+            "@type": "d",
+            "@rid": "#11:3",
+            "@version": 0,
+            "@class": "VApplication",
+            "id": "23366b3533612c75754b465245285249",
+            "name": "CRM",
+            "routes": {
+                "/": "crm_layout"
+            },
+            "publicUser": "#7:6",
+            "publicDir": "public",
+            "scripts": [
+                "http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"
+            ],
+            "roles": [
+                "#8:6"
             ]
         },
         {
@@ -177,6 +214,14 @@
             "@class": "VDomain",
             "name": "github.mono.ch",
             "application": "#11:2"
+        },
+        {
+            "@type": "d",
+            "@rid": "#12:4",
+            "@version": 0,
+            "@class": "VDomain",
+            "name": "crm.jillix.com",
+            "application": "#11:3"
         },
         {
             "@type": "d",
@@ -308,6 +353,22 @@
                 "#17:1",
                 "#17:2",
                 "#17:3"
+            ]
+        },
+        {
+            "@type": "d",
+            "@rid": "#8:6",
+            "@version": 0,
+            "@class": "VRole",
+            "name": "CRM Role",
+            "app": "#11:3",
+            "in": [
+                "#14:70"
+            ],
+            "out": [
+                "#15:71",
+                "#17:4",
+                "#17:5"
             ]
         },
         {
@@ -1421,6 +1482,14 @@
         },
         {
             "@type": "d",
+            "@rid": "#14:70",
+            "@version": 0,
+            "@class": "EMemberOf",
+            "out": "#7:6",
+            "in": "#8:6"
+        },
+        {
+            "@type": "d",
             "@rid": "#15:61",
             "@version": 0,
             "@class": "EUsesInstanceOf",
@@ -1457,6 +1526,26 @@
         },
         {
             "@type": "d",
+            "@rid": "#15:71",
+            "@version": 0,
+            "@class": "EUsesInstanceOf",
+            "miid": "crm_layout",
+            "version": "8ee9aa2646c59adea5a3242d5e0c0a11f3527f57",
+            "html": {
+                "type": "a",
+                "path": "html/layout"
+            },
+            "config": {
+                "title": "CRM",
+                "modules": {
+                }
+            },
+            "css": ["css/font-awesome.min.css", "css/bootstrap.min.css", "css/screen.css"],
+            "out": "#8:6",
+            "in": "#10:6"
+        },
+        {
+            "@type": "d",
             "@rid": "#16:63",
             "@version": 0,
             "@class": "ECanPerform",
@@ -1489,6 +1578,24 @@
             "@class": "EHasAccessTo",
             "version": "bf98a5b73189be6c4670d97f97fc46f7d62d543a",
             "out": "#8:5",
+            "in": "#10:11"
+        },
+        {
+            "@type": "d",
+            "@rid": "#17:4",
+            "@version": 0,
+            "@class": "EHasAccessTo",
+            "version": "8ee9aa2646c59adea5a3242d5e0c0a11f3527f57",
+            "out": "#8:6",
+            "in": "#10:6"
+        },
+        {
+            "@type": "d",
+            "@rid": "#17:5",
+            "@version": 0,
+            "@class": "EHasAccessTo",
+            "version": "bf98a5b73189be6c4670d97f97fc46f7d62d543a",
+            "out": "#8:6",
             "in": "#10:11"
         },
         {
