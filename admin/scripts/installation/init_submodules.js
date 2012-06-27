@@ -54,6 +54,15 @@ openDbConnection(function() {
                     return;
                 }
 
+                // TODO add bitbucket to server API
+                if (module.source === "bitbucket") {
+                    console.log("Bitbucket modules not yes supported in install scripts. Please install manually: " + modulePath);
+                    if (!--count) {
+                        close();
+                    }
+                    return;
+                }
+
                 // try and fetch the module
                 api.fetchModule(module, function(err) {
 
@@ -61,7 +70,7 @@ openDbConnection(function() {
                         console.log("Failed to install module: " + modulePath);
                         console.log(err);
                     } else {
-                        console.dir("Installed module: " + modulePath);
+                        console.log("Installed module: " + modulePath);
                     }
 
                     if (!--count) {

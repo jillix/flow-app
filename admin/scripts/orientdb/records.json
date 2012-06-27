@@ -374,6 +374,7 @@
             ],
             "out": [
                 "#15:71",
+                "#15:72",
                 "#17:4",
                 "#17:5"
             ]
@@ -617,6 +618,16 @@
             "in": [
                 "#18:4"
             ]
+        },
+        {
+            "@type": "d",
+            "@rid": "#10:13",
+            "@version": 0,
+            "@class": "VModule",
+            "source": "bitbucket",
+            "owner": "faeb187",
+            "name": "list",
+            "latest": "latest"
         },
         {
             "@type": "d",
@@ -1553,6 +1564,21 @@
         },
         {
             "@type": "d",
+            "@rid": "#15:72",
+            "@version": 0,
+            "@class": "EUsesInstanceOf",
+            "miid": "crm_list",
+            "version": "latest",
+            "html": {
+                "type": "a",
+                "path": "html/list"
+            },
+            "css": [],
+            "out": "#8:6",
+            "in": "#10:13"
+        },
+        {
+            "@type": "d",
             "@rid": "#16:63",
             "@version": 0,
             "@class": "ECanPerform",
@@ -1604,6 +1630,15 @@
             "version": "bf98a5b73189be6c4670d97f97fc46f7d62d543a",
             "out": "#8:6",
             "in": "#10:11"
+        },
+        {
+            "@type": "d",
+            "@rid": "#17:6",
+            "@version": 0,
+            "@class": "EHasAccessTo",
+            "version": "latest",
+            "out": "#8:6",
+            "in": "#10:13"
         },
         {
             "@type": "d",
