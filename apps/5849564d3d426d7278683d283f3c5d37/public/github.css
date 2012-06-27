@@ -60,8 +60,11 @@ section {
     margin-left: 5px;
 }
 
-.providers {
-    margin: auto;
-    text-align: center;
+#providers {
+    display: inline-block;
 }
 
+.mauto {
+    text-align: center;
+    margin: auto;
+}
