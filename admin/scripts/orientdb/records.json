@@ -1579,7 +1579,9 @@
             "config": {
                 "title": "CRM",
                 "modules": {
-                    "list": "crm_list"
+                    "list": "crm_list",
+                    "table": "crm_table",
+                    "detail": "crm_detail"
                 }
             },
             "css": [],
