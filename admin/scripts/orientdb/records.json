@@ -1674,31 +1674,13 @@
             "@rid": "#17:4",
             "@version": 0,
             "@class": "EHasAccessTo",
-            "version": "8ee9aa2646c59adea5a3242d5e0c0a11f3527f57",
-            "out": "#8:6",
-            "in": "#10:6"
-        },
-        {
-            "@type": "d",
-            "@rid": "#17:5",
-            "@version": 0,
-            "@class": "EHasAccessTo",
-            "version": "bf98a5b73189be6c4670d97f97fc46f7d62d543a",
-            "out": "#8:6",
-            "in": "#10:11"
-        },
-        {
-            "@type": "d",
-            "@rid": "#17:6",
-            "@version": 0,
-            "@class": "EHasAccessTo",
             "version": "latest",
             "out": "#8:6",
             "in": "#10:13"
         },
         {
             "@type": "d",
-            "@rid": "#17:7",
+            "@rid": "#17:5",
             "@version": 0,
             "@class": "EHasAccessTo",
             "version": "latest",
@@ -1707,7 +1689,7 @@
         },
         {
             "@type": "d",
-            "@rid": "#17:8",
+            "@rid": "#17:6",
             "@version": 0,
             "@class": "EHasAccessTo",
             "version": "latest",
