@@ -287,6 +287,7 @@ exports.getDomainApplication = function(domain, withRoutes, callback) {
             "application.publicDir AS publicDir, " +
             "application.scripts AS scripts, " +
             "application.css AS css, " +
+            "application.name AS title, " +
             "application.error AS errorMiid " +
         "FROM " +
             "VDomain " +

@@ -26,6 +26,7 @@ function initScripts(module, application, ie7) {
     return "<!DOCTYPE html>" + nl +
         "<html>" + nl +
         "<head>" + nl +
+        "<title>" + application.title + "</title>" + nl +
         appScripts +
         appCss +
         "<script type='text/javascript'>" + nl +
