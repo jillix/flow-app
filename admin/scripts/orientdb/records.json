@@ -1556,6 +1556,7 @@
             "config": {
                 "title": "CRM",
                 "modules": {
+                    "list": "crm_list"
                 }
             },
             "css": [],

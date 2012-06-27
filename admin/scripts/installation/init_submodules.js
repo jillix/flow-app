@@ -56,7 +56,7 @@ openDbConnection(function() {
 
                 // TODO add bitbucket to server API
                 if (module.source === "bitbucket") {
-                    console.log("Bitbucket modules not yes supported in install scripts. Please install manually: " + modulePath);
+                    console.log("Bitbucket modules not yet supported in install scripts. Please manually install: " + modulePath);
                     if (!--count) {
                         close();
                     }
