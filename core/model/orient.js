@@ -286,6 +286,7 @@ exports.getDomainApplication = function(domain, withRoutes, callback) {
             (withRoutes ? "application.routes AS routes, " : "") +
             "application.publicDir AS publicDir, " +
             "application.scripts AS scripts, " +
+            "application.css AS css, " +
             "application.error AS errorMiid " +
         "FROM " +
             "VDomain " +
@@ -320,6 +321,7 @@ exports.getDomainApplication = function(domain, withRoutes, callback) {
         }
 
         application.scripts = application.scripts || [];
+        application.css = application.css || [];
 
         callback(null, application);
     });

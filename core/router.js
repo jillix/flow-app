@@ -12,10 +12,22 @@ function initScripts(module, application, ie7) {
         appScripts += "<script type='text/javascript' src='" + application.scripts[i] + "'></script>" + nl;
     }
 
+    var appCss = "";
+    for (var i in application.css) {
+        appCss += "<link rel='stylesheet' type='text/css' href='" + application.css[i] + "'/>" + nl;
+    }
+
+    var ieHtml5 =
+        "<!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->" + nl +
+        "<!--[if lt IE 9]>" + nl +
+        "<script src='http://html5shim.googlecode.com/svn/trunk/html5.js'></script>" + nl +
+        "<![endif]-->";
+
     return "<!DOCTYPE html>" + nl +
         "<html>" + nl +
         "<head>" + nl +
-        appScripts + 
+        appScripts +
+        appCss +
         "<script type='text/javascript'>" + nl +
         (CONFIG.dev ? "// require.js reads this global property, if available" : "") + nl +
         "var require={" + nl +
@@ -30,6 +42,8 @@ function initScripts(module, application, ie7) {
         (ie7 ? "<script src='/" + CONFIG.operationKey + "/core/getClient/json2.js'></script>" + nl : "") +
         "<script src='/" + CONFIG.operationKey + "/core/getClient/require.js'></script>" + nl +
         "<script src='/" + CONFIG.operationKey + "/core/getClient/N.js'></script>" + nl +
+        "<meta http-equiv='content-type' content='text/html; charset=utf-8'/>" + nl +
+        ieHtml5 + nl +
         "</head>" + nl +
         "<body></body>" + nl +
         "</html>";

@@ -180,6 +180,12 @@
                 "http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js",
                 "/js/bootstrap.min.js"
             ],
+            "css": [
+                "css/font-awesome.min.css",
+                "css/bootstrap.min.css",
+                "css/screen.css",
+                "http://fonts.googleapis.com/css?family=Droid+Sans:400,700"
+            ],
             "roles": [
                 "#8:6"
             ]
@@ -1541,7 +1547,7 @@
                 "modules": {
                 }
             },
-            "css": ["css/font-awesome.min", "css/bootstrap.min", "css/screen"],
+            "css": [],
             "out": "#8:6",
             "in": "#10:6"
         },
