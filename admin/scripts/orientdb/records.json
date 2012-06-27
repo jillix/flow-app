@@ -375,6 +375,8 @@
             "out": [
                 "#15:71",
                 "#15:72",
+                "#15:73",
+                "#15:74",
                 "#17:4",
                 "#17:5",
                 "#17:6"
@@ -628,6 +630,26 @@
             "source": "bitbucket",
             "owner": "faeb187",
             "name": "list",
+            "latest": "latest"
+        },
+        {
+            "@type": "d",
+            "@rid": "#10:14",
+            "@version": 0,
+            "@class": "VModule",
+            "source": "bitbucket",
+            "owner": "faeb187",
+            "name": "table",
+            "latest": "latest"
+        },
+        {
+            "@type": "d",
+            "@rid": "#10:15",
+            "@version": 0,
+            "@class": "VModule",
+            "source": "bitbucket",
+            "owner": "faeb187",
+            "name": "detail",
             "latest": "latest"
         },
         {
@@ -1581,6 +1603,36 @@
         },
         {
             "@type": "d",
+            "@rid": "#15:73",
+            "@version": 0,
+            "@class": "EUsesInstanceOf",
+            "miid": "crm_table",
+            "version": "latest",
+            "html": {
+                "type": "a",
+                "path": "html/table"
+            },
+            "css": [],
+            "out": "#8:6",
+            "in": "#10:14"
+        },
+        {
+            "@type": "d",
+            "@rid": "#15:74",
+            "@version": 0,
+            "@class": "EUsesInstanceOf",
+            "miid": "crm_detail",
+            "version": "latest",
+            "html": {
+                "type": "a",
+                "path": "html/detail"
+            },
+            "css": [],
+            "out": "#8:6",
+            "in": "#10:15"
+        },
+        {
+            "@type": "d",
             "@rid": "#16:63",
             "@version": 0,
             "@class": "ECanPerform",
@@ -1641,6 +1693,24 @@
             "version": "latest",
             "out": "#8:6",
             "in": "#10:13"
+        },
+        {
+            "@type": "d",
+            "@rid": "#17:7",
+            "@version": 0,
+            "@class": "EHasAccessTo",
+            "version": "latest",
+            "out": "#8:6",
+            "in": "#10:14"
+        },
+        {
+            "@type": "d",
+            "@rid": "#17:8",
+            "@version": 0,
+            "@class": "EHasAccessTo",
+            "version": "latest",
+            "out": "#8:6",
+            "in": "#10:15"
         },
         {
             "@type": "d",
