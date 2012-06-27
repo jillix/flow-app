@@ -29,6 +29,7 @@
     ],
     "dependencies" : {
         "cookies"       : "*",
+        "bitbucket"     : "*",
         "forever"       : "*",
         "formidable"    : "*",
         "github"        : "*",
