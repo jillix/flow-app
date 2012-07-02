@@ -381,7 +381,19 @@
                 "#17:5",
                 "#17:6",
                 "#17:7",
-                "#17:8"
+                "#17:8",
+                "#16:64",
+                "#16:65",
+                "#16:66",
+                "#16:67",
+                "#16:68",
+                "#16:69",
+                "#16:70",
+                "#16:71",
+                "#16:72",
+                "#16:73",
+                "#16:74",
+                "#16:75"
             ]
         },
         {
@@ -475,6 +487,18 @@
         },
         {
             "@type": "d",
+            "@rid": "#9:10",
+            "@version": 0,
+            "@class": "VOperation",
+            "module": "github/adioo/list/d8b6a776c1698277bf270e2d2e65443dc6071059",
+            "file": "operations.js",
+            "method": "getData",
+            "in": [
+                "#16:42"
+            ]
+        },
+        {
+            "@type": "d",
             "@rid": "#9:11",
             "@version": 0,
             "@class": "VOperation",
@@ -489,15 +513,123 @@
         },
         {
             "@type": "d",
-            "@rid": "#9:10",
+            "@rid": "#9:12",
             "@version": 0,
             "@class": "VOperation",
-            "module": "github/adioo/list/d8b6a776c1698277bf270e2d2e65443dc6071059",
             "file": "operations.js",
-            "method": "getData",
-            "in": [
-                "#16:42"
-            ]
+            "method": "get",
+            "in": ["#16:64"],
+            "out": ["#18:5"]
+        },
+        {
+            "@type": "d",
+            "@rid": "#9:13",
+            "@version": 0,
+            "@class": "VOperation",
+            "file": "operations.js",
+            "method": "del",
+            "in": ["#16:65"],
+            "out": ["#18:6"]
+        },
+        {
+            "@type": "d",
+            "@rid": "#9:14",
+            "@version": 0,
+            "@class": "VOperation",
+            "file": "operations.js",
+            "method": "import",
+            "in": ["#16:66"],
+            "out": ["#18:7"]
+        },
+        {
+            "@type": "d",
+            "@rid": "#9:15",
+            "@version": 0,
+            "@class": "VOperation",
+            "file": "operations.js",
+            "method": "save",
+            "in": ["#16:67"],
+            "out": ["#18:8"]
+        },
+        {
+            "@type": "d",
+            "@rid": "#9:16",
+            "@version": 0,
+            "@class": "VOperation",
+            "file": "operations.js",
+            "method": "get",
+            "in": ["#16:68"],
+            "out": ["#18:9"]
+        },
+        {
+            "@type": "d",
+            "@rid": "#9:17",
+            "@version": 0,
+            "@class": "VOperation",
+            "file": "operations.js",
+            "method": "del",
+            "in": ["#16:69"],
+            "out": ["#18:10"]
+        },
+        {
+            "@type": "d",
+            "@rid": "#9:18",
+            "@version": 0,
+            "@class": "VOperation",
+            "file": "operations.js",
+            "method": "add",
+            "in": ["#16:70"],
+            "out": ["#18:11"]
+        },
+        {
+            "@type": "d",
+            "@rid": "#9:19",
+            "@version": 0,
+            "@class": "VOperation",
+            "file": "operations.js",
+            "method": "save",
+            "in": ["#16:71"],
+            "out": ["#18:12"]
+        },
+        {
+            "@type": "d",
+            "@rid": "#9:20",
+            "@version": 0,
+            "@class": "VOperation",
+            "file": "operations.js",
+            "method": "export",
+            "in": ["#16:72"],
+            "out": ["#18:13"]
+        },
+        {
+            "@type": "d",
+            "@rid": "#9:21",
+            "@version": 0,
+            "@class": "VOperation",
+            "file": "operations.js",
+            "method": "save",
+            "in": ["#16:73"],
+            "out": ["#18:14"]
+        },
+        {
+            "@type": "d",
+            "@rid": "#9:22",
+            "@version": 0,
+            "@class": "VOperation",
+            "file": "operations.js",
+            "method": "add",
+            "in": ["#16:74"],
+            "out": ["#18:15"]
+        },
+        {
+            "@type": "d",
+            "@rid": "#9:23",
+            "@version": 0,
+            "@class": "VOperation",
+            "file": "operations.js",
+            "method": "del",
+            "in": ["#16:75"],
+            "out": ["#18:16"]
         },
         {
             "@type": "d",
@@ -632,7 +764,13 @@
             "source": "bitbucket",
             "owner": "faeb187",
             "name": "list",
-            "latest": "latest"
+            "latest": "latest",
+            "in": [
+                "#18:5",
+                "#18:6",
+                "#18:7",
+                "#18:8"
+            ]
         },
         {
             "@type": "d",
@@ -642,7 +780,14 @@
             "source": "bitbucket",
             "owner": "faeb187",
             "name": "table",
-            "latest": "latest"
+            "latest": "latest",
+            "in": [
+                "#18:9",
+                "#18:10",
+                "#18:11",
+                "#18:12",
+                "#18:13"
+            ]
         },
         {
             "@type": "d",
@@ -652,7 +797,12 @@
             "source": "bitbucket",
             "owner": "faeb187",
             "name": "detail",
-            "latest": "latest"
+            "latest": "latest",
+            "in": [
+                "#18:14",
+                "#18:15",
+                "#18:16"
+            ]
         },
         {
             "@type": "d",
@@ -1646,6 +1796,114 @@
         },
         {
             "@type": "d",
+            "@rid": "#16:64",
+            "@version": 0,
+            "@class": "ECanPerform",
+            "miid": "crm_list",
+            "out": "#8:6",
+            "in": "#9:12"
+        },
+        {
+            "@type": "d",
+            "@rid": "#16:65",
+            "@version": 0,
+            "@class": "ECanPerform",
+            "miid": "crm_list",
+            "out": "#8:6",
+            "in": "#9:13"
+        },
+        {
+            "@type": "d",
+            "@rid": "#16:66",
+            "@version": 0,
+            "@class": "ECanPerform",
+            "miid": "crm_list",
+            "out": "#8:6",
+            "in": "#9:14"
+        },
+        {
+            "@type": "d",
+            "@rid": "#16:67",
+            "@version": 0,
+            "@class": "ECanPerform",
+            "miid": "crm_list",
+            "out": "#8:6",
+            "in": "#9:15"
+        },
+        {
+            "@type": "d",
+            "@rid": "#16:68",
+            "@version": 0,
+            "@class": "ECanPerform",
+            "miid": "crm_table",
+            "out": "#8:6",
+            "in": "#9:16"
+        },
+        {
+            "@type": "d",
+            "@rid": "#16:69",
+            "@version": 0,
+            "@class": "ECanPerform",
+            "miid": "crm_table",
+            "out": "#8:6",
+            "in": "#9:17"
+        },
+        {
+            "@type": "d",
+            "@rid": "#16:70",
+            "@version": 0,
+            "@class": "ECanPerform",
+            "miid": "crm_table",
+            "out": "#8:6",
+            "in": "#9:18"
+        },
+        {
+            "@type": "d",
+            "@rid": "#16:71",
+            "@version": 0,
+            "@class": "ECanPerform",
+            "miid": "crm_table",
+            "out": "#8:6",
+            "in": "#9:19"
+        },
+        {
+            "@type": "d",
+            "@rid": "#16:72",
+            "@version": 0,
+            "@class": "ECanPerform",
+            "miid": "crm_table",
+            "out": "#8:6",
+            "in": "#9:20"
+        },
+        {
+            "@type": "d",
+            "@rid": "#16:73",
+            "@version": 0,
+            "@class": "ECanPerform",
+            "miid": "crm_detail",
+            "out": "#8:6",
+            "in": "#9:21"
+        },
+        {
+            "@type": "d",
+            "@rid": "#16:74",
+            "@version": 0,
+            "@class": "ECanPerform",
+            "miid": "crm_detail",
+            "out": "#8:6",
+            "in": "#9:22"
+        },
+        {
+            "@type": "d",
+            "@rid": "#16:75",
+            "@version": 0,
+            "@class": "ECanPerform",
+            "miid": "crm_detail",
+            "out": "#8:6",
+            "in": "#9:23"
+        },
+        {
+            "@type": "d",
             "@rid": "#17:1",
             "@version": 0,
             "@class": "EHasAccessTo",
@@ -1760,6 +2018,114 @@
             "version": "50b44365b00c463142a2a01ad2b585a92e240a39",
             "out": "#9:11",
             "in": "#10:12"
+        },
+        {
+            "@type": "d",
+            "@rid": "#18:5",
+            "@version": 0,
+            "@class": "EBelongsTo",
+            "version": "50b44365b00c463142a2a01ad2b585a92e240a39",
+            "out": "#9:12",
+            "in": "#10:13"
+        },
+        {
+            "@type": "d",
+            "@rid": "#18:6",
+            "@version": 0,
+            "@class": "EBelongsTo",
+            "version": "50b44365b00c463142a2a01ad2b585a92e240a39",
+            "out": "#9:13",
+            "in": "#10:13"
+        },
+        {
+            "@type": "d",
+            "@rid": "#18:7",
+            "@version": 0,
+            "@class": "EBelongsTo",
+            "version": "50b44365b00c463142a2a01ad2b585a92e240a39",
+            "out": "#9:14",
+            "in": "#10:13"
+        },
+        {
+            "@type": "d",
+            "@rid": "#18:8",
+            "@version": 0,
+            "@class": "EBelongsTo",
+            "version": "50b44365b00c463142a2a01ad2b585a92e240a39",
+            "out": "#9:15",
+            "in": "#10:13"
+        },
+        {
+            "@type": "d",
+            "@rid": "#18:9",
+            "@version": 0,
+            "@class": "EBelongsTo",
+            "version": "50b44365b00c463142a2a01ad2b585a92e240a39",
+            "out": "#9:16",
+            "in": "#10:14"
+        },
+        {
+            "@type": "d",
+            "@rid": "#18:10",
+            "@version": 0,
+            "@class": "EBelongsTo",
+            "version": "50b44365b00c463142a2a01ad2b585a92e240a39",
+            "out": "#9:17",
+            "in": "#10:14"
+        },
+        {
+            "@type": "d",
+            "@rid": "#18:11",
+            "@version": 0,
+            "@class": "EBelongsTo",
+            "version": "50b44365b00c463142a2a01ad2b585a92e240a39",
+            "out": "#9:18",
+            "in": "#10:14"
+        },
+        {
+            "@type": "d",
+            "@rid": "#18:12",
+            "@version": 0,
+            "@class": "EBelongsTo",
+            "version": "50b44365b00c463142a2a01ad2b585a92e240a39",
+            "out": "#9:19",
+            "in": "#10:14"
+        },
+        {
+            "@type": "d",
+            "@rid": "#18:13",
+            "@version": 0,
+            "@class": "EBelongsTo",
+            "version": "50b44365b00c463142a2a01ad2b585a92e240a39",
+            "out": "#9:20",
+            "in": "#10:14"
+        },
+        {
+            "@type": "d",
+            "@rid": "#18:14",
+            "@version": 0,
+            "@class": "EBelongsTo",
+            "version": "50b44365b00c463142a2a01ad2b585a92e240a39",
+            "out": "#9:21",
+            "in": "#10:15"
+        },
+        {
+            "@type": "d",
+            "@rid": "#18:15",
+            "@version": 0,
+            "@class": "EBelongsTo",
+            "version": "50b44365b00c463142a2a01ad2b585a92e240a39",
+            "out": "#9:22",
+            "in": "#10:15"
+        },
+        {
+            "@type": "d",
+            "@rid": "#18:16",
+            "@version": 0,
+            "@class": "EBelongsTo",
+            "version": "50b44365b00c463142a2a01ad2b585a92e240a39",
+            "out": "#9:23",
+            "in": "#10:15"
         }
     ]
 }
