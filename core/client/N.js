@@ -390,15 +390,11 @@ var N = {
             // cache result
             self.modCache[miid] = response;
             
-            target.style.display = "none";
-            
             var div = document.createElement("div");
             
             // add miid to html
             div.setAttribute("id", miid);
             
-            // TODO show loader
-
             if (response.html) {
                 div.innerHTML = response.html;
             }
@@ -411,7 +407,6 @@ var N = {
             // TODO handle requirejs errors
             require.onError = function(err){
                 
-                target.style.display = "block";
                 callback(err, null);
             };
 
@@ -434,11 +429,9 @@ var N = {
                     }, response.conf);
                 }
 
-                // TODO: hide loader
                 // TODO: init state
                 
                 target.appendChild(div);
-                target.style.display = "block";
 
                 callback(null);
             });
