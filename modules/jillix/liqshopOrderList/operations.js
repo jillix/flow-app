@@ -21,7 +21,14 @@ exports.getBranches = function(link) {
             var sessionData = link.session.data || {};
 
             if (sessionData.branch) {
-                branchFilter = { "short" : sessionData.branch.toString() };
+
+                var splits = sessionData.branch.split(",");
+
+                if (splits.length > 1) {
+                    branchFilter = { "short" : splits[0] };
+                } else {
+                    branchFilter = { "short" : sessionData.branch };
+                }
             }
             
             db.find(branchFilter).toArray(function(err, docs) {
@@ -67,8 +74,10 @@ exports.getOrders = function(link) {
         // branch filtering
         var branch = userBranch || (queryObj.branch !== "0" ? queryObj.branch : "");
         if (branch) {
+
             // DD Marketing need to see all D* + Lauper order items
             var splits = branch.split(",");
+
             if (splits.length > 1) {
                 archiveFilter["$elemMatch"].branch = { "$in": splits };
             } else {
@@ -140,7 +149,7 @@ exports.getOrders = function(link) {
 
                     var item  = order.items[j];
 
-                    if (!branch || branch && item.branch === branch) {
+                    if (!branch || (branch && branch.indexOf(item.branch) > -1)) {
                         items.push(item);
                     }
                 }
