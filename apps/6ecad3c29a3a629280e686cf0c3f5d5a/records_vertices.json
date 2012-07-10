@@ -1,0 +1,85 @@
+{"records":[
+
+{
+    "@type": "d",
+    "@rid": "#12:0",
+    "@version": 0,
+    "@class": "VDomain",
+    "name": "develop.jillix.com",
+    "app": "#11:0"
+},
+{
+    "@type": "d",
+    "@rid": "#11:0",
+    "@version": 0,
+    "@class": "VApplication",
+    "id": "6ecad3c29a3a629280e686cf0c3f5d5a",
+    "name": "MonoAdmin",
+    "routes": {
+        "admin": "develop_modules",
+        "*": {
+            "/": "develop_user",
+            "apps": "develop_apps"
+        },
+        "/": "develop_login"
+    },
+    "publicUser": "#7:0",
+    "publicDir": "publicFiles",
+    "error": "develop_login"
+},
+{
+    "@type": "d",
+    "@rid": "#7:0",
+    "@version": 0,
+    "@class": "VUser",
+    "username": "anonymous",
+    "password": "",
+    "data": {
+        "fullname": "MonoAdmin Public"
+    },
+    "out": ["#14:0"]
+},
+{
+    "@type": "d",
+    "@rid": "#7:1",
+    "@version": 0,
+    "@class": "VUser",
+    "username": "admin",
+    "password": "3cc849279ba298b587a34cabaeffc5ecb3a044bbf97c516fab7ede9d1af77cfa",
+    "data": {
+        "fullname": "MonoAdmin"
+    },
+    "out": ["#14:1", "#14:2"]
+},
+{
+    "@type": "d",
+    "@rid": "#8:0",
+    "@version": 0,
+    "@class": "VRole",
+    "name": "MonoAdmin Public",
+    "app": "#11:0",
+    "in": ["#14:0", "#14:2"],
+    "out": ["#17:0"]
+},
+{
+    "@type": "d",
+    "@rid": "#8:1",
+    "@version": 0,
+    "@class": "VRole",
+    "name": "MonoAdmin",
+    "app": "#11:0",
+    "in": ["#14:1"],
+    "out": [
+        "#17:1",
+        "#17:2",
+        "#17:3",
+        "#17:4",
+        "#15:0",
+        "#15:1",
+        "#15:2",
+        "#15:3",
+        "#15:4"
+    ]
+}
+
+]}

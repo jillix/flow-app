@@ -1,0 +1,10 @@
+{
+    "dependencies": {
+        
+        "github/adioo/bind":    "bf98a5b73189be6c4670d97f97fc46f7d62d543a",
+        "github/adioo/layout":  "47ac820d36a4a2e5be393b2d67028d5acf827ad7",
+        "github/adioo/tab":     "82cf7231581076b4c616e053e7e8b62188695417",
+        "github/adioo/list":    "d8b6a776c1698277bf270e2d2e65443dc6071059",
+        "github/adioo/form":    "c26cbd9cbd6b150d1e8f2c2c6ad6d3ce4dfac746"
+    }
+}
