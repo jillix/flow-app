@@ -84,6 +84,8 @@ var N = {
 
                     events[name].push(method);
                 }
+                
+                return this;
             },
 
             //Fire Event
@@ -105,6 +107,8 @@ var N = {
                         }
                     }
                 }
+                
+                return this;
             },
 
             //Remove Event
@@ -127,6 +131,8 @@ var N = {
                         delete this.e[event];
                     }
                 }
+                
+                return this;
             }
         },
 
