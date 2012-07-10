@@ -418,7 +418,7 @@ var N = {
                 // init module
                 if (typeof module === "function") {
                     
-                    module.call({
+                    module = module.call({
                         
                         dom:    div,
                         obs:    N.obs(miid),
@@ -433,7 +433,7 @@ var N = {
                 
                 target.appendChild(div);
 
-                callback(null);
+                callback(module);
             });
         };
         
