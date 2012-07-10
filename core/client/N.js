@@ -423,7 +423,7 @@ var N = {
                 // init module
                 if (typeof module === "function") {
                     
-                    module.call({
+                    module = module.call({
                         
                         dom:    div,
                         obs:    N.obs(miid),
@@ -440,7 +440,7 @@ var N = {
                 target.appendChild(div);
                 target.style.display = "block";
 
-                callback(null);
+                callback(module);
             });
         };
         
