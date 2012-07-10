@@ -1,12 +1,11 @@
-var fs = require("fs"),
-    cp = require('child_process');
+var fs = require("fs");
+var cp = require("child_process");
 
 var db = require(CONFIG.root + "/core/model/orient.js");
 
+var MODULE_ROOT = CONFIG.root + "/modules/";
 
-/*
-    Clones a git repo to a certain directory. The directory must exist
-*/
+
 function gitClone(url, dirName, baseName, callback) {
 
     fs.exists(dirName + "/" + baseName, function(exists) {
@@ -54,7 +53,7 @@ function gitReset(repoDir, commit, callback) {
 function addModuleDir(source, owner, module, callback) {
 
     var options = {
-        cwd: CONFIG.root + "/modules"
+        cwd: MODULE_ROOT
     };
     var mkdir = cp.spawn("mkdir", ["-p", source + "/" + owner + "/" + module], options);
 
@@ -68,6 +67,58 @@ function addModuleDir(source, owner, module, callback) {
 }
 
 
+function findLatestCommit(module, callback) {
+
+    var git = cp.spawn("git", ["ls-remote", module.getGitUrl(), "HEAD"]);
+
+    var out = "";
+
+    git.stdout.on("data", function(data) {
+        out += data.toString();
+    });
+
+    git.stderr.on("data", function() {});
+
+    git.on("exit", function(code) {
+
+        if (code || !out || out.length < 40) {
+            return callback({ error: "Failed to retrieve module latest commit ID for module: " + module.getModulePath(), code: 207 });
+        }
+        callback(null, out.substr(0, 40));
+    });
+
+}
+
+function cloneModuleVersion(module, callback) {
+
+    var url = module.getGitUrl();
+    if (!url) {
+        return callback({ error: "Invalid source: " + module.source, code: 204 });
+    }
+
+    var version = module.version === "latest" ? module.latest : module.version;
+
+    if (!version || version === "latest") {
+        return callback({ error: "Invalid module latest version resolution: " + module.getVersionPath(), code: 209 });
+    }
+
+    var dirName = MODULE_ROOT + module.getModulePath();
+
+    // clone the repo now from url, in the target directory, in a directory having the version name
+    gitClone(url, dirName, version, function(err) {
+
+        if (err) { return callback(err) };
+
+        if (module.version === "latest") {
+            // make this version the latest one
+            setLatestVersion(module, callback);
+        } else {
+            // reset to this version
+            gitReset(dirName + "/" + version, version, callback);
+        }
+    });
+}
+
 // ************** API **************
 
 function fetchModule(module, callback) {
@@ -75,36 +126,35 @@ function fetchModule(module, callback) {
     addModuleDir(module.source, module.owner, module.name, function(err) {
 
         if (err) { return callback(err); }
-    
-        var dirName = CONFIG.root + "/modules/" + module.source + "/" + module.owner + "/" + module.name;
-        var url = null;
-        switch (module.source) {
-            case "github":
-                url = "https://github.com/" + module.owner + "/" + module.name + ".git";
-                break;
-            case "bitbucket":
-                url = "git@bitbucket.org:" + module.owner + "/" + module.name.toLowerCase() + ".git";
-                break;
-            default:
-                callback({ error: "Invalid source: " + module.source, code: 204});
-                return;
+
+        if (module.version !== "latest") {
+            // for fixed version modules, just clone
+            cloneModuleVersion(module, callback);
+            return;
+        } else {
+            // for sliding version modules, get the latest
+            findLatestCommit(module, function(err, commit) {
+
+                if (err) { return callback(err); }
+
+                module.latest = commit;
+
+                // if this commit version is already present, just make sure we have the latest symlink
+                if (fs.existsSync(MODULE_ROOT + module.getModulePath() + "/" + commit)) {
+                    setLatestVersion(module, callback);
+                    return;
+                }
+
+                cloneModuleVersion(module, callback);
+            });
         }
-
-        // clone the repo first
-        gitClone(url, dirName, module.version, function(err) {
-
-            if (err) { return callback(err) };
-
-            // reset to this version (commit)
-            gitReset(dirName + "/" + module.version, module.version, callback);
-        });
     });
 }
 
 function removeModule(module, callback) {
 
     var options = {
-        cwd: CONFIG.root + "/modules/"
+        cwd: MODULE_ROOT
     };
     var git = cp.spawn("rm", ["-Rf", module.getVersionPath()], options);
 
@@ -118,7 +168,7 @@ function removeModule(module, callback) {
 
 function getModuleOperations(module, callback) {
 
-    fs.readFile(CONFIG.root + "/modules/" + module.getVersionPath() + "/mono.json", function (err, data) {
+    fs.readFile(MODULE_ROOT + module.getVersionPath() + "/mono.json", function (err, data) {
 
         if (err) { return callback("Error while reading the mono.json file for module " + module.getVersionPath()) };
 
@@ -135,12 +185,18 @@ function getModuleOperations(module, callback) {
             var mono = JSON.parse(data);
             callback(null, mono.operations || []);
         } catch (err) {
+            console.dir(err);
             callback("Invalid mono.json in module " + module.getVersionPath());
         }
     });
 }
 
 function installModule(module, callback) {
+
+    if (fs.existsSync(MODULE_ROOT + module.getVersionPath())) {
+        console.log("Skipping " + module.getVersionPath());
+        return callback();
+    }
 
     fetchModule(module, function(err) {
 
@@ -177,11 +233,10 @@ function uninstallModule(module, callback) {
 function setLatestVersion(module, callback) {
 
     var options = {
-        cwd: CONFIG.root + "/modules/"
+        cwd: MODULE_ROOT + module.getModulePath()
     };
-    var ln = cp.spawn("ln", ["-shf", module.version, module.getModulePath() + "/latest"], options);
+    var ln = cp.spawn("ln", ["-shf", module.latest, "latest"], options);
 
-    // TODO the order is important: create latest link and 
     ln.on("exit", function(code) {
         if (code) {
             return callback({ error: "ln error: ln exited with code " + code, code: 210 });
@@ -190,59 +245,11 @@ function setLatestVersion(module, callback) {
     });
 }
 
-// = = = = = = = = = = = = = = = = = = = = 
 
-//
-// TODO is there a way to reserve IDs in Orient to poulate bulk import scripts?
-//
-
-/*
-    Takes an application descriptor and deploys an application.
-    If description.application.appId exists already, redeploy the app.
-    If description.application.appId does not exists, deploy a new app.
-
-    {
-        application: {
-            _id: ?
-            appId:
-        }
-    }
-*/
-function deployApplication(descriptor, callback) {
-
-}
-
-/*
-    Removes a deployed application havin the given appId.
-*/
-function undeployApplication(appId, callback) {
-
-}
-
-/*
-    {
-        users: [
-            {
-                _did: 1001
-                _id: ?
-                ...
-            }
-        ],
-    }
-*/
-function createUsers(descriptor, callback) {
-
-}
-
-// = = = = = = = = = = = = = = = = = = = = 
-
-
-exports.deployApplication = deployApplication;
 exports.fetchModule = fetchModule;
 exports.removeModule = removeModule;
 exports.installModule = installModule;
 exports.uninstallModule = uninstallModule;
-
 exports.setLatestVersion = setLatestVersion;
 
 exports.Module = function(source, owner, name, version) {
@@ -260,6 +267,17 @@ exports.Module = function(source, owner, name, version) {
         return getModulePath() + "/" + version;
     }
     
+    function getGitUrl() {
+        switch (source) {
+            case "github":
+                return "https://github.com/" + owner + "/" + name + ".git";
+            case "bitbucket":
+                return "git@bitbucket.org:" + owner + "/" + name.toLowerCase() + ".git";
+            default:
+                return null;
+        }
+    }
+
     return {
         source: source,
         owner: owner,
@@ -267,7 +285,8 @@ exports.Module = function(source, owner, name, version) {
         version: version,
 
         getModulePath: getModulePath,
-        getVersionPath: getVersionPath
+        getVersionPath: getVersionPath,
+        getGitUrl: getGitUrl
     }
 };
 

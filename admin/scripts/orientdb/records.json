@@ -619,7 +619,7 @@
             "source": "github",
             "owner": "gabipetrovay",
             "name": "github_display",
-            "latest": "50b44365b00c463142a2a01ad2b585a92e240a39",
+            "latest": "e2d0e0dd58078884f3059a6b3c4f5bd5733c66c2",
             "in": [
                 "#18:4"
             ]
@@ -1558,7 +1558,7 @@
             "@version": 0,
             "@class": "EUsesInstanceOf",
             "miid": "github_display",
-            "version": "50b44365b00c463142a2a01ad2b585a92e240a39",
+            "version": "latest",
             "html": {
                 "type": "a",
                 "path": "html/github"
@@ -1649,7 +1649,7 @@
             "@rid": "#17:1",
             "@version": 0,
             "@class": "EHasAccessTo",
-            "version": "50b44365b00c463142a2a01ad2b585a92e240a39",
+            "version": "latest",
             "out": "#8:5",
             "in": "#10:12"
         },
@@ -1757,7 +1757,7 @@
             "@rid": "#18:4",
             "@version": 0,
             "@class": "EBelongsTo",
-            "version": "50b44365b00c463142a2a01ad2b585a92e240a39",
+            "version": "latest",
             "out": "#9:11",
             "in": "#10:12"
         }

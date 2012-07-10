@@ -34,6 +34,15 @@ function openDbConnection(callback) {
 
 openDbConnection(function() {
 
+    var descriptor = {
+        dependencies: {
+            "github/gabipetrovay/github": "latest"
+        }
+    };
+
+    apps.installDependencies(descriptor, callback) {
+        // TODO continue
+    }
     // add mono modules as submodules
     model.getModuleUsedVersions(function(err, modules) {
 
