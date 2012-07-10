@@ -24,8 +24,8 @@
 
     display:block;
     float:left;
-    width:170px;
-    margin-left:5px;
+    width: 170px;
+    margin-right: 5px;
 }
 
 #orderDetail label.title {
@@ -42,3 +42,24 @@
     height: 20px;
 }
 
+#orderItems tr label, #orderItemsDone tr label {
+    width: auto;
+    margin: 0 5px;
+}
+#orderItems tr, #orderItemsDone tr {
+   border-bottom: solid 1px rgb(154,154,154);
+}
+
+#orderItems td, #orderItemsDone td {
+   margin-right: 5px;
+   border-right: solid 1px rgb(154,154,154);
+}
+
+#orderItems td input, #orderItemsDone td input {
+
+   margin-left: 10px;
+}
+
+.red {
+    color: red;
+}

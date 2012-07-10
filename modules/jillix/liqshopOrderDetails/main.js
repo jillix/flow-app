@@ -82,6 +82,10 @@ define(["./jquery.min"], function() {
 
         $("#noItmSel").hide();
         $("#orderDetail").show();
+        if (order._c.length == 8) {
+	    $("#hbInfo").show();
+	    $("#zuhand").show();
+        }
 
         cachedOrder = order;
 
@@ -95,6 +99,8 @@ define(["./jquery.min"], function() {
 
         $("#noItmSel").show();
         $("#orderDetail").hide();
+        $("#hbInfo").hide();
+        $("#zuhand").hide();
 
         cachedOrder = null;
 
@@ -223,10 +229,11 @@ define(["./jquery.min"], function() {
         branch: { en: "Branch", de: "Filiale", fr: "Branche" },
         show:   { en: "Show", de: "Zeige", fr: "Voir" },
         all:    { en: "All", de: "Alle", fr: "Tous" },
-        new:    { en: "New", de: "Neu", fr: "Nouveaux" },
+        "new":    { en: "New", de: "Neu", fr: "Nouveaux" },
         archived: { en: "Archived", de: "Archiviert", fr: "Archivés" },
 
         // details
+        hbInfoText: { en: "Please ...", de: "Bitte Warenkorb erstellen und den Betrag mit der Artikel-Nr. GU HAPPY BONUS wieder gutschreiben", fr: "Sil vu ple" },
         orderNr:    { en: "Order No.", de: "Bestell-Nr", fr: "Numéro d'ordre" },
         orderDate:  { en: "Order Date", de: "Bestelleingang", fr: "Date d'ordre" },
         customer:   { en: "Customer", de: "Kunde", fr: "Client" },
@@ -235,6 +242,7 @@ define(["./jquery.min"], function() {
         zip:        { en: "ZIP", de: "PLZ", fr: "ZIP" },
         city:       { en: "City", de: "Ort", fr: "Ville" },
         customerNo: { en: "Customer No.", de: "Kunden-Nr.", fr: "Numéro de client" },
+        moreInfo:   { en: "For the attention of", de: "Zu Handen von", fr: "À l'attention de" },
         unprocessedItems: { en: "Unprocessed Items", de: "Unbearbeitete Artikel", fr: "Articles non traités" },
         processedItems: { en: "Processed Items", de: "Bearbeitete Artikel", fr: "Articles traités" },
         archiveAll: { en: "Archive all articles", de: "Alle Artikel archivieren", fr: "Archiver tous les articles" },

@@ -58,6 +58,11 @@ ul.bar li {
     line-height:    31px;
 }
 
+#liqshop_order_list ul.top li {
+    
+    font-size: 10px;
+}
+
 ul.bar li.right {
     
     float: right;

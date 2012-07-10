@@ -10,7 +10,9 @@ define(["./jquery.min"], function() {
 
         userInput = $("#pub", self.dom);
         passInput = $("#pwd", self.dom);
-
+	
+	document.title = config && config.title ? config.title : "Login";
+	
         $("#btn", self.dom).click(function() {
 
             var user = userInput.val();

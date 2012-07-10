@@ -23,7 +23,7 @@ exports.getBranches = function(link) {
             if (sessionData.branch) {
                 branchFilter = { "short" : sessionData.branch.toString() };
             }
-
+            
             db.find(branchFilter).toArray(function(err, docs) {
 
                 if (err) {
@@ -67,7 +67,13 @@ exports.getOrders = function(link) {
         // branch filtering
         var branch = userBranch || (queryObj.branch !== "0" ? queryObj.branch : "");
         if (branch) {
-            archiveFilter["$elemMatch"].branch = branch;
+            // DD Marketing need to see all D* + Lauper order items
+            var splits = branch.split(",");
+            if (splits.length > 1) {
+                archiveFilter["$elemMatch"].branch = { "$in": splits };
+            } else {
+                archiveFilter["$elemMatch"].branch = branch;
+            }
         }
 
         // archive filtering
@@ -90,7 +96,7 @@ exports.getOrders = function(link) {
             "items": archiveFilter
         }
 
-        //console.log(JSON.stringify(mongoQuery));
+        console.log(JSON.stringify(mongoQuery));
 
         db.find(mongoQuery).toArray(function(err, docs) {
 

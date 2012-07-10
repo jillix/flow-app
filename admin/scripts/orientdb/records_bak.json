@@ -1,0 +1,1259 @@
+{
+    "records": [
+        {
+            "@type": "d",
+            "@rid": "#7:0",
+            "@version": 0,
+            "@class": "VUser",
+            "username": "anonymous",
+            "password": "",
+            "data": {
+                "fullname": "MonoAdmin Public User"
+            },
+            "out": [
+                "#6:0"
+            ]
+        },
+        {
+            "@type": "d",
+            "@rid": "#7:1",
+            "@version": 0,
+            "@class": "VUser",
+            "username": "admin",
+            "password": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
+            "data": {
+                "fullname": "MonoAdmin Admin"
+            },
+            "out": [
+                "#6:1",
+                "#6:2"
+            ]
+        },
+        {
+            "@type": "d",
+            "@rid": "#7:2",
+            "@version": 0,
+            "@class": "VUser",
+            "username": "anonymous",
+            "password": "",
+            "data": {
+                "fullname": "Liqshop Public User"
+            },
+            "out": [
+                "#6:19"
+            ]
+        },
+        {
+            "@type": "d",
+            "@rid": "#7:3",
+            "@version": 0,
+            "@class": "VUser",
+            "username": "ddaarau",
+            "password": "3cc849279ba298b587a34cabaeffc5ecb3a044bbf97c516fab7ede9d1af77cfa",
+            "data": {
+                "fullname": "DD | Aarau",
+                "language": "de",
+                "session": {
+                    "branch": "AA"
+                }
+            },
+            "out": [
+                "#6:20",
+                "#6:21"
+            ]
+        },
+        {
+            "@type": "d",
+            "@rid": "#7:4",
+            "@version": 0,
+            "@class": "VUser",
+            "username": "sagadmin",
+            "password": "3cc849279ba298b587a34cabaeffc5ecb3a044bbf97c516fab7ede9d1af77cfa",
+            "data": {
+                "fullname": "Liqshop Admin",
+                "language": "en"
+            },
+            "out": [
+                "#6:22",
+                "#6:23",
+                "#6:24"
+            ]
+        },
+        {
+            "@type": "d",
+            "@rid": "#11:0",
+            "@version": 0,
+            "@class": "VApplication",
+            "id": "6ecad3c29a3a629280e686cf0c3f5d5a",
+            "name": "Mono Dev App",
+            "routes": {
+                "/": "mono_admin",
+                "editor": "mono_editor_1",
+                "stdl": "mono_stdl_list_1"
+            },
+            "publicUser": "#7:0",
+            "publicDir": "pub",
+            "roles": [
+                "#8:0",
+                "#8:1"
+            ]
+        },
+        {
+            "@type": "d",
+            "@rid": "#11:1",
+            "@version": 0,
+            "@class": "VApplication",
+            "id": "1898d7aa981f11e19f213e956188709b",
+            "name": "Liqshop Orders",
+            "routes": {
+                "/": "liqshop_layout"
+            },
+            "publicUser": "#7:2",
+            "publicDir": "public",
+            "error": "liqshop_order_login",
+            "roles": [
+                "#8:2",
+                "#8:3",
+                "#8:4"
+            ]
+        },
+        {
+            "@type": "d",
+            "@rid": "#12:0",
+            "@version": 0,
+            "@class": "VDomain",
+            "name": "127.0.0.1",
+            "application": "#11:0"
+        },
+        {
+            "@type": "d",
+            "@rid": "#12:1",
+            "@version": 0,
+            "@class": "VDomain",
+            "name": "liqshop.ch",
+            "application": "#11:1"
+        },
+        {
+            "@type": "d",
+            "@rid": "#12:2",
+            "@version": 0,
+            "@class": "VDomain",
+            "name": "176.34.110.184",
+            "application": "#11:1"
+        },
+        {
+            "@type": "d",
+            "@rid": "#8:0",
+            "@version": 0,
+            "@class": "VRole",
+            "name": "Mono Public",
+            "app": "#11:0",
+            "in": [
+                "#6:0",
+                "#6:1"
+            ],
+            "out": [
+                "#6:13",
+                "#6:6",
+                "#6:8",
+                "#6:10",
+                "#6:11",
+                "#6:12",
+                "#6:27",
+                "#6:28",
+                "#6:29",
+                "#6:30",
+                "#6:31",
+                "#6:32",
+                "#6:33",
+                "#6:34",
+                "#6:35",
+                "#6:36",
+                "#6:37",
+                "#6:38",
+                "#6:39",
+                "#6:40",
+                "#6:41",
+                "#6:42",
+                "#6:43",
+                "#6:44",
+                "#6:45",
+                "#6:46",
+                "#6:47",
+                "#6:48",
+                "#6:49",
+                "#6:50",
+                "#6:51",
+                "#6:52",
+                "#6:53",
+                "#6:54",
+                "#6:55",
+                "#6:56",
+                "#6:57"
+            ]
+        },
+        {
+            "@type": "d",
+            "@rid": "#8:1",
+            "@version": 0,
+            "@class": "VRole",
+            "name": "Mono Admin",
+            "app": "#11:0",
+            "in": [
+                "#6:2"
+            ]
+        },
+        {
+            "@type": "d",
+            "@rid": "#8:2",
+            "@version": 0,
+            "@class": "VRole",
+            "name": "Liqshop Public Role",
+            "app": "#11:1",
+            "in": [
+                "#6:19",
+                "#6:20",
+                "#6:22"
+            ],
+            "out": [
+                "#6:26",
+
+                "#6:25"
+            ]
+        },
+        {
+            "@type": "d",
+            "@rid": "#8:3",
+            "@version": 0,
+            "@class": "VRole",
+            "name": "Liqshop Branch Role",
+            "app": "#11:1",
+            "in": [
+                "#6:21",
+                "#6:23"
+            ],
+            "out": [
+                "#6:9",
+                "#6:17",
+                "#6:18",
+
+                "#6:14",
+                "#6:15",
+                "#6:16"
+            ]
+        },
+        {
+            "@type": "d",
+            "@rid": "#8:4",
+            "@version": 0,
+            "@class": "VRole",
+            "name": "Liqshop Admin Role",
+            "app": "#11:1",
+            "in": [
+                "#6:24"
+            ]
+        },
+        {
+            "@type": "d",
+            "@rid": "#9:3",
+            "@version": 0,
+            "@class": "VOperation",
+            "module": "faeb187/stdl.list",
+            "file": "ops.js",
+            "method": "getData",
+            "in": [
+                "#6:13"
+            ]
+        },
+        {
+            "@type": "d",
+            "@rid": "#9:4",
+            "@version": 0,
+            "@class": "VOperation",
+            "module": "jillix/liqshopOrderList",
+            "file": "operations.js",
+            "method": "getOrders",
+            "in": [
+                "#6:9"
+            ]
+        },
+        {
+            "@type": "d",
+            "@rid": "#9:5",
+            "@version": 0,
+            "@class": "VOperation",
+            "module": "jillix/liqshopOrderList",
+            "file": "operations.js",
+            "method": "getBranches",
+            "in": [
+                "#6:17"
+            ]
+        },
+        {
+            "@type": "d",
+            "@rid": "#9:6",
+            "@version": 0,
+            "@class": "VOperation",
+            "module": "jillix/liqshopOrderDetails",
+            "file": "operations.js",
+            "method": "archiveItem",
+            "in": [
+                "#6:18"
+            ]
+        },
+        {
+            "@type": "d",
+            "@rid": "#9:7",
+            "@version": 0,
+            "@class": "VOperation",
+            "module": "jillix/liqshopOrderLogin",
+            "file": "operations.js",
+            "method": "login",
+            "in": [
+                "#6:26"
+            ]
+        },
+        {
+            "@type": "d",
+            "@rid": "#9:8",
+            "@version": 0,
+            "@class": "VOperation",
+            "module": "adioo/tab",
+            "file": "operations.js",
+            "method": "getData",
+            "in": [
+                "#6:27"
+            ]
+        },
+        {
+            "@type": "d",
+            "@rid": "#9:9",
+            "@version": 0,
+            "@class": "VOperation",
+            "module": "adioo/form",
+            "file": "operations.js",
+            "method": "saveData",
+            "in": []
+        },
+        {
+            "@type": "d",
+            "@rid": "#9:10",
+            "@version": 0,
+            "@class": "VOperation",
+            "module": "adioo/list",
+            "file": "operations.js",
+            "method": "getData",
+            "in": [
+                "#6:42"
+            ]
+        },
+        {
+            "@type": "d",
+            "@rid": "#10:1",
+            "@version": 0,
+            "@class": "VModule",
+            "owner": "jillix",
+            "name": "editor",
+            "dir": "client",
+            "library": false,
+            "in": [
+                "#6:6"
+            ]
+        },
+        {
+            "@type": "d",
+            "@rid": "#10:2",
+            "@version": 0,
+            "@class": "VModule",
+            "owner": "ajaxorg",
+            "name": "ace",
+            "dir": "lib/ace",
+            "library": true
+        },
+        {
+            "@type": "d",
+            "@rid": "#10:3",
+            "@version": 0,
+            "@class": "VModule",
+            "owner": "faeb187",
+            "name": "stdl.list",
+            "dir": "js/client",
+            "library": false,
+            "in": [
+                "#6:10"
+            ]
+        },
+        {
+            "@type": "d",
+            "@rid": "#10:4",
+            "@version": 0,
+            "owner": "adioo",
+            "@class": "VModule",
+            "name": "tab",
+            "library": false,
+            "in": [
+                "#6:11"
+            ]
+        },
+        {
+            "@type": "d",
+            "@rid": "#10:5",
+            "@version": 0,
+            "@class": "VModule",
+            "owner": "adioo",
+            "name": "list",
+            "library": false,
+            "in": [
+            ]
+        },
+        {
+            "@type": "d",
+            "@rid": "#10:6",
+            "@version": 0,
+            "@class": "VModule",
+            "owner": "adioo",
+            "name": "layout",
+            "library": false,
+            "in": [
+                "#6:12",
+                "#6:14"
+            ]
+        },
+        {
+            "@type": "d",
+            "@rid": "#10:7",
+            "@version": 0,
+            "@class": "VModule",
+            "owner": "adioo",
+            "name": "form",
+            "library": false,
+            "in": [
+            ]
+        },
+        {
+            "@type": "d",
+            "@rid": "#10:8",
+            "@version": 0,
+            "@class": "VModule",
+            "owner": "jillix",
+            "name": "liqshopOrderList",
+            "library": false,
+            "in": [
+                "#6:15"
+            ]
+        },
+        {
+            "@type": "d",
+            "@rid": "#10:9",
+            "@version": 0,
+            "@class": "VModule",
+            "owner": "jillix",
+            "name": "liqshopOrderDetails",
+            "library": false,
+            "in": [
+                "#6:16"
+            ]
+        },
+        {
+            "@type": "d",
+            "@rid": "#10:10",
+            "@version": 0,
+            "@class": "VModule",
+            "owner": "jillix",
+            "name": "liqshopOrderLogin",
+            "library": false,
+            "in": [
+                "#6:25"
+            ]
+        },
+        {
+            "@type": "d",
+            "@rid": "#10:11",
+            "@version": 0,
+            "@class": "VModule",
+            "owner": "adioo",
+            "name": "bind",
+            "library": true
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:0",
+            "@version": 0,
+            "@class": "EMemberOf",
+            "out": "#7:0",
+            "in": "#8:0"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:1",
+            "@version": 0,
+            "@class": "EMemberOf",
+            "out": "#7:1",
+            "in": "#8:0"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:2",
+            "@version": 0,
+            "@class": "EMemberOf",
+            "out": "#7:1",
+            "in": "#8:1"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:6",
+            "@version": 0,
+            "@class": "EHasAccessTo",
+            "miid": "mono_editor_1",
+            "html": {
+                "type": "a",
+                "path": "stdl/ace/ace"
+            },
+            "css": ["ace"],
+            "out": "#8:0",
+            "in": "#10:1"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:9",
+            "@version": 0,
+            "@class": "ECanPerform",
+            "miid": "liqshop_order_list",
+            "out": "#8:3",
+            "in": "#9:4"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:10",
+            "@version": 0,
+            "@class": "EHasAccessTo",
+            "miid": "mono_stdl_list_1",
+            "html": {
+                "type": "a",
+                "path": "stdl/list/list"
+            },
+            "css": ["def", "screen", "list"],
+            "out": "#8:0",
+            "in": "#10:3"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:11",
+            "@version": 0,
+            "@class": "EHasAccessTo",
+            "miid": "mono_admin",
+            "html": {
+                "type": "a",
+                "path": "main"
+            },
+            "config": {
+                
+                "source": {
+                
+                    "name": "getData"
+                },
+                "target": "#vertexClassMenu",
+                "itemTag": "li",
+                "tabTag": "div",
+                "tabContainer": "#vertexes",
+                "noTabSelected": "#noClassSelected"
+            },
+            "css": ["main", "vertex"],
+            "out": "#8:0",
+            "in": "#10:4"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:12",
+            "@version": 0,
+            "@class": "EHasAccessTo",
+            "miid": "mono_stdl_layout_1",
+            "html": {
+                "type": "a",
+                "path": "stdl/layout/layout"
+            },
+            "config": {
+                "title": "Test Title",
+                "modules": {
+                    "myList": "mono_stdl_list_1",
+                    "myEditor": "mono_editor_1"
+                }    
+            },
+            "css": ["layout"],
+            "out": "#8:0",
+            "in": "#10:6"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:13",
+            "@version": 0,
+            "@class": "ECanPerform",
+            "miid": "mono_stdl_list_1",
+            "out": "#8:0",
+            "in": "#9:3"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:14",
+            "@version": 0,
+            "@class": "EHasAccessTo",
+            "miid": "liqshop_layout",
+            "html": {
+                "type": "a",
+                "path": "html/layout"
+            },
+            "config": {
+                "title": "Liqshop Orders",
+                "modules": {
+                    "orderList": "liqshop_order_list",
+                    "orderDetails": "liqshop_order_details"
+                }    
+            },
+            "css": ["reset-min", "main", "tab", "hpane", "bar", "list", "form", "table", "orderDetail"],
+            "out": "#8:3",
+            "in": "#10:6"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:15",
+            "@version": 0,
+            "@class": "EHasAccessTo",
+            "miid": "liqshop_order_list",
+            "html": {
+                "type": "a",
+                "path": "html/list"
+            },
+            "css": [],
+            "out": "#8:3",
+            "in": "#10:8"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:16",
+            "@version": 0,
+            "@class": "EHasAccessTo",
+            "miid": "liqshop_order_details",
+            "html": {
+                "type": "a",
+                "path": "html/details"
+            },
+            "css": [],
+            "out": "#8:3",
+            "in": "#10:9"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:17",
+            "@version": 0,
+            "@class": "ECanPerform",
+            "miid": "liqshop_order_list",
+            "out": "#8:3",
+            "in": "#9:5"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:18",
+            "@version": 0,
+            "@class": "ECanPerform",
+            "miid": "liqshop_order_details",
+            "out": "#8:3",
+            "in": "#9:6"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:19",
+            "@version": 0,
+            "@class": "EMemberOf",
+            "out": "#7:2",
+            "in": "#8:2"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:20",
+            "@version": 0,
+            "@class": "EMemberOf",
+            "out": "#7:3",
+            "in": "#8:2"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:21",
+            "@version": 0,
+            "@class": "EMemberOf",
+            "out": "#7:3",
+            "in": "#8:3"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:22",
+            "@version": 0,
+            "@class": "EMemberOf",
+            "out": "#7:4",
+            "in": "#8:2"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:23",
+            "@version": 0,
+            "@class": "EMemberOf",
+            "out": "#7:4",
+            "in": "#8:3"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:24",
+            "@version": 0,
+            "@class": "EMemberOf",
+            "out": "#7:4",
+            "in": "#8:4"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:25",
+            "@version": 0,
+            "@class": "EHasAccessTo",
+            "miid": "liqshop_order_login",
+            "html": {
+                "type": "a",
+                "path": "html/login"
+            },
+            "css": ["login"],
+            "out": "#8:2",
+            "in": "#10:10"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:26",
+            "@version": 0,
+            "@class": "ECanPerform",
+            "miid": "liqshop_order_login",
+            "out": "#8:2",
+            "in": "#9:7"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:27",
+            "@version": 0,
+            "@class": "ECanPerform",
+            "miid": "mono_admin",
+            "out": "#8:0",
+            "in": "#9:8"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:28",
+            "@version": 0,
+            "@class": "EHasAccessTo",
+            "miid": "domain_manager",
+            "html": {
+                "type": "a",
+                "path": "vertex"
+            },
+            "config": {
+                
+                "title": "Mono Admin - Domains",
+                "modules": {
+                    
+                    "vertexList": "domain_list",
+                    "vertexDetail": "domain_detail"
+                }
+            },
+            "out": "#8:0",
+            "in": "#10:6"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:29",
+            "@version": 0,
+            "@class": "EHasAccessTo",
+            "miid": "app_manager",
+            "html": {
+                "type": "a",
+                "path": "vertex"
+            },
+            "config": {
+            
+                "title": "Mono Admin - Apps",
+                "modules": {
+                    
+                    "vertexList": "app_list",
+                    "vertexDetail": "app_detail"
+                }
+            },
+            "out": "#8:0",
+            "in": "#10:6"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:30",
+            "@version": 0,
+            "@class": "EHasAccessTo",
+            "miid": "user_manager",
+            "html": {
+                "type": "a",
+                "path": "vertex"
+            },
+            "config": {
+                
+                "title": "Mono Admin - Users",
+                "modules": {
+                    
+                    "vertexList": "user_list",
+                    "vertexDetail": "user_detail"
+                }
+            },
+            "out": "#8:0",
+            "in": "#10:6"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:31",
+            "@version": 0,
+            "@class": "EHasAccessTo",
+            "miid": "role_manager",
+            "html": {
+                "type": "a",
+                "path": "vertex"
+            },
+            "config": {
+                
+                "title": "Mono Admin - Roles",
+                "modules": {
+                    
+                    "vertexList": "role_list",
+                    "vertexDetail": "role_detail"
+                }
+            },
+            "out": "#8:0",
+            "in": "#10:6"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:32",
+            "@version": 0,
+            "@class": "EHasAccessTo",
+            "miid": "module_manager",
+            "html": {
+                "type": "a",
+                "path": "vertex"
+            },
+            "config": {
+                
+                "title": "Mono Admin - Modules",
+                "modules": {
+                    
+                    "vertexList": "module_list",
+                    "vertexDetail": "module_detail"
+                }
+            },
+            "out": "#8:0",
+            "in": "#10:6"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:33",
+            "@version": 0,
+            "@class": "EHasAccessTo",
+            "miid": "operation_manager",
+            "html": {
+                "type": "a",
+                "path": "vertex"
+            },
+            "config": {
+                
+                "title": "Mono Admin - Operations",
+                "modules": {
+                    
+                    "vertexList": "operation_list",
+                    "vertexDetail": "operation_detail"
+                }
+            },
+            "out": "#8:0",
+            "in": "#10:6"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:34",
+            "@version": 0,
+            "@class": "EHasAccessTo",
+            "miid": "domain_detail",
+            "html": {
+                "type": "a",
+                "path": "detail_domain"
+            },
+            "config": {
+                
+                "fill": "showDetails"
+            },
+            "out": "#8:0",
+            "in": "#10:7"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:35",
+            "@version": 0,
+            "@class": "EHasAccessTo",
+            "miid": "domain_list",
+            "html": {
+                "type": "a",
+                "path": "list"
+            },
+            "config": {
+                
+                "source": {
+                    
+                    "name": "getData"
+                },
+                "target": "#domain_list ul",
+                "itemTag": "li"
+            },
+            "out": "#8:0",
+            "in": "#10:5"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:36",
+            "@version": 0,
+            "@class": "EHasAccessTo",
+            "miid": "app_list",
+            "html": {
+                "type": "a",
+                "path": "list"
+            },
+            "config": {
+                
+                "source": {
+                    
+                    "name": "getData"
+                },
+                "target": "#app_list ul",
+                "itemTag": "li"
+            },
+            "out": "#8:0",
+            "in": "#10:5"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:37",
+            "@version": 0,
+            "@class": "EHasAccessTo",
+            "miid": "user_list",
+            "html": {
+                "type": "a",
+                "path": "list"
+            },
+            "config": {
+                
+                "source": {
+                    
+                    "name": "getData"
+                },
+                "target": "#user_list ul",
+                "itemTag": "li"
+            },
+            "out": "#8:0",
+            "in": "#10:5"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:38",
+            "@version": 0,
+            "@class": "EHasAccessTo",
+            "miid": "role_list",
+            "html": {
+                "type": "a",
+                "path": "list"
+            },
+            "config": {
+                
+                "source": {
+                    
+                    "name": "getData"
+                },
+                "target": "#role_list ul",
+                "itemTag": "li"
+            },
+            "out": "#8:0",
+            "in": "#10:5"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:39",
+            "@version": 0,
+            "@class": "EHasAccessTo",
+            "miid": "module_list",
+            "html": {
+                "type": "a",
+                "path": "list"
+            },
+            "config": {
+                
+                "source": {
+                    
+                    "name": "getData"
+                },
+                "target": "#module_list ul",
+                "itemTag": "li"
+            },
+            "out": "#8:0",
+            "in": "#10:5"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:40",
+            "@version": 0,
+            "@class": "EHasAccessTo",
+            "miid": "operation_list",
+            "html": {
+                "type": "a",
+                "path": "list"
+            },
+            "config": {
+                
+                "source": {
+                    
+                    "name": "getData"
+                },
+                "target": "#operation_list ul",
+                "itemTag": "li"
+            },
+            "out": "#8:0",
+            "in": "#10:5"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:41",
+            "@version": 0,
+            "@class": "ECanPerform",
+            "miid": "domain_detail",
+            "out": "#8:0",
+            "in": "#9:9"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:42",
+            "@version": 0,
+            "@class": "ECanPerform",
+            "miid": "domain_list",
+            "params": {
+                
+                "nameField": "name",
+                "query": "select name, application.name from vdomain",
+                "obsName": "domain_detail",
+                "eventName": "showDetails"
+            },
+            "out": "#8:0",
+            "in": "#9:10"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:43",
+            "@version": 0,
+            "@class": "ECanPerform",
+            "miid": "app_list",
+            "params": {
+                
+                "nameField": "name",
+                "query": "select id, name, routes, publicUser, publicDir from vapplication",
+                "obsName": "app_detail",
+                "eventName": "showDetails"
+            },
+            "out": "#8:0",
+            "in": "#9:10"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:44",
+            "@version": 0,
+            "@class": "ECanPerform",
+            "miid": "user_list",
+            "params": {
+                
+                "nameField": "username",
+                "query": "select username, password from vuser",
+                "obsName": "user_detail",
+                "eventName": "showDetails"
+            },
+            "out": "#8:0",
+            "in": "#9:10"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:45",
+            "@version": 0,
+            "@class": "ECanPerform",
+            "miid": "role_list",
+            "params": {
+                
+                "nameField": "name",
+                "query": "select name, app from vrole",
+                "obsName": "role_detail",
+                "eventName": "showDetails"
+            },
+            "out": "#8:0",
+            "in": "#9:10"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:46",
+            "@version": 0,
+            "@class": "ECanPerform",
+            "miid": "module_list",
+            "params": {
+                
+                "nameField": "name",
+                "query": "select owner, name, dir, library from vmodule",
+                "obsName": "module_detail",
+                "eventName": "showDetails"
+            },
+            "out": "#8:0",
+            "in": "#9:10"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:47",
+            "@version": 0,
+            "@class": "ECanPerform",
+            "miid": "operation_list",
+            "params": {
+                
+                "nameField": "module",
+                "query": "select module, file, method from voperation",
+                "obsName": "operation_detail",
+                "eventName": "showDetails"
+            },
+            "out": "#8:0",
+            "in": "#9:10"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:48",
+            "@version": 0,
+            "@class": "EHasAccessTo",
+            "miid": "app_detail",
+            "html": {
+                "type": "a",
+                "path": "detail_app"
+            },
+            "config": {
+                
+                "fill": "showDetails"
+            },
+            "out": "#8:0",
+            "in": "#10:7"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:49",
+            "@version": 0,
+            "@class": "ECanPerform",
+            "miid": "app_detail",
+            "out": "#8:0",
+            "in": "#9:9"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:50",
+            "@version": 0,
+            "@class": "EHasAccessTo",
+            "miid": "user_detail",
+            "html": {
+                "type": "a",
+                "path": "detail_user"
+            },
+            "config": {
+                
+                "fill": "showDetails"
+            },
+            "out": "#8:0",
+            "in": "#10:7"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:51",
+            "@version": 0,
+            "@class": "ECanPerform",
+            "miid": "user_detail",
+            "out": "#8:0",
+            "in": "#9:9"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:52",
+            "@version": 0,
+            "@class": "EHasAccessTo",
+            "miid": "role_detail",
+            "html": {
+                "type": "a",
+                "path": "detail_role"
+            },
+            "config": {
+                
+                "fill": "showDetails"
+            },
+            "out": "#8:0",
+            "in": "#10:7"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:53",
+            "@version": 0,
+            "@class": "ECanPerform",
+            "miid": "role_detail",
+            "out": "#8:0",
+            "in": "#9:9"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:54",
+            "@version": 0,
+            "@class": "EHasAccessTo",
+            "miid": "module_detail",
+            "html": {
+                "type": "a",
+                "path": "detail_module"
+            },
+            "config": {
+                
+                "fill": "showDetails"
+            },
+            "out": "#8:0",
+            "in": "#10:7"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:55",
+            "@version": 0,
+            "@class": "ECanPerform",
+            "miid": "module_detail",
+            "out": "#8:0",
+            "in": "#9:9"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:56",
+            "@version": 0,
+            "@class": "EHasAccessTo",
+            "miid": "operation_detail",
+            "html": {
+                "type": "a",
+                "path": "detail_operation"
+            },
+            "config": {
+                
+                "fill": "showDetails"
+            },
+            "out": "#8:0",
+            "in": "#10:7"
+        },
+        {
+            "@type": "d",
+            "@rid": "#6:57",
+            "@version": 0,
+            "@class": "ECanPerform",
+            "miid": "operation_detail",
+            "out": "#8:0",
+            "in": "#9:9"
+        }
+    ]
+}
