@@ -36,6 +36,7 @@ fs.readFile(descriptorFile, function (err, data) {
 
         apps.installApplication(descriptor, function(err) {
 
+            // TODO why doesn't this script end anymore?
             orient.disconnect(CONFIG.orient);
 
             if (err) {
