@@ -331,13 +331,6 @@
                         "not-null": true
                     },
                     {
-                        "name": "roles",
-                        "type": "LINKSET",
-                        "mandatory": false,
-                        "not-null": false,
-                        "linked-class": "VRole"
-                    },
-                    {
                         "name": "publicUser",
                         "type": "LINK",
                         "mandatory": true,
@@ -365,7 +358,7 @@
                         "not-null": true
                     },
                     {
-                        "name": "application",
+                        "name": "app",
                         "type": "LINK",
                         "mandatory": true,
                         "not-null": true,
