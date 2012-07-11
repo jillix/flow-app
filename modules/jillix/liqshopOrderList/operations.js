@@ -107,7 +107,7 @@ exports.getOrders = function(link) {
             "items": archiveFilter
         }
 
-        //console.log(JSON.stringify(mongoQuery));
+        console.log(JSON.stringify(mongoQuery));
 
         db.find(mongoQuery).toArray(function(err, docs) {
 
@@ -147,16 +147,35 @@ exports.getOrders = function(link) {
 
                 var items = [];
 
+                // this will help us eliminate in archive view all the orders
+                // that don't have at least one item matching to the users branch
+                var hasBranch = false;
+
                 for (var j in order.items) {
 
                     var item  = order.items[j];
 
                     if (!branch || (branch && branch.indexOf(item.branch) > -1)) {
+                        hasBranch = true;
+                    }
+
+                    if (!userBranch || (branch && branch.indexOf(item.branch) > -1)) {
+                        item.readonly = false;
                         items.push(item);
+                    } else {
+                        item.readonly = true;
+                        if (branch !== "LAUPER") {
+                            items.push(item);
+                        }
                     }
                 }
 
-                // overwrite the initial items
+                // empty this order if there are no items for this branch
+                if (!hasBranch) {
+                    items = [];
+                }
+
+                // overwrite the initial items after filtering
                 order.items = items;
 
                 if (items.length) {

@@ -181,6 +181,9 @@ define(["./jquery.min"], function() {
 
             // clone the item template
             var itemRow = itemTemplate.clone();
+            if (items[i].readonly) {
+                itemRow.find("[type='checkbox']").hide();
+            }
 
             // now replace the item fields
             processFields(itemRow.find("." + itemFieldClass), items[i]);
