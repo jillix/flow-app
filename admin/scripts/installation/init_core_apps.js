@@ -5,9 +5,40 @@ var cp = require('child_process');
 var fs = require('fs');
 
 var orient = require(CONFIG.root + "/core/db/orient.js");
-var api = require(CONFIG.root + "/api/server");
+var appsApi = require(CONFIG.root + "/api/apps");
 var model = require(CONFIG.root + "/core/model/orient");
 
+var apps = fs.readdirSync(CONFIG.root + "/apps");
+
+var descriptorFiles = [];
+
+for (var i in apps) {
+
+    var appId = apps[i];
+    var monoJson = CONFIG.root + "/apps/" + appId + "/mono.json";
+
+    if (appId.length == 32 && fs.existsSync(monoJson)) {
+        descriptorFiles.push(monoJson);
+    }
+}
+
+for (var i in descriptorFiles) {
+if (descriptorFiles[i].indexOf("5849564d3d426d7278683d283f3c5d37") == -1) continue;
+    console.log("Installing application: " + descriptorFiles[i]);
+
+    appsApi.installApplication(descriptorFiles[i], function(err, appId) {
+
+        if (err) {
+            console.error("Failed to install application: " + appId);
+            console.error(err);
+            return;
+        }
+
+        console.log("Succesfully installed application: " + appId);
+    });
+}
+
+return;
 
 function openDbConnection(callback) {
 
@@ -40,9 +71,10 @@ openDbConnection(function() {
         }
     };
 
-    apps.installDependencies(descriptor, callback) {
+    apps.installDependencies(descriptor, function(err, callback) {
         // TODO continue
-    }
+    });
+
     // add mono modules as submodules
     model.getModuleUsedVersions(function(err, modules) {
 

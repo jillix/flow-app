@@ -195,7 +195,7 @@ function installModule(module, callback) {
 
     if (fs.existsSync(MODULE_ROOT + module.getVersionPath())) {
         console.log("Skipping " + module.getVersionPath());
-        return callback();
+        return callback(null, false);
     }
 
     fetchModule(module, function(err) {
@@ -215,7 +215,10 @@ function installModule(module, callback) {
 
             module.operations = operations;
 
-            db.insertModuleVersion(module, callback);
+            db.insertModuleVersion(module, function(err) {
+                if (err) {return callback(err); }
+                callback(null, true);
+            });
         });
     });
 }

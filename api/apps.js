@@ -1,21 +1,74 @@
 var fs = require("fs");
 
+var orient = require(CONFIG.root + "/core/db/orient.js");
 var modules = require(CONFIG.root + "/api/modules");
 
 
 function installApplication(descriptor, callback) {
 
-    installDependencies(descriptor, function(err) {
+    switch (typeof descriptor) {
+        case "string":
+            installApplicationFromFile(descriptor, callback);
+            break;
+        case "object":
+            installApplicationFromObject(descriptor, callback);
+            break;
+        default:
+            callback("The descriptor must be either a path to a descriptor file or a descriptor object.");
+    }
+};
+
+/**
+ *
+ */
+function installApplicationFromFile(file, callback) {
+
+    fs.readFile(file, function (err, data) {
+
         if (err) {
-            // TODO cleanup
-            return callback(err);
+            return callback("Error while reading the application descriptor file: " + file);
         }
 
-        callback();
+        var descriptor = null;
+
+        try {
+            descriptor = JSON.parse(data);
+        } catch (err) {
+            var error = "Invalid descriptor file (" + file + "): " + data.toString();
+            return callback(error);
+        }
+
+        installApplicationFromObject(descriptor, callback);
     });
 }
 
+/**
+ *
+ */
+function installApplicationFromObject(descriptor, callback) {
 
+    // TODO validate the descriptor
+
+    orient.connect(CONFIG.orient, function() {
+
+        installDependencies(descriptor, function(err) {
+
+            // TODO why doesn't this script end anymore?
+            orient.disconnect(CONFIG.orient);
+
+            if (err) {
+                // TODO cleanup
+                return callback(err);
+            }
+
+            callback(null, descriptor.appId);
+        });
+    });
+}
+
+/**
+ *
+ */
 function installDependencies(descriptor, callback) {
 
     if (!descriptor.dependencies) {
@@ -33,12 +86,12 @@ function installDependencies(descriptor, callback) {
             var splits = i.split("/");
             var module = new modules.Module(splits[0], splits[1], splits[2], deps[i]);
 
-            modules.installModule(module, function(err) {
+            modules.installModule(module, function(err, newlyInstalled) {
                 if (err) {
                     console.error("Could not install dependency: " + module.getVersionPath() + ". Reason:");
                     console.error(JSON.stringify(err));
                     errors.push(err);
-                } else {
+                } else if (newlyInstalled) {
                     console.log("Installed dependency: " + module.getVersionPath());
                 }
 
