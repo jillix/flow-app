@@ -208,9 +208,9 @@ function generateExport(orders, lang) {
 
     switch (lang) {
         case "fr":
-            result += "Region;Branche;Besuchsgebiet;Numéro de client;Entreprise;Numéro d'ordre;Date d'ordre;Numéro d'article;Désignation;Quantité;Net;Prämie;Währung;";
+            result += "Région;Succursale;Zone de visite;Numéro de client;Entreprise;Numéro de commande;Date de commande;Numéro d'article;Désignation;Quantité;Net;Prime;Monnaie;";
         case "it":
-            result += "missing Italian header translation";
+            result += "Regione;Filiale;Zona visita;Numero cliente;Ditta;No. ordine;Dati per l'ordinazione;Numero articolo;Descrizione;Quantità;Netto;Premio;Valuta;";
             break;
         default:
             result += "Region;Filiale;Besuchsgebiet;Kundennummer;Firma;Bestellnummer;Bestelldatum;Art. Nr.;Bezeichnung;Menge;Netto;Prämie;Währung;";

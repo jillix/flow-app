@@ -229,41 +229,41 @@ define(["./jquery.min"], function() {
 
     var translations = {
         // list
-        branch: { en: "Branch", de: "Filiale", fr: "Branche" },
+        branch: { en: "Branch", de: "Filiale", fr: "Succursale", it: "Filiale" },
         show:   { en: "Show", de: "Zeige", fr: "Voir" },
-        all:    { en: "All", de: "Alle", fr: "Tous" },
-        "new":    { en: "New", de: "Neu", fr: "Nouveaux" },
-        archived: { en: "Archived", de: "Archiviert", fr: "Archivés" },
+        all:    { en: "All", de: "Alle", fr: "Tous", it: "Tutto" },
+        "new":    { en: "New", de: "Neu", fr: "Nouveaux", it: "Nuovi" },
+        archived: { en: "Archived", de: "Archiviert", fr: "Archivés", it: "Archiviati" },
 
         // details
         hbInfoText: { en: "Bitte Warenkorb erstellen und den Betrag mit der Artikel-Nr. GU HAPPY BONUS wieder gutschreiben", de: "Bitte Warenkorb erstellen und den Betrag mit der Artikel-Nr. GU HAPPY BONUS wieder gutschreiben", fr: "Veuillez générer un panier et créditer le montant en retour avec le numéro d'article GU HAPPY BONUS.", it: "Si prega di creare un carrello e di riaccreditare l'importo con il n. di articolo GU HAPPY BONUS" },
-        orderNr:    { en: "Order No.", de: "Bestell-Nr", fr: "Numéro d'ordre" },
-        orderDate:  { en: "Order Date", de: "Bestelleingang", fr: "Date d'ordre" },
-        customer:   { en: "Customer", de: "Kunde", fr: "Client" },
-        company:    { en: "Company", de: "Firma", fr: "Entreprise" },
-        name:       { en: "Name", de: "Name", fr: "Nom" },
-        zip:        { en: "ZIP", de: "PLZ", fr: "ZIP" },
-        city:       { en: "City", de: "Ort", fr: "Ville" },
-        customerNo: { en: "Customer No.", de: "Kunden-Nr.", fr: "Numéro de client" },
-        moreInfo:   { en: "For the attention of", de: "Zu Handen von", fr: "À l'attention de" },
-        unprocessedItems: { en: "Unprocessed Items", de: "Unbearbeitete Artikel", fr: "Articles non traités" },
-        processedItems: { en: "Processed Items", de: "Bearbeitete Artikel", fr: "Articles traités" },
-        archiveAll: { en: "Archive all articles", de: "Alle Artikel archivieren", fr: "Archiver tous les articles" },
-        unarchiveAll: { en: "Unarchive all articles", de: "Alle Artikel dearchivieren", fr: "Désarchiver tous les articles" },
-        itemNr:     { en: "Item Nr.", de: "Artikel-Nr.", fr: "Numéro d'article" },
-        description: { en: "Description", de: "Bezeichnung", fr: "Désignation" },
-        netto:      { en: "Net", de: "Netto", fr: "Net" },
-        quantity:   { en: "Quantity", de: "Menge", fr: "Quantité" },
-        archive:    { en: "Archive", de: "Archivieren", fr: "Archiver" },
-        unarchive:  { en: "Unarchive", de: "Dearchivieren", fr: "Désarchiver" },
+        orderNr:    { en: "Order No.", de: "Bestellnummer", fr: "Numéro de commande", it: "No. ordine" },
+        orderDate:  { en: "Order Date", de: "Bestelldatum", fr: "Date de commande", it: "Dati per l'ordinazione" },
+        customer:   { en: "Customer", de: "Kunde", fr: "Client", it: "Cliente" },
+        company:    { en: "Company", de: "Firma", fr: "Entreprise", it: "Firma" },
+        name:       { en: "Name", de: "Name", fr: "Nom", it: "Nome" },
+        zip:        { en: "ZIP", de: "PLZ", fr: "ZIP", it: "ZIP" },
+        city:       { en: "City", de: "Ort", fr: "Ville", it: "Citta" },
+        customerNo: { en: "Customer No.", de: "Kunden-Nr.", fr: "Numéro de client", it: "Numero cliente" },
+        moreInfo:   { en: "For the attention of", de: "Zu Handen von", fr: "À l'attention de", it: "Per" },
+        unprocessedItems: { en: "Unprocessed Items", de: "Unbearbeitete Artikel", fr: "Articles non traités", it: "Articoli non processati" },
+        processedItems: { en: "Processed Items", de: "Bearbeitete Artikel", fr: "Articles traités", it: "Articoli processati" },
+        archiveAll: { en: "Archive all articles", de: "Alle Artikel archivieren", fr: "Archiver tous les articles", it: "Archiviare tutti gli articoli" },
+        unarchiveAll: { en: "Unarchive all articles", de: "Alle Artikel dearchivieren", fr: "Désarchiver tous les articles", it: "Disarchiviare tutti gli articoli!" },
+        itemNr:     { en: "Item Nr.", de: "Artikel-Nr.", fr: "Numéro d'article", it: "Numero articolo" },
+        description: { en: "Description", de: "Bezeichnung", fr: "Désignation", it: "Descrizione" },
+        netto:      { en: "Net", de: "Netto", fr: "Net", it: "Netto" },
+        quantity:   { en: "Quantity", de: "Menge", fr: "Quantité", it: "Quantità" },
+        archive:    { en: "Archive", de: "Archivieren", fr: "Archiver", it: "Archiviare" },
+        unarchive:  { en: "Unarchive", de: "Dearchivieren", fr: "Désarchiver", it: "Disarchiviare" },
 
         // layout
-        logout:     { en: "Logout", de: "Abmelden", fr: "Déconnecter" },
-        orders:     { en: "Orders", de: "Bestellungen", fr: "Ordres" }
+        logout:     { en: "Logout", de: "Abmelden", fr: "Déconnecter", it: "Logout" },
+        orders:     { en: "Orders", de: "Bestellungen", fr: "Ordres", it: "Ordini" }
     };
 
     function i18n(language) {
-
+language = "it";
         var prefix = "%";
 
         function translate(target) {
