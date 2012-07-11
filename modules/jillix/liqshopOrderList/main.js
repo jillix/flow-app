@@ -142,6 +142,9 @@ define(["./jquery.min"], function() {
             (text === "" ? "" : "&search=" + encodeURIComponent(text)) +
             "&skip=" + ((page - 1) * pageSize) + "&limit=" + pageSize;
 
+        var href = window.location.href + "@/liqshop_order_list/getOrders" + queryStr + "&export=1";
+        $("#listExport", self.dom).attr("href", href);
+
         // get the order list
         self.link("getOrders", { query: queryStr  }, function(err, orders) {
 

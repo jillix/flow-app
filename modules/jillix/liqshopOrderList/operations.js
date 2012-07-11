@@ -101,6 +101,8 @@ exports.getOrders = function(link) {
         var skip = queryObj.skip || 0;
         var limit = queryObj.limit || 0;
 
+        var isExport = queryObj["export"] ? true : false;
+
         var mongoQuery = {
             "items": archiveFilter
         }
@@ -162,13 +164,71 @@ exports.getOrders = function(link) {
                 }
             }
 
-            var length = orders.length;
-            orders = orders.splice(skip, limit || length);
-            orders.unshift(length);
-            send.ok(link.res, orders);
+            if (!isExport) {
+                var length = orders.length;
+                orders = orders.splice(skip, limit || length);
+                orders.unshift(length);
+                send.ok(link.res, orders);
+            }
+            else {
+                link.res.headers["content-type"] = "text/csv";
+                link.res.headers["content-disposition"] = "attachment; filename=export.csv";
+                var csv = generateExport(orders, link.session.loc);
+                send.ok(link.res, csv);
+            }
         });
     });
 };
+
+
+function generateExport(orders, lang) {
+    var NEW_LINE = "\r\n";
+    var SEPARATOR = ";";
+
+    var result = "";
+
+    switch (lang) {
+        case "fr":
+            result += "Region;Branche;Besuchsgebiet;Numéro de client;Entreprise;Numéro d'ordre;Date d'ordre;Numéro d'article;Désignation;Quantité;Net;Prämie;Währung;";
+        case "it":
+            result += "missing Italian header translation";
+            break;
+        default:
+            result += "Region;Filiale;Besuchsgebiet;Kundennummer;Firma;Bestellnummer;Bestelldatum;Art. Nr.;Bezeichnung;Menge;Netto;Prämie;Währung;";
+    }
+
+    result += NEW_LINE;
+
+    for (var i = 0; i < orders.length; i++) {
+        var order = orders[i];
+
+        for (var j = 0; j < order.items.length; j++) {
+            var item = order.items[j];
+
+            var line = "";
+
+            line += (order.customer.region || "") + SEPARATOR;
+            line += (order.customer.branch || "") + SEPARATOR;
+            line += (order.customer.vis_region || "") + SEPARATOR;
+            line += (order.customer.cnr || "") + SEPARATOR;
+            line += (order.adress.company || "") + SEPARATOR;
+            line += (order._c || "") + SEPARATOR;
+            line += (order.date || "") + SEPARATOR;
+
+            line += (item.nr || "") + SEPARATOR;
+            line += (item.caption || "") + SEPARATOR;
+            line += (item.number || "") + SEPARATOR;
+            line += (item.netto || "") + SEPARATOR;
+
+            line += ("dd" || "") + SEPARATOR;
+            line += (order.currency || "") + SEPARATOR;
+
+            result += line + NEW_LINE;
+        }
+    }
+
+    return result;
+}
 
 
 function dateToInt(date) {
