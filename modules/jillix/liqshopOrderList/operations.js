@@ -105,7 +105,7 @@ exports.getOrders = function(link) {
             "items": archiveFilter
         }
 
-        console.log(JSON.stringify(mongoQuery));
+        //console.log(JSON.stringify(mongoQuery));
 
         db.find(mongoQuery).toArray(function(err, docs) {
 
