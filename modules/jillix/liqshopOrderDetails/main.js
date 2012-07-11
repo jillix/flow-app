@@ -233,7 +233,7 @@ define(["./jquery.min"], function() {
         archived: { en: "Archived", de: "Archiviert", fr: "Archivés" },
 
         // details
-        hbInfoText: { en: "Please ...", de: "Bitte Warenkorb erstellen und den Betrag mit der Artikel-Nr. GU HAPPY BONUS wieder gutschreiben", fr: "Sil vu ple" },
+        hbInfoText: { en: "Bitte Warenkorb erstellen und den Betrag mit der Artikel-Nr. GU HAPPY BONUS wieder gutschreiben", de: "Bitte Warenkorb erstellen und den Betrag mit der Artikel-Nr. GU HAPPY BONUS wieder gutschreiben", fr: "Veuillez générer un panier et créditer le montant en retour avec le numéro d'article GU HAPPY BONUS.", it: "Si prega di creare un carrello e di riaccreditare l'importo con il n. di articolo GU HAPPY BONUS" },
         orderNr:    { en: "Order No.", de: "Bestell-Nr", fr: "Numéro d'ordre" },
         orderDate:  { en: "Order Date", de: "Bestelleingang", fr: "Date d'ordre" },
         customer:   { en: "Customer", de: "Kunde", fr: "Client" },
