@@ -263,7 +263,7 @@ define(["./jquery.min"], function() {
     };
 
     function i18n(language) {
-language = "it";
+
         var prefix = "%";
 
         function translate(target) {
