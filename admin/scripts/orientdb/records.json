@@ -1004,6 +1004,14 @@
         },
         {
             "@type": "d",
+            "@rid": "#12:3",
+            "@version": 0,
+            "@class": "VDomain",
+            "name": "54.247.119.64",
+            "application": "#11:1"
+        },
+        {
+            "@type": "d",
             "@rid": "#8:0",
             "@version": 0,
             "@class": "VRole",
