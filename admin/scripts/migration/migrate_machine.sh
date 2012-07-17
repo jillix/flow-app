@@ -2,8 +2,14 @@
 
 USERNAME=mono
 ADMINNAME=$SUDO_USER
-SOURCE_USERNAME=webadmin
-SOURCE_SERVER=machine14.abc4it.com
+
+# Old Machine 14
+#SOURCE_USERNAME=webadmin
+#SOURCE_SERVER=machine14.abc4it.com
+
+# AWS Micro Instance
+SOURCE_USERNAME=ubuntu
+SOURCE_SERVER=ip-10-229-30-51.eu-west-1.compute.internal
 
 if [ "$1" = "-n" ]
 then
@@ -117,7 +123,7 @@ function checkout_mono {
     rm -Rf $MONO_TMP
 
     # cloning mono in a temp directory
-    git clone git@github.com:adioo/mono.git $MONO_TMP
+    git clone git@github.com:jillix/mono.git $MONO_TMP
 
     # did the migration script change?
     check_latest_script $MONO_TMP
@@ -160,7 +166,7 @@ function checkout_legacy {
     echo "*** Checking out legacy source code ***"
 
     # cloning legacy in a temp directory
-    git clone git@github.com:adioo/legacy.git ~/legacy_tmp
+    git clone git@github.com:jillix/legacy.git ~/legacy_tmp
     chown -R $USERNAME:$USERNAME ~/legacy_tmp
     mv ~/legacy_tmp /home/$USERNAME/legacy
 
@@ -178,7 +184,12 @@ function setup_user {
     then
         umount /home/$USERNAME/images
     fi
-    userdel -r $USERNAME
+
+    MONOUSER_ENTRY=`cat /etc/passwd | grep ":/home/$USERNAME:"`
+    if [ "$MONOUSER_ENTRY" != "" ]
+    then
+        userdel -r $USERNAME
+    fi
 
     # create user account
     useradd -m -s /bin/bash $USERNAME
@@ -213,6 +224,9 @@ function install_software {
 
     # install unzip if not present
     install unzip
+
+    # install zip if not present
+    install zip
 
     # install g++ if not present (needed by some node modules)
     install build-essential g++
