@@ -123,7 +123,7 @@ function checkout_mono {
     rm -Rf $MONO_TMP
 
     # cloning mono in a temp directory
-    git clone git@github.com:adioo/mono.git $MONO_TMP
+    git clone git@github.com:jillix/mono.git $MONO_TMP
 
     # did the migration script change?
     check_latest_script $MONO_TMP
@@ -166,7 +166,7 @@ function checkout_legacy {
     echo "*** Checking out legacy source code ***"
 
     # cloning legacy in a temp directory
-    git clone git@github.com:adioo/legacy.git ~/legacy_tmp
+    git clone git@github.com:jillix/legacy.git ~/legacy_tmp
     chown -R $USERNAME:$USERNAME ~/legacy_tmp
     mv ~/legacy_tmp /home/$USERNAME/legacy
 
