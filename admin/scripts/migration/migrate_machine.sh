@@ -188,7 +188,7 @@ function setup_user {
     MONOUSER_ENTRY=`cat /etc/passwd | grep ":/home/$USERNAME:"`
     if [ "$MONOUSER_ENTRY" != "" ]
     then
-        userdel -r $USERNAME
+        userdel -rf $USERNAME
     fi
 
     # create user account
