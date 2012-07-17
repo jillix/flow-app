@@ -240,6 +240,99 @@ exports.getUser = function(appId, userName, callback) {
 };
 
 
+exports.addApplication = function(appId, name, routes, publicDir, callback) {
+
+    // #7:7 should be the default public user
+    var command =
+        "INSERT INTO VApplication SET " +
+            "id = '" + appId + "', " +
+            "name = '" + name + "', " +
+            "routes = " + JSON.stringify(routes) + " , " +
+            "publicDir = " + publicDir + ", " +
+            "publicUser = #7:7";
+
+    sql(command, function(err, results) {
+
+        if (err || !results || results.length != 1 || !results[0] || !results[0]["@rid"]) {
+            return  callback(err || "Failed to insert application: " + appId + "(" + name + ")");
+        }
+
+        var id = idFromRid(results[0]["@rid"]);
+
+        callback(null, id);
+    });
+
+}
+
+exports.addRole = function(appId, name, callback) {
+
+    translateAppId(appId, function(err, id) {
+
+        if (err) {
+            return callback(err);
+        }
+
+        var command =
+            "INSERT INTO VRole SET " +
+                "name = '" + name + "', " +
+                "app = '" + id + "'";
+
+        sql(command, function(err, results) {
+
+            if (err || !results || results.length != 1 || !results[0] || !results[0]["@rid"]) {
+                return  callback(err || "Failed to insert role '" + name + "' for application '" + appId + "'");
+            }
+
+            var id = idFromRid(results[0]["@rid"]);
+            callback(null, id);
+        });
+    });
+};
+
+
+function translateAppId(appId, callback) {
+
+    if (typeof appId !== "string") {
+        return callback("Invalid application id or rid: " + appId);
+    }
+
+    var command =
+        "SELECT " +
+            "@rid AS id " +
+        "FROM " +
+            "VApplication " +
+        "WHERE " +
+            "id = '" + appId + "'";
+
+    sql(command, function(err, results) {
+debugger;
+
+            if (err) {
+                return callback("An error occurred while translating the application ID: " + appId + ". " + JSON.stringify(err));
+            }
+
+            // if there is no result
+            if (!results || results.length == 0) {
+                return callback("Application not found: " + appId);
+            }
+
+            // if there are too many results
+            if (results.length > 1) {
+                return callback("Could not uniquely determine the application with ID: " + appId);
+            }
+
+            var application = results[0];
+
+            // if the application does not have the required fields
+            if (!application || !application.id) {
+                return callback("Missing application ID: " + JSON.stringify(application));
+            }
+
+            callback(null, application.id);
+        });
+}
+
+
 exports.getAppId = function(domain, callback) {
 
         var command =

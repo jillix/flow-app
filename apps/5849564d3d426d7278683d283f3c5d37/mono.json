@@ -1,9 +1,31 @@
 {
-    "appId": "5849564d3d426d7278683d283f3c5d37",
+    "appId": "9849564d3d426d7278683d283f3c5d37",
+    "name": "MonoAdmin",
     "dependencies": {
         "github/gabipetrovay/github_display":   "latest",
         "github/adioo/layout":                  "latest",
         "github/adioo/bind":                    "a9a69b83431f9b21f332fd5b75c85d40e1157332"
-    }
+    },
+    "routes": {
+        "module": "github_layout"
+    },
+    "publicDir": "public",
+    "users": [
+        {
+            "id": 0,
+            "username": "public",
+            "password": "",
+            "data": {
+                "fullname": "MonoAdmin Public User"
+            },
+            "roles": [0]
+        }
+    ],
+    "roles": [
+        {
+            "id": 0,
+            "name": "MonoAdmin Public Role"
+        }
+    ]
 }
 

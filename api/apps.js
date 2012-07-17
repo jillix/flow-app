@@ -2,16 +2,17 @@ var fs = require("fs");
 
 var orient = require(CONFIG.root + "/core/db/orient.js");
 var modules = require(CONFIG.root + "/api/modules");
+var db = require(CONFIG.root + "/core/model/orient.js");
 
 
-function installApplication(descriptor, callback) {
+function install(descriptor, callback) {
 
     switch (typeof descriptor) {
         case "string":
-            installApplicationFromFile(descriptor, callback);
+            installFromFile(descriptor, callback);
             break;
         case "object":
-            installApplicationFromObject(descriptor, callback);
+            installFromObject(descriptor, callback);
             break;
         default:
             callback("The descriptor must be either a path to a descriptor file or a descriptor object.");
@@ -21,7 +22,7 @@ function installApplication(descriptor, callback) {
 /**
  *
  */
-function installApplicationFromFile(file, callback) {
+function installFromFile(file, callback) {
 
     fs.readFile(file, function (err, data) {
 
@@ -38,30 +39,59 @@ function installApplicationFromFile(file, callback) {
             return callback(error);
         }
 
-        installApplicationFromObject(descriptor, callback);
+        installFromObject(descriptor, callback);
     });
 }
 
 /**
  *
  */
-function installApplicationFromObject(descriptor, callback) {
+function installFromObject(descriptor, callback) {
 
     // TODO validate the descriptor
 
-    orient.connect(CONFIG.orient, function() {
+    orient.connect(CONFIG.orient, function(err) {
 
-        installDependencies(descriptor, function(err) {
+        if (err) {
+            return callback(err, descriptor.appId);
+        }
 
-            // TODO why doesn't this script end anymore?
-            orient.disconnect(CONFIG.orient);
+        // **************
+        // 1. APPLICATION
+        // **************
+        db.addApplication(
+                descriptor.appId,
+                descriptor.name || "Unnamed application",
+                descriptor.routes || null,
+                descriptor.publicDir || "",
+                function(err, _id) {
 
-            if (err) {
+            // TODO cleanup
+            if (err) { return callback(err, descriptor.appId); }
+
+            descriptor._id = _id;
+
+            // ***************
+            // 2. DEPENDENCIES
+            // ***************
+            installDependencies(descriptor, function(err) {
+
                 // TODO cleanup
-                return callback(err);
-            }
+                if (err) { return callback(err, descriptor.appId); }
 
-            callback(null, descriptor.appId);
+                // ********
+                // 3. ROLES
+                // ********
+                installRoles(descriptor, function(err) {
+
+                    orient.disconnect(CONFIG.orient);
+
+                    // TODO cleanup
+                    if (err) { return callback(err, descriptor.appId); }
+
+                    callback(null, descriptor.appId);
+                });
+            });
         });
     });
 }
@@ -95,15 +125,72 @@ function installDependencies(descriptor, callback) {
                     console.log("Installed dependency: " + module.getVersionPath());
                 }
 
-                if (!--count) callback(errors.length ? errors : undefined);
+                if (!--count) callback(errors.length ? errors : null);
             })
         })(i);
     }
 }
 
+/**
+ *
+ */
+function installRoles(descriptor, callback) {
 
-exports.installApplication = installApplication;
+    if (!descriptor.roles) {
+        return callback(null);
+    }
+
+    var roles = descriptor.roles;
+    var count = roles.length;
+    var errors = [];
+
+    for (var i in roles) {
+        (function(i) {
+            var role = roles[i];
+
+            console.log("Adding role: " + JSON.stringify(role));
+            db.addRole(descriptor.appId, role.name, function(err, _id) {
+
+                if (err) {
+                    errors.push(err);
+                } else {
+                    role._id = _id;
+                }
+                if (!--count) callback(errors.length ? errors : null);
+            });
+        })(i);
+    }
+}
+
+/**
+ *
+ */
+function installUsers(descriptor, callback) {
+
+    if (!descriptor.users) {
+        return callback(null);
+    }
+
+    var users = descriptor.users;
+    var count = users.length;
+    var errors = [];
+
+    for (var i in users) {
+        (function(i) {
+            var user = users[i];
+            // TODO add user
+            console.log("Adding user: " + JSON.stringify(user));
+
+            if (!--count) callback(errors.length ? errors : null);
+        })(i);
+    }
+}
+
+
+exports.install = install;
 exports.installDependencies = installDependencies;
+exports.installUsers = installUsers;
+exports.installRoles = installRoles;
 
 // = = = = = = = = = = = = = = = = = = = = 
 
@@ -133,23 +220,4 @@ function deployApplication(descriptor, callback) {
 function undeployApplication(appId, callback) {
 
 }
-
-/*
-    {
-        users: [
-            {
-                _did: 1001
-                _id: ?
-                ...
-            }
-        ],
-    }
-*/
-function createUsers(descriptor, callback) {
-
-}
-
-// = = = = = = = = = = = = = = = = = = = = 
-
-
 
