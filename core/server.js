@@ -1,4 +1,5 @@
-var http  = require("http");
+var http = require("http");
+var ip = require(CONFIG.root + "/core/util.js").ip;
 
 // imported functions
 var parseUrl  = require("url").parse,
@@ -9,6 +10,19 @@ var parseUrl  = require("url").parse,
     exec      = require("child_process").exec;
 
 var Server = exports.Server = function () {};
+var host = ip();
+
+if(!host) {
+    
+    if (CONFIG.dev) {
+        
+        host = "127.0.0.1";
+    }
+    else {
+    
+        throw new Error("Missing IP Adress");
+    }
+};
 
 Server.prototype.start = function() {
 
@@ -27,7 +41,7 @@ Server.prototype.start = function() {
                     
             // start http server
             self.server = http.createServer(requestHandler);
-            self.server.listen(CONFIG.dev ? CONFIG.devPort : CONFIG.port);
+            self.server.listen(CONFIG.dev ? CONFIG.devPort : CONFIG.port, host);
         });
     };
     
