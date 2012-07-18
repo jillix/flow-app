@@ -84,12 +84,21 @@ function installFromObject(descriptor, callback) {
                 // ********
                 installRoles(descriptor, function(err) {
 
-                    orient.disconnect(CONFIG.orient);
-
                     // TODO cleanup
                     if (err) { return callback(err, descriptor.appId); }
 
-                    callback(null, descriptor.appId);
+                    // ********
+                    // 4. USERS
+                    // ********
+                    installUsers(descriptor, function(err) {
+
+                        orient.disconnect(CONFIG.orient);
+
+                        // TODO cleanup
+                        if (err) { return callback(err, descriptor.appId); }
+
+                        callback(null, descriptor.appId);
+                    });
                 });
             });
         });
@@ -148,7 +157,6 @@ function installRoles(descriptor, callback) {
         (function(i) {
             var role = roles[i];
 
-            console.log("Adding role: " + JSON.stringify(role));
             db.addRole(descriptor.appId, role.name, function(err, _id) {
 
                 if (err) {
@@ -178,10 +186,29 @@ function installUsers(descriptor, callback) {
     for (var i in users) {
         (function(i) {
             var user = users[i];
-            // TODO add user
-            console.log("Adding user: " + JSON.stringify(user));
 
-            if (!--count) callback(errors.length ? errors : null);
+            // find the roles for this user
+            var roles = [];
+            var pseudoRoles = user.roles;
+            for (var i in pseudoRoles) {
+                var pseudoRole = pseudoRoles[i];
+                for (var j in descriptor.roles) {
+                    if (descriptor.roles[j].id == pseudoRole) {
+                        roles.push(descriptor.roles[j]._id);
+                    }
+                }
+            }
+
+            // now add the user
+            db.addUser(descriptor.appId, user, roles, function(err, _id) {
+
+                if (err) {
+                    errors.push(err);
+                } else {
+                    user._id = _id;
+                }
+                if (!--count) callback(errors.length ? errors : null);
+            });
         })(i);
     }
 }

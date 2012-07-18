@@ -1,8 +1,67 @@
 {
     "appId": "1898d7aa981f11e19f213e956188709b",
+    "name": "Liqshop Orders",
     "dependencies": {
         "github/adioo/layout":                  "8ee9aa2646c59adea5a3242d5e0c0a11f3527f57",
         "github/adioo/bind":                    "bf98a5b73189be6c4670d97f97fc46f7d62d543a"
-    }
+    },
+    "routes": {
+        "/": "liqshop_layout"
+    },
+    "error": "liqshop_order_login",
+    "domains": [
+        "liqshop.ch",
+        "orders.happybonus.ch"
+    ],
+    "publicUser": 0,
+    "users": [
+        {
+            "id": 0,
+            "username": "",
+            "password": "",
+            "data": {
+                "fullname": "Liqshop Public User"
+            },
+            "roles": [0]
+        },
+        {
+            "id": 1,
+            "username": "ddaarau",
+            "password": "3cc849279ba298b587a34cabaeffc5ecb3a044bbf97c516fab7ede9d1af77cfa",
+            "data": {
+                "fullname": "Liqshop Public User",
+                "fullname": "DD | Aarau",
+                "language": "de",
+                "session": {
+                    "branch": "AA"
+                }
+            },
+            "roles": [1,0]
+        },
+        {
+            "id": 2,
+            "username": "sag",
+            "password": "3cc849279ba298b587a34cabaeffc5ecb3a044bbf97c516fab7ede9d1af77cfa",
+            "data": {
+                "fullname": "Liqshop Admin",
+                "language": "en"
+            },
+            "roles": [2,1,0]
+        }
+    ],
+    "roles": [
+        {
+            "id": 0,
+            "name": "Liqshop Public Role"
+        },
+        {
+            "id": 1,
+            "name": "Liqshop Branch Role"
+        },
+        {
+            "id": 2,
+            "name": "Liqshop Admin Role"
+        }
+    ]
 }
 

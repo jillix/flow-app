@@ -1,5 +1,5 @@
 {
-    "appId": "9849564d3d426d7278683d283f3c5d37",
+    "appId": "5849564d3d426d7278683d283f3c5d37",
     "name": "MonoAdmin",
     "dependencies": {
         "github/gabipetrovay/github_display":   "latest",
@@ -9,11 +9,19 @@
     "routes": {
         "module": "github_layout"
     },
+    "domains": [
+        "github.mono.ch"
+    ],
+    "scripts": [
+        "/jquery.js",
+        "/bootstrap/js/bootstrap-button.js"
+    ],
     "publicDir": "public",
+    "publicUser": 0,
     "users": [
         {
             "id": 0,
-            "username": "public",
+            "username": "",
             "password": "",
             "data": {
                 "fullname": "MonoAdmin Public User"

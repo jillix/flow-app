@@ -248,7 +248,7 @@ exports.addApplication = function(appId, name, routes, publicDir, callback) {
             "id = '" + appId + "', " +
             "name = '" + name + "', " +
             "routes = " + JSON.stringify(routes) + " , " +
-            "publicDir = " + publicDir + ", " +
+            "publicDir = '" + publicDir + "', " +
             "publicUser = #7:7";
 
     sql(command, function(err, results) {
@@ -264,6 +264,7 @@ exports.addApplication = function(appId, name, routes, publicDir, callback) {
 
 }
 
+
 exports.addRole = function(appId, name, callback) {
 
     translateAppId(appId, function(err, id) {
@@ -272,10 +273,11 @@ exports.addRole = function(appId, name, callback) {
             return callback(err);
         }
 
+        // first add the Role node
         var command =
             "INSERT INTO VRole SET " +
                 "name = '" + name + "', " +
-                "app = '" + id + "'";
+                "app = " + id;
 
         sql(command, function(err, results) {
 
@@ -283,7 +285,50 @@ exports.addRole = function(appId, name, callback) {
                 return  callback(err || "Failed to insert role '" + name + "' for application '" + appId + "'");
             }
 
-            var id = idFromRid(results[0]["@rid"]);
+            var rid = results[0]["@rid"];
+            
+            // now add this Role in the application reference list
+            var command =
+                "UPDATE " + id + " ADD roles = " + rid;
+
+            sql(command, function(err, results) {
+
+                if (err) {
+                    return  callback("Failed to insert role '" + rid + "' into application '" + id + "'. " + JSON.stringify(err));
+                }
+
+                var id = idFromRid(rid);
+                callback(null, id);
+            });
+        });
+    });
+};
+
+
+exports.addUser = function(appId, user, roles, callback) {
+
+    translateAppId(appId, function(err, id) {
+
+        if (err) {
+            return callback(err);
+        }
+
+        // first add the Role node
+        var command =
+            "INSERT INTO VUser SET " +
+                "username = '" + user.username + "', " +
+                "password = '" + user.password + "', " +
+                "data = " + JSON.stringify(user.data);
+
+        sql(command, function(err, results) {
+
+            if (err || !results || results.length != 1 || !results[0] || !results[0]["@rid"]) {
+                return  callback(err || "Failed to insert user '" + username + "' for application '" + appId + "'");
+            }
+
+            var rid = results[0]["@rid"];
+            
+            var id = idFromRid(rid);
             callback(null, id);
         });
     });
@@ -305,7 +350,6 @@ function translateAppId(appId, callback) {
             "id = '" + appId + "'";
 
     sql(command, function(err, results) {
-debugger;
 
             if (err) {
                 return callback("An error occurred while translating the application ID: " + appId + ". " + JSON.stringify(err));

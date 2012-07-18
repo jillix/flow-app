@@ -58,12 +58,16 @@ function install_orientdb {
         download_orientdb
     fi
 
-    # TODO only if not already running
-    # start OrientDB to make sure the root user and password are generated
-    TMP_CUR_DIR=`pwd`
-    cd "$ORIENTDB_ROOT/bin/"
-    ./server.sh > /dev/null 2>&1 &
-    cd "$TMP_CUR_DIR"
+    # only if orient server not already running
+    ORIENT_PROCESS=$(ps aux | grep "com.orientechnologies.orient.server" | grep -v grep)
+    if [ ! $ORIENT_PROCESS ]
+    then
+        # start OrientDB to make sure the root user and password are generated
+        TMP_CUR_DIR=`pwd`
+        cd "$ORIENTDB_ROOT/bin/"
+        ./server.sh > /dev/null 2>&1 &
+        cd "$TMP_CUR_DIR"
+    fi
 
     # wating until the server starts (max 20 seconds)
     x=0
@@ -110,6 +114,7 @@ function install_orientdb {
     # TODO Whu doesn't console return non-zero on error?
     if [ $? -eq 0 ]
     then
+        echo ""
         echo "Database imported successfully."
         echo "Database import log written to: $IMPORT_LOG"
     else
@@ -118,7 +123,7 @@ function install_orientdb {
     fi
 
     # close now OrientDB server TODO but only if we start it above
-    kill $(ps aux | grep "$ORIENTDB_ROOT" | grep -v "grep" | awk '{print $2}')
+    #kill $(ps aux | grep "$ORIENTDB_ROOT" | grep -v "grep" | awk '{print $2}')
 }
 
 
