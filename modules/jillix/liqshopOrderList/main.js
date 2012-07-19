@@ -162,7 +162,7 @@ define(["./jquery.min"], function() {
                 var litm = $("<li>");
                 litm.append(
                         "<span class='orderdate'>" +
-                            orders[i].time +
+                            orders[i].date +
                         "</span> | " +
                         "<span class='ordernr'>" +
                             orders[i]._c +

@@ -125,6 +125,9 @@ exports.getOrders = function(link) {
                 
                 var order = docs[i];
 
+                // make the date a displayable one;
+                order.date = order.date.substr(6, 2) + "/" + order.date.substr(4, 2) + "/" + order.date.substr(0, 4);
+
                 // filter only the mathing orders
                 if (searchWords.length) {
 
