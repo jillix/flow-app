@@ -311,11 +311,11 @@ function initialize_mono {
     HOME=/home/$USERNAME sudo -u $USERNAME sh -c "cd /home/$USERNAME/mono ; npm install"
 
     mkdir -p /home/mono/images
-    mount /dev/xvdi1 /home/$USERNAME/images
 
     echo "####################################"
     echo "############### TODO ###############"
     echo "####################################"
+    echo "mount /dev/xvdi1 /home/$USERNAME/images"
     echo "ln --symbolic /home/mono/images/happy /home/$USERNAME/legacy/projects/happybonus/mods/article/img"
     echo "ln --symbolic /home/mono/images/liqshop /home/$USERNAME/legacy/projects/liqshop/files/pub/articles"
     echo "####################################"
@@ -323,6 +323,14 @@ function initialize_mono {
     echo "####################################"
 
     chown -R mono:mono /home/$USERNAME/images
+
+
+    echo ""
+    echo "####################################"
+    echo "############ TEMPORARY #############"
+    echo "####################################"
+    mongo /home/$USERNAME/legacy/scripts/shell/migration/import_orders_new.sh
+    echo "####################################"
 }
 
 
@@ -338,9 +346,6 @@ install_software
 # checkout mono code
 checkout_mono
 
-# initialize mono
-initialize_mono
-
 # checkout legacy code
 checkout_legacy
 
@@ -353,3 +358,5 @@ import_legacy_databases
 # initialize legacy
 initialize_legacy
 
+# initialize mono
+initialize_mono
