@@ -231,10 +231,10 @@ function import_legacy_databases {
         return
     fi
 
-    echo "*** Importing the legacy databases from machine14 ***"
+    echo "*** Importing the legacy databases from $SOURCE_SERVER ***"
     rm -Rf dump*
 
-    # perform a mongo dump on the old machine14
+    # perform a mongo dump on the source server
     scp /home/$USERNAME/legacy/scripts/shell/migration/export_mongo.sh $SOURCE_USERNAME@$SOURCE_SERVER:/home/$SOURCE_USERNAME/
     ssh -o StrictHostKeyChecking=no $SOURCE_USERNAME@$SOURCE_SERVER "~/export_mongo.sh $COMPLETE"
 
@@ -276,6 +276,9 @@ function import_legacy_databases {
     fi
 
     rm -Rf dump*
+
+    echo "*** Importing the old orders in the new common order format in sag.orders_new"
+    mongo /home/$USERNAME/legacy/scripts/shell/migration/import_orders_new.js
 }
 
 function install_legacy_software {
@@ -283,7 +286,7 @@ function install_legacy_software {
     install_nginx
     configure_nginx
 
-    # install ftp for nightly sag impot jobs
+    # install ftp for nightly sag import jobs
     install vsftpd
 }
 
@@ -297,11 +300,11 @@ function initialize_mono {
     HOME=/home/$USERNAME sudo -u $USERNAME sh -c "cd /home/$USERNAME/mono ; npm install"
 
     mkdir -p /home/mono/images
-    mount /dev/xvdi1 /home/$USERNAME/images
 
     echo "####################################"
     echo "############### TODO ###############"
     echo "####################################"
+    echo "mount /dev/xvdi1 /home/$USERNAME/images"
     echo "ln --symbolic /home/mono/images/happy /home/$USERNAME/legacy/projects/happybonus/mods/article/img"
     echo "ln --symbolic /home/mono/images/liqshop /home/$USERNAME/legacy/projects/liqshop/files/pub/articles"
     echo "####################################"
@@ -309,6 +312,13 @@ function initialize_mono {
     echo "####################################"
 
     chown -R mono:mono /home/$USERNAME/images
+
+    echo ""
+    echo "####################################"
+    echo "############# TEMPORARY ############"
+    echo "####################################"
+    echo "Switching to the mono liqshop branch"
+    git checkout liqshop
 }
 
 
@@ -324,9 +334,6 @@ install_software
 # checkout mono code
 checkout_mono
 
-# initialize mono
-initialize_mono
-
 # checkout legacy code
 checkout_legacy
 
@@ -338,4 +345,7 @@ import_legacy_databases
 
 # initialize legacy
 initialize_legacy
+
+# initialize mono
+initialize_mono
 
