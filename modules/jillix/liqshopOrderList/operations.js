@@ -162,9 +162,18 @@ exports.getOrders = function(link) {
                         hasBranch = true;
                     }
 
-                    if (!userBranch || (branch && branch.indexOf(item.branch) > -1)) {
-                        item.readonly = false;
-                        items.push(item);
+                    if (!userBranch && branch) {
+
+                        var splits = branch.split(",");
+
+                        for (var i in splits) {
+
+                            if (splits[i] == item.branch) {
+                                item.readonly = false;
+                                items.push(item);
+                                break;
+                            }
+                        }
                     } else {
                         item.readonly = true;
                         if (branch !== "LAUPER") {
