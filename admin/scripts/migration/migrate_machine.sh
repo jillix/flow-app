@@ -308,6 +308,14 @@ function initialize_legacy {
 
 function initialize_mono {
     echo "*** Initializing mono projects ***"
+
+    echo "####################################"
+    echo "############ TEMPORARY #############"
+    echo "####################################"
+    mongo /home/$USERNAME/legacy/scripts/shell/migration/import_orders_new.sh
+    HOME=/home/$USERNAME sudo -u $USERNAME sh -c "cd /home/$USERNAME/mono ; git checkout liqshop"
+    echo "####################################"
+
     HOME=/home/$USERNAME sudo -u $USERNAME sh -c "cd /home/$USERNAME/mono ; npm install"
 
     mkdir -p /home/mono/images
@@ -323,14 +331,6 @@ function initialize_mono {
     echo "####################################"
 
     chown -R mono:mono /home/$USERNAME/images
-
-
-    echo ""
-    echo "####################################"
-    echo "############ TEMPORARY #############"
-    echo "####################################"
-    mongo /home/$USERNAME/legacy/scripts/shell/migration/import_orders_new.sh
-    echo "####################################"
 }
 
 
