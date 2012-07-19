@@ -245,7 +245,7 @@ function import_legacy_databases {
         return
     fi
 
-    echo "*** Importing the legacy databases from machine14 ***"
+    echo "*** Importing the legacy databases from $SOURCE_SERVER ***"
     rm -Rf dump*
 
     # perform a mongo dump on the old machine14
