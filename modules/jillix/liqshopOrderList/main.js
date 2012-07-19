@@ -14,7 +14,7 @@ define(["./jquery.min"], function() {
 
         self = this;
 
-        N.obs("liqshop_order_details").l("archived", refresh);
+        N.obs("liqshop_order_details").l("archived", function() { page = 1; refresh(); } );
 
         ul = $(self.dom).find(".list");
         branches = $("#orders_filter_branch", self.dom);
@@ -32,7 +32,7 @@ define(["./jquery.min"], function() {
             select($(this));
         });
 
-        $(".filter", self.dom).on("change", refresh);
+        $(".filter", self.dom).on("change", function() { page = 1; refresh(); });
         $(".pageHandle", self.dom).on("click", pageRequest);
 
         fetchBranches();
