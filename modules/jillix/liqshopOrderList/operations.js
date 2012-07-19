@@ -109,7 +109,7 @@ exports.getOrders = function(link) {
 
         console.log(JSON.stringify(mongoQuery));
 
-        db.find(mongoQuery).toArray(function(err, docs) {
+        db.find(mongoQuery, { sort: { date: -1 } }).toArray(function(err, docs) {
 
             if (err) {
                 send.internalservererror(link, err);
