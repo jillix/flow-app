@@ -4,7 +4,6 @@ CONFIG = require(process.cwd() + "/config");
 var cp = require('child_process');
 var fs = require('fs');
 
-var orient = require(CONFIG.root + "/core/db/orient.js");
 var appsApi = require(CONFIG.root + "/api/apps");
 var model = require(CONFIG.root + "/core/model/orient");
 
@@ -33,9 +32,6 @@ function installApp(i) {
         appsApi.install(descriptorFiles[i], function(err, appId) {
 
             if (err) {
-                if (CONFIG.orient.DB) {
-                    CONFIG.orient.DB.close();
-                }
                 console.error(err);
                 console.error("Failed to install application: " + appId);
             } else {

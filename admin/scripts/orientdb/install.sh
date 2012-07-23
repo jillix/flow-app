@@ -60,7 +60,7 @@ function install_orientdb {
 
     # only if orient server not already running
     ORIENT_PROCESS=$(ps aux | grep "com.orientechnologies.orient.server" | grep -v grep)
-    if [ ! $ORIENT_PROCESS ]
+    if [ "$ORIENT_PROCESS" == "" ]
     then
         # start OrientDB to make sure the root user and password are generated
         TMP_CUR_DIR=`pwd`

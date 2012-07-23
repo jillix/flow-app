@@ -265,6 +265,51 @@ exports.addApplication = function(appId, name, routes, publicDir, callback) {
 }
 
 
+exports.assignRole = function(uid, rid, callback) {
+
+    callback = callback || function() {};
+
+    var vuCluster = CONFIG.orient.DB.getClusterByClass("VUser");
+    var vrCluster = CONFIG.orient.DB.getClusterByClass("VRole");
+
+    var urid = "#" + vuCluster.id + ":" + uid;
+    var rrid = "#" + vrCluster.id + ":" + rid;
+
+    var hash = null;
+    var options = {
+        "class" : "EMemberOf"
+    };
+
+    edge(urid, rrid, hash, options, function(err, edge) {
+
+        if (err) {
+            return callback("");
+        }
+
+        callback(null);
+    });
+}
+
+
+exports.updatePublicUser = function(appId, uid, callback) {
+
+    callback = callback || function() {};
+
+    var vuCluster = CONFIG.orient.DB.getClusterByClass("VUser");
+
+    var command =
+        "UPDATE Vapplication SET publicUser = #" + vuCluster.id + ":" + uid + " WHERE id = '" + appId + "'";
+
+    sql(command, function(err, results) {
+
+        if (err || !results || results.length != 1 || !results[0]) {
+            return  callback(err || "Failed to update the public user for application: " + appId);
+        }
+
+        callback(null);
+    });
+}
+
 exports.addRole = function(appId, name, callback) {
 
     translateAppId(appId, function(err, id) {
@@ -655,3 +700,16 @@ function sql(command, callback) {
     }
     CONFIG.orient.DB.command(command, callback);
 }
+
+
+function edge(srid, drid, hash, options, callback) {
+
+    var db = CONFIG.orient.DB;
+
+    db.loadRecord(srid, function(err, srecord) {
+        db.loadRecord(drid, function(err, drecord) {
+            db.createEdge(srecord, drecord, hash, options, callback);
+        });
+    });
+}
+

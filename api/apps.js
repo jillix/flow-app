@@ -49,12 +49,17 @@ function installFromFile(file, callback) {
 function installFromObject(descriptor, callback) {
 
     // TODO validate the descriptor
-
     orient.connect(CONFIG.orient, function(err) {
 
         if (err) {
             return callback(err, descriptor.appId);
         }
+
+        var initialCallback = callback;
+        callback = function(err, result) {
+            orient.disconnect(CONFIG.orient);
+            initialCallback(err, result);
+        };
 
         // **************
         // 1. APPLICATION
@@ -90,14 +95,27 @@ function installFromObject(descriptor, callback) {
                     // ********
                     // 4. USERS
                     // ********
-                    installUsers(descriptor, function(err) {
-
-                        orient.disconnect(CONFIG.orient);
+                    installUsers(descriptor, function(err, publicUser) {
 
                         // TODO cleanup
                         if (err) { return callback(err, descriptor.appId); }
 
-                        callback(null, descriptor.appId);
+                        db.updatePublicUser(descriptor.appId, publicUser._id, function(err) {
+                            if (err) {
+                                console.error(err);
+                            }
+                        });
+
+                        // *************
+                        // 4. USER-ROLES
+                        // *************
+                        assignUserRoles(descriptor, function(err) {
+
+                            // TODO cleanup
+                            if (err) { return callback(err, descriptor.appId); }
+
+                            callback(null, descriptor.appId);
+                        });
                     });
                 });
             });
@@ -183,9 +201,20 @@ function installUsers(descriptor, callback) {
     var count = users.length;
     var errors = [];
 
+    var publicUser = null;
+
     for (var i in users) {
-        (function(i) {
-            var user = users[i];
+
+        (function(user) {
+
+            if (user.username === "") {
+                if (!publicUser) {
+                    publicUser = user;
+                } else {
+                    errors.push({ message: "There can be only one public user with an empty username.", data: user });
+                    if (!--count) { return callback(errors); }
+                }
+            }
 
             // find the roles for this user
             var roles = [];
@@ -207,11 +236,41 @@ function installUsers(descriptor, callback) {
                 } else {
                     user._id = _id;
                 }
-                if (!--count) callback(errors.length ? errors : null);
+                if (!--count) callback(errors.length ? errors : null, publicUser);
             });
-        })(i);
+        })(users[i]);
     }
 }
+
+/**
+ *
+ */
+function assignUserRoles(descriptor, callback) {
+
+    var users = descriptor.users;
+    var roles = descriptor.roles;
+    var uc = users.length;
+
+    var userIndex = 0;
+    var roleIndex = 0;
+
+    function addRolesSequential(ui, ri) {
+        if (ui >= uc) {
+            return callback(null);
+        }
+
+        if (!users[ui].roles || ri >= users[ui].roles.length) {
+            return addRolesSequential(++ui, 0);
+        }
+
+        db.assignRole(users[ui]._id, roles[users[ui].roles[ri]]._id, function() {
+            addRolesSequential(ui, ++ri);
+        });
+    }
+
+    addRolesSequential(userIndex, roleIndex);
+}
+
 
 
 exports.install = install;
