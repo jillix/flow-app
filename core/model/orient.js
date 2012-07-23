@@ -242,14 +242,14 @@ exports.getUser = function(appId, userName, callback) {
 
 exports.addApplication = function(appId, name, routes, publicDir, callback) {
 
-    // #7:7 should be the default public user
+    // #7:0 should be the default public user
     var command =
         "INSERT INTO VApplication SET " +
             "id = '" + appId + "', " +
             "name = '" + name + "', " +
             "routes = " + JSON.stringify(routes) + " , " +
             "publicDir = '" + publicDir + "', " +
-            "publicUser = #7:7";
+            "publicUser = #7:0";
 
     sql(command, function(err, results) {
 
