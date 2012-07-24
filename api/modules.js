@@ -198,6 +198,21 @@ function installModule(module, callback) {
         return callback(null, false);
     }
 
+    var initialCallback = callback;
+    callback = function(err, data) {
+
+        if (!err) {
+            return initialCallback(null, data);
+        }
+
+        removeModule(module, function(err1) {
+            if (err1) {
+                return initialCallback("Cannot cleanup module: " + module.getVersionPath() + ". " + JSON.stringify(err1));
+            }
+            initialCallback(err, data);
+        });
+    }
+
     
     // ***********
     // 1. DOWNLOAD

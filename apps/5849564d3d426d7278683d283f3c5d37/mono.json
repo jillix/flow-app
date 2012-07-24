@@ -4,10 +4,7 @@
     "dependencies": {
         "github/gabipetrovay/github_display":   "latest",
         "github/adioo/layout":                  "latest",
-        "github/adioo/bind":                    "a9a69b83431f9b21f332fd5b75c85d40e1157332",
-        "bitbucket/jillix/liqshopOrderLogin":   "latest",
-        "bitbucket/jillix/liqshopOrderList":    "latest",
-        "bitbucket/jillix/liqshopOrderDetails": "latest"
+        "github/adioo/bind":                    "a9a69b83431f9b21f332fd5b75c85d40e1157332"
     },
     "routes": {
         "module": "github_layout"
