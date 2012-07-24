@@ -195,7 +195,13 @@ function installModule(module, callback) {
 
     if (fs.existsSync(MODULE_ROOT + module.getVersionPath())) {
         console.log("Skipping " + module.getVersionPath());
-        return callback(null, false);
+        db.getModuleVersion(module, function(err, modDoc) {
+
+            if (err) { return callback(err); }
+            if (!modDoc) { return callback("An installed module is missing from the database: " + module.getVersionPath()); }
+            return callback(null, idFromRid(modDoc["@rid"]));
+        });
+        return;
     }
 
     var initialCallback = callback;
@@ -270,7 +276,7 @@ function installModule(module, callback) {
                             console.log("Inserted " + inserted.length + " operations for module: " + module.getVersionPath());
                         }
 
-                        callback(null, true);
+                        callback(null, module._id);
                     });
                 });
             });

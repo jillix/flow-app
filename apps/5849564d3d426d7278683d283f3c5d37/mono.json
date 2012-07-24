@@ -32,7 +32,8 @@
     "roles": [
         {
             "id": 0,
-            "name": "MonoAdmin Public Role"
+            "name": "MonoAdmin Public Role",
+            "uses": [0, 1, 2]
         }
     ]
 }

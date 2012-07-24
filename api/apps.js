@@ -79,7 +79,8 @@ function installFromObject(descriptor, callback) {
             // ***************
             // 2. DEPENDENCIES
             // ***************
-            installDependencies(descriptor, function(err) {
+            installDependencies(descriptor, function(err, ids) {
+                descriptor.modules = ids;
 
                 // TODO cleanup
                 if (err) { return callback(err, descriptor.appId); }
@@ -107,14 +108,23 @@ function installFromObject(descriptor, callback) {
                         });
 
                         // *************
-                        // 4. USER-ROLES
+                        // 5. USER-ROLES
                         // *************
                         assignUserRoles(descriptor, function(err) {
 
                             // TODO cleanup
                             if (err) { return callback(err, descriptor.appId); }
 
-                            callback(null, descriptor.appId);
+                            // ************
+                            // 6. ROLE USES
+                            // ************
+                            roleModuleUsage(descriptor, function(err) {
+
+                                // TODO cleanup
+                                if (err) { return callback(err, descriptor.appId); }
+
+                                callback(null, descriptor.appId);
+                            });
                         });
                     });
                 });
@@ -137,24 +147,28 @@ function installDependencies(descriptor, callback) {
 
     var count = Object.keys(deps).length;
     var errors = [];
+    var ids = [];
+    var index = 0;
 
-    for (var i in deps) {
-        (function(i) {
-            var splits = i.split("/");
-            var module = new modules.Module(splits[0], splits[1], splits[2], deps[i]);
+    for (var key in deps) {
+        (function(key, index) {
+            var splits = key.split("/");
+            var module = new modules.Module(splits[0], splits[1], splits[2], deps[key]);
 
-            modules.installModule(module, function(err, newlyInstalled) {
+            modules.installModule(module, function(err, id) {
                 if (err) {
                     console.error("Could not install dependency: " + module.getVersionPath() + ". Reason:");
                     console.error(JSON.stringify(err));
                     errors.push(err);
-                } else if (newlyInstalled) {
+                } else if (id != undefined) {
                     console.log("Installed dependency: " + module.getVersionPath());
                 }
 
-                if (!--count) callback(errors.length ? errors : null);
+                ids[index] = id;
+
+                if (!--count) callback(errors.length ? errors : null, ids);
             })
-        })(i);
+        })(key, index++);
     }
 }
 
@@ -271,6 +285,16 @@ function assignUserRoles(descriptor, callback) {
     addRolesSequential(userIndex, roleIndex);
 }
 
+
+/**
+ *
+ */
+function roleModuleUsage(descriptor, callback) {
+
+    console.log("TODO: Add roles module usage edges");
+
+    callback(null);
+}
 
 
 exports.install = install;
