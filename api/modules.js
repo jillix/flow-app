@@ -69,7 +69,7 @@ function addModuleDir(source, owner, module, callback) {
 
 function findLatestCommit(module, callback) {
 
-    var git = cp.spawn("git", ["ls-remote", module.getGitUrl(), "HEAD"]);
+    var git = cp.spawn("git", ["ls-remote", module.getSourceUrl(), "HEAD"]);
 
     var out = "";
 
@@ -91,7 +91,7 @@ function findLatestCommit(module, callback) {
 
 function cloneModuleVersion(module, callback) {
 
-    var url = module.getGitUrl();
+    var url = module.getSourceUrl();
     if (!url) {
         return callback({ error: "Invalid source: " + module.source, code: 204 });
     }
@@ -198,26 +198,66 @@ function installModule(module, callback) {
         return callback(null, false);
     }
 
+    
+    // ***********
+    // 1. DOWNLOAD
+    // ***********
+    if (CONFIG.log.moduleInstallation || CONFIG.logLevel === "verbose") {
+        console.log("Fetching  module: " + module.getModulePath());
+    }
     fetchModule(module, function(err) {
 
-        if (err) {
-            return callback(err);
+        if (err) { return callback(err); }
+
+        // ****************
+        // 2. UPSERT MODULE
+        // ****************
+        if (CONFIG.log.moduleInstallation || CONFIG.logLevel === "verbose") {
+            console.log("Upserting module: " + module.getModulePath());
         }
+        db.upsertModule(module, function(err, modDoc) {
 
-        getModuleOperations(module, function(err, operations) {
+            if (err) { return callback(err); }
+            
+            // ************************
+            // 3. UPSERT MODULE VERSION
+            // ************************
+            if (CONFIG.log.moduleInstallation || CONFIG.logLevel === "verbose") {
+                console.log("Upserting module version: " + module.getVersionPath());
+            }
+            db.upsertModuleVersion(module, function(err, versionDoc) {
 
-            if (err) {
-                removeModule(module, function(err1) {
-                    callback(err);
+                if (err) { return callback(err); }
+
+                // *************************
+                // 4. READ MODULE OPERATIONS
+                // *************************
+                if (CONFIG.log.moduleInstallation || CONFIG.logLevel === "verbose") {
+                    console.log("Reading module operations from: " + module.getVersionPath() + "/mono.json");
+                }
+                getModuleOperations(module, function(err, operations) {
+
+                    if (err) { return callback(err); };
+
+                    module.operations = operations;
+
+                    // ***************************
+                    // 5. INSERT MODULE OPERATIONS
+                    // ***************************
+                    if (CONFIG.log.moduleInstallation || CONFIG.logLevel === "verbose") {
+                        console.log("Inserting " + operations.length + " operations for module: " + module.getVersionPath());
+                    }
+                    db.insertOperations(module, function(err, inserted) {
+
+                        if (err) { return callback(err); };
+
+                        if (CONFIG.log.moduleInstallation || CONFIG.logLevel === "verbose") {
+                            console.log("Inserted " + inserted.length + " operations for module: " + module.getVersionPath());
+                        }
+
+                        callback(null, true);
+                    });
                 });
-                return
-            };
-
-            module.operations = operations;
-
-            db.insertModuleVersion(module, function(err) {
-                if (err) {return callback(err); }
-                callback(null, true);
             });
         });
     });
@@ -270,7 +310,7 @@ exports.Module = function(source, owner, name, version) {
         return getModulePath() + "/" + version;
     }
     
-    function getGitUrl() {
+    function getSourceUrl() {
         switch (source) {
             case "github":
                 return "https://github.com/" + owner + "/" + name + ".git";
@@ -289,7 +329,7 @@ exports.Module = function(source, owner, name, version) {
 
         getModulePath: getModulePath,
         getVersionPath: getVersionPath,
-        getGitUrl: getGitUrl
+        getSourceUrl: getSourceUrl
     }
 };
 

@@ -55,6 +55,57 @@ exports.getModules = function(callback) {
 };
 
 
+exports.addModule = function(module, callback) {
+
+    var command =
+        "INSERT INTO VModule (" +
+            "source, owner, name, latest" +
+        ") VALUES (" +
+            "'" + module.source + "', " +
+            "'" + module.owner + "', " +
+            "'" + module.name + "', " +
+            "'" + module.latest + "'" +
+        ")";
+
+    sql(command, function(err, results) {
+
+        if (err) {
+            return callback("An error occurred while inserting module '" + module.getModulePath() + "': " + JSON.stringify(err));
+        }
+
+        callback(null, results[0] || null);
+    });
+};
+
+
+exports.addModuleVersion = function(module, callback) {
+
+    if (module._id == undefined) {
+        return callback("The module is missing the _id.");
+    }
+
+    var vmCluster = CONFIG.orient.DB.getClusterByClass("VModule");
+
+    var command =
+        "INSERT INTO VModuleVersion (" +
+            "version, module, publicDir" +
+        ") VALUES (" +
+            "'" + module.version + "', " +
+            "#" + vmCluster.id + ":" + module._id + ", " +
+            "" + null + "" +
+        ")";
+
+    sql(command, function(err, results) {
+
+        if (err) {
+            return callback("An error occurred while inserting module version '" + module.getVersionPath() + "': " + JSON.stringify(err));
+        }
+
+        callback(null, results[0] || null);
+    });
+};
+
+
 exports.getModule = function(source, owner, name, callback) {
 
     var command =
@@ -77,21 +128,51 @@ exports.getModule = function(source, owner, name, callback) {
 };
 
 
-exports.insertOperations = function(operations, callback) {
+exports.getModuleVersion = function(module, callback) {
 
+    var command =
+        "SELECT " +
+        "FROM " +
+            "VModuleVersion " +
+        "WHERE " +
+            "module.source = '" + module.source + "' AND " +
+            "module.owner = '" + module.owner + "' AND " +
+            "module.name = '" + module.name + "' AND " +
+            "version = '" + module.version + "'";
+
+    sql(command, function(err, results) {
+
+        if (err) {
+            return callback("An error occurred while retrieving module version '" + module.getVersionPath() + "': " + JSON.stringify(err));
+        }
+
+        callback(null, results[0] || null);
+    });
+};
+
+
+exports.insertOperations = function(module, callback) {
+
+    if (module._id == undefined) {
+        return callback("The module is missing the _id.");
+    }
+
+    var operations = module.operations;
     if (!operations || !operations.length) {
         return callback(null, []);
     }
 
     // build the INSERT VALUES string
+    var vmCluster = CONFIG.orient.DB.getClusterByClass("VModule");
     var opsStr = "";
     for (var i in operations) {
-        opsStr += "('" + operations[i].file + "', '" + operations[i]["function"] + "'),";
+        opsStr += "(#" + vmCluster.id + ":" + module._id + ", '" + operations[i].file + "', '" + operations[i]["function"] + "'),";
     }
     opsStr = opsStr.slice(0, -1);
 
     var command =
         "INSERT INTO VOperation (" +
+            "module, " +
             "file, " +
             "method" +
         ") VALUES " +
@@ -101,54 +182,48 @@ exports.insertOperations = function(operations, callback) {
 };
 
 
-exports.insertBelongsTo = function(rid, version, operations, callback) {
-
-    if (!operations || !operations.length) {
-        return callback(null, []);
-    }
-
-    var edgeStr = "";
-    for (var i in operations) {
-        edgeStr += "('" + version + "', " + operations[i]["@rid"] + ", " + rid + "),";
-    }
-    edgeStr = edgeStr.slice(0, -1);
-
-    var command =
-        "INSERT INTO EBelongsTo (" +
-            "version, " +
-            "out, " +
-            "in" +
-        ") VALUES " +
-            edgeStr;
-
-    sql(command, callback);
-};
-
-
-exports.insertModuleVersion = function(module, callback) {
-
+exports.upsertModule = function(module, callback) {
     // find the module
     exports.getModule(module.source, module.owner, module.name, function(err, mod) {
 
-        var rid = mod['@rid'];
+        if (err) { return callback("Error while upserting (SELECT) module: " + module.getModulePath() + ". Error: " + JSON.stringify(err)); }
 
-        // insert the operations
-        exports.insertOperations(module.operations, function(err, inserted) {
-        
-            if (err) {
-                return callback("An error occurred while inserting module operations for module '" + module.relativePath() + "': " + JSON.stringify(err));
+        if (mod) {
+            module._id = idFromRid(mod['@rid']);
+            return callback(null, mod);
+        }
+
+        // add the module
+        exports.addModule(module, function(err, mod) {
+
+            if (err || !mod) { return callback("Error while upserting (INSERT) module: " + module.getModulePath() + ". Error: " + JSON.stringify(err)); }
+
+            module._id = idFromRid(mod['@rid']);
+            callback(null, mod);
+        })
+    });
+}
+
+
+exports.upsertModuleVersion = function(module, callback) {
+
+    exports.upsertModule(module, function(err, docMod) {
+
+        if (err) { return callback(err); }
+
+        exports.getModuleVersion(module, function(err, versionDoc) {
+            
+            if (err) { return callback(err); }
+
+            if (versionDoc) {
+                return callback(null, versionDoc);
             }
 
-            // insert the EBelongsTo edge between operations and module
-            exports.insertBelongsTo(rid, module.version, inserted, function(err, inserted) {
-                if (err) {
-                    return callback("An error occurred while inserting module operations edges for module '" + module.relativePath() + "': " + JSON.stringify(err));
-                }
+            exports.addModuleVersion(module, function(err, versionDoc) {
+            
+                if (err) { return callback(err); }
 
-                // TODO insert the lings in the "in" list for the module
-                //db.save(module);
-
-                callback(null);
+                return callback(null, versionDoc);
             });
         });
     });

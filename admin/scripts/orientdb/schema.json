@@ -102,7 +102,7 @@
             "type": "PHYSICAL"
         },
         {
-            "name": "ebelongsto",
+            "name": "vmoduleversion",
             "id": 18,
             "type": "PHYSICAL"
         }
@@ -255,6 +255,12 @@
                 "super-class": "OGraphVertex",
                 "properties": [
                     {
+                        "name": "module",
+                        "type": "LINK",
+                        "mandatory": true,
+                        "not-null": true
+                    },
+                    {
                         "name": "file",
                         "type": "STRING",
                         "mandatory": true,
@@ -297,9 +303,30 @@
                         "type": "STRING",
                         "mandatory": true,
                         "not-null": true
+                    }
+                ]
+            },
+            {
+                "name": "VModuleVersion",
+                "default-cluster-id": 18,
+                "cluster-ids": [18],
+                "super-class": "OGraphVertex",
+                "properties": [
+                    {
+                        "name": "version",
+                        "type": "STRING",
+                        "mandatory": true,
+                        "not-null": true
                     },
                     {
-                        "name": "dir",
+                        "name": "module",
+                        "type": "LINK",
+                        "mandatory": true,
+                        "not-null": true,
+                        "linked-class": "VModule"
+                    },
+                    {
+                        "name": "publicDir",
                         "type": "STRING",
                         "mandatory": false,
                         "not-null": true
@@ -393,12 +420,6 @@
                         "not-null": true
                     },
                     {
-                        "name": "version",
-                        "type": "STRING",
-                        "mandatory": true,
-                        "not-null": true
-                    },
-                    {
                         "name": "html",
                         "type": "EMBEDDEDMAP",
                         "mandatory": false,
@@ -437,28 +458,7 @@
                 "default-cluster-id": 17,
                 "cluster-ids": [17],
                 "super-class": "OGraphEdge",
-                "properties": [
-                    {
-                        "name": "version",
-                        "type": "STRING",
-                        "mandatory": true,
-                        "not-null": true
-                    }
-                ]
-            },
-            {
-                "name": "EBelongsTo",
-                "default-cluster-id": 18,
-                "cluster-ids": [18],
-                "super-class": "OGraphEdge",
-                "properties": [
-                    {
-                        "name": "version",
-                        "type": "STRING",
-                        "mandatory": true,
-                        "not-null": true
-                    }
-                ]
+                "properties": [ ]
             }
         ]
     }
