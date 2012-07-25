@@ -322,9 +322,9 @@ exports.addApplication = function(appId, name, routes, publicDir, callback) {
         "INSERT INTO VApplication SET " +
             "id = '" + appId + "', " +
             "name = '" + name + "', " +
-            "routes = " + JSON.stringify(routes) + " , " +
             "publicDir = '" + publicDir + "', " +
-            "publicUser = #7:0";
+            "publicUser = #7:0, " +
+            "routes = " + JSON.stringify(routes);
 
     sql(command, function(err, results) {
 

@@ -8,8 +8,8 @@ TMP_DIR=tmp
 mkdir -p "$TMP_DIR"
 
 ORIENTDB_ROOT=bin/orientdb
-#ORIENTDB_VERSION=`curl --silent https://oss.sonatype.org/content/repositories/releases/com/orientechnologies/orientdb/maven-metadata.xml | grep "release" | cut -d ">" -f 2 | cut -d "<" -f 1`
-ORIENTDB_VERSION=1.0.1
+ORIENTDB_VERSION=`curl --silent https://oss.sonatype.org/content/repositories/releases/com/orientechnologies/orientdb/maven-metadata.xml | grep "release" | cut -d ">" -f 2 | cut -d "<" -f 1`
+#ORIENTDB_VERSION=1.0.1
 ORIENTDB_ROOT_USER=root
 ORIENTDB_MONO_SQL=mono.sql
 ORIENTDB_MONO_DROP_SQL=mono_drop.sql
@@ -32,9 +32,12 @@ function download_orientdb {
     echo "Removing old OrientDB installation..."
     rm -Rf "$ORIENTDB_ROOT"
 
-    echo "Unpacking OrientDB in: $ORIENTDB_ROOT"
-    mkdir -p "$ORIENTDB_ROOT"
-    unzip -o -q -d "$ORIENTDB_ROOT" "$TMP_DIR/$ORIENTDB_ARCHIVE"
+    mkdir -p bin
+
+    echo "Unpacking OrientDB in: bin"
+    unzip -o -q -d bin "$TMP_DIR/$ORIENTDB_ARCHIVE"
+
+    mv "bin/orientdb-graphed-$ORIENTDB_VERSION" "$ORIENTDB_ROOT"
     chmod +x bin/orientdb/bin/*sh
 }
 
@@ -69,9 +72,10 @@ function install_orientdb {
         cd "$TMP_CUR_DIR"
     fi
 
-    # wating until the server starts (max 20 seconds)
+    # waiting until the server starts (max 20 seconds)
     x=0
-    while [ $x -le 20 ]
+    SECS=20
+    while [ $x -lt $SECS ]
     do
         echo "Waiting for the OrientDB server to start..."
         SERVER_PID=`lsof -iTCP:2424 -sTCP:LISTEN -t`
@@ -84,7 +88,7 @@ function install_orientdb {
         x=$(( $x + 1 ))
     done
 
-    if [ $x -eq 10 ]
+    if [ $x -eq $SECS ]
     then
         echo "Could not start the OrientDB server. Try again or do this shit manually."
         echo "Aborting!"
@@ -125,7 +129,6 @@ function install_orientdb {
     # close now OrientDB server TODO but only if we start it above
     #kill $(ps aux | grep "$ORIENTDB_ROOT" | grep -v "grep" | awk '{print $2}')
 }
-
 
 install_orientdb
 
