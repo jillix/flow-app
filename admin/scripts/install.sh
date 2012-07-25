@@ -2,6 +2,9 @@
 
 MONO_ROOT=`pwd`
 
+# TODO temp module removal
+rm -Rf $MONO_ROOT/modules/*
+
 # install OrientDB and mono database
 $MONO_ROOT/admin/scripts/orientdb/install.sh
 

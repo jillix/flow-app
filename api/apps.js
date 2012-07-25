@@ -177,10 +177,6 @@ function installDependencies(descriptor, callback) {
  */
 function installRoles(descriptor, callback) {
 
-    if (!descriptor.roles) {
-        return callback(null);
-    }
-
     var roles = descriptor.roles;
     var count = roles.length;
     var errors = [];
@@ -285,15 +281,69 @@ function assignUserRoles(descriptor, callback) {
     addRolesSequential(userIndex, roleIndex);
 }
 
-
 /**
  *
  */
 function roleModuleUsage(descriptor, callback) {
 
-    console.log("TODO: Add roles module usage edges");
+    var roles = descriptor.roles;
+    var count = roles.length;
+    var errors = [];
 
-    callback(null);
+    for (var i in roles) {
+        (function(i) {
+            var role = roles[i];
+
+            addModuleInstances(descriptor, role, function(err) {
+            
+                if (err) {
+                    errors.push(err);
+                }
+
+                if (!--count) callback(errors.length ? errors : null);
+            });
+        })(i);
+    }
+}
+
+/**
+ *
+ */
+function addModuleInstances(descriptor, role, callback) {
+
+    var miids = Object.keys(role.uses || {});
+    var count = miids.length;
+
+    if (!count) {
+        return callback(null);
+    }
+
+    function addModuleInstancesSequential(miidIndex) {
+
+        if (miidIndex >= count) {
+            return callback(null);
+        }
+
+        var miid = miids[miidIndex];
+        var use = role.uses[miid];
+        use.miid = miid;
+        db.addModuleInstance(role._id, use, function(err, id) {
+            
+            if (err) {
+                errors.push(err);
+            } else {
+                use._id = id;
+            }
+
+            console.log("Added UsesInstanceOf Edge: " + id + " for miid: " + use.miid);
+
+            addModuleInstancesSequential(++miidIndex);
+        });
+    }
+
+    addModuleInstancesSequential(0);
+
+    return;
 }
 
 

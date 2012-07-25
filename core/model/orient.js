@@ -355,10 +355,10 @@ exports.assignRole = function(uid, rid, callback) {
         "class" : "EMemberOf"
     };
 
-    edge(urid, rrid, hash, options, function(err, edge) {
+    edge(urid, rrid, hash, options, function(err, edgeDoc) {
 
         if (err) {
-            return callback("");
+            return callback(err);
         }
 
         callback(null);
@@ -384,6 +384,7 @@ exports.updatePublicUser = function(appId, uid, callback) {
         callback(null);
     });
 }
+
 
 exports.addRole = function(appId, name, callback) {
 
@@ -453,6 +454,32 @@ exports.addUser = function(appId, user, roles, callback) {
         });
     });
 };
+
+
+exports.addModuleInstance = function(rid, use, callback) {
+
+    callback = callback || function() {};
+
+    var vrCluster = CONFIG.orient.DB.getClusterByClass("VRole");
+    var vvCluster = CONFIG.orient.DB.getClusterByClass("VModuleVersion");
+
+    var rrid = "#" + vrCluster.id + ":" + rid;
+    var vrid = "#" + vvCluster.id + ":" + use.id;
+
+    delete use.id;
+    var options = {
+        "class" : "EUsesInstanceOf"
+    };
+
+    edge(rrid, vrid, use, options, function(err, edgeDoc) {
+
+        if (err) {
+            return callback(err);
+        }
+
+        callback(null, idFromRid(edgeDoc["@rid"]));
+    });
+}
 
 
 function translateAppId(appId, callback) {

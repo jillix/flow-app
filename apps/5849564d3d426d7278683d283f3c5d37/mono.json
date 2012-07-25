@@ -33,8 +33,30 @@
         {
             "id": 0,
             "name": "MonoAdmin Public Role",
-            "uses": [0, 1, 2]
+            "uses": {
+                "github_layout": {
+                    "id": 1,
+                    "html": {
+                        "type": "a",
+                        "path": "html/layout"
+                    },
+                    "css": ["bootstrap/css/bootstrap", "github"]
+                }
+            }
         }
-    ]
+    ],
+    "miids": {
+        "github_layout": {
+            "roles": [0],
+            "module": 1,
+            "config": {
+                "html": {
+                    "type": "a",
+                    "path": "html/layout"
+                },
+                "css": ["bootstrap/css/bootstrap", "github"]
+            }
+        }
+    }
 }
 
