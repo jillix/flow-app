@@ -430,12 +430,6 @@
                         "type": "EMBEDDEDSET",
                         "mandatory": false,
                         "not-null": true
-                    },
-                    {
-                        "name": "config",
-                        "type": "EMBEDDEDMAP",
-                        "mandatory": false,
-                        "not-null": true
                     }
                 ]
             },

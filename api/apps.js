@@ -335,15 +335,11 @@ function addModuleInstances(descriptor, role, callback) {
                 use._id = id;
             }
 
-            console.log("Added UsesInstanceOf Edge: " + id + " for miid: " + use.miid);
-
             addModuleInstancesSequential(++miidIndex);
         });
     }
 
     addModuleInstancesSequential(0);
-
-    return;
 }
 
 

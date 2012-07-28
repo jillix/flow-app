@@ -40,6 +40,12 @@
                         "type": "a",
                         "path": "html/layout"
                     },
+                    "config": {
+                        "title": "Github Admin",
+                        "modules": {
+                            "githubDisplay": "github_display"
+                        }
+                    },
                     "css": ["bootstrap/css/bootstrap", "github"]
                 }
             }
