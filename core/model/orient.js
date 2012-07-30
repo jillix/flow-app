@@ -456,7 +456,7 @@ exports.addUser = function(appId, user, roles, callback) {
 };
 
 
-exports.addModuleInstance = function(rid, use, callback) {
+exports.addModuleInstance = function(miid, rid, vid, hash, callback) {
 
     callback = callback || function() {};
 
@@ -464,20 +464,34 @@ exports.addModuleInstance = function(rid, use, callback) {
     var vvCluster = CONFIG.orient.DB.getClusterByClass("VModuleVersion");
 
     var rrid = "#" + vrCluster.id + ":" + rid;
-    var vrid = "#" + vvCluster.id + ":" + use.id;
+    var vrid = "#" + vvCluster.id + ":" + vid;
 
-    delete use.id;
     var options = {
         "class" : "EUsesInstanceOf"
     };
 
-    edge(rrid, vrid, use, options, function(err, edgeDoc) {
+    hash.miid = miid;
+
+    // first we add a Uses edge between the role and the version
+    edge(rrid, vrid, hash, options, function(err, edgeDoc) {
 
         if (err) {
             return callback(err);
         }
 
-        callback(null, idFromRid(edgeDoc["@rid"]));
+        var options = {
+            "class" : "EHasAccessTo"
+        };
+
+        // now we add the Access edge between the role and the version
+        edge(rrid, vrid, { miid: miid }, options, function(err, edgeDoc1) {
+
+            if (err) {
+                return callback(err);
+            }
+
+            callback(null, idFromRid(edgeDoc["@rid"]));
+        });
     });
 }
 

@@ -286,56 +286,64 @@ function assignUserRoles(descriptor, callback) {
  */
 function roleModuleUsage(descriptor, callback) {
 
-    var roles = descriptor.roles;
-    var count = roles.length;
+    var miidObjs = descriptor.miids;
+    var miids = Object.keys(miidObjs || {});
+    var count = miids.length;
     var errors = [];
 
-    for (var i in roles) {
-        (function(i) {
-            var role = roles[i];
-
-            addModuleInstances(descriptor, role, function(err) {
-            
-                if (err) {
-                    errors.push(err);
-                }
-
-                if (!--count) callback(errors.length ? errors : null);
-            });
-        })(i);
-    }
-}
-
-/**
- *
- */
-function addModuleInstances(descriptor, role, callback) {
-
-    var miids = Object.keys(role.uses || {});
-    var count = miids.length;
-
-    if (!count) {
-        return callback(null);
-    }
-
-    function addModuleInstancesSequential(miidIndex) {
+    function roleModuleUsageSequential(miidIndex) {
 
         if (miidIndex >= count) {
-            return callback(null);
+            return callback(errors.length ? errors : null);
         }
 
         var miid = miids[miidIndex];
-        var use = role.uses[miid];
-        use.miid = miid;
-        db.addModuleInstance(role._id, use, function(err, id) {
-            
+        addModuleInstanceUsage(descriptor, miid, miidObjs[miid], function(err) {
+
+            if (err) {
+                errors.push(err);
+            }
+
+            roleModuleUsageSequential(++miidIndex);
+        });
+    }
+
+    roleModuleUsageSequential(0);
+}
+
+/**
+ * This add the EUsesInstanceOf edges between module instances and the roles
+ * that use this instance.
+ */
+function addModuleInstanceUsage(descriptor, miid, miidObj, callback) {
+
+    var roles = miidObj.roles || [];
+    var module = miidObj.module;
+
+    var roleCount = roles.length;
+
+    if (!roleCount) {
+        return callback(null);
+    }
+
+    var _ids = [];
+
+    function addModuleInstancesSequential(roleIndex) {
+
+        if (roleIndex >= roleCount) {
+            miidObj._ids = _ids;
+            return callback(null);
+        }
+
+        db.addModuleInstance(miid, descriptor.roles[roles[roleIndex]]._id, descriptor.modules[module], miidObj.config, function(err, id) {
+
             if (err) {
                 errors.push(err);
             } else {
-                use._id = id;
+                _ids.push(id);
             }
 
-            addModuleInstancesSequential(++miidIndex);
+            addModuleInstancesSequential(++roleIndex);
         });
     }
 
