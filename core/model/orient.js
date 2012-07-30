@@ -153,8 +153,8 @@ exports.getModuleVersion = function(module, callback) {
 
 exports.insertOperations = function(module, callback) {
 
-    if (module._id == undefined) {
-        return callback("The module is missing the _id.");
+    if (module._vid == undefined) {
+        return callback("The module is missing the _vid. Upsert this module version to obtain a version ID.");
     }
 
     var operations = module.operations;
@@ -163,10 +163,10 @@ exports.insertOperations = function(module, callback) {
     }
 
     // build the INSERT VALUES string
-    var vmCluster = CONFIG.orient.DB.getClusterByClass("VModule");
+    var vvCluster = CONFIG.orient.DB.getClusterByClass("VModuleVersion");
     var opsStr = "";
     for (var i in operations) {
-        opsStr += "(#" + vmCluster.id + ":" + module._id + ", '" + operations[i].file + "', '" + operations[i]["function"] + "'),";
+        opsStr += "(#" + vvCluster.id + ":" + module._vid + ", '" + operations[i].file + "', '" + operations[i]["function"] + "'),";
     }
     opsStr = opsStr.slice(0, -1);
 
@@ -216,6 +216,7 @@ exports.upsertModuleVersion = function(module, callback) {
             if (err) { return callback(err); }
 
             if (versionDoc) {
+                module._vid = idFromRid(versionDoc['@rid']);
                 return callback(null, versionDoc);
             }
 
@@ -223,6 +224,7 @@ exports.upsertModuleVersion = function(module, callback) {
             
                 if (err) { return callback(err); }
 
+                module._vid = idFromRid(versionDoc['@rid']);
                 return callback(null, versionDoc);
             });
         });
