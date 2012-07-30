@@ -546,9 +546,11 @@ function getOperationId(rid, miid, name, callback) {
     var rrid = "#" + vrCluster.id + ":" + rid;
 
     var command =
-        "SELECT @rid as id FROM VOperation WHERE module IN (" +
-            "SELECT in FROM EHasAccessTo WHERE out = " + rrid + " AND miid = '" + miid + "'" +
-        ")";
+        "SELECT @rid as id FROM VOperation " +
+        "WHERE " +
+            "method = '" + name + "' AND " +
+            "module IN " +
+                "(SELECT in FROM EHasAccessTo WHERE out = " + rrid + " AND miid = '" + miid + "')";
 
     sql(command, function(err, results) {
 

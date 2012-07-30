@@ -37,8 +37,8 @@
     ],
     "miids": {
         "github_layout": {
-            "roles": [0],
             "module": 1,
+            "roles": [0],
             "config": {
                 "html": {
                     "type": "a",

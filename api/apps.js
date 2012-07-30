@@ -164,17 +164,17 @@ function installDependencies(descriptor, callback) {
             var splits = key.split("/");
             var module = new modules.Module(splits[0], splits[1], splits[2], deps[key]);
 
-            modules.installModule(module, function(err, module) {
+            modules.installModule(module, function(err, mod) {
 
                 if (err) {
                     console.error("Could not install dependency: " + module.getVersionPath() + ". Reason:");
                     console.error(JSON.stringify(err));
                     errors.push(err);
-                } else if (module._vid != undefined) {
-                    console.log("Installed dependency: " + module.getVersionPath());
+                } else if (mod._vid != undefined) {
+                    console.log("Installed dependency: " + mod.getVersionPath());
                 }
 
-                ids[index] = module._vid;
+                ids[index] = mod._vid;
 
                 if (!--count) callback(errors.length ? errors : null, ids);
             })
@@ -407,9 +407,10 @@ function addModuleInstanceOperations(descriptor, miid, miidObj, callback) {
         for (var i in operation.roles) {
 
             var role = operation.roles[i];
+
             var canPerform = {
                 name: key,
-                role: descriptor.roles[i]._id,
+                role: descriptor.roles[role]._id,
                 params: operation.params[i]
             };
             canPerforms.push(canPerform);

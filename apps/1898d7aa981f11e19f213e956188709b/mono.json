@@ -16,6 +16,8 @@
         "liqshop.ch",
         "orders.happybonus.ch"
     ],
+    "publicDir": "public",
+    "publicUser": 0,
     "users": [
         {
             "id": 0,
@@ -31,7 +33,7 @@
             "username": "ddaarau",
             "password": "3cc849279ba298b587a34cabaeffc5ecb3a044bbf97c516fab7ede9d1af77cfa",
             "data": {
-                "fullname": "Liqshop Public User",
+                "fullname": "Liqshop Branch User",
                 "fullname": "DD | Aarau",
                 "language": "de",
                 "session": {
@@ -45,8 +47,8 @@
             "username": "sag",
             "password": "3cc849279ba298b587a34cabaeffc5ecb3a044bbf97c516fab7ede9d1af77cfa",
             "data": {
-                "fullname": "Liqshop Admin",
-                "language": "en"
+                "fullname": "Liqshop Admin User",
+                "language": "de"
             },
             "roles": [2,1,0]
         }
@@ -64,6 +66,81 @@
             "id": 2,
             "name": "Liqshop Admin Role"
         }
-    ]
+    ],
+    "miids": {
+        "liqshop_layout": {
+            "module": 3,
+            "roles": [1],
+            "config": {
+                "html": {
+                    "type": "a",
+                    "path": "html/layout"
+                },
+                "config": {
+                    "title": "Liqshop Orders",
+                    "modules": {
+                        "orderList": "liqshop_order_list",
+                        "orderDetails": "liqshop_order_details"
+                    }    
+                },
+                "css": ["reset-min", "main", "tab", "hpane", "bar", "list", "form", "table", "orderDetail"]
+            }
+        },
+        "liqshop_order_list": {
+            "module": 1,
+            "roles": [1],
+            "config": {
+                "html": {
+                    "type": "a",
+                    "path": "html/list"
+                },
+                "css": []
+            },
+            "operations": {
+                "getOrders": {
+                    "roles": [1],
+                    "params": [null]
+                },
+                "getBranches": {
+                    "roles": [1],
+                    "params": [null]
+                }
+            }
+        },
+        "liqshop_order_details": {
+            "module": 2,
+            "roles": [1],
+            "config": {
+                "html": {
+                    "type": "a",
+                    "path": "html/details"
+                },
+                "css": []
+            },
+            "operations": {
+                "archiveItem": {
+                    "roles": [1],
+                    "params": [null]
+                }
+            }
+        },
+        "liqshop_order_login": {
+            "module": 0,
+            "roles": [0],
+            "config": {
+                "html": {
+                    "type": "a",
+                    "path": "html/details"
+                },
+                "css": ["login"]
+            },
+            "operations": {
+                "login": {
+                    "roles": [0],
+                    "params": [null]
+                }
+            }
+        }
+    }
 }
 
