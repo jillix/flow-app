@@ -52,7 +52,7 @@ function installFromObject(descriptor, callback) {
     orient.connect(CONFIG.orient, function(err) {
 
         if (err) {
-            return callback(err, descriptor.appId);
+            return callback(err, descriptor);
         }
 
         var initialCallback = callback;
@@ -72,7 +72,7 @@ function installFromObject(descriptor, callback) {
                 function(err, _id) {
 
             // TODO cleanup
-            if (err) { return callback(err, descriptor.appId); }
+            if (err) { return callback(err, descriptor); }
 
             descriptor._id = _id;
 
@@ -83,7 +83,7 @@ function installFromObject(descriptor, callback) {
                 descriptor.modules = ids;
 
                 // TODO cleanup
-                if (err) { return callback(err, descriptor.appId); }
+                if (err) { return callback(err, descriptor); }
 
                 // ********
                 // 3. ROLES
@@ -91,7 +91,7 @@ function installFromObject(descriptor, callback) {
                 installRoles(descriptor, function(err) {
 
                     // TODO cleanup
-                    if (err) { return callback(err, descriptor.appId); }
+                    if (err) { return callback(err, descriptor); }
 
                     // ********
                     // 4. USERS
@@ -99,7 +99,7 @@ function installFromObject(descriptor, callback) {
                     installUsers(descriptor, function(err, publicUser) {
 
                         // TODO cleanup
-                        if (err) { return callback(err, descriptor.appId); }
+                        if (err) { return callback(err, descriptor); }
 
                         db.updatePublicUser(descriptor.appId, publicUser._id, function(err) {
                             if (err) {
@@ -113,7 +113,7 @@ function installFromObject(descriptor, callback) {
                         assignUserRoles(descriptor, function(err) {
 
                             // TODO cleanup
-                            if (err) { return callback(err, descriptor.appId); }
+                            if (err) { return callback(err, descriptor); }
 
                             // ************
                             // 6. ROLE USES
@@ -121,9 +121,18 @@ function installFromObject(descriptor, callback) {
                             roleModuleUsage(descriptor, function(err) {
 
                                 // TODO cleanup
-                                if (err) { return callback(err, descriptor.appId); }
+                                if (err) { return callback(err, descriptor); }
 
-                                callback(null, descriptor.appId);
+                                // ******************
+                                // 7. ROLE OPERATIONS
+                                // ******************
+                                //roleOperations(descriptor, function(err) {
+
+                                //    // TODO cleanup
+                                //    if (err) { return callback(err, descriptor); }
+
+                                    callback(null, descriptor);
+                                //});
                             });
                         });
                     });
@@ -298,7 +307,7 @@ function roleModuleUsage(descriptor, callback) {
         }
 
         var miid = miids[miidIndex];
-        addModuleInstanceUsage(descriptor, miid, miidObjs[miid], function(err) {
+        addModuleInstanceUses(descriptor, miid, miidObjs[miid], function(err) {
 
             if (err) {
                 errors.push(err);
@@ -315,7 +324,7 @@ function roleModuleUsage(descriptor, callback) {
  * This add the EUsesInstanceOf edges between module instances and the roles
  * that use this instance.
  */
-function addModuleInstanceUsage(descriptor, miid, miidObj, callback) {
+function addModuleInstanceUses(descriptor, miid, miidObj, callback) {
 
     var roles = miidObj.roles || [];
     var module = miidObj.module;
@@ -328,7 +337,7 @@ function addModuleInstanceUsage(descriptor, miid, miidObj, callback) {
 
     var _ids = [];
 
-    function addModuleInstancesSequential(roleIndex) {
+    function addModuleInstanceUsesSequential(roleIndex) {
 
         if (roleIndex >= roleCount) {
             miidObj._ids = _ids;
@@ -343,11 +352,80 @@ function addModuleInstanceUsage(descriptor, miid, miidObj, callback) {
                 _ids.push(id);
             }
 
-            addModuleInstancesSequential(++roleIndex);
+            addModuleInstanceUsesSequential(++roleIndex);
         });
     }
 
-    addModuleInstancesSequential(0);
+    addModuleInstanceUsesSequential(0);
+}
+
+/**
+ *
+ */
+function roleOperations(descriptor, callback) {
+
+    var miidObjs = descriptor.miids;
+    var miids = Object.keys(miidObjs || {});
+    var count = miids.length;
+    var errors = [];
+
+    function roleOperationsSequential(miidIndex) {
+
+        if (miidIndex >= count) {
+            return callback(errors.length ? errors : null);
+        }
+
+        var miid = miids[miidIndex];
+        addModuleInstanceOperations(descriptor, miid, miidObjs[miid], function(err) {
+
+            if (err) {
+                errors.push(err);
+            }
+
+            roleOperationsSequential(++miidIndex);
+        });
+    }
+
+    roleOperationsSequential(0);
+}
+
+/**
+ * This add the EUsesInstanceOf edges between module instances and the roles
+ * that use this instance.
+ */
+function addModuleInstanceOperations(descriptor, miid, miidObj, callback) {
+
+    var roles = miidObj.roles || [];
+    var module = miidObj.module;
+
+    var roleCount = roles.length;
+
+    if (!roleCount) {
+        return callback(null);
+    }
+
+    var _ids = [];
+
+    function addModuleInstanceOperationsSequential(roleIndex) {
+
+        if (roleIndex >= roleCount) {
+            miidObj._ids = _ids;
+            return callback(null);
+        }
+
+        db.addModuleInstance(miid, descriptor.roles[roles[roleIndex]]._id, descriptor.modules[module], miidObj.config, function(err, id) {
+
+            if (err) {
+                errors.push(err);
+            } else {
+                _ids.push(id);
+            }
+
+            addModuleInstanceOperationsSequential(++roleIndex);
+        });
+    }
+
+    addModuleInstanceOperationsSequential(0);
 }
 
 

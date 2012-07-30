@@ -29,13 +29,13 @@ function installApp(i) {
         console.log("-------------------");
         console.log("Installing application: " + descriptorFiles[i]);
 
-        appsApi.install(descriptorFiles[i], function(err, appId) {
+        appsApi.install(descriptorFiles[i], function(err, descriptor) {
 
             if (err) {
                 console.error(err);
-                console.error("Failed to install application: " + appId);
+                console.error("Failed to install application: " + descriptor.appId);
             } else {
-                console.log("Succesfully installed application: " + appId);
+                console.log("Succesfully installed application: " + descriptor.appId);
             }
 
             // install the next application

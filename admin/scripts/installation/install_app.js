@@ -10,14 +10,14 @@ if (process.argv.length < 3) {
     return;
 }
 
-apps.install(process.argv[2], function(err, appId) {
+apps.install(process.argv[2], function(err, descriptor) {
 
     if (err) {
-        console.error("Failed to install application: " + appId);
+        console.error("Failed to install application: " + descriptor.appId);
         console.error(err);
         return;
     }
 
-    console.log("Succesfully installed application: " + appId);
+    console.log("Succesfully installed application: " + descriptor.appId);
 });
 

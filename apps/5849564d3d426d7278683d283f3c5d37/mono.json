@@ -51,12 +51,6 @@
                     }
                 },
                 "css": ["bootstrap/css/bootstrap", "github"]
-            },
-            "operations": {
-                "modules": {
-                    "roles": [0],
-                    "params": [null]
-                }
             }
         },
         "github_display": {
@@ -68,6 +62,12 @@
                     "path": "html/github"
                 },
                 "css": []
+            },
+            "operations": {
+                "modules": {
+                    "roles": [0],
+                    "params": [null]
+                }
             }
         }
     }
