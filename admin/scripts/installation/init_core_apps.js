@@ -24,7 +24,6 @@ for (var i in apps) {
 // recursive function to serialize the application installation
 function installApp(i) {
     if (i < descriptorFiles.length) {
-//if (descriptorFiles[i].indexOf("5849564d3d426d7278683d283f3c5d37") == -1) return installApp(++i);
 
         console.log("-------------------");
         console.log("Installing application: " + descriptorFiles[i]);

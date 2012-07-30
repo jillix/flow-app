@@ -276,7 +276,7 @@ function installModule(module, callback) {
                             console.log("Inserted " + inserted.length + " operations for module: " + module.getVersionPath());
                         }
 
-                        callback(null, module._id);
+                        callback(null, module);
                     });
                 });
             });

@@ -126,13 +126,13 @@ function installFromObject(descriptor, callback) {
                                 // ******************
                                 // 7. ROLE OPERATIONS
                                 // ******************
-                                //roleOperations(descriptor, function(err) {
+                                roleOperations(descriptor, function(err) {
 
-                                //    // TODO cleanup
-                                //    if (err) { return callback(err, descriptor); }
+                                    // TODO cleanup
+                                    if (err) { return callback(err, descriptor); }
 
                                     callback(null, descriptor);
-                                //});
+                                });
                             });
                         });
                     });
@@ -164,16 +164,17 @@ function installDependencies(descriptor, callback) {
             var splits = key.split("/");
             var module = new modules.Module(splits[0], splits[1], splits[2], deps[key]);
 
-            modules.installModule(module, function(err, id) {
+            modules.installModule(module, function(err, module) {
+
                 if (err) {
                     console.error("Could not install dependency: " + module.getVersionPath() + ". Reason:");
                     console.error(JSON.stringify(err));
                     errors.push(err);
-                } else if (id != undefined) {
+                } else if (module._vid != undefined) {
                     console.log("Installed dependency: " + module.getVersionPath());
                 }
 
-                ids[index] = id;
+                ids[index] = module._vid;
 
                 if (!--count) callback(errors.length ? errors : null, ids);
             })
@@ -321,8 +322,7 @@ function roleModuleUsage(descriptor, callback) {
 }
 
 /**
- * This add the EUsesInstanceOf edges between module instances and the roles
- * that use this instance.
+ * This adds the EUsesInstanceOf edges between roles and module versions.
  */
 function addModuleInstanceUses(descriptor, miid, miidObj, callback) {
 
@@ -390,38 +390,54 @@ function roleOperations(descriptor, callback) {
 }
 
 /**
- * This add the EUsesInstanceOf edges between module instances and the roles
- * that use this instance.
+ * This adds the ECanPerform edges between roles and operations.
  */
 function addModuleInstanceOperations(descriptor, miid, miidObj, callback) {
 
-    var roles = miidObj.roles || [];
-    var module = miidObj.module;
+    var operations = miidObj.operations || [];
+    var module = descriptor.modules[miidObj.module];
 
-    var roleCount = roles.length;
+    // gather can perform operations
+    var canPerforms = [];
 
-    if (!roleCount) {
+    for (var key in operations) {
+
+        var operation = operations[key];
+
+        for (var i in operation.roles) {
+
+            var role = operation.roles[i];
+            var canPerform = {
+                name: key,
+                role: descriptor.roles[i]._id,
+                params: operation.params[i]
+            };
+            canPerforms.push(canPerform);
+        }
+    }
+
+    var count = canPerforms.length;
+    var errors = [];
+
+    if (!count) {
         return callback(null);
     }
 
-    var _ids = [];
+    function addModuleInstanceOperationsSequential(index) {
 
-    function addModuleInstanceOperationsSequential(roleIndex) {
-
-        if (roleIndex >= roleCount) {
-            miidObj._ids = _ids;
+        if (index >= count) {
             return callback(null);
         }
 
-        db.addModuleInstance(miid, descriptor.roles[roles[roleIndex]]._id, descriptor.modules[module], miidObj.config, function(err, id) {
+        var canPerform = canPerforms[index];
+
+        db.addCanPerform(miid, canPerform.role, canPerform.name, canPerform.params, function(err, id) {
 
             if (err) {
                 errors.push(err);
-            } else {
-                _ids.push(id);
             }
 
-            addModuleInstanceOperationsSequential(++roleIndex);
+            addModuleInstanceOperationsSequential(++index);
         });
     }
 

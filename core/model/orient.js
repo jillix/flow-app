@@ -498,6 +498,79 @@ exports.addModuleInstance = function(miid, rid, vid, hash, callback) {
 }
 
 
+exports.addCanPerform = function(miid, rid, operation, params, callback) {
+
+    callback = callback || function() {};
+
+    // find operation id for miid
+    getOperationId(rid, miid, operation, function(err, id) {
+
+        if (err) {
+            return callback(err);
+        }
+
+        var vrCluster = CONFIG.orient.DB.getClusterByClass("VRole");
+        var voCluster = CONFIG.orient.DB.getClusterByClass("VOperation");
+
+        var rrid = "#" + vrCluster.id + ":" + rid;
+        var orid = "#" + voCluster.id + ":" + id;
+
+        var options = {
+            "class" : "ECanPerform"
+        };
+
+        var hash = {
+            miid: miid
+        };
+        if (params) {
+            hash.params = params;
+        }
+
+        // first we add a Uses edge between the role and the version
+        edge(rrid, orid, hash, options, function(err, edgeDoc) {
+
+            if (err) {
+                return callback(err);
+            }
+
+            callback(null, idFromRid(edgeDoc["@rid"]));
+        });
+    });
+}
+
+
+function getOperationId(rid, miid, name, callback) {
+
+    var vrCluster = CONFIG.orient.DB.getClusterByClass("VRole");
+    
+    var rrid = "#" + vrCluster.id + ":" + rid;
+
+    var command =
+        "SELECT @rid as id FROM VOperation WHERE module IN (" +
+            "SELECT in FROM EHasAccessTo WHERE out = " + rrid + " AND miid = '" + miid + "'" +
+        ")";
+
+    sql(command, function(err, results) {
+
+        if (err) {
+            return callback("An error occurred while finding operation id for role: " + rrid + " and miid: " + miid + ". " + JSON.stringify(err));
+        }
+
+        // if there is no result
+        if (!results || results.length == 0) {
+            return callback("Could not find operation id for role: " + rrid + " and miid: " + miid);
+        }
+
+        // if there are too many results
+        if (results.length > 1) {
+            return callback("Coould not uniquely identify operation id for role: " + rrid + " and miid: " + miid);
+        }
+        
+        callback(null, idFromRid(results[0].id));
+    });
+}
+
+
 function translateAppId(appId, callback) {
 
     if (typeof appId !== "string") {
@@ -514,29 +587,29 @@ function translateAppId(appId, callback) {
 
     sql(command, function(err, results) {
 
-            if (err) {
-                return callback("An error occurred while translating the application ID: " + appId + ". " + JSON.stringify(err));
-            }
+        if (err) {
+            return callback("An error occurred while translating the application ID: " + appId + ". " + JSON.stringify(err));
+        }
 
-            // if there is no result
-            if (!results || results.length == 0) {
-                return callback("Application not found: " + appId);
-            }
+        // if there is no result
+        if (!results || results.length == 0) {
+            return callback("Application not found: " + appId);
+        }
 
-            // if there are too many results
-            if (results.length > 1) {
-                return callback("Could not uniquely determine the application with ID: " + appId);
-            }
+        // if there are too many results
+        if (results.length > 1) {
+            return callback("Could not uniquely determine the application with ID: " + appId);
+        }
 
-            var application = results[0];
+        var application = results[0];
 
-            // if the application does not have the required fields
-            if (!application || !application.id) {
-                return callback("Missing application ID: " + JSON.stringify(application));
-            }
+        // if the application does not have the required fields
+        if (!application || !application.id) {
+            return callback("Missing application ID: " + JSON.stringify(application));
+        }
 
-            callback(null, application.id);
-        });
+        callback(null, application.id);
+    });
 }
 
 
