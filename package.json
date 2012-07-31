@@ -37,7 +37,8 @@
         "orientdb"      : "0.x",
         "mongodb"       : "*",
         "nodemailer"    : "*",
-        "request"       : "*"
+        "request"       : "*",
+        "node-static"   : "*"
     },
     "devDependencies": {
         "tap"           : "*"
