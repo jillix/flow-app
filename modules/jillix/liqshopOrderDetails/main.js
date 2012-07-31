@@ -8,7 +8,8 @@ define(["./jquery.min"], function() {
     var orderFieldClass = "orderField";
 
     var itemTable, itemTableDone;
-
+    
+    var branches;
 
     function init(config) {
 
@@ -16,7 +17,7 @@ define(["./jquery.min"], function() {
 
         itemTable = $("#orderItems", self.dom);
         itemTableDone = $("#orderItemsDone", self.dom);
-
+        
         N.obs("liqshop_order_list").l("selected", orderSelected);
         N.obs("liqshop_order_list").l("unselected", orderUnselected);
 
@@ -83,8 +84,22 @@ define(["./jquery.min"], function() {
         $("#noItmSel").hide();
         $("#orderDetail").show();
         if (order._c.length == 8) {
-	    $("#hbInfo").show();
-	    $("#zuhand").show();
+            
+            $("#orderTitle").text("HappyBonus");
+            
+            if (!branches) {
+                branches = $("#orders_filter_branch");
+            }
+            
+            var branch = branches.val();
+
+            if(branch != "LAUPER" && branch != "DDCHMAR") {
+                $("#hbInfo").show();
+	            $("#zuhand").show();
+            }
+        }
+        else {
+            $("#orderTitle").text("Liq-Shop");
         }
 
         cachedOrder = order;
@@ -183,6 +198,7 @@ define(["./jquery.min"], function() {
             var itemRow = itemTemplate.clone();
             if (items[i].readonly) {
                 itemRow.find("[type='checkbox']").hide();
+                itemRow.addClass("readonly");
             }
 
             // now replace the item fields

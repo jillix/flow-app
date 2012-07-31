@@ -63,3 +63,14 @@
 .red {
     color: red;
 }
+
+#orderTitle {
+    color: #888;
+    font-width: bold;
+    font-size: 39px;
+    margin-bottom: 20px;
+}
+
+.readonly {
+    color: #888;
+}

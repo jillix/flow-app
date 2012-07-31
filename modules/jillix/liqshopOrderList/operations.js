@@ -72,26 +72,32 @@ exports.getOrders = function(link) {
         }
 
         // branch filtering
+        var __branches = [];
         var branch = userBranch || (queryObj.branch !== "0" ? queryObj.branch : "");
         if (branch) {
 
             // DD Marketing need to see all D* + Lauper order items
             var splits = branch.split(",");
+            
+            if (splits.length == 1 && branch != "LAUPER") {
+                
+                splits.push("LAUPER");
+                splits.push("DDCHMAR");
+                
+                for (var i in splits) {
+                      
+                    __branches.push({"customer.branch": splits[i]});
+                };
 
-            if (splits.length > 1) {
                 archiveFilter["$elemMatch"].branch = { "$in": splits };
-            } else {
-                archiveFilter["$elemMatch"].branch = branch;
             }
         }
 
         // archive filtering
         var archive = queryObj.archive;
         if (archive === "1") {
-            archiveFilter = {
-                "$not": archiveFilter
-            };
-        }
+            archiveFilter["$elemMatch"].archived["$exists"] = 1;
+        };
 
         // search filtering
         var search = (queryObj.search || "").toLowerCase().trim();
@@ -104,13 +110,18 @@ exports.getOrders = function(link) {
         var isExport = queryObj["export"] ? true : false;
 
         var mongoQuery = {
-            "items": archiveFilter
-        }
+            "items": archiveFilter,
+        };
 
-        console.log(JSON.stringify(mongoQuery));
+        if (__branches.length > 0) {
+            
+            mongoQuery["$or"] = __branches;
+        };
+        
+        //console.log(mongoQuery.items["$elemMatch"]);
 
         db.find(mongoQuery, { sort: { date: -1 } }).toArray(function(err, docs) {
-
+            
             if (err) {
                 send.internalservererror(link, err);
                 return;
@@ -153,16 +164,21 @@ exports.getOrders = function(link) {
                 // this will help us eliminate in archive view all the orders
                 // that don't have at least one item matching to the users branch
                 var hasBranch = false;
-
+                var notInArchive = false;
+                
                 for (var j in order.items) {
 
                     var item  = order.items[j];
-
+                    
                     if (!branch || (branch && branch.indexOf(item.branch) > -1)) {
                         hasBranch = true;
                     }
+                    
+                    if (archive === "1" && !item.archived) {
+                        notInArchive = true;
+                    };
 
-                    if (!userBranch || (branch && branch.indexOf(item.branch) > -1)) {
+                    if (!userBranch || (branch && (branch === item.branch || branch.indexOf(item.branch + ",") > -1 || branch.indexOf("," + item.branch) > -1))) {
                         item.readonly = false;
                         items.push(item);
                     } else {
@@ -172,9 +188,9 @@ exports.getOrders = function(link) {
                         }
                     }
                 }
-
+                
                 // empty this order if there are no items for this branch
-                if (!hasBranch) {
+                if (!hasBranch || notInArchive) {
                     items = [];
                 }
 
