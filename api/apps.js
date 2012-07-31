@@ -76,9 +76,19 @@ function installFromObject(descriptor, callback) {
 
             descriptor._id = _id;
 
-            // ***************
-            // 2. DEPENDENCIES
-            // ***************
+            // ************
+            // 2.a. DOMAINS
+            // ************
+            installDomains(descriptor, function(err) {
+
+                if (err) {
+                    console.error("Failed to install domains for application: " + descriptor + appId + ". " + JSON.stringify(err));
+                }
+            });
+
+            // *****************
+            // 2.b. DEPENDENCIES
+            // *****************
             installDependencies(descriptor, function(err, ids) {
                 descriptor.modules = ids;
 
@@ -140,6 +150,18 @@ function installFromObject(descriptor, callback) {
             });
         });
     });
+}
+
+/**
+ *
+ */
+function installDomains(descriptor, callback) {
+
+    if (!descriptor.domains || descriptor.domains.length == 0) {
+        return callback(null);
+    }
+
+    db.addApplicationDomains(descriptor._id, descriptor.domains, callback);
 }
 
 /**

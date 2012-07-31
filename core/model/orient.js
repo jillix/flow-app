@@ -653,6 +653,31 @@ exports.getAppId = function(domain, callback) {
 };
 
 
+exports.addApplicationDomains = function(aid, domains, callback) {
+
+    if (!domains || !domains.length) {
+        return callback(null);
+    }
+
+    // build the INSERT VALUES string
+    var vaCluster = CONFIG.orient.DB.getClusterByClass("VApplication");
+    var valuesStr = "";
+    for (var i in domains) {
+        valuesStr += "(#" + vaCluster.id + ":" + aid + ", '" + domains[i] + "'),";
+    }
+    valuesStr = valuesStr.slice(0, -1);
+
+    var command =
+        "INSERT INTO VDomain (" +
+            "application, " +
+            "name " +
+        ") VALUES " +
+            valuesStr;
+
+    sql(command, callback);
+};
+
+
 exports.getDomainApplication = function(domain, withRoutes, callback) {
 
     var command =
