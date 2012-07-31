@@ -69,6 +69,7 @@ function installFromObject(descriptor, callback) {
                 descriptor.name || "Unnamed application",
                 descriptor.routes || null,
                 descriptor.publicDir || "",
+                descriptor.error || null,
                 function(err, _id) {
 
             // TODO cleanup
@@ -472,33 +473,4 @@ exports.install = install;
 exports.installDependencies = installDependencies;
 exports.installUsers = installUsers;
 exports.installRoles = installRoles;
-
-// = = = = = = = = = = = = = = = = = = = = 
-
-//
-// TODO is there a way to reserve IDs in Orient to poulate bulk import scripts?
-//
-
-/*
-    Takes an application descriptor and deploys an application.
-    If description.application.appId exists already, redeploy the app.
-    If description.application.appId does not exists, deploy a new app.
-
-    {
-        application: {
-            _id: ?
-            appId:
-        }
-    }
-*/
-function deployApplication(descriptor, callback) {
-
-}
-
-/*
-    Removes a deployed application havin the given appId.
-*/
-function undeployApplication(appId, callback) {
-
-}
 

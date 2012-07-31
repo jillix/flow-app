@@ -317,7 +317,7 @@ exports.getUser = function(appId, userName, callback) {
 };
 
 
-exports.addApplication = function(appId, name, routes, publicDir, callback) {
+exports.addApplication = function(appId, name, routes, publicDir, errorMiid, callback) {
 
     // #7:0 should be the default public user
     var command =
@@ -326,6 +326,7 @@ exports.addApplication = function(appId, name, routes, publicDir, callback) {
             "name = '" + name + "', " +
             "publicDir = '" + publicDir + "', " +
             "publicUser = #7:0, " +
+            "error = " + (errorMiid ? "'" + errorMiid + "'" : "null") + ", " +
             "routes = " + JSON.stringify(routes);
 
     sql(command, function(err, results) {
