@@ -130,7 +130,7 @@
             "config": {
                 "html": {
                     "type": "a",
-                    "path": "html/details"
+                    "path": "html/login"
                 },
                 "css": ["login"]
             },

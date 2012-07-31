@@ -112,15 +112,18 @@ function installFromObject(descriptor, callback) {
                         // TODO cleanup
                         if (err) { return callback(err, descriptor); }
 
+                        // ********************
+                        // 5.a. APP PUBLIC USER
+                        // ********************
                         db.updatePublicUser(descriptor.appId, publicUser._id, function(err) {
                             if (err) {
                                 console.error(err);
                             }
                         });
 
-                        // *************
-                        // 5. USER-ROLES
-                        // *************
+                        // ***************
+                        // 5.b. USER-ROLES
+                        // ***************
                         assignUserRoles(descriptor, function(err) {
 
                             // TODO cleanup
@@ -195,9 +198,8 @@ function installDependencies(descriptor, callback) {
                     errors.push(err);
                 } else if (mod._vid != undefined) {
                     console.log("Installed dependency: " + mod.getVersionPath());
+                    ids[index] = mod._vid;
                 }
-
-                ids[index] = mod._vid;
 
                 if (!--count) callback(errors.length ? errors : null, ids);
             })

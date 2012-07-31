@@ -789,10 +789,10 @@ exports.getModuleConfig = function(appId, miid, userId, callback) {
     //      only miid's from this appId must be searched
     var command =
         "SELECT " +
-            "in.source AS source, " +
-            "in.owner AS owner, " +
-            "in.name AS name, " +
-            "version, " +
+            "in.module.source AS source, " +
+            "in.module.owner AS owner, " +
+            "in.module.name AS name, " +
+            "in.version AS version, " +
             "config, html, " +
             "css " +
         "FROM " +
@@ -817,6 +817,11 @@ exports.getModuleConfig = function(appId, miid, userId, callback) {
         }
 
         var module = results[0];
+
+        if (!module.source || !module.owner || !module.name || !module.version) {
+            return callback("Incomplete module object. Source, owner, name and, version must all be present: " + JSON.stringify(module));
+        }
+
         callback(null, module);
     });
 }
@@ -832,14 +837,17 @@ exports.getModuleFile = function(source, owner, name, userId, callback) {
     //      only miid's from this appId must be searched
     var command =
         "SELECT " +
-            "dir, source, owner, name, latest " +
+            "module.source, " +
+            "module.owner, " +
+            "module.name, " +
+            "module.latest " +
         "FROM " +
             "(TRAVERSE VUser.out, EMemberOf.in, VRole.out, EHasAccessTo.in FROM #" + vuCluster.id + ":" + userId + ") " +
         "WHERE " +
-            "@class = 'VModule' AND " +
-            "source = '" + source + "' AND " +
-            "owner = '" + owner + "' AND " +
-            "name = '" + name + "'";
+            "@class = 'VModuleVersion' AND " +
+            "module.source = '" + source + "' AND " +
+            "module.owner = '" + owner + "' AND " +
+            "module.name = '" + name + "'";
 
     sql(command, function(err, results) {
 

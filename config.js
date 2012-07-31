@@ -1,3 +1,16 @@
+// extend Object prototype with clone function
+Object.defineProperty(Object.prototype, "clone", {
+        
+    // writeable: false, (default value)
+    // enumerable: false, (default value)
+    // configurable: false, (default value)
+    value: function(){
+        function O(){}
+        O.prototype = this;
+        return new O();
+    }
+});
+
 // use optimist to parse the command line options
 var argv = require("optimist")
     .default("config", __dirname + "/mono.json")
