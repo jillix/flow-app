@@ -25,11 +25,13 @@ div.hpane.box {
 
 div.hpane.pane.first {
     
+    width: 450px;
     left:   0px;
 }
 
 div.hpane.pane.last {
     
+    left: 457px;
     right:  0px;
 }
 
@@ -37,11 +39,11 @@ div.hpane.handler {
     
     width:  5px;
     
+    left: 450px;
+
     border: solid 1px rgb( 170, 170, 170 );
     border-top: none;
     border-bottom: none;
     
     background-color: rgb( 233, 233, 233 );
-    
-    cursor: ew-resize;
 }
