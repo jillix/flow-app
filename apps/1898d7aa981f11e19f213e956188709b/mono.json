@@ -1,12 +1,6 @@
 {
     "appId": "1898d7aa981f11e19f213e956188709b",
     "name": "Liqshop Orders",
-    "dependencies": {
-        "bitbucket/jillix/liqshopOrderLogin":   "latest",
-        "bitbucket/jillix/liqshopOrderList":    "latest",
-        "bitbucket/jillix/liqshopOrderDetails": "latest",
-        "github/adioo/layout":                  "44e9aefdca780ba1f54b510a61fe02aa34016d06"
-    },
     "routes": {
         "/": "liqshop_layout"
     },

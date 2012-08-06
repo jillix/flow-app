@@ -173,26 +173,27 @@ function installDomains(descriptor, callback) {
  */
 function installDependencies(descriptor, callback) {
 
-    if (!descriptor.dependencies) {
-        return callback(null);
+    // gather all dependencies
+    var dependencies = {};
+    for (var miid in descriptor.miids) {
+        dependencies[descriptor.miids[miid].module] = -1;
     }
-
+    
     var moduleRoot = CONFIG.root + "/modules/";
-    var depKeys = Object.keys(descriptor.dependencies);
+    var depKeys = Object.keys(dependencies);
     var count = depKeys.length;
     var errors = [];
-    var ids = {};
     var index = 0;
 
     function installDependenciesSequential(index) {
 
         if (index >= count) {
-            return callback(null, ids);
+            return callback(null, dependencies);
         }
 
         var key = depKeys[index];
         var splits = key.split("/");
-        var module = new modules.Module(splits[0], splits[1], splits[2], descriptor.dependencies[key]);
+        var module = new modules.Module(splits[0], splits[1], splits[2], splits[3]);
 
         modules.installModule(module, function(err) {
 
@@ -204,12 +205,12 @@ function installDependencies(descriptor, callback) {
                 console.log("Installed dependency: " + module.getVersionPath());
 
                 // add this module to the dependency list
-                ids[module.getVersionPath()] = module._vid;
+                dependencies[module.getVersionPath()] = module._vid;
 
                 // add sub-dependencies to this app dependencies
                 if (module.modules) {
                     for (var key in module.modules) {
-                        ids[key] = module.modules[key];
+                        dependencies[key] = module.modules[key];
                     }
                 }
             }

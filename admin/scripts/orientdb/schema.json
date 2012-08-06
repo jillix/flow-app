@@ -105,6 +105,11 @@
             "name": "vmoduleversion",
             "id": 18,
             "type": "PHYSICAL"
+        },
+        {
+            "name": "edependson",
+            "id": 19,
+            "type": "PHYSICAL"
         }
     ],
     "schema":{
@@ -451,6 +456,13 @@
                 "name": "EHasAccessTo",
                 "default-cluster-id": 17,
                 "cluster-ids": [17],
+                "super-class": "OGraphEdge",
+                "properties": [ ]
+            },
+            {
+                "name": "EDependsOn",
+                "default-cluster-id": 19,
+                "cluster-ids": [19],
                 "super-class": "OGraphEdge",
                 "properties": [ ]
             }

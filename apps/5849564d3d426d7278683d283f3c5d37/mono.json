@@ -1,10 +1,6 @@
 {
     "appId": "5849564d3d426d7278683d283f3c5d37",
     "name": "MonoAdmin",
-    "dependencies": {
-        "github/gabipetrovay/github_display":   "latest",
-        "github/adioo/layout":                  "latest"
-    },
     "routes": {
         "module": "github_layout"
     },
