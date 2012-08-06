@@ -3,8 +3,7 @@
     "name": "MonoAdmin",
     "dependencies": {
         "github/gabipetrovay/github_display":   "latest",
-        "github/adioo/layout":                  "latest",
-        "github/adioo/bind":                    "a9a69b83431f9b21f332fd5b75c85d40e1157332"
+        "github/adioo/layout":                  "latest"
     },
     "routes": {
         "module": "github_layout"
@@ -37,7 +36,7 @@
     ],
     "miids": {
         "github_layout": {
-            "module": 1,
+            "module": "github/adioo/layout/latest",
             "roles": [0],
             "config": {
                 "html": {
@@ -54,8 +53,8 @@
             }
         },
         "github_display": {
+            "module": "github/gabipetrovay/github_display/latest",
             "roles": [0],
-            "module": 0,
             "config": {
                 "html": {
                     "type": "a",

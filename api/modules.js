@@ -70,7 +70,6 @@ function addModuleDir(source, owner, module, callback) {
 function findLatestCommit(module, callback) {
 
     var git = cp.spawn("git", ["ls-remote", module.getSourceUrl(), "HEAD"]);
-
     var out = "";
 
     git.stdout.on("data", function(data) {
@@ -191,19 +190,106 @@ function getModuleOperations(module, callback) {
     });
 }
 
+function readModuleDescriptor(module, callback) {
+
+    // if the module version does not exists, throw error 
+    if (!fs.existsSync(MODULE_ROOT + module.getVersionPath())) {
+        return callback("The module does not exist: " + module.getVersionPath());
+    }
+
+    var file = MODULE_ROOT + module.getVersionPath() + "/mono.json";
+
+    fs.readFile(file, function (err, data) {
+
+        if (err) {
+            return callback("Error while reading the module descriptor file: " + file);
+        }
+
+        var descriptor = null;
+
+        try {
+            descriptor = JSON.parse(data);
+        } catch (err) {
+            var error = "Invalid descriptor file (" + file + "): " + data.toString();
+            return callback(error);
+        }
+
+        // TODO validate descriptor
+
+        callback(null, descriptor);
+    });
+
+}
+
+function installDependencies(descriptor, callback) {
+
+    // just call back is there are no dependencies
+    if (!descriptor.dependencies) {
+        return callback(null);
+    }
+
+    var moduleRoot = CONFIG.root + "/modules/";
+    var depKeys = Object.keys(descriptor.dependencies);
+    var count = depKeys.length;
+    var errors = [];
+    var ids = {};
+    var index = 0;
+
+    function installDependenciesSequential(index) {
+
+        if (index >= count) {
+            return callback(null, ids);
+        }
+
+        var key = depKeys[index];
+        var splits = key.split("/");
+        var module = new exports.Module(splits[0], splits[1], splits[2], descriptor.dependencies[key]);
+
+        installModule(module, function(err) {
+
+            if (err) {
+                console.error("Could not install dependency: " + module.getVersionPath() + ". Reason:");
+                console.error(JSON.stringify(err));
+                errors.push(err);
+            } else if (module._vid != undefined) {
+                //console.log("Installed dependency: " + module.getVersionPath());
+
+                // add this module to the dependency list
+                ids[module.getVersionPath()] = module._vid;
+
+                // add sub-dependencies to this app dependencies
+                if (module.modules) {
+                    for (var key in module.modules) {
+                        ids[key] = module.modules[key];
+                    }
+                }
+            }
+
+            installDependenciesSequential(++index);
+        })
+    }
+
+    installDependenciesSequential(index);
+}
+
 function installModule(module, callback) {
 
+    // if the module exists, just get it's id
     if (fs.existsSync(MODULE_ROOT + module.getVersionPath())) {
         console.log("Skipping " + module.getVersionPath());
-        db.getModuleVersion(module, function(err, modDoc) {
+        db.getModuleVersionId(module, function(err, id) {
 
             if (err) { return callback(err); }
-            if (!modDoc) { return callback("An installed module is missing from the database: " + module.getVersionPath()); }
-            return callback(null, idFromRid(modDoc["@rid"]));
+
+            var deps = {};
+            deps[module.getVersionPath()] = id;
+
+            callback(null, deps);
         });
         return;
     }
 
+    // wrap the callback to perform cleanup on error
     var initialCallback = callback;
     callback = function(err, data) {
 
@@ -230,53 +316,80 @@ function installModule(module, callback) {
 
         if (err) { return callback(err); }
 
-        // ****************
-        // 2. UPSERT MODULE
-        // ****************
+        // ******************
+        // 2. READ DESCRIPTOR
+        // ******************
         if (CONFIG.log.moduleInstallation || CONFIG.logLevel === "verbose") {
-            console.log("Upserting module: " + module.getModulePath());
+            console.log("Reading module descriptor: " + module.getVersionPath());
         }
-        db.upsertModule(module, function(err, modDoc) {
+        readModuleDescriptor(module, function(err, descriptor) {
 
             if (err) { return callback(err); }
-            
-            // ************************
-            // 3. UPSERT MODULE VERSION
-            // ************************
+
+            // the descriptor is a valid descriptor at this point
+
+            // ***********************
+            // 3. INSTALL DEPENDENCIES
+            // ***********************
             if (CONFIG.log.moduleInstallation || CONFIG.logLevel === "verbose") {
-                console.log("Upserting module version: " + module.getVersionPath());
+                console.log("Installing dependencies for module: " + module.getVersionPath());
             }
-            db.upsertModuleVersion(module, function(err, versionDoc) {
+            installDependencies(descriptor, function(err, ids) {
 
-                if (err) { return callback(err); }
-
-                // *************************
-                // 4. READ MODULE OPERATIONS
-                // *************************
-                if (CONFIG.log.moduleInstallation || CONFIG.logLevel === "verbose") {
-                    console.log("Reading module operations from: " + module.getVersionPath() + "/mono.json");
+                module.modules = module.modules || {};
+                for (var key in ids) {
+                    module.modules[key] = ids[key];
                 }
-                getModuleOperations(module, function(err, operations) {
 
-                    if (err) { return callback(err); };
+                // ****************
+                // 4. UPSERT MODULE
+                // ****************
+                if (CONFIG.log.moduleInstallation || CONFIG.logLevel === "verbose") {
+                    console.log("Upserting module: " + module.getModulePath());
+                }
+                db.upsertModule(module, function(err, modDoc) {
 
-                    module.operations = operations;
-
-                    // ***************************
-                    // 5. INSERT MODULE OPERATIONS
-                    // ***************************
+                    if (err) { return callback(err); }
+                    
+                    // ************************
+                    // 5. UPSERT MODULE VERSION
+                    // ************************
                     if (CONFIG.log.moduleInstallation || CONFIG.logLevel === "verbose") {
-                        console.log("Inserting " + operations.length + " operations for module: " + module.getVersionPath());
+                        console.log("Upserting module version: " + module.getVersionPath());
                     }
-                    db.insertOperations(module, function(err, inserted) {
+                    db.upsertModuleVersion(module, function(err, versionDoc) {
 
-                        if (err) { return callback(err); };
+                        if (err) { return callback(err); }
 
+                        // *************************
+                        // 6. READ MODULE OPERATIONS
+                        // *************************
                         if (CONFIG.log.moduleInstallation || CONFIG.logLevel === "verbose") {
-                            console.log("Inserted " + inserted.length + " operations for module: " + module.getVersionPath());
+                            console.log("Reading module operations from: " + module.getVersionPath() + "/mono.json");
                         }
+                        getModuleOperations(module, function(err, operations) {
 
-                        callback(null, module);
+                            if (err) { return callback(err); };
+
+                            module.operations = operations;
+
+                            // ***************************
+                            // 7. INSERT MODULE OPERATIONS
+                            // ***************************
+                            if (CONFIG.log.moduleInstallation || CONFIG.logLevel === "verbose") {
+                                console.log("Inserting " + operations.length + " operations for module: " + module.getVersionPath());
+                            }
+                            db.insertOperations(module, function(err, inserted) {
+
+                                if (err) { return callback(err); };
+
+                                if (CONFIG.log.moduleInstallation || CONFIG.logLevel === "verbose") {
+                                    console.log("Inserted " + inserted.length + " operations for module: " + module.getVersionPath());
+                                }
+
+                                callback(null, module);
+                            });
+                        });
                     });
                 });
             });

@@ -177,34 +177,48 @@ function installDependencies(descriptor, callback) {
         return callback(null);
     }
 
-    var deps = descriptor.dependencies;
     var moduleRoot = CONFIG.root + "/modules/";
-
-    var count = Object.keys(deps).length;
+    var depKeys = Object.keys(descriptor.dependencies);
+    var count = depKeys.length;
     var errors = [];
-    var ids = [];
+    var ids = {};
     var index = 0;
 
-    for (var key in deps) {
-        (function(key, index) {
-            var splits = key.split("/");
-            var module = new modules.Module(splits[0], splits[1], splits[2], deps[key]);
+    function installDependenciesSequential(index) {
 
-            modules.installModule(module, function(err, mod) {
+        if (index >= count) {
+            return callback(null, ids);
+        }
 
-                if (err) {
-                    console.error("Could not install dependency: " + module.getVersionPath() + ". Reason:");
-                    console.error(JSON.stringify(err));
-                    errors.push(err);
-                } else if (mod._vid != undefined) {
-                    console.log("Installed dependency: " + mod.getVersionPath());
-                    ids[index] = mod._vid;
+        var key = depKeys[index];
+        var splits = key.split("/");
+        var module = new modules.Module(splits[0], splits[1], splits[2], descriptor.dependencies[key]);
+
+        modules.installModule(module, function(err) {
+
+            if (err) {
+                console.error("Could not install dependency: " + module.getVersionPath() + ". Reason:");
+                console.error(JSON.stringify(err));
+                errors.push(err);
+            } else if (module._vid != undefined) {
+                console.log("Installed dependency: " + module.getVersionPath());
+
+                // add this module to the dependency list
+                ids[module.getVersionPath()] = module._vid;
+
+                // add sub-dependencies to this app dependencies
+                if (module.modules) {
+                    for (var key in module.modules) {
+                        ids[key] = module.modules[key];
+                    }
                 }
+            }
 
-                if (!--count) callback(errors.length ? errors : null, ids);
-            })
-        })(key, index++);
+            installDependenciesSequential(++index);
+        })
     }
+
+    installDependenciesSequential(index);
 }
 
 /**

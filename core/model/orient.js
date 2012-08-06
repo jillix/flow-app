@@ -151,6 +151,17 @@ exports.getModuleVersion = function(module, callback) {
 };
 
 
+exports.getModuleVersionId = function(module, callback) {
+
+    exports.getModuleVersion(module, function(err, modDoc) {
+
+        if (err) { return callback(err); }
+        if (!modDoc) { return callback("Could not find module version in the database: " + module.getVersionPath()); }
+        return callback(null, idFromRid(modDoc["@rid"]));
+    });
+};
+
+
 exports.insertOperations = function(module, callback) {
 
     if (module._vid == undefined) {
