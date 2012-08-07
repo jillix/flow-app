@@ -90,8 +90,8 @@ function installFromObject(descriptor, callback) {
             // *****************
             // 2.b. DEPENDENCIES
             // *****************
-            installDependencies(descriptor, function(err, ids) {
-                descriptor.modules = ids;
+            installDependencies(descriptor, function(err, dependencies) {
+                descriptor.dependencies = dependencies;
 
                 // TODO cleanup
                 if (err) { return callback(err, descriptor); }
@@ -195,7 +195,7 @@ function installDependencies(descriptor, callback) {
         var splits = key.split("/");
         var module = new modules.Module(splits[0], splits[1], splits[2], splits[3]);
 
-        modules.installModule(module, function(err) {
+        modules.installModule(module, function(err, installedDependencies) {
 
             if (err) {
                 console.error("Could not install dependency: " + module.getVersionPath() + ". Reason:");
@@ -208,10 +208,8 @@ function installDependencies(descriptor, callback) {
                 dependencies[module.getVersionPath()] = module._vid;
 
                 // add sub-dependencies to this app dependencies
-                if (module.modules) {
-                    for (var key in module.modules) {
-                        dependencies[key] = module.modules[key];
-                    }
+                for (var key in installedDependencies) {
+                    dependencies[key] = installedDependencies[key];
                 }
             }
 
@@ -384,7 +382,7 @@ function addModuleInstanceUses(descriptor, miid, miidObj, callback) {
             return callback(null);
         }
 
-        db.addModuleInstance(miid, descriptor.roles[roles[roleIndex]]._id, descriptor.modules[module], miidObj.config, function(err, id) {
+        db.addModuleInstance(miid, descriptor.roles[roles[roleIndex]]._id, descriptor.dependencies[module], miidObj.config, function(err, id) {
 
             if (err) {
                 errors.push(err);
@@ -435,7 +433,7 @@ function roleOperations(descriptor, callback) {
 function addModuleInstanceOperations(descriptor, miid, miidObj, callback) {
 
     var operations = miidObj.operations || [];
-    var module = descriptor.modules[miidObj.module];
+    var module = descriptor.dependencies[miidObj.module];
 
     // gather can perform operations
     var canPerforms = [];
@@ -467,7 +465,7 @@ function addModuleInstanceOperations(descriptor, miid, miidObj, callback) {
     function addModuleInstanceOperationsSequential(index) {
 
         if (index >= count) {
-            return callback(null);
+            return callback(errors.length ? errors : null);
         }
 
         var canPerform = canPerforms[index];

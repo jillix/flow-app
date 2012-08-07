@@ -62,7 +62,7 @@
     ],
     "miids": {
         "liqshop_layout": {
-            "module": "github/adioo/layout/44e9aefdca780ba1f54b510a61fe02aa34016d06",
+            "module": "github/adioo/layout/4e9fde0e42aa856743c993a29348845d65079437",
             "roles": [1],
             "config": {
                 "html": {
@@ -80,7 +80,7 @@
             }
         },
         "liqshop_order_list": {
-            "module": "bitbucket/jillix/liqshopOrderList/latest",
+            "module": "bitbucket/jillix/liqshopOrderList/f4c8d63431ddcb7699489d0d2d840c3317ce1771",
             "roles": [1],
             "config": {
                 "html": {
@@ -101,7 +101,7 @@
             }
         },
         "liqshop_order_details": {
-            "module": "bitbucket/jillix/liqshopOrderDetails/latest",
+            "module": "bitbucket/jillix/liqshopOrderDetails/e6154e4863e710025a7b8c4d7c281386231222db",
             "roles": [1],
             "config": {
                 "html": {
@@ -118,7 +118,7 @@
             }
         },
         "liqshop_order_login": {
-            "module": "bitbucket/jillix/liqshopOrderLogin/latest",
+            "module": "bitbucket/jillix/liqshopOrderLogin/0efd101823fc210ff548e6b6087bcdf56d6cc167",
             "roles": [0],
             "config": {
                 "html": {

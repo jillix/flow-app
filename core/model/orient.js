@@ -151,6 +151,56 @@ exports.getModuleVersion = function(module, callback) {
 };
 
 
+exports.getModuleVersionDependencies = function(vid, callback) {
+
+    var vvCluster = CONFIG.orient.DB.getClusterByClass("VModuleVersion");
+    var vrid = "#" + vvCluster.id + ":" + vid;
+
+    var command =
+        "SELECT " +
+            "@rid AS rid, " +
+            "module.source AS source, " +
+            "module.owner AS owner, " +
+            "module.name AS name, " +
+            "version " +
+        "FROM " +
+            "(TRAVERSE VModuleVersion.out, EDependsOn.in FROM " + vrid + ") " +
+        "WHERE @class = 'VModuleVersion' AND @rid <> " + vrid;
+
+    sql(command, function(err, results) {
+
+        if (err) {
+            return callback("An error occurred while retrieving module version dependencies for '" + vid + "': " + JSON.stringify(err));
+        }
+
+        var dependencies = {};
+
+        for (var i in results) {
+            var d = results[i];
+            dependencies[d.source + "/" + d.owner + "/" + d.name + "/" + d.version] = idFromRid(d.rid);
+        }
+
+        callback(null, dependencies);
+    });
+};
+
+
+exports.addModuleVersionDependency = function(vid, vidDependency, callback) {
+
+    var vvCluster = CONFIG.orient.DB.getClusterByClass("VModuleVersion");
+
+    var vrid = "#" + vvCluster.id + ":" + vid;
+    var vridDependency = "#" + vvCluster.id + ":" + vidDependency;
+
+    var hash = null;
+    var options = {
+        "class" : "EDependsOn"
+    };
+
+    edge(vrid, vridDependency, hash, options, callback);
+};
+
+
 exports.getModuleVersionId = function(module, callback) {
 
     exports.getModuleVersion(module, function(err, modDoc) {
@@ -498,16 +548,57 @@ exports.addModuleInstance = function(miid, rid, vid, hash, callback) {
         };
 
         // now we add the Access edge between the role and the version
-        edge(rrid, vrid, { miid: miid }, options, function(err, edgeDoc1) {
+        exports.getModuleVersionDependencies(vid, function(err, dependencies) {
 
             if (err) {
                 return callback(err);
             }
 
-            callback(null, idFromRid(edgeDoc["@rid"]));
+            var depIds = [vid];
+            for (var key in dependencies) {
+                depIds.push(dependencies[key]);
+            }
+
+            exports.addRoleAccesses(rid, depIds, function(err) {
+
+                if (err) {
+                    return callback(err);
+                }
+
+                callback(null, idFromRid(edgeDoc["@rid"]));
+            });
         });
     });
-}
+};
+
+
+exports.addRoleAccesses = function(rid, depIds, callback) {
+
+    var vrCluster = CONFIG.orient.DB.getClusterByClass("VRole");
+    var vvCluster = CONFIG.orient.DB.getClusterByClass("VModuleVersion");
+    var rrid = "#" + vrCluster.id + ":" + rid;
+
+    var options = {
+        "class" : "EHasAccessTo"
+    };
+
+    var index = 0;
+    
+    function addRoleAccessesSequential(index) {
+
+        if (index >= depIds.length) {
+            return callback(null);
+        }
+
+        var vrid = "#" + vvCluster.id + ":" + depIds[index];
+
+        edge(rrid, vrid, null, options, function(err, edgeDoc) {
+            addRoleAccessesSequential(++index);
+        });
+    }
+
+    addRoleAccessesSequential(0);
+};
 
 
 exports.addCanPerform = function(miid, rid, operation, params, callback) {

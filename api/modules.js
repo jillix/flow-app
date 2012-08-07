@@ -225,27 +225,27 @@ function installDependencies(descriptor, callback) {
 
     // just call back is there are no dependencies
     if (!descriptor.dependencies) {
-        return callback(null);
+        return callback(null, {});
     }
 
     var moduleRoot = CONFIG.root + "/modules/";
     var depKeys = Object.keys(descriptor.dependencies);
     var count = depKeys.length;
     var errors = [];
-    var ids = {};
+    var dependencies = {};
     var index = 0;
 
     function installDependenciesSequential(index) {
 
         if (index >= count) {
-            return callback(null, ids);
+            return callback(null, dependencies);
         }
 
         var key = depKeys[index];
         var splits = key.split("/");
         var module = new exports.Module(splits[0], splits[1], splits[2], descriptor.dependencies[key]);
 
-        installModule(module, function(err) {
+        installModule(module, function(err, installedDependencies) {
 
             if (err) {
                 console.error("Could not install dependency: " + module.getVersionPath() + ". Reason:");
@@ -255,13 +255,11 @@ function installDependencies(descriptor, callback) {
                 //console.log("Installed dependency: " + module.getVersionPath());
 
                 // add this module to the dependency list
-                ids[module.getVersionPath()] = module._vid;
+                dependencies[module.getVersionPath()] = module._vid;
 
                 // add sub-dependencies to this app dependencies
-                if (module.modules) {
-                    for (var key in module.modules) {
-                        ids[key] = module.modules[key];
-                    }
+                for (var key in installedDependencies) {
+                    dependencies[key] = installedDependencies[key];
                 }
             }
 
@@ -270,6 +268,39 @@ function installDependencies(descriptor, callback) {
     }
 
     installDependenciesSequential(index);
+}
+
+function addDependencyLinks(module, descriptor, installedDependencies, callback) {
+
+    // just call back is there are no dependencies
+    if (!descriptor.dependencies) {
+        return callback(null);
+    }
+
+    var depKeys = Object.keys(descriptor.dependencies);
+    var count = depKeys.length;
+    var index = 0;
+
+    function addDependencyLinksSequential(index) {
+
+        if (index >= count) {
+            return callback(null);
+        }
+
+        var key = depKeys[index] + "/" + descriptor.dependencies[depKeys[index]];
+        var depId = installedDependencies[key];
+
+        db.addModuleVersionDependency(module._vid, depId, function(err) {
+
+            if (err) {
+                console.error("Could not add dependency link from version '" + module.getVersionPath() + "' to module version '" + key + "'");
+            }
+
+            addDependencyLinksSequential(++index);
+        })
+    }
+
+    addDependencyLinksSequential(index);
 }
 
 function installModule(module, callback) {
@@ -281,10 +312,9 @@ function installModule(module, callback) {
 
             if (err) { return callback(err); }
 
-            var deps = {};
-            deps[module.getVersionPath()] = id;
+            module._vid = id;
 
-            callback(null, deps);
+            db.getModuleVersionDependencies(module._vid, callback);
         });
         return;
     }
@@ -334,12 +364,7 @@ function installModule(module, callback) {
             if (CONFIG.log.moduleInstallation || CONFIG.logLevel === "verbose") {
                 console.log("Installing dependencies for module: " + module.getVersionPath());
             }
-            installDependencies(descriptor, function(err, ids) {
-
-                module.modules = module.modules || {};
-                for (var key in ids) {
-                    module.modules[key] = ids[key];
-                }
+            installDependencies(descriptor, function(err, installedDependencies) {
 
                 // ****************
                 // 4. UPSERT MODULE
@@ -380,14 +405,25 @@ function installModule(module, callback) {
                                 console.log("Inserting " + operations.length + " operations for module: " + module.getVersionPath());
                             }
                             db.insertOperations(module, function(err, inserted) {
-
+console.dir(inserted);
                                 if (err) { return callback(err); };
 
                                 if (CONFIG.log.moduleInstallation || CONFIG.logLevel === "verbose") {
                                     console.log("Inserted " + inserted.length + " operations for module: " + module.getVersionPath());
                                 }
 
-                                callback(null, module);
+                                // ********************
+                                // 8. LINK DEPENDENCIES
+                                // ********************
+                                if (CONFIG.log.moduleInstallation || CONFIG.logLevel === "verbose") {
+                                    console.log("Adding dependency links: " + module.getVersionPath() + "/mono.json");
+                                }
+                                addDependencyLinks(module, descriptor, installedDependencies, function(err) {
+
+                                    if (err) { return callback(err); };
+
+                                    callback(null, installedDependencies);
+                                });
                             });
                         });
                     });
