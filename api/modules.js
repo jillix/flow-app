@@ -405,7 +405,7 @@ function installModule(module, callback) {
                                 console.log("Inserting " + operations.length + " operations for module: " + module.getVersionPath());
                             }
                             db.insertOperations(module, function(err, inserted) {
-console.dir(inserted);
+
                                 if (err) { return callback(err); };
 
                                 if (CONFIG.log.moduleInstallation || CONFIG.logLevel === "verbose") {
