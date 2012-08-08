@@ -390,7 +390,7 @@
                         "not-null": true
                     },
                     {
-                        "name": "app",
+                        "name": "application",
                         "type": "LINK",
                         "mandatory": true,
                         "not-null": true,
