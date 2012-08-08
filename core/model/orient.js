@@ -402,9 +402,9 @@ exports.addApplication = function(appId, name, routes, publicDir, errorMiid, scr
         // TODO because of a bug in orient 1.1.0 query is not parsed after the first map: routes
         // and therefore the scripts are not saved in the application entry
         var command = "UPDATE " + results[0]["@rid"] + " SET scripts = " + JSON.stringify(scripts);
-console.log(command);
+
         sql(command, function(err) {
-console.dir(scripts);
+
             if (err) {
                 return callback(err || "Failed to insert application scripts for application " + appId + "(" + name + ")");
             }
