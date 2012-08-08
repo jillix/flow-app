@@ -84,6 +84,8 @@ var N = {
 
                     events[name].push(method);
                 }
+
+                return this;
             },
 
             //Fire Event
@@ -105,6 +107,8 @@ var N = {
                         }
                     }
                 }
+
+                return this;
             },
 
             //Remove Event
@@ -127,6 +131,8 @@ var N = {
                         delete this.e[event];
                     }
                 }
+
+                return this;
             }
         },
 
@@ -340,10 +346,11 @@ var N = {
         //create link and append it to the DOM
         var head = document.getElementsByTagName("head")[0],
             link = document.createElement("link"),
+            external = file.indexOf("http://") == 0 || file.indexOf("https://") == 0,
             attr = {
                 rel:    "stylesheet",
                 type:   "text/css",
-                href:   N.ok + "/core/getFile/" + file
+                href:   external ? file : N.ok + "/core/getFile/" + file
             };
         
         for (var name in attr) {
@@ -390,7 +397,7 @@ var N = {
             // cache result
             self.modCache[miid] = response;
             
-            target.style.display = "none";
+            //target.style.display = "none";
             
             var div = document.createElement("div");
             
@@ -438,7 +445,7 @@ var N = {
                 // TODO: init state
                 
                 target.appendChild(div);
-                target.style.display = "block";
+                //target.style.display = "block";
 
                 callback(module);
             });
