@@ -80,7 +80,7 @@
             }
         },
         "liqshop_order_list": {
-            "module": "bitbucket/jillix/liqshopOrderList/f4c8d63431ddcb7699489d0d2d840c3317ce1771",
+            "module": "bitbucket/jillix/liqshopOrderList/80e7b77674a6ce90068db15fd48487ba284cf992",
             "roles": [1],
             "config": {
                 "html": {

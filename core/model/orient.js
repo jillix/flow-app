@@ -378,7 +378,7 @@ exports.getUser = function(appId, userName, callback) {
 };
 
 
-exports.addApplication = function(appId, name, routes, publicDir, errorMiid, callback) {
+exports.addApplication = function(appId, name, routes, publicDir, errorMiid, scripts, callback) {
 
     // #7:0 should be the default public user
     var command =
@@ -388,7 +388,8 @@ exports.addApplication = function(appId, name, routes, publicDir, errorMiid, cal
             "publicDir = '" + publicDir + "', " +
             "publicUser = #7:0, " +
             "error = " + (errorMiid ? "'" + errorMiid + "'" : "null") + ", " +
-            "routes = " + JSON.stringify(routes);
+            "routes = " + JSON.stringify(routes) + ", " +
+            "scripts = " + JSON.stringify(scripts);
 
     sql(command, function(err, results) {
 
@@ -398,7 +399,18 @@ exports.addApplication = function(appId, name, routes, publicDir, errorMiid, cal
 
         var id = idFromRid(results[0]["@rid"]);
 
-        callback(null, id);
+        // TODO because of a bug in orient 1.1.0 query is not parsed after the first map: routes
+        // and therefore the scripts are not saved in the application entry
+        var command = "UPDATE " + results[0]["@rid"] + " SET scripts = " + JSON.stringify(scripts);
+console.log(command);
+        sql(command, function(err) {
+console.dir(scripts);
+            if (err) {
+                return callback(err || "Failed to insert application scripts for application " + appId + "(" + name + ")");
+            }
+
+            callback(null, id);
+        });
     });
 
 }
@@ -653,7 +665,8 @@ function getOperationId(rid, miid, name, callback) {
         "WHERE " +
             "method = '" + name + "' AND " +
             "module IN " +
-                "(SELECT in FROM EHasAccessTo WHERE out = " + rrid + " AND miid = '" + miid + "')";
+                "(SELECT in FROM EHasAccessTo WHERE out = " + rrid + ")";
+                //"(SELECT in FROM EHasAccessTo WHERE out = " + rrid + " AND miid = '" + miid + "')";
 
     sql(command, function(err, results) {
 
@@ -667,9 +680,9 @@ function getOperationId(rid, miid, name, callback) {
         }
 
         // if there are too many results
-        if (results.length > 1) {
-            return callback("Coould not uniquely identify operation id for role: " + rrid + " and miid: " + miid);
-        }
+        //if (results.length > 1) {
+        //    return callback("Coould not uniquely identify operation id for role: " + rrid + " and miid: " + miid);
+        //}
         
         callback(null, idFromRid(results[0].id));
     });
@@ -840,10 +853,10 @@ exports.getUserOperation = function(miid, method, userId, callback) {
 
     var command =
         "SELECT " +
-            "in.out[0].in.source AS source, " +
-            "in.out[0].in.owner AS owner, " +
-            "in.out[0].in.name AS name, " +
-            "in.out[0].version AS version, " +
+            "in.module.module.source AS source, " +
+            "in.module.module.owner AS owner, " +
+            "in.module.module.name AS name, " +
+            "in.module.version AS version, " +
             "in.file AS file, " +
             "params " +
         "FROM " +

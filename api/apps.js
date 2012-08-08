@@ -70,6 +70,7 @@ function installFromObject(descriptor, callback) {
                 descriptor.routes || null,
                 descriptor.publicDir || "",
                 descriptor.error || null,
+                descriptor.scripts || [],
                 function(err, _id) {
 
             // TODO cleanup
