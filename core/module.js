@@ -30,7 +30,7 @@ function buildModule(link, module) {
         for (var i in module.css) {
 
             // TODO append D/ for domain css and M/ for module css
-            response.css.push(module.css[i] + ".css");
+            response.css.push(module.css[i]);
         }
     }
     

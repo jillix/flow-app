@@ -45,7 +45,7 @@
                         "githubDisplay": "github_display"
                     }
                 },
-                "css": ["bootstrap/css/bootstrap", "github"]
+                "css": ["/bootstrap/css/bootstrap.css", "/github.css"]
             }
         },
         "github_display": {

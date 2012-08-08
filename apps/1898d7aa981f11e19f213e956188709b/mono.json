@@ -76,7 +76,7 @@
                         "orderDetails": "liqshop_order_details"
                     }    
                 },
-                "css": ["reset-min", "main", "tab", "hpane", "bar", "list", "form", "table", "orderDetail"]
+                "css": ["/reset-min.css", "/main.css", "/tab.css", "/hpane.css", "/bar.css", "/list.css", "/form.css", "/table.css", "/orderDetail.css"]
             }
         },
         "liqshop_order_list": {
@@ -125,7 +125,7 @@
                     "type": "a",
                     "path": "html/login"
                 },
-                "css": ["login"]
+                "css": ["/login.css"]
             },
             "operations": {
                 "login": {
