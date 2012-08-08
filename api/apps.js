@@ -84,7 +84,7 @@ function installFromObject(descriptor, callback) {
             installDomains(descriptor, function(err) {
 
                 if (err) {
-                    console.error("Failed to install domains for application: " + descriptor + appId + ". " + JSON.stringify(err));
+                    console.error("Failed to install domains for application: " + descriptor.appId + ". " + JSON.stringify(err));
                 }
             });
 
