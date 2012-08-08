@@ -790,7 +790,9 @@ exports.addApplicationDomains = function(aid, domains, callback) {
         ") VALUES " +
             valuesStr;
 
-    sql(command, callback);
+    sql(command, function(err, results) {
+        callback(err);
+    });
 };
 
 
