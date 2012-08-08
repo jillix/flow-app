@@ -64,8 +64,7 @@ exports.route = function(link) {
             send.notfound(link, err || "No routing table found");
             return;
         }
-debugger;
-console.dir(application.routes);
+
         var module = traverse(link.pathname != "/" ? link.pathname.replace(/\/$/, "") : link.pathname, application.routes, "");
 
         if (typeof module == "string") {
@@ -77,7 +76,6 @@ console.dir(application.routes);
             send.ok(link.res, initScripts(module, application, (link.req.headers['user-agent'].indexOf("MSIE 7.0") > -1 ? true : false)));
         }
         else {
-console.log(link.req.url);
             publicFiles(link, application.appId, application.publicDir);
         }
     });
