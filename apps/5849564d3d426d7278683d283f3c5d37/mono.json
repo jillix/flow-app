@@ -1,0 +1,70 @@
+{
+    "appId": "5849564d3d426d7278683d283f3c5d37",
+    "name": "MonoAdmin",
+    "routes": {
+        "module": "github_layout"
+    },
+    "domains": [
+        "github.mono.ch"
+    ],
+    "scripts": [
+        "/jquery.js",
+        "/bootstrap/js/bootstrap-button.js"
+    ],
+    "publicDir": "public",
+    "publicUser": 0,
+    "users": [
+        {
+            "id": 0,
+            "username": "",
+            "password": "",
+            "data": {
+                "fullname": "MonoAdmin Public User"
+            },
+            "roles": [0]
+        }
+    ],
+    "roles": [
+        {
+            "id": 0,
+            "name": "MonoAdmin Public Role"
+        }
+    ],
+    "miids": {
+        "github_layout": {
+            "module": "github/adioo/layout/4e9fde0e42aa856743c993a29348845d65079437",
+            "roles": [0],
+            "config": {
+                "html": {
+                    "type": "a",
+                    "path": "html/layout"
+                },
+                "config": {
+                    "title": "Github Admin",
+                    "modules": {
+                        "githubDisplay": "github_display"
+                    }
+                },
+                "css": ["/bootstrap/css/bootstrap.css", "/github.css"]
+            }
+        },
+        "github_display": {
+            "module": "github/gabipetrovay/github_display/63fff43060818054c4298a42fb091f3b8bd7e317",
+            "roles": [0],
+            "config": {
+                "html": {
+                    "type": "a",
+                    "path": "html/github"
+                },
+                "css": []
+            },
+            "operations": {
+                "modules": {
+                    "roles": [0],
+                    "params": [null]
+                }
+            }
+        }
+    }
+}
+

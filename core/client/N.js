@@ -84,7 +84,7 @@ var N = {
 
                     events[name].push(method);
                 }
-                
+
                 return this;
             },
 
@@ -107,7 +107,7 @@ var N = {
                         }
                     }
                 }
-                
+
                 return this;
             },
 
@@ -131,7 +131,7 @@ var N = {
                         delete this.e[event];
                     }
                 }
-                
+
                 return this;
             }
         },
@@ -346,10 +346,11 @@ var N = {
         //create link and append it to the DOM
         var head = document.getElementsByTagName("head")[0],
             link = document.createElement("link"),
+            external = file.indexOf("http://") == 0 || file.indexOf("https://") == 0,
             attr = {
                 rel:    "stylesheet",
                 type:   "text/css",
-                href:   N.ok + "/core/getFile/" + file
+                href:   external ? file : N.ok + "/core/getFile/" + file
             };
         
         for (var name in attr) {

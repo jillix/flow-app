@@ -1,0 +1,139 @@
+{
+    "appId": "1898d7aa981f11e19f213e956188709b",
+    "name": "Liqshop Orders",
+    "routes": {
+        "/": "liqshop_layout"
+    },
+    "error": "liqshop_order_login",
+    "domains": [
+        "liqshop.ch",
+        "orders.happybonus.ch"
+    ],
+    "publicDir": "public",
+    "publicUser": 0,
+    "users": [
+        {
+            "id": 0,
+            "username": "",
+            "password": "",
+            "data": {
+                "fullname": "Liqshop Public User"
+            },
+            "roles": [0]
+        },
+        {
+            "id": 1,
+            "username": "ddaarau",
+            "password": "3cc849279ba298b587a34cabaeffc5ecb3a044bbf97c516fab7ede9d1af77cfa",
+            "data": {
+                "fullname": "Liqshop Branch User",
+                "fullname": "DD | Aarau",
+                "language": "de",
+                "session": {
+                    "branch": "AA"
+                }
+            },
+            "roles": [1,0]
+        },
+        {
+            "id": 2,
+            "username": "sag",
+            "password": "3cc849279ba298b587a34cabaeffc5ecb3a044bbf97c516fab7ede9d1af77cfa",
+            "data": {
+                "fullname": "Liqshop Admin User",
+                "language": "de"
+            },
+            "roles": [2,1,0]
+        }
+    ],
+    "roles": [
+        {
+            "id": 0,
+            "name": "Liqshop Public Role"
+        },
+        {
+            "id": 1,
+            "name": "Liqshop Branch Role"
+        },
+        {
+            "id": 2,
+            "name": "Liqshop Admin Role"
+        }
+    ],
+    "miids": {
+        "liqshop_layout": {
+            "module": "github/adioo/layout/4e9fde0e42aa856743c993a29348845d65079437",
+            "roles": [1],
+            "config": {
+                "html": {
+                    "type": "a",
+                    "path": "html/layout"
+                },
+                "config": {
+                    "title": "Liqshop Orders",
+                    "modules": {
+                        "orderList": "liqshop_order_list",
+                        "orderDetails": "liqshop_order_details"
+                    }    
+                },
+                "css": ["/reset-min.css", "/main.css", "/tab.css", "/hpane.css", "/bar.css", "/list.css", "/form.css", "/table.css", "/orderDetail.css"]
+            }
+        },
+        "liqshop_order_list": {
+            "module": "bitbucket/jillix/liqshopOrderList/80e7b77674a6ce90068db15fd48487ba284cf992",
+            "roles": [1],
+            "config": {
+                "html": {
+                    "type": "a",
+                    "path": "html/list"
+                },
+                "css": []
+            },
+            "operations": {
+                "getOrders": {
+                    "roles": [1],
+                    "params": [null]
+                },
+                "getBranches": {
+                    "roles": [1],
+                    "params": [null]
+                }
+            }
+        },
+        "liqshop_order_details": {
+            "module": "bitbucket/jillix/liqshopOrderDetails/e6154e4863e710025a7b8c4d7c281386231222db",
+            "roles": [1],
+            "config": {
+                "html": {
+                    "type": "a",
+                    "path": "html/details"
+                },
+                "css": []
+            },
+            "operations": {
+                "archiveItem": {
+                    "roles": [1],
+                    "params": [null]
+                }
+            }
+        },
+        "liqshop_order_login": {
+            "module": "bitbucket/jillix/liqshopOrderLogin/0efd101823fc210ff548e6b6087bcdf56d6cc167",
+            "roles": [0],
+            "config": {
+                "html": {
+                    "type": "a",
+                    "path": "html/login"
+                },
+                "css": ["/login.css"]
+            },
+            "operations": {
+                "login": {
+                    "roles": [0],
+                    "params": [null]
+                }
+            }
+        }
+    }
+}
+

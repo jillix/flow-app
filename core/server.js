@@ -31,14 +31,11 @@ Server.prototype.start = function() {
         
         // establish the database connection
         orient.connect(CONFIG.orient, function(err, db) {
-            
+
             if (err) {
-                
                 throw new Error(JSON.stringify(err));
             }
             
-            CONFIG.orient.DB = db;
-                    
             // start http server
             self.server = http.createServer(requestHandler);
             self.server.listen(CONFIG.dev ? CONFIG.devPort : CONFIG.port, host);

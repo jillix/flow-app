@@ -9,6 +9,7 @@ mkdir -p "$TMP_DIR"
 
 ORIENTDB_ROOT=bin/orientdb
 ORIENTDB_VERSION=`curl --silent https://oss.sonatype.org/content/repositories/releases/com/orientechnologies/orientdb/maven-metadata.xml | grep "release" | cut -d ">" -f 2 | cut -d "<" -f 1`
+#ORIENTDB_VERSION=1.1.0
 ORIENTDB_ROOT_USER=root
 ORIENTDB_MONO_SQL=mono.sql
 ORIENTDB_MONO_DROP_SQL=mono_drop.sql
@@ -31,9 +32,12 @@ function download_orientdb {
     echo "Removing old OrientDB installation..."
     rm -Rf "$ORIENTDB_ROOT"
 
-    echo "Unpacking OrientDB in: $ORIENTDB_ROOT"
-    mkdir -p "$ORIENTDB_ROOT"
-    unzip -o -q -d "$ORIENTDB_ROOT" "$TMP_DIR/$ORIENTDB_ARCHIVE"
+    mkdir -p bin
+
+    echo "Unpacking OrientDB in: bin"
+    unzip -o -q -d bin "$TMP_DIR/$ORIENTDB_ARCHIVE"
+
+    mv "bin/orientdb-graphed-$ORIENTDB_VERSION" "$ORIENTDB_ROOT"
     chmod +x bin/orientdb/bin/*sh
 }
 
@@ -57,16 +61,21 @@ function install_orientdb {
         download_orientdb
     fi
 
-    # TODO only if not already running
-    # start OrientDB to make sure the root user and password are generated
-    TMP_CUR_DIR=`pwd`
-    cd "$ORIENTDB_ROOT/bin/"
-    ./server.sh > /dev/null 2>&1 &
-    cd "$TMP_CUR_DIR"
+    # only if orient server not already running
+    ORIENT_PROCESS=$(ps aux | grep "com.orientechnologies.orient.server" | grep -v grep)
+    if [ "$ORIENT_PROCESS" == "" ]
+    then
+        # start OrientDB to make sure the root user and password are generated
+        TMP_CUR_DIR=`pwd`
+        cd "$ORIENTDB_ROOT/bin/"
+        ./server.sh > /dev/null 2>&1 &
+        cd "$TMP_CUR_DIR"
+    fi
 
-    # wating until the server starts (max 20 seconds)
+    # waiting until the server starts (max 20 seconds)
     x=0
-    while [ $x -le 20 ]
+    SECS=20
+    while [ $x -lt $SECS ]
     do
         echo "Waiting for the OrientDB server to start..."
         SERVER_PID=`lsof -iTCP:2424 -sTCP:LISTEN -t`
@@ -79,7 +88,7 @@ function install_orientdb {
         x=$(( $x + 1 ))
     done
 
-    if [ $x -eq 10 ]
+    if [ $x -eq $SECS ]
     then
         echo "Could not start the OrientDB server. Try again or do this shit manually."
         echo "Aborting!"
@@ -109,6 +118,7 @@ function install_orientdb {
     # TODO Whu doesn't console return non-zero on error?
     if [ $? -eq 0 ]
     then
+        echo ""
         echo "Database imported successfully."
         echo "Database import log written to: $IMPORT_LOG"
     else
@@ -117,9 +127,8 @@ function install_orientdb {
     fi
 
     # close now OrientDB server TODO but only if we start it above
-    kill $(ps aux | grep "$ORIENTDB_ROOT" | grep -v "grep" | awk '{print $2}')
+    #kill $(ps aux | grep "$ORIENTDB_ROOT" | grep -v "grep" | awk '{print $2}')
 }
-
 
 install_orientdb
 

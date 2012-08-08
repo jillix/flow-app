@@ -55,6 +55,57 @@ exports.getModules = function(callback) {
 };
 
 
+exports.addModule = function(module, callback) {
+
+    var command =
+        "INSERT INTO VModule (" +
+            "source, owner, name, latest" +
+        ") VALUES (" +
+            "'" + module.source + "', " +
+            "'" + module.owner + "', " +
+            "'" + module.name + "', " +
+            "'" + module.latest + "'" +
+        ")";
+
+    sql(command, function(err, results) {
+
+        if (err) {
+            return callback("An error occurred while inserting module '" + module.getModulePath() + "': " + JSON.stringify(err));
+        }
+
+        callback(null, results[0] || null);
+    });
+};
+
+
+exports.addModuleVersion = function(module, callback) {
+
+    if (module._id == undefined) {
+        return callback("The module is missing the _id.");
+    }
+
+    var vmCluster = CONFIG.orient.DB.getClusterByClass("VModule");
+
+    var command =
+        "INSERT INTO VModuleVersion (" +
+            "version, module, publicDir" +
+        ") VALUES (" +
+            "'" + module.version + "', " +
+            "#" + vmCluster.id + ":" + module._id + ", " +
+            "" + null + "" +
+        ")";
+
+    sql(command, function(err, results) {
+
+        if (err) {
+            return callback("An error occurred while inserting module version '" + module.getVersionPath() + "': " + JSON.stringify(err));
+        }
+
+        callback(null, results[0] || null);
+    });
+};
+
+
 exports.getModule = function(source, owner, name, callback) {
 
     var command =
@@ -77,21 +128,112 @@ exports.getModule = function(source, owner, name, callback) {
 };
 
 
-exports.insertOperations = function(operations, callback) {
+exports.getModuleVersion = function(module, callback) {
 
+    var command =
+        "SELECT " +
+        "FROM " +
+            "VModuleVersion " +
+        "WHERE " +
+            "module.source = '" + module.source + "' AND " +
+            "module.owner = '" + module.owner + "' AND " +
+            "module.name = '" + module.name + "' AND " +
+            "version = '" + module.version + "'";
+
+    sql(command, function(err, results) {
+
+        if (err) {
+            return callback("An error occurred while retrieving module version '" + module.getVersionPath() + "': " + JSON.stringify(err));
+        }
+
+        callback(null, results[0] || null);
+    });
+};
+
+
+exports.getModuleVersionDependencies = function(vid, callback) {
+
+    var vvCluster = CONFIG.orient.DB.getClusterByClass("VModuleVersion");
+    var vrid = "#" + vvCluster.id + ":" + vid;
+
+    var command =
+        "SELECT " +
+            "@rid AS rid, " +
+            "module.source AS source, " +
+            "module.owner AS owner, " +
+            "module.name AS name, " +
+            "version " +
+        "FROM " +
+            "(TRAVERSE VModuleVersion.out, EDependsOn.in FROM " + vrid + ") " +
+        "WHERE @class = 'VModuleVersion' AND @rid <> " + vrid;
+
+    sql(command, function(err, results) {
+
+        if (err) {
+            return callback("An error occurred while retrieving module version dependencies for '" + vid + "': " + JSON.stringify(err));
+        }
+
+        var dependencies = {};
+
+        for (var i in results) {
+            var d = results[i];
+            dependencies[d.source + "/" + d.owner + "/" + d.name + "/" + d.version] = idFromRid(d.rid);
+        }
+
+        callback(null, dependencies);
+    });
+};
+
+
+exports.addModuleVersionDependency = function(vid, vidDependency, callback) {
+
+    var vvCluster = CONFIG.orient.DB.getClusterByClass("VModuleVersion");
+
+    var vrid = "#" + vvCluster.id + ":" + vid;
+    var vridDependency = "#" + vvCluster.id + ":" + vidDependency;
+
+    var hash = null;
+    var options = {
+        "class" : "EDependsOn"
+    };
+
+    edge(vrid, vridDependency, hash, options, callback);
+};
+
+
+exports.getModuleVersionId = function(module, callback) {
+
+    exports.getModuleVersion(module, function(err, modDoc) {
+
+        if (err) { return callback(err); }
+        if (!modDoc) { return callback("Could not find module version in the database: " + module.getVersionPath()); }
+        return callback(null, idFromRid(modDoc["@rid"]));
+    });
+};
+
+
+exports.insertOperations = function(module, callback) {
+
+    if (module._vid == undefined) {
+        return callback("The module is missing the _vid. Upsert this module version to obtain a version ID.");
+    }
+
+    var operations = module.operations;
     if (!operations || !operations.length) {
         return callback(null, []);
     }
 
     // build the INSERT VALUES string
+    var vvCluster = CONFIG.orient.DB.getClusterByClass("VModuleVersion");
     var opsStr = "";
     for (var i in operations) {
-        opsStr += "('" + operations[i].file + "', '" + operations[i]["function"] + "'),";
+        opsStr += "(#" + vvCluster.id + ":" + module._vid + ", '" + operations[i].file + "', '" + operations[i]["function"] + "'),";
     }
     opsStr = opsStr.slice(0, -1);
 
     var command =
         "INSERT INTO VOperation (" +
+            "module, " +
             "file, " +
             "method" +
         ") VALUES " +
@@ -101,54 +243,50 @@ exports.insertOperations = function(operations, callback) {
 };
 
 
-exports.insertBelongsTo = function(rid, version, operations, callback) {
-
-    if (!operations || !operations.length) {
-        return callback(null, []);
-    }
-
-    var edgeStr = "";
-    for (var i in operations) {
-        edgeStr += "('" + version + "', " + operations[i]["@rid"] + ", " + rid + "),";
-    }
-    edgeStr = edgeStr.slice(0, -1);
-
-    var command =
-        "INSERT INTO EBelongsTo (" +
-            "version, " +
-            "out, " +
-            "in" +
-        ") VALUES " +
-            edgeStr;
-
-    sql(command, callback);
-};
-
-
-exports.insertModuleVersion = function(module, callback) {
-
+exports.upsertModule = function(module, callback) {
     // find the module
     exports.getModule(module.source, module.owner, module.name, function(err, mod) {
 
-        var rid = mod['@rid'];
+        if (err) { return callback("Error while upserting (SELECT) module: " + module.getModulePath() + ". Error: " + JSON.stringify(err)); }
 
-        // insert the operations
-        exports.insertOperations(module.operations, function(err, inserted) {
-        
-            if (err) {
-                return callback("An error occurred while inserting module operations for module '" + module.relativePath() + "': " + JSON.stringify(err));
+        if (mod) {
+            module._id = idFromRid(mod['@rid']);
+            return callback(null, mod);
+        }
+
+        // add the module
+        exports.addModule(module, function(err, mod) {
+
+            if (err || !mod) { return callback("Error while upserting (INSERT) module: " + module.getModulePath() + ". Error: " + JSON.stringify(err)); }
+
+            module._id = idFromRid(mod['@rid']);
+            callback(null, mod);
+        })
+    });
+}
+
+
+exports.upsertModuleVersion = function(module, callback) {
+
+    exports.upsertModule(module, function(err, docMod) {
+
+        if (err) { return callback(err); }
+
+        exports.getModuleVersion(module, function(err, versionDoc) {
+            
+            if (err) { return callback(err); }
+
+            if (versionDoc) {
+                module._vid = idFromRid(versionDoc['@rid']);
+                return callback(null, versionDoc);
             }
 
-            // insert the EBelongsTo edge between operations and module
-            exports.insertBelongsTo(rid, module.version, inserted, function(err, inserted) {
-                if (err) {
-                    return callback("An error occurred while inserting module operations edges for module '" + module.relativePath() + "': " + JSON.stringify(err));
-                }
+            exports.addModuleVersion(module, function(err, versionDoc) {
+            
+                if (err) { return callback(err); }
 
-                // TODO insert the lings in the "in" list for the module
-                //db.save(module);
-
-                callback(null);
+                module._vid = idFromRid(versionDoc['@rid']);
+                return callback(null, versionDoc);
             });
         });
     });
@@ -240,6 +378,359 @@ exports.getUser = function(appId, userName, callback) {
 };
 
 
+exports.addApplication = function(appId, name, routes, publicDir, errorMiid, scripts, callback) {
+
+    // #7:0 should be the default public user
+    var command =
+        "INSERT INTO VApplication SET " +
+            "id = '" + appId + "', " +
+            "name = '" + name + "', " +
+            "publicDir = '" + publicDir + "', " +
+            "publicUser = #7:0, " +
+            "error = " + (errorMiid ? "'" + errorMiid + "'" : "null") + ", " +
+            "routes = " + JSON.stringify(routes) + ", " +
+            "scripts = " + JSON.stringify(scripts);
+
+    sql(command, function(err, results) {
+
+        if (err || !results || results.length != 1 || !results[0] || !results[0]["@rid"]) {
+            return  callback(err || "Failed to insert application: " + appId + "(" + name + ")");
+        }
+
+        var id = idFromRid(results[0]["@rid"]);
+
+        // TODO because of a bug in orient 1.1.0 query is not parsed after the first map: routes
+        // and therefore the scripts are not saved in the application entry
+        var command = "UPDATE " + results[0]["@rid"] + " SET scripts = " + JSON.stringify(scripts);
+
+        sql(command, function(err) {
+
+            if (err) {
+                return callback(err || "Failed to insert application scripts for application " + appId + "(" + name + ")");
+            }
+
+            callback(null, id);
+        });
+    });
+
+}
+
+
+exports.assignRole = function(uid, rid, callback) {
+
+    callback = callback || function() {};
+
+    var vuCluster = CONFIG.orient.DB.getClusterByClass("VUser");
+    var vrCluster = CONFIG.orient.DB.getClusterByClass("VRole");
+
+    var urid = "#" + vuCluster.id + ":" + uid;
+    var rrid = "#" + vrCluster.id + ":" + rid;
+
+    var hash = null;
+    var options = {
+        "class" : "EMemberOf"
+    };
+
+    edge(urid, rrid, hash, options, function(err, edgeDoc) {
+
+        if (err) {
+            return callback(err);
+        }
+
+        callback(null);
+    });
+}
+
+
+exports.updatePublicUser = function(appId, uid, callback) {
+
+    callback = callback || function() {};
+
+    var vuCluster = CONFIG.orient.DB.getClusterByClass("VUser");
+
+    var command =
+        "UPDATE Vapplication SET publicUser = #" + vuCluster.id + ":" + uid + " WHERE id = '" + appId + "'";
+
+    sql(command, function(err, results) {
+
+        if (err || !results || results.length != 1 || !results[0]) {
+            return  callback(err || "Failed to update the public user for application: " + appId);
+        }
+
+        callback(null);
+    });
+}
+
+
+exports.addRole = function(appId, name, callback) {
+
+    translateAppId(appId, function(err, id) {
+
+        if (err) {
+            return callback(err);
+        }
+
+        // first add the Role node
+        var command =
+            "INSERT INTO VRole SET " +
+                "name = '" + name + "', " +
+                "app = " + id;
+
+        sql(command, function(err, results) {
+
+            if (err || !results || results.length != 1 || !results[0] || !results[0]["@rid"]) {
+                return  callback(err || "Failed to insert role '" + name + "' for application '" + appId + "'");
+            }
+
+            var rid = results[0]["@rid"];
+            
+            // now add this Role in the application reference list
+            var command =
+                "UPDATE " + id + " ADD roles = " + rid;
+
+            sql(command, function(err, results) {
+
+                if (err) {
+                    return  callback("Failed to insert role '" + rid + "' into application '" + id + "'. " + JSON.stringify(err));
+                }
+
+                var id = idFromRid(rid);
+                callback(null, id);
+            });
+        });
+    });
+};
+
+
+exports.addUser = function(appId, user, roles, callback) {
+
+    translateAppId(appId, function(err, id) {
+
+        if (err) {
+            return callback(err);
+        }
+
+        // first add the Role node
+        var command =
+            "INSERT INTO VUser SET " +
+                "username = '" + user.username + "', " +
+                "password = '" + user.password + "', " +
+                "data = " + JSON.stringify(user.data);
+
+        sql(command, function(err, results) {
+
+            if (err || !results || results.length != 1 || !results[0] || !results[0]["@rid"]) {
+                return  callback(err || "Failed to insert user '" + username + "' for application '" + appId + "'");
+            }
+
+            var rid = results[0]["@rid"];
+            
+            var id = idFromRid(rid);
+            callback(null, id);
+        });
+    });
+};
+
+
+exports.addModuleInstance = function(miid, rid, vid, hash, callback) {
+
+    callback = callback || function() {};
+
+    var vrCluster = CONFIG.orient.DB.getClusterByClass("VRole");
+    var vvCluster = CONFIG.orient.DB.getClusterByClass("VModuleVersion");
+
+    var rrid = "#" + vrCluster.id + ":" + rid;
+    var vrid = "#" + vvCluster.id + ":" + vid;
+
+    var options = {
+        "class" : "EUsesInstanceOf"
+    };
+
+    hash.miid = miid;
+
+    // first we add a Uses edge between the role and the version
+    edge(rrid, vrid, hash, options, function(err, edgeDoc) {
+
+        if (err) {
+            return callback(err);
+        }
+
+        var options = {
+            "class" : "EHasAccessTo"
+        };
+
+        // now we add the Access edge between the role and the version
+        exports.getModuleVersionDependencies(vid, function(err, dependencies) {
+
+            if (err) {
+                return callback(err);
+            }
+
+            var depIds = [vid];
+            for (var key in dependencies) {
+                depIds.push(dependencies[key]);
+            }
+
+            exports.addRoleAccesses(rid, depIds, function(err) {
+
+                if (err) {
+                    return callback(err);
+                }
+
+                callback(null, idFromRid(edgeDoc["@rid"]));
+            });
+        });
+    });
+};
+
+
+exports.addRoleAccesses = function(rid, depIds, callback) {
+
+    var vrCluster = CONFIG.orient.DB.getClusterByClass("VRole");
+    var vvCluster = CONFIG.orient.DB.getClusterByClass("VModuleVersion");
+    var rrid = "#" + vrCluster.id + ":" + rid;
+
+    var options = {
+        "class" : "EHasAccessTo"
+    };
+
+    var index = 0;
+    
+    function addRoleAccessesSequential(index) {
+
+        if (index >= depIds.length) {
+            return callback(null);
+        }
+
+        var vrid = "#" + vvCluster.id + ":" + depIds[index];
+
+        edge(rrid, vrid, null, options, function(err, edgeDoc) {
+            addRoleAccessesSequential(++index);
+        });
+    }
+
+    addRoleAccessesSequential(0);
+};
+
+
+exports.addCanPerform = function(miid, rid, operation, params, callback) {
+
+    callback = callback || function() {};
+
+    // find operation id for miid
+    getOperationId(rid, miid, operation, function(err, id) {
+
+        if (err) {
+            return callback(err);
+        }
+
+        var vrCluster = CONFIG.orient.DB.getClusterByClass("VRole");
+        var voCluster = CONFIG.orient.DB.getClusterByClass("VOperation");
+
+        var rrid = "#" + vrCluster.id + ":" + rid;
+        var orid = "#" + voCluster.id + ":" + id;
+
+        var options = {
+            "class" : "ECanPerform"
+        };
+
+        var hash = {
+            miid: miid
+        };
+        if (params) {
+            hash.params = params;
+        }
+
+        // first we add a Uses edge between the role and the version
+        edge(rrid, orid, hash, options, function(err, edgeDoc) {
+
+            if (err) {
+                return callback(err);
+            }
+
+            callback(null, idFromRid(edgeDoc["@rid"]));
+        });
+    });
+}
+
+
+function getOperationId(rid, miid, name, callback) {
+
+    var vrCluster = CONFIG.orient.DB.getClusterByClass("VRole");
+    
+    var rrid = "#" + vrCluster.id + ":" + rid;
+
+    var command =
+        "SELECT @rid as id FROM VOperation " +
+        "WHERE " +
+            "method = '" + name + "' AND " +
+            "module IN " +
+                "(SELECT in FROM EHasAccessTo WHERE out = " + rrid + ")";
+                //"(SELECT in FROM EHasAccessTo WHERE out = " + rrid + " AND miid = '" + miid + "')";
+
+    sql(command, function(err, results) {
+
+        if (err) {
+            return callback("An error occurred while finding operation id for role: " + rrid + " and miid: " + miid + ". " + JSON.stringify(err));
+        }
+
+        // if there is no result
+        if (!results || results.length == 0) {
+            return callback("Could not find operation id for role: " + rrid + " and miid: " + miid);
+        }
+
+        // if there are too many results
+        //if (results.length > 1) {
+        //    return callback("Coould not uniquely identify operation id for role: " + rrid + " and miid: " + miid);
+        //}
+        
+        callback(null, idFromRid(results[0].id));
+    });
+}
+
+
+function translateAppId(appId, callback) {
+
+    if (typeof appId !== "string") {
+        return callback("Invalid application id or rid: " + appId);
+    }
+
+    var command =
+        "SELECT " +
+            "@rid AS id " +
+        "FROM " +
+            "VApplication " +
+        "WHERE " +
+            "id = '" + appId + "'";
+
+    sql(command, function(err, results) {
+
+        if (err) {
+            return callback("An error occurred while translating the application ID: " + appId + ". " + JSON.stringify(err));
+        }
+
+        // if there is no result
+        if (!results || results.length == 0) {
+            return callback("Application not found: " + appId);
+        }
+
+        // if there are too many results
+        if (results.length > 1) {
+            return callback("Could not uniquely determine the application with ID: " + appId);
+        }
+
+        var application = results[0];
+
+        // if the application does not have the required fields
+        if (!application || !application.id) {
+            return callback("Missing application ID: " + JSON.stringify(application));
+        }
+
+        callback(null, application.id);
+    });
+}
+
+
 exports.getAppId = function(domain, callback) {
 
         var command =
@@ -275,6 +766,31 @@ exports.getAppId = function(domain, callback) {
 
             callback(null, application.appId);
         });
+};
+
+
+exports.addApplicationDomains = function(aid, domains, callback) {
+
+    if (!domains || !domains.length) {
+        return callback(null);
+    }
+
+    // build the INSERT VALUES string
+    var vaCluster = CONFIG.orient.DB.getClusterByClass("VApplication");
+    var valuesStr = "";
+    for (var i in domains) {
+        valuesStr += "(#" + vaCluster.id + ":" + aid + ", '" + domains[i] + "'),";
+    }
+    valuesStr = valuesStr.slice(0, -1);
+
+    var command =
+        "INSERT INTO VDomain (" +
+            "application, " +
+            "name " +
+        ") VALUES " +
+            valuesStr;
+
+    sql(command, callback);
 };
 
 
@@ -337,10 +853,10 @@ exports.getUserOperation = function(miid, method, userId, callback) {
 
     var command =
         "SELECT " +
-            "in.out[0].in.source AS source, " +
-            "in.out[0].in.owner AS owner, " +
-            "in.out[0].in.name AS name, " +
-            "in.out[0].version AS version, " +
+            "in.module.module.source AS source, " +
+            "in.module.module.owner AS owner, " +
+            "in.module.module.name AS name, " +
+            "in.module.version AS version, " +
             "in.file AS file, " +
             "params " +
         "FROM " +
@@ -388,10 +904,10 @@ exports.getModuleConfig = function(appId, miid, userId, callback) {
     //      only miid's from this appId must be searched
     var command =
         "SELECT " +
-            "in.source AS source, " +
-            "in.owner AS owner, " +
-            "in.name AS name, " +
-            "version, " +
+            "in.module.source AS source, " +
+            "in.module.owner AS owner, " +
+            "in.module.name AS name, " +
+            "in.version AS version, " +
             "config, html, " +
             "css " +
         "FROM " +
@@ -416,6 +932,11 @@ exports.getModuleConfig = function(appId, miid, userId, callback) {
         }
 
         var module = results[0];
+
+        if (!module.source || !module.owner || !module.name || !module.version) {
+            return callback("Incomplete module object. Source, owner, name and, version must all be present: " + JSON.stringify(module));
+        }
+
         callback(null, module);
     });
 }
@@ -431,14 +952,17 @@ exports.getModuleFile = function(source, owner, name, userId, callback) {
     //      only miid's from this appId must be searched
     var command =
         "SELECT " +
-            "dir, source, owner, name, latest " +
+            "module.source, " +
+            "module.owner, " +
+            "module.name, " +
+            "module.latest " +
         "FROM " +
             "(TRAVERSE VUser.out, EMemberOf.in, VRole.out, EHasAccessTo.in FROM #" + vuCluster.id + ":" + userId + ") " +
         "WHERE " +
-            "@class = 'VModule' AND " +
-            "source = '" + source + "' AND " +
-            "owner = '" + owner + "' AND " +
-            "name = '" + name + "'";
+            "@class = 'VModuleVersion' AND " +
+            "module.source = '" + source + "' AND " +
+            "module.owner = '" + owner + "' AND " +
+            "module.name = '" + name + "'";
 
     sql(command, function(err, results) {
 
@@ -518,3 +1042,16 @@ function sql(command, callback) {
     }
     CONFIG.orient.DB.command(command, callback);
 }
+
+
+function edge(srid, drid, hash, options, callback) {
+
+    var db = CONFIG.orient.DB;
+
+    db.loadRecord(srid, function(err, srecord) {
+        db.loadRecord(drid, function(err, drecord) {
+            db.createEdge(srecord, drecord, hash, options, callback);
+        });
+    });
+}
+

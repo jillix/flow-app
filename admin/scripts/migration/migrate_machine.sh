@@ -248,7 +248,7 @@ function import_legacy_databases {
     echo "*** Importing the legacy databases from $SOURCE_SERVER ***"
     rm -Rf dump*
 
-    # perform a mongo dump on the old machine14
+    # perform a mongo dump on the source server
     scp /home/$USERNAME/legacy/scripts/shell/migration/export_mongo.sh $SOURCE_USERNAME@$SOURCE_SERVER:/home/$SOURCE_USERNAME/
     ssh -o StrictHostKeyChecking=no $SOURCE_USERNAME@$SOURCE_SERVER "~/export_mongo.sh $COMPLETE"
 
@@ -290,6 +290,9 @@ function import_legacy_databases {
     fi
 
     rm -Rf dump*
+
+    echo "*** Importing the old orders in the new common order format in sag.orders_new"
+    mongo /home/$USERNAME/legacy/scripts/shell/migration/import_orders_new.js
 }
 
 function install_legacy_software {
@@ -297,7 +300,7 @@ function install_legacy_software {
     install_nginx
     configure_nginx
 
-    # install ftp for nightly sag impot jobs
+    # install ftp for nightly sag import jobs
     install vsftpd
 }
 
@@ -331,6 +334,13 @@ function initialize_mono {
     echo "####################################"
 
     chown -R mono:mono /home/$USERNAME/images
+
+    echo ""
+    echo "####################################"
+    echo "############# TEMPORARY ############"
+    echo "####################################"
+    echo "Switching to the mono liqshop branch"
+    git checkout liqshop
 }
 
 
@@ -360,3 +370,4 @@ initialize_legacy
 
 # initialize mono
 initialize_mono
+

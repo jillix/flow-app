@@ -6,6 +6,6 @@
 input, textarea { width:300px; margin-bottom:5px; }
 textarea { height:100px; padding:2px; }
 input[type=checkbox] { float:left; margin-right:3px; width:auto; }
-input[type=search] { width:150px; }
+input[type=search] { width:100px; }
 
 #noItemSelected { display:block; }

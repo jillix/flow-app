@@ -106,11 +106,11 @@ function removeModule(module, callback) {
     var options = {
         cwd: CONFIG.root + "/modules/"
     };
-    var git = cp.spawn("rm", ["-Rf", module.relativePath()], options);
+    var git = cp.spawn("rm", ["-Rf", module.getVersionPath()], options);
 
     git.on("exit", function(code) {
         if (code) {
-            return callback("Could not remove module: " + module.relativePath());
+            return callback("Could not remove module: " + module.getVersionPath());
         }
         callback(null);
     });
@@ -118,9 +118,9 @@ function removeModule(module, callback) {
 
 function getModuleOperations(module, callback) {
 
-    fs.readFile(CONFIG.root + "/modules/" + module.relativePath() + "/mono.json", function (err, data) {
+    fs.readFile(CONFIG.root + "/modules/" + module.getVersionPath() + "/mono.json", function (err, data) {
 
-        if (err) { return callback("Error while reading the mono.json file for module " + module.relativePath()) };
+        if (err) { return callback("Error while reading the mono.json file for module " + module.getVersionPath()) };
 
         // transform from buffer to string
         data = data.toString();
@@ -135,21 +135,12 @@ function getModuleOperations(module, callback) {
             var mono = JSON.parse(data);
             callback(null, mono.operations || []);
         } catch (err) {
-            callback("Invalid mono.json in module " + module.relativePath());
+            callback("Invalid mono.json in module " + module.getVersionPath());
         }
     });
 }
 
-
-function installModule(source, owner, name, version, callback) {
-
-    var module = {
-        source: source,
-        owner: owner,
-        name: name,
-        version: version,
-        relativePath: function() { return source + "/" + owner + "/" + name + "/" + version; }
-    };
+function installModule(module, callback) {
 
     fetchModule(module, function(err) {
 
@@ -173,15 +164,7 @@ function installModule(source, owner, name, version, callback) {
     });
 }
 
-function uninstallModule(source, owner, name, version, callback) {
-
-    var module = {
-        source: source,
-        owner: owner,
-        name: name,
-        version: version,
-        relativePath: function() { return source + "/" + owner + "/" + name + "/" + version; }
-    };
+function uninstallModule(module, callback) {
 
     db.deleteModuleVersion(module, function(err) {
         if (err) {
@@ -191,9 +174,100 @@ function uninstallModule(source, owner, name, version, callback) {
     });
 }
 
+function setLatestVersion(module, callback) {
 
+    var options = {
+        cwd: CONFIG.root + "/modules/"
+    };
+    var ln = cp.spawn("ln", ["-shf", module.version, module.getModulePath() + "/latest"], options);
+
+    // TODO the order is important: create latest link and 
+    ln.on("exit", function(code) {
+        if (code) {
+            return callback({ error: "ln error: ln exited with code " + code, code: 210 });
+        }
+        callback(null);
+    });
+}
+
+// = = = = = = = = = = = = = = = = = = = = 
+
+//
+// TODO is there a way to reserve IDs in Orient to poulate bulk import scripts?
+//
+
+/*
+    Takes an application descriptor and deploys an application.
+    If description.application.appId exists already, redeploy the app.
+    If description.application.appId does not exists, deploy a new app.
+
+    {
+        application: {
+            _id: ?
+            appId:
+        }
+    }
+*/
+function deployApplication(descriptor, callback) {
+
+}
+
+/*
+    Removes a deployed application havin the given appId.
+*/
+function undeployApplication(appId, callback) {
+
+}
+
+/*
+    {
+        users: [
+            {
+                _did: 1001
+                _id: ?
+                ...
+            }
+        ],
+    }
+*/
+function createUsers(descriptor, callback) {
+
+}
+
+// = = = = = = = = = = = = = = = = = = = = 
+
+
+exports.deployApplication = deployApplication;
 exports.fetchModule = fetchModule;
 exports.removeModule = removeModule;
 exports.installModule = installModule;
 exports.uninstallModule = uninstallModule;
+
+exports.setLatestVersion = setLatestVersion;
+
+exports.Module = function(source, owner, name, version) {
+
+    source = source || "";
+    owner = owner || "";
+    name = name || "";
+    version = version || "latest"
+
+    function getModulePath() {
+        return source + "/" + owner + "/" + name;
+    }
+    
+    function getVersionPath() {
+        return getModulePath() + "/" + version;
+    }
+    
+    return {
+        source: source,
+        owner: owner,
+        name: name,
+        version: version,
+
+        getModulePath: getModulePath,
+        getVersionPath: getVersionPath
+    }
+};
 
