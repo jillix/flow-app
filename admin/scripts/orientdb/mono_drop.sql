@@ -1,2 +1,3 @@
-drop database remote:localhost/mono root @ORIENTDB_ROOT_PASSWORD@;
+connect remote:localhost/mono root @ORIENTDB_ROOT_PASSWORD@;
+drop database;
 

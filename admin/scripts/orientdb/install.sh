@@ -108,6 +108,7 @@ function install_orientdb {
     echo "Configuring OrientDB mono SQL file: $SCRIPT_DIR/$ORIENTDB_MONO_SQL"
     sed -e "s/@ORIENTDB_ROOT_PASSWORD@/$ORIENTDB_ROOT_PASSWORD/" "$SCRIPT_DIR/$ORIENTDB_MONO_SQL" > "$TMP_DIR/$ORIENTDB_MONO_SQL"
 
+    IMPORT_LOG=$TMP_DIR/$ORIENTDB_MONO_SQL.log
     ORIENTDB_MONO_DB_DIR=$ORIENTDB_ROOT/databases/mono
     if [ -d "$ORIENTDB_MONO_DB_DIR" ]
     then
@@ -116,11 +117,16 @@ function install_orientdb {
         echo "Configuring OrientDB mono drop SQL file: $SCRIPT_DIR/$ORIENTDB_MONO_DROP_SQL"
         sed -e "s/@ORIENTDB_ROOT_PASSWORD@/$ORIENTDB_ROOT_PASSWORD/" "$SCRIPT_DIR/$ORIENTDB_MONO_DROP_SQL" > "$TMP_DIR/$ORIENTDB_MONO_DROP_SQL"
 
-        $ORIENTDB_ROOT/bin/console.sh "$TMP_DIR/$ORIENTDB_MONO_DROP_SQL" 2>&1 > /dev/null
+        $ORIENTDB_ROOT/bin/console.sh "$TMP_DIR/$ORIENTDB_MONO_DROP_SQL" 2>&1 > "$IMPORT_LOG"
+
+    fi
+    if [ -d "$ORIENTDB_MONO_DB_DIR" ]
+    then
+        echo "Failed to properly drop mono database from: $ORIENTDB_MONO_DB_DIR"
+        exit 2
     fi
 
     echo "Installing the OrientDB database from: $TMP_DIR/$ORIENTDB_MONO_SQL"
-    IMPORT_LOG=$TMP_DIR/$ORIENTDB_MONO_SQL.log
     $ORIENTDB_ROOT/bin/console.sh "$TMP_DIR/$ORIENTDB_MONO_SQL" 2>&1 > "$IMPORT_LOG"
     
     # TODO Whu doesn't console return non-zero on error?
