@@ -63,7 +63,7 @@ function install_orientdb {
 
     # only if orient server not already running
     ORIENT_PROCESS=$(ps aux | grep "com.orientechnologies.orient.server" | grep -v grep)
-    if [ "$ORIENT_PROCESS" == "" ]
+    if [ -z "$ORIENT_PROCESS" ]
     then
         # start OrientDB to make sure the root user and password are generated
         TMP_CUR_DIR=`pwd`
@@ -96,6 +96,12 @@ function install_orientdb {
     fi
 
     ORIENTDB_ROOT_PASSWORD=`grep "name=\"$ORIENTDB_ROOT_USER\"" $ORIENTDB_ROOT/config/orientdb-server-config.xml | cut -d \" -f 4`
+    if [ -z "$ORIENTDB_ROOT_PASSWORD" ]
+    then
+        echo "Could not determine the OrientDB server root password."
+        echo "Aborting!"
+        exit 2
+    fi
 
     echo "Configuring OrientDB mono SQL file: $SCRIPT_DIR/$ORIENTDB_MONO_SQL"
     sed -e "s/@ORIENTDB_ROOT_PASSWORD@/$ORIENTDB_ROOT_PASSWORD/" "$SCRIPT_DIR/$ORIENTDB_MONO_SQL" > "$TMP_DIR/$ORIENTDB_MONO_SQL"
