@@ -65,11 +65,13 @@ function install_orientdb {
     ORIENT_PROCESS=$(ps aux | grep "com.orientechnologies.orient.server" | grep -v grep)
     if [ -z "$ORIENT_PROCESS" ]
     then
+        echo "Starting OrientDB server..."
         # start OrientDB to make sure the root user and password are generated
         TMP_CUR_DIR=`pwd`
         cd "$ORIENTDB_ROOT/bin/"
         ./server.sh > /dev/null 2>&1 &
         cd "$TMP_CUR_DIR"
+        ORIENTDB_KILL=true
     fi
 
     # waiting until the server starts (max 20 seconds)
@@ -132,8 +134,6 @@ function install_orientdb {
         cat "$IMPORT_LOG"
     fi
 
-    # close now OrientDB server TODO but only if we start it above
-    #kill $(ps aux | grep "$ORIENTDB_ROOT" | grep -v "grep" | awk '{print $2}')
 }
 
 install_orientdb
