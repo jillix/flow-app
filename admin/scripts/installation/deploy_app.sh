@@ -44,9 +44,20 @@ fi
 mv "$TMP_APP_DIR" "$MONO_ROOT/apps/$APP_ID"
 ce "Could not move application to propper location: $APP_ID"
 
+# stop mono
+MONO_PID=`lsof -iTCP:8000 -sTCP:LISTEN -t`
+if [ -n "$MONO_PID" ]
+then
+    kill $MONO_PID
+fi
+
+# install all applications in mono
 cd $MONO_ROOT
-npm install > /dev/null
+npm install
 ce "Could not deploy application: $APP_ID"
+
+# starting mono
+node $MONO_ROOT/server.js &
 
 echo "Succesfully deployed application $APP_ID"
 

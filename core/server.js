@@ -10,19 +10,17 @@ var parseUrl  = require("url").parse,
     exec      = require("child_process").exec;
 
 var Server = exports.Server = function () {};
-var host = ip();
 
-if(!host) {
-    
-    if (CONFIG.dev) {
-        
+// TODO commented out until nginx will be removed
+//var host = ip();
+//
+//if (!host) {
+//    if (CONFIG.dev) {
         host = "127.0.0.1";
-    }
-    else {
-    
-        throw new Error("Missing IP Adress");
-    }
-};
+//    } else {
+//        throw new Error("Missing IP Address");
+//    }
+//}
 
 Server.prototype.start = function() {
 
