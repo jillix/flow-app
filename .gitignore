@@ -6,4 +6,3 @@ npm-debug.log
 bin/
 node_modules/
 tmp/
-apps/tmp/

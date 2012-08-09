@@ -1,7 +1,5 @@
 #!/bin/bash
 
-zip test ./* > /dev/null
-
 MONO_ROOT=~/mono
 APP_FILE_ARG=$1
 
