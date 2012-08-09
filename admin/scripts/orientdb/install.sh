@@ -13,6 +13,10 @@ ORIENTDB_VERSION=`curl --silent https://oss.sonatype.org/content/repositories/re
 ORIENTDB_ROOT_USER=root
 ORIENTDB_MONO_SQL=mono.sql
 ORIENTDB_MONO_DROP_SQL=mono_drop.sql
+if [ `uname` == "Darwin" ]
+then
+    ORIENTDB_MONO_DROP_SQL=mono_drop.sql.mac
+fi
 
 
 function download_orientdb {
