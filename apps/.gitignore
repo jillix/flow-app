@@ -1,0 +1,5 @@
+# ignoring all content of this directory 
+*
+!000000000000000000000000000000*
+!tmp/
+!.gitignore

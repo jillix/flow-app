@@ -1,5 +1,5 @@
 {
-    "appId": "1898d7aa981f11e19f213e956188709b",
+    "appId": "00000000000000000000000000000010",
     "name": "Liqshop Orders",
     "routes": {
         "/": "liqshop_layout"
