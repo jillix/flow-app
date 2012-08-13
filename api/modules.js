@@ -19,6 +19,15 @@ function gitClone(url, dirName, baseName, callback) {
         };
         var git = cp.spawn("git", ["clone", url, baseName], options);
 
+        if (CONFIG.log.moduleInstallation || CONFIG.logLevel === "verbose") {
+            git.stdout.on("data", function(data) {
+                console.log(data.toString());
+            });
+            git.stderr.on("data", function(data) {
+                console.error(data.toString());
+            });
+        }
+
         git.on("exit", function(code) {
             if (code) {
                 return callback({ error: "Git error: git clone exited with code " + code, code: 200 });
@@ -327,6 +336,9 @@ function installModule(module, callback) {
             return initialCallback(null, data);
         }
 
+        if (CONFIG.log.moduleInstallation || CONFIG.logLevel === "verbose") {
+            console.error("Module installation error. Removing module: " + module.getVersionPath());
+        }
         removeModule(module, function(err1) {
             if (err1) {
                 return initialCallback("Cannot cleanup module: " + module.getVersionPath() + ". " + JSON.stringify(err1));
@@ -485,7 +497,7 @@ exports.Module = function(source, owner, name, version) {
             case "github":
                 return "https://github.com/" + owner + "/" + name + ".git";
             case "bitbucket":
-                return "git@bitbucket.org:" + owner + "/" + name.toLowerCase() + ".git";
+                return "https://bitbucket.org/" + owner + "/" + name.toLowerCase() + ".git";
             default:
                 return null;
         }
