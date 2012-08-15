@@ -5,7 +5,8 @@
         "module": "github_layout"
     },
     "domains": [
-        "github.mono.ch"
+        "admin.jillix.net",
+        "admin.mono.ch"
     ],
     "scripts": [
         "/jquery.js",

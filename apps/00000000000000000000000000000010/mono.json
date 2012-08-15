@@ -7,7 +7,8 @@
     "error": "liqshop_order_login",
     "domains": [
         "liqshop.ch",
-        "orders.happybonus.ch"
+        "orders.happybonus.ch",
+        "liqshop.jillix.net"
     ],
     "publicDir": "public",
     "publicUser": 0,
