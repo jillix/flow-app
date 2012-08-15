@@ -295,36 +295,49 @@ exports.upsertModuleVersion = function(module, callback) {
 
 exports.deleteModuleVersion = function(module, callback) {
 
-    // find the module
-    exports.getModule(module.source, module.owner, module.name, function(err, mod) {
+    // find the module version
+    exports.getModuleVersion(module, function(err, modVer) {
 
-        var rid = mod['@rid'];
-        var command = "TRAVERSE EHasAccessTo.out FROM (SELECT FROM EHasAccessTo WHERE in = " + rid + ") LIMIT 3";
+        var rid = modVer['@rid'];
+
+        // find incomming role access edges for this module version
+        // TODO delete the wrapping SELECT when the following issue is resolved:
+        // http://code.google.com/p/orient/issues/detail?id=1018&q=TRAVERSE%20LIMIT
+        var command = "SELECT FROM (TRAVERSE in FROM " + rid + ") LIMIT 3";
 
         sql(command, function(err, results) {
 
-            // TODO add results.length != 2 when checking user rights
-            if (err || !results) {
-                return callback("Could not delete module version: " + module.relativePath());
+            if (err || !results || results.length < 1) {
+                return callback("Could find module version access rights: " + module.getVersionPath());
             }
 
-            var command =
-                "DELETE FROM " +
-                    "(TRAVERSE " +
-                        "EBelongsTo.out " +
-                    "FROM " +
-                        "(SELECT FROM EBelongsTo " +
-                        "WHERE " +
-                            "in = " + rid + " AND " +
-                            "version = '" + module.version + "'))";
+            // if we have more than one edges for this module version, we will not delete it
+            // TODO in future dev mode, there will probably be development edges
+            // and there deleting will be allowed
+            if (results.length > 1) {
+                return callback("Cannot delete a used module version: " + module.getVersionPath());
+            }
+
+            // delete the operations for this module
+            var command = "DELETE FROM VOperation WHERE module = " + rid;
 
             sql(command, function(err, results) {
 
                 if (err) {
-                    return callback("An error occurred while deleting module version '" + module.relativePath() + "': " + JSON.stringify(err));
+                    return callback("An error occurred while deleteing module version operations '" + module.relativePath() + "': " + JSON.stringify(err));
                 }
 
-                callback(null);
+                // now delete the module version
+                var command = "DELETE FROM " + rid;
+
+                sql(command, function(err, results) {
+
+                    if (err) {
+                        return callback("An error occurred while deleteing module version '" + module.relativePath() + "': " + JSON.stringify(err));
+                    }
+
+                    callback(null);
+                });
             });
         });
     });
