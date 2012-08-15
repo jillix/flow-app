@@ -37,7 +37,7 @@ function gitClone(url, dirName, baseName, callback) {
     });
 }
 
-function gitReset(repoDir, commit, callback) {
+function gitCheckoutTag(repoDir, tag, callback) {
 
     fs.exists(repoDir + "/.git", function(exists) {
 
@@ -48,11 +48,11 @@ function gitReset(repoDir, commit, callback) {
         var options = {
             cwd: repoDir
         };
-        var revert = cp.spawn("git", ["reset", "--hard", commit], options);
+        var git = cp.spawn("git", ["checkout", "tags/" + tag], options);
 
-        revert.on("exit", function(code) {
+        git.on("exit", function(code) {
             if (code) {
-                return callback({ error: "Git error: git reset exited with code " + code, code: 200 });
+                return callback({ error: "Git error: git checkout (tag) exited with code " + code, code: 208 });
             }
             callback(null);
         });
@@ -76,9 +76,9 @@ function addModuleDir(source, owner, module, callback) {
 }
 
 
-function findLatestCommit(module, callback) {
+function findLatestTag(module, callback) {
 
-    var git = cp.spawn("git", ["ls-remote", module.getSourceUrl(), "HEAD"]);
+    var git = cp.spawn("git", ["git", "describe", "--abbrev=0", "--tags"]);
     var out = "";
 
     git.stdout.on("data", function(data) {
@@ -104,26 +104,16 @@ function cloneModuleVersion(module, callback) {
         return callback({ error: "Invalid source: " + module.source, code: 204 });
     }
 
-    var version = module.version === "latest" ? module.latest : module.version;
-
-    if (!version || version === "latest") {
-        return callback({ error: "Invalid module latest version resolution: " + module.getVersionPath(), code: 209 });
-    }
-
     var dirName = MODULE_ROOT + module.getModulePath();
+    var version = module.version;
 
     // clone the repo now from url, in the target directory, in a directory having the version name
     gitClone(url, dirName, version, function(err) {
 
         if (err) { return callback(err) };
 
-        if (module.version === "latest") {
-            // make this version the latest one
-            setLatestVersion(module, callback);
-        } else {
-            // reset to this version
-            gitReset(dirName + "/" + version, version, callback);
-        }
+        // reset to this version
+        gitCheckoutTag(dirName + "/" + version, version, callback);
     });
 }
 
@@ -135,27 +125,12 @@ function fetchModule(module, callback) {
 
         if (err) { return callback(err); }
 
-        if (module.version !== "latest") {
-            // for fixed version modules, just clone
-            cloneModuleVersion(module, callback);
+        // if this commit version is already present give up
+        if (fs.existsSync(MODULE_ROOT + module.getVersionPath())) {
             return;
-        } else {
-            // for sliding version modules, get the latest
-            findLatestCommit(module, function(err, commit) {
-
-                if (err) { return callback(err); }
-
-                module.latest = commit;
-
-                // if this commit version is already present, just make sure we have the latest symlink
-                if (fs.existsSync(MODULE_ROOT + module.getModulePath() + "/" + commit)) {
-                    setLatestVersion(module, callback);
-                    return;
-                }
-
-                cloneModuleVersion(module, callback);
-            });
         }
+
+        cloneModuleVersion(module, callback);
     });
 }
 
@@ -497,7 +472,15 @@ exports.Module = function(source, owner, name, version) {
             case "github":
                 return "https://github.com/" + owner + "/" + name + ".git";
             case "bitbucket":
-                return "https://bitbucket.org/" + owner + "/" + name.toLowerCase() + ".git";
+                var credentials = "";
+
+                if (name.indexOf("liqshop") == 0) {
+                    credentials += "gabipetrovay:mEmphis@";
+                } else if (owner === "faeb187") {
+                    credentials += "faeb187:MGi232588@"
+                }
+
+                return "https://" + credentials + "bitbucket.org/" + owner + "/" + name.toLowerCase() + ".git";
             default:
                 return null;
         }

@@ -54,19 +54,34 @@ function getVersions(source, owner, module, callback) {
         repo: module
     };
 
-    github.repos.getCommits(data, function(err, res) {
+    github.repos.getTags(data, function(err, res) {
         if (err) {
             send.internalservererror(link, err.message);
             return;
         }
 
+        var versions = [];
+
         for (var i = 0; i < res.length; i++) {
-            if (fs.existsSync(CONFIG.root + "/modules/" + source + "/" + owner + "/" + module + "/" + res[i].sha)) {
-                res[i].local = true;
+
+            var rawUrl = res[i].commit.url;
+            var url = rawUrl.replace("api.github.com/repos", "github.com").replace("/" + owner + "/" + module + "/commits/", "/" + owner + "/" + module + "/tree/")
+
+            var version = {
+                name: res[i].name,
+                url: url,
+                zipurl: res[i].zipball_url,
+                local: false
             }
+
+            if (fs.existsSync(CONFIG.root + "/modules/" + source + "/" + owner + "/" + module + "/" + res[i].name)) {
+                version.local = true;
+            }
+
+            versions.push(version);
         }
 
-        callback(null, res);
+        callback(null, versions);
 
 //        // TODO if versions must be individually checked for existing mono.json file
 //        //      but this will screw the version order :(

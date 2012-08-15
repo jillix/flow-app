@@ -32,7 +32,7 @@
     ],
     "miids": {
         "github_layout": {
-            "module": "github/adioo/layout/4e9fde0e42aa856743c993a29348845d65079437",
+            "module": "github/adioo/layout/v0.0.1",
             "roles": [0],
             "config": {
                 "html": {
@@ -49,7 +49,7 @@
             }
         },
         "github_display": {
-            "module": "github/gabipetrovay/github_display/63fff43060818054c4298a42fb091f3b8bd7e317",
+            "module": "github/gabipetrovay/github_display/dev",
             "roles": [0],
             "config": {
                 "html": {
