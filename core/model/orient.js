@@ -954,10 +954,10 @@ exports.getModuleFile = function(source, owner, name, userId, callback) {
     //      only miid's from this appId must be searched
     var command =
         "SELECT " +
-            "module.source, " +
-            "module.owner, " +
-            "module.name, " +
-            "module.latest " +
+            "module.source AS source, " +
+            "module.owner AS owner, " +
+            "module.name AS name, " +
+            "module.latest AS latest " +
         "FROM " +
             "(TRAVERSE VUser.out, EMemberOf.in, VRole.out, EHasAccessTo.in FROM #" + vuCluster.id + ":" + userId + ") " +
         "WHERE " +
