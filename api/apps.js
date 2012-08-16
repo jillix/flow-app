@@ -5,6 +5,9 @@ var modules = require(CONFIG.root + "/api/modules");
 var db = require(CONFIG.root + "/core/model/orient.js");
 
 
+/**
+ *
+ */
 function install(descriptor, callback) {
 
     switch (typeof descriptor) {
@@ -13,6 +16,23 @@ function install(descriptor, callback) {
             break;
         case "object":
             installFromObject(descriptor, callback);
+            break;
+        default:
+            callback("The descriptor must be either a path to a descriptor file or a descriptor object.");
+    }
+};
+
+/**
+ *
+ */
+function uninstall(descriptor, callback) {
+
+    switch (typeof descriptor) {
+        case "string":
+            uninstallFromFile(descriptor, callback);
+            break;
+        case "object":
+            uninstallFromObject(descriptor, callback);
             break;
         default:
             callback("The descriptor must be either a path to a descriptor file or a descriptor object.");
@@ -46,9 +66,33 @@ function installFromFile(file, callback) {
 /**
  *
  */
+function uninstallFromFile(file, callback) {
+
+    fs.readFile(file, function (err, data) {
+
+        if (err) {
+            return callback("Error while reading the application descriptor file: " + file);
+        }
+
+        var descriptor = null;
+
+        try {
+            descriptor = JSON.parse(data);
+        } catch (err) {
+            var error = "Invalid descriptor file (" + file + "): " + data.toString();
+            return callback(error);
+        }
+
+        uninstallFromObject(descriptor, callback);
+    });
+}
+
+/**
+ *
+ */
 function installFromObject(descriptor, callback) {
 
-    // TODO validate the descriptor
+    // todo validate the descriptor
     orient.connect(CONFIG.orient, function(err) {
 
         if (err) {
@@ -150,6 +194,66 @@ function installFromObject(descriptor, callback) {
                                 });
                             });
                         });
+                    });
+                });
+            });
+        });
+    });
+}
+
+/**
+ *
+ */
+function uninstallFromObject(descriptor, callback) {
+
+    // TODO validate the descriptor
+    orient.connect(CONFIG.orient, function(err) {
+
+        if (err) {
+            return callback(err, descriptor);
+        }
+
+        var initialCallback = callback;
+        callback = function(err, result) {
+            orient.disconnect(CONFIG.orient);
+            initialCallback(err, result);
+        };
+
+        // ******************
+        // 1. GET APPLICATION
+        // ******************
+        db.getApplication(descriptor.appId, function(err, application) {
+
+            // TODO cleanup
+            if (err) { return callback(err, descriptor); }
+
+            var aid = application.aid;
+
+            // ***************
+            // 2. DELETE USERS
+            // ***************
+            db.deleteUsers(aid, function(err) {
+
+                // TODO cleanup
+                if (err) { return callback(err, descriptor); }
+
+                // *********************
+                // 3. DELETE ROLE ACCESS
+                // *********************
+                db.deleteRoles(aid, function(err) {
+
+                    // TODO cleanup
+                    if (err) { return callback(err, descriptor); }
+
+                    // *********************
+                    // 3. DELETE APPLICATION
+                    // *********************
+                    db.deleteApplication(aid, function(err) {
+
+                        // TODO cleanup
+                        if (err) { return callback(err, descriptor); }
+
+                        callback(null, descriptor);
                     });
                 });
             });
@@ -486,6 +590,7 @@ function addModuleInstanceOperations(descriptor, miid, miidObj, callback) {
 
 
 exports.install = install;
+exports.uninstall = uninstall;
 exports.installDependencies = installDependencies;
 exports.installUsers = installUsers;
 exports.installRoles = installRoles;

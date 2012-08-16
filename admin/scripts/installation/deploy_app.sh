@@ -35,29 +35,42 @@ rm $APP_FILE_ARG
 APP_ID=`node -e "console.log(require('$TMP_APP_DIR/mono.json').appId)" 2> /dev/null`
 ce "Could not determine the application ID."
 
-# move the app to the app ID directory
+APP_DESCRIPTOR=$MONO_ROOT/apps/$APP_ID/mono.json
+
+# clean up if already installed
 if [ -e "$MONO_ROOT/apps/$APP_ID" ]
 then
+    # uninstall the application
+    node $MONO_ROOT/admin/installation/uninstall_app.js $APP_DESCRIPTOR
+    ce "Could not uninstall application: $APP_ID"
+
+    # and remove the application directory
     rm -R "$MONO_ROOT/apps/$APP_ID"
     ce "Could not cleanup already existing application: $APP_ID"
 fi
+
+# move the app to the app ID directory
 mv "$TMP_APP_DIR" "$MONO_ROOT/apps/$APP_ID"
 ce "Could not move application to propper location: $APP_ID"
 
-# stop mono
-MONO_PID=`lsof -iTCP:8000 -sTCP:LISTEN -t`
-if [ -n "$MONO_PID" ]
-then
-    kill $MONO_PID
-fi
+# install the new application
+node $MONO_ROOT/admin/installation/install_app.js $APP_DESCRIPTOR
+ce "Could not install application: $APP_ID"
 
-# install all applications in mono
-cd $MONO_ROOT
-npm install
-ce "Could not deploy application: $APP_ID"
-
-# starting mono
-node $MONO_ROOT/server.js &
+## stop mono
+#MONO_PID=`lsof -iTCP:8000 -sTCP:LISTEN -t`
+#if [ -n "$MONO_PID" ]
+#then
+#    kill $MONO_PID
+#fi
+#
+## install all applications in mono
+#cd $MONO_ROOT
+#npm install
+#ce "Could not deploy application: $APP_ID"
+#
+## starting mono
+#node $MONO_ROOT/server.js &
 
 echo "Succesfully deployed application $APP_ID"
 

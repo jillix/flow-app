@@ -11,17 +11,16 @@ if (process.argv.length < 3) {
     return;
 }
 
-apps.install(process.argv[2], function(err, descriptor) {
+apps.uninstall(process.argv[2], function(err, descriptor) {
 
     if (err) {
         console.error(err);
-        console.error("Failed to install application" + (descriptor && descriptor.appId ? ": " + descriptor.appId : ""));
-        console.error("Failed to install application: " + descriptor.appId);
+        console.error("Failed to uninstall application" + (descriptor && descriptor.appId ? ": " + descriptor.appId : ""));
         process.exit(2);
         return;
     }
 
-    console.log("Succesfully installed application: " + descriptor.appId);
+    console.log("Succesfully uninstalled application: " + descriptor.appId);
     process.exit();
 });
 

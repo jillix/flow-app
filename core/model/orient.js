@@ -433,11 +433,8 @@ exports.assignRole = function(uid, rid, callback) {
 
     callback = callback || function() {};
 
-    var vuCluster = CONFIG.orient.DB.getClusterByClass("VUser");
-    var vrCluster = CONFIG.orient.DB.getClusterByClass("VRole");
-
-    var urid = "#" + vuCluster.id + ":" + uid;
-    var rrid = "#" + vrCluster.id + ":" + rid;
+    var urid = ridFromId("VUser", uid);
+    var rrid = ridFromId("VRole", rid);
 
     var hash = null;
     var options = {
@@ -459,10 +456,8 @@ exports.updatePublicUser = function(appId, uid, callback) {
 
     callback = callback || function() {};
 
-    var vuCluster = CONFIG.orient.DB.getClusterByClass("VUser");
-
     var command =
-        "UPDATE Vapplication SET publicUser = #" + vuCluster.id + ":" + uid + " WHERE id = '" + appId + "'";
+        "UPDATE Vapplication SET publicUser = " + ridFromId("VUser", uid) + " WHERE id = '" + appId + "'";
 
     sql(command, function(err, results) {
 
@@ -479,15 +474,15 @@ exports.addRole = function(appId, name, callback) {
 
     translateAppId(appId, function(err, id) {
 
-        if (err) {
-            return callback(err);
-        }
+        if (err) { return callback(err); }
+
+        var aid = ridFromId("VApplication", id);
 
         // first add the Role node
         var command =
             "INSERT INTO VRole SET " +
                 "name = '" + name + "', " +
-                "app = " + id;
+                "app = " + aid;
 
         sql(command, function(err, results) {
 
@@ -496,19 +491,18 @@ exports.addRole = function(appId, name, callback) {
             }
 
             var rid = results[0]["@rid"];
-            
+
             // now add this Role in the application reference list
             var command =
-                "UPDATE " + id + " ADD roles = " + rid;
+                "UPDATE " + aid + " ADD roles = " + rid;
 
             sql(command, function(err, results) {
 
                 if (err) {
-                    return  callback("Failed to insert role '" + rid + "' into application '" + id + "'. " + JSON.stringify(err));
+                    return  callback("Failed to insert role '" + rid + "' into application '" + appId + "'. " + JSON.stringify(err));
                 }
 
-                var id = idFromRid(rid);
-                callback(null, id);
+                callback(null, idFromRid(rid));
             });
         });
     });
@@ -517,43 +511,167 @@ exports.addRole = function(appId, name, callback) {
 
 exports.addUser = function(appId, user, roles, callback) {
 
-    translateAppId(appId, function(err, id) {
+    var command =
+        "INSERT INTO VUser SET " +
+            "username = '" + user.username + "', " +
+            "password = '" + user.password + "', " +
+            "data = " + JSON.stringify(user.data);
 
-        if (err) {
-            return callback(err);
+    sql(command, function(err, results) {
+
+        if (err || !results || results.length != 1 || !results[0] || !results[0]["@rid"]) {
+            return  callback(err || "Failed to insert user '" + username + "' for application '" + appId + "'");
         }
 
-        // first add the Role node
-        var command =
-            "INSERT INTO VUser SET " +
-                "username = '" + user.username + "', " +
-                "password = '" + user.password + "', " +
-                "data = " + JSON.stringify(user.data);
-
-        sql(command, function(err, results) {
-
-            if (err || !results || results.length != 1 || !results[0] || !results[0]["@rid"]) {
-                return  callback(err || "Failed to insert user '" + username + "' for application '" + appId + "'");
-            }
-
-            var rid = results[0]["@rid"];
-            
-            var id = idFromRid(rid);
-            callback(null, id);
-        });
+        var rid = results[0]["@rid"];
+        
+        var id = idFromRid(rid);
+        callback(null, id);
     });
 };
+
+
+exports.deleteUsers = function(aid, callback) {
+
+    // find first all the RIDs of User nodes and their membership edges
+    var command =
+        "SELECT " +
+            "@rid AS rid " +
+        "FROM " +
+            "(TRAVERSE VRole.in, EMemberOf.out FROM " +
+                "(SELECT FROM VRole WHERE app = " + ridFromId("VApplication", aid) + ") " +
+            ") " +
+        "WHERE " +
+            "@class = 'EMemberOf' OR " +
+            "@class = 'VUser'";
+
+    deleteRidsFromCommand(command, function(err) {
+
+        if (err) {
+            return callback("Failed to delete users for application with ID " + aid + ": " + JSON.stringify(err)); 
+        }
+
+        callback(null);
+    });
+};
+
+
+exports.deleteRoles = function(aid, callback) {
+
+    // find first all the RIDs of role nodes and their permission edges
+    var command =
+        "SELECT " +
+            "@rid AS rid " +
+        "FROM " +
+            "(TRAVERSE out FROM " +
+                "(SELECT FROM VRole WHERE app = " + ridFromId("VApplication", aid) + ") " +
+            ") ";
+
+    deleteRidsFromCommand(command, function(err) {
+
+        if (err) {
+            return callback("Failed to delete roles for application with ID " + aid + ": " + JSON.stringify(err)); 
+        }
+
+        callback(null);
+    });
+};
+
+
+exports.deleteApplication = function(aid, callback) {
+
+    var arid = ridFromId("VApplication", aid);
+
+    // check if the application has roles and if it does, do not allow deletion it
+    var command = "SELECT FROM VRole WHERE app = " + arid;
+
+    sql(command, function(err, results) {
+
+        if (err) {
+            return callback("Failed to delete application with ID " + aid + ": "+ JSON.stringify(err));
+        }
+
+        if (results && results.length > 0) {
+            return callback("Cannot delete application with ID " + aid + " because it still has roles assigned to it. Delete the roles first.");
+        }
+
+        // now find all the RIDs of domain nodes and the application node
+        var command =
+            "SELECT @rid AS rid FROM (" +
+                "TRAVERSE " +
+                    "application " +
+                "FROM " +
+                    "VDomain " +
+                "WHERE " +
+                    "application = " + arid + " OR " +
+                    "@rid = " + arid +
+            ")";
+
+        deleteRidsFromCommand(command, function(err) {
+
+            if (err) {
+                return callback("Failed to delete the application and its domains for application with ID " + aid + ": " + JSON.stringify(err)); 
+            }
+
+            callback(null);
+        });
+    });
+}
+
+
+function deleteRids(rids, callback) {
+
+    if (!(rids instanceof Array) || !rids.length) {
+        return callback(null);
+    }
+
+    // gather all the RIDs for the DELETE command
+    var toDelete = "";
+    for (var i in rids) {
+        toDelete += rids[i] + ",";
+    }
+    toDelete = toDelete.slice(0, -1);
+
+    // delete all the users and their membership edges
+    command = "DELETE FROM [" + toDelete + "]";
+
+    sql(command, function(err, results) {
+
+        if (err) {
+            return callback("Failed to delete RIDs " + JSON.stringify(rids) + ": " + JSON.stringify(err));
+        }
+
+        callback(null);
+    });
+}
+
+
+function deleteRidsFromCommand(command, callback) {
+
+    sql(command, function(err, results) {
+
+        if (err) { return callback(err); }
+
+        if (!results || !results.length) { return callback(null); }
+
+        var rids = [];
+        for (var i in results) {
+            if (results[i].rid) {
+                rids.push(results[i].rid);
+            }
+        }
+
+        deleteRids(rids, callback);
+    });
+}
 
 
 exports.addModuleInstance = function(miid, rid, vid, hash, callback) {
 
     callback = callback || function() {};
 
-    var vrCluster = CONFIG.orient.DB.getClusterByClass("VRole");
-    var vvCluster = CONFIG.orient.DB.getClusterByClass("VModuleVersion");
-
-    var rrid = "#" + vrCluster.id + ":" + rid;
-    var vrid = "#" + vvCluster.id + ":" + vid;
+    var rrid = ridFromId("VRole", rid);
+    var vrid = ridFromId("VModuleVersion", vid);
 
     var options = {
         "class" : "EUsesInstanceOf"
@@ -701,16 +819,19 @@ function getOperationId(rid, miid, name, callback) {
     });
 }
 
-
+/**
+ * This translates an appId (a application logical ID, what one finds in a descriptor)
+ * into a database internal application id
+ */
 function translateAppId(appId, callback) {
 
-    if (typeof appId !== "string") {
-        return callback("Invalid application id or rid: " + appId);
+    if (typeof appId !== "string" && appId.length != 32) {
+        return callback("Invalid application id: " + appId);
     }
 
     var command =
         "SELECT " +
-            "@rid AS id " +
+            "@rid AS rid " +
         "FROM " +
             "VApplication " +
         "WHERE " +
@@ -735,11 +856,48 @@ function translateAppId(appId, callback) {
         var application = results[0];
 
         // if the application does not have the required fields
-        if (!application || !application.id) {
+        if (!application || !application.rid) {
             return callback("Missing application ID: " + JSON.stringify(application));
         }
 
-        callback(null, application.id);
+        callback(null, idFromRid(application.rid));
+    });
+}
+
+
+exports.getApplication = function(appId, callback) {
+
+    translateAppId(appId, function(err, id) {
+
+        if (err) { return callback(err); }
+
+        var command =
+            "SELECT " +
+                "* " +
+            "FROM " +
+                ridFromId("VApplication", id);
+
+        sql(command, function(err, results) {
+
+            if (err) {
+                return callback("An error occurred while retrieving the application '" + appId + "': " + JSON.stringify(err));
+            }
+
+            // if there is no result
+            if (!results || results.length == 0 || !results[0]) {
+                return callback("Application not found: " + appId);
+            }
+
+            // if there are too many results
+            if (results.length > 1) {
+                return callback("Could not uniquely determine the application with ID: " + appId);
+            }
+
+            var application = results[0];
+            application.aid = id;
+
+            callback(null, application);
+        });
     });
 }
 
@@ -1039,7 +1197,10 @@ exports.getDomainPublicUser = function(domain, callback) {
     });
 };
 
-
+/**
+ * Given an Orient RID, this will return the ID in the cluster or null if the 
+ * RID is not in the format: #x:y
+ */
 function idFromRid(rid) {
     if (typeof rid === "string") {
         var number = parseInt(rid.split(":")[1]);
@@ -1048,6 +1209,20 @@ function idFromRid(rid) {
         }
     }
     return null;
+}
+
+/**
+ * Given a class name and an ID, 
+ */
+function ridFromId(className, id) {
+
+    var cluster = CONFIG.orient.DB.getClusterByClass(className);
+
+    if (!cluster || isNaN(id)) {
+        return null;
+    }
+
+    return "#" + cluster.id + ":" + id;
 }
 
 
