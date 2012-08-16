@@ -16,7 +16,6 @@ apps.install(process.argv[2], function(err, descriptor) {
     if (err) {
         console.error(err);
         console.error("Failed to install application" + (descriptor && descriptor.appId ? ": " + descriptor.appId : ""));
-        console.error("Failed to install application: " + descriptor.appId);
         process.exit(2);
         return;
     }

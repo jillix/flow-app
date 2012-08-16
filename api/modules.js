@@ -289,19 +289,38 @@ function addDependencyLinks(module, descriptor, installedDependencies, callback)
 
 function installModule(module, callback) {
 
-    // if the module exists, just get it's id
+    // if the module exists, just get it's id (unless it's a "dev" version)
     if (fs.existsSync(MODULE_ROOT + module.getVersionPath())) {
-        console.log("Skipping " + module.getVersionPath());
-        db.getModuleVersionId(module, function(err, id) {
+        // id not a dev module
+        if (module.version !== "dev") {
+            console.log("Skipping " + module.getVersionPath());
+            db.getModuleVersionId(module, function(err, id) {
 
-            if (err) { return callback(err); }
+                if (err) { return callback(err); }
 
-            module._vid = id;
+                module._vid = id;
 
-            db.getModuleVersionDependencies(module._vid, callback);
-        });
-        return;
+                db.getModuleVersionDependencies(module._vid, callback);
+            });
+            return;
+        } else {
+            // uninstall first for dev modules
+            uninstallModule(module, function(err) {
+
+                if (err) { return callback(err); }
+
+                // now perform a clean install
+                installModuleActions(module, callback);
+            });
+            return;
+        }
     }
+
+    // do the actual installation
+    installModuleActions(module, callback);
+}
+
+function installModuleActions(module, callback) {
 
     // wrap the callback to perform cleanup on error
     var initialCallback = callback;
@@ -322,7 +341,6 @@ function installModule(module, callback) {
         });
     }
 
-    
     // ***********
     // 1. DOWNLOAD
     // ***********
@@ -426,6 +444,7 @@ function uninstallModule(module, callback) {
         if (err) {
             return callback(err);
         }
+
         removeModule(module, callback);
     });
 }

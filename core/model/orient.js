@@ -308,7 +308,7 @@ exports.deleteModuleVersion = function(module, callback) {
         sql(command, function(err, results) {
 
             if (err || !results || results.length < 1) {
-                return callback("Could find module version access rights: " + module.getVersionPath());
+                return callback("Could not find module version access rights: " + module.getVersionPath());
             }
 
             // if we have more than one edges for this module version, we will not delete it
