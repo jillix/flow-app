@@ -1,6 +1,8 @@
 #!/bin/bash
 
 MONO_ROOT=~/mono
+cd $MONO_ROOT
+
 APP_FILE_ARG=$1
 
 function ce {
@@ -41,8 +43,8 @@ APP_DESCRIPTOR=$MONO_ROOT/apps/$APP_ID/mono.json
 if [ -e "$MONO_ROOT/apps/$APP_ID" ]
 then
     # uninstall the application
-    node $MONO_ROOT/admin/installation/uninstall_app.js $APP_DESCRIPTOR
-    ce "Could not uninstall application: $APP_ID"
+    node $MONO_ROOT/admin/scripts/installation/uninstall_app.js $APP_DESCRIPTOR
+    #ce "Could not uninstall application: $APP_ID"
 
     # and remove the application directory
     rm -R "$MONO_ROOT/apps/$APP_ID"
@@ -54,7 +56,7 @@ mv "$TMP_APP_DIR" "$MONO_ROOT/apps/$APP_ID"
 ce "Could not move application to propper location: $APP_ID"
 
 # install the new application
-node $MONO_ROOT/admin/installation/install_app.js $APP_DESCRIPTOR
+node $MONO_ROOT/admin/scripts/installation/install_app.js $APP_DESCRIPTOR
 ce "Could not install application: $APP_ID"
 
 ## stop mono
