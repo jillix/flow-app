@@ -38,7 +38,8 @@
         "mongodb"       : "*",
         "nodemailer"    : "*",
         "request"       : "*",
-        "node-static"   : "*"
+        "node-static"   : "*",
+        "syntax-error"  : "*"
     },
     "devDependencies": {
         "tap"           : "*"

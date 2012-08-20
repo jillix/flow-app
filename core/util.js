@@ -4,16 +4,12 @@ var os = require("os");
 function _require(file) {
     
     try {
-        
         return require(file)
     }
     catch (err) {
-        
         if (CONFIG.dev) {
-            
             console.log("File: " + file + "\n" + err);
         }
-        
         return err;
     }
 }
@@ -90,23 +86,47 @@ this.pause = function(req) {
  */
 // TODO limit memory usage
 this.load = function(file, method) {
-    
+
+    var fileName = file.replace("/home/mono/mono/modules/", "");
+
     if (!require.cache[file]) {
-        
+
+        // TODO this should only be done when a module is deployed
+        var parseError = checkSyntax(file);
+        if (parseError) {
+            parseError.annotated = parseError.annotated.replace("/home/mono/mono/modules/", "");
+            parseError.fileName = file;
+            return parseError;
+        }
+
         fs.unwatchFile(file);
         fs.watchFile(file, function(curr, prev) {
-            
+
             if (curr.mtime.valueOf() != prev.mtime.valueOf()) {
-                
+
                 require.cache[file] = null;
                 delete require.cache[file];
                 _require(file);
             }
         });
     }
-    
-    return method ? _require(file)[method] : _require(file);
+
+    var result = _require(file);
+
+    if (result instanceof Error) {
+        result.fileName = fileName;
+        result.message = result.toString();
+        return result;
+    }
+
+    return method ? result[method] : result;
 };
+
+function checkSyntax(file) {
+    var check = require("syntax-error");
+    var src = fs.readFileSync(file);
+    return check(src, file);
+}
 
 /**
  * description:  Load File in Memory and reload it when File changes
