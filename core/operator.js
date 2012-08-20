@@ -71,17 +71,11 @@ exports.operation = function(link) {
 
 function checkAndCallFunction(link, resume, method, params) {
 
-    if (method instanceof SyntaxError) {
+    if (method instanceof Error) {
         if (resume) {
             resume(true);
         }
         send.internalservererror(link, method);
-        return;
-    } else if (method instanceof Error) {
-        if (resume) {
-            resume(true);
-        }
-        send.internalservererror(link, { message: method.toString() });
         return;
     }
 

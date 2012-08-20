@@ -116,6 +116,7 @@ this.load = function(file, method) {
     if (result instanceof Error) {
         result.fileName = fileName;
         result.message = result.toString();
+        result.annotated = result.stack.replace("/home/mono/mono/modules/", "");
         return result;
     }
 
