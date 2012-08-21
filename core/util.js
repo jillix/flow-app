@@ -159,6 +159,8 @@ this.read = function(file, encoding, callback) {
                 fs.unwatchFile(file);
                 fs.watchFile(file, function(curr, prev) {
                     
+                    // TODO sometimes the files remain unwatched
+                    // check the issue at: https://github.com/jillix/mono/issues/24
                     if (curr.mtime.valueOf() != prev.mtime.valueOf() || curr.ctime.valueOf() != prev.ctime.valueOf()) {
                         
                         fs.readFile(file, encoding, function(err, data) {
