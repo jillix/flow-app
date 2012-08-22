@@ -142,7 +142,7 @@ function handlePostRequest(link, method, resume) {
             return;
         }
 
-        var appDir = CONFIG.root + "/apps/" + session.appId + "/";
+        var appDir = CONFIG.root + "/apps/" + link.session.appid + "/";
         var uploadDir = appDir + link.params.uploadDir;
 
         try {
@@ -173,6 +173,22 @@ function handlePostRequest(link, method, resume) {
 
             link.data = fields;
             link.files = files;
+
+            // make sure the user receives only relative path to his application
+            for (var fileName in files) {
+                var file = files[fileName];
+                if (file.path) {
+                    delete file._writeStream;
+                    file.path = file.path.slice(appDir.length);
+                }
+
+                // TODO add the same checks when formidable changes the files format
+                // There are 2 issues which could probably change the files format:
+                // - support for file inputs using name[] format
+                //      https://github.com/felixge/node-formidable/issues/33
+                // - support for multiple attribute for file input fields
+                //      https://github.com/felixge/node-formidable/pull/115
+            }
 
             method(link);
         });
