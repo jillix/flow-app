@@ -1,4 +1,5 @@
 var formidable      = require("formidable"),
+    fs              = require("fs"),
     util            = require(CONFIG.root + "/core/util.js"),
     send            = require(CONFIG.root + "/core/send.js").send,
     mods            = require(CONFIG.root + "/core/module.js"),
@@ -136,10 +137,31 @@ function handlePostRequest(link, method, resume) {
     // handle form data requests
     else if (contentType.indexOf("multipart/form-data" ) > -1 || contentType.indexOf("application/x-www-form-urlencoded" ) > -1) {
 
+        if (!link.params || !link.params.uploadDir) {
+            send.forbidden(link, "Please provide an uploadDir parameter to your operation.");
+            return;
+        }
+
+        var appDir = CONFIG.root + "/apps/" + session.appId + "/";
+        var uploadDir = appDir + link.params.uploadDir;
+
+        try {
+            uploadDir = fs.realpathSync(uploadDir);
+        } catch(err) {
+            // do not give a chance the user to try and guess the server's directory structure
+            // based on this error, so, in case of an error we set to a fake path
+            uploadDir = "";
+        }
+
+        if (uploadDir.indexOf(appDir) != 0) {
+            send.forbidden(link, "You are only granted write access in your application directory.");
+            return;
+        }
+
         var form = new formidable.IncomingForm();
 
         // define upload dir for temporary files
-        form.uploadDir = link.params && link.params.uploadDir ? link.params.uploadDir : CONFIG.uploadDir;
+        form.uploadDir = uploadDir;
 
         // parse form data
         form.parse(link.req, function(err, fields, files) {
@@ -150,12 +172,7 @@ function handlePostRequest(link, method, resume) {
             }
 
             link.data = fields;
-
-            if (files) {
-                for(var file in files) {
-                    link.data[file] = files[file];
-                }
-            }
+            link.files = files;
 
             method(link);
         });
@@ -166,3 +183,4 @@ function handlePostRequest(link, method, resume) {
 
     resume();
 }
+
