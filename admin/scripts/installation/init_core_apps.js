@@ -7,14 +7,14 @@ var fs = require('fs');
 var appsApi = require(CONFIG.root + "/api/apps");
 var model = require(CONFIG.root + "/core/model/orient");
 
-var apps = fs.readdirSync(CONFIG.root + "/apps");
+var apps = fs.readdirSync(CONFIG.APPLICATION_ROOT);
 
 var descriptorFiles = [];
 
 for (var i in apps) {
 
     var appId = apps[i];
-    var monoJson = CONFIG.root + "/apps/" + appId + "/mono.json";
+    var monoJson = CONFIG.APPLICATION_ROOT + appId + "/mono.json";
 
     if (appId.length == 32 && fs.existsSync(monoJson)) {
         descriptorFiles.push(monoJson);

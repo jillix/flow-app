@@ -101,3 +101,8 @@ config.orient || throwError("The OrientDB configuration is missing");
 config.orient.server || throwError("The OrientDB configuration is missing the server key");
 config.orient.db || throwError("The OrientDB configuration is missing the db key");
 
+// Constants
+//
+config.MODULE_ROOT = config.root + "/modules/";
+config.APPLICATION_ROOT = config.root + "/apps/";
+

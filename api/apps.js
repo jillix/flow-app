@@ -1,8 +1,9 @@
 var fs = require("fs");
 
-var orient = require(CONFIG.root + "/core/db/orient.js");
+var orient = require(CONFIG.root + "/core/db/orient");
 var modules = require(CONFIG.root + "/api/modules");
-var db = require(CONFIG.root + "/core/model/orient.js");
+var server = require(CONFIG.root + "/api/server");
+var db = require(CONFIG.root + "/core/model/orient");
 
 
 /**
@@ -276,53 +277,84 @@ function installDomains(descriptor, callback) {
 /**
  *
  */
+function cleanupApplicationDependencies(descriptor, callback) {
+
+    server.removeDirectory(CONFIG.APPLICATION_ROOT + descriptor.appId + "/mono_modules", function(err) {
+
+        if (err) { return callback; }
+
+        server.removeDirectory(CONFIG.APPLICATION_ROOT + descriptor.appId + "/node_modules", callback);
+    });
+}
+
+/**
+ *
+ */
 function installDependencies(descriptor, callback) {
 
-    // gather all dependencies
-    var dependencies = {};
-    for (var miid in descriptor.miids) {
-        dependencies[descriptor.miids[miid].module] = -1;
-    }
-    
-    var moduleRoot = CONFIG.root + "/modules/";
-    var depKeys = Object.keys(dependencies);
-    var count = depKeys.length;
-    var errors = [];
-    var index = 0;
+console.log("Removing application dependencies");
+    cleanupApplicationDependencies(descriptor, function(err) {
 
-    function installDependenciesSequential(index) {
-
-        if (index >= count) {
-            return callback(null, dependencies);
+        if (err) {
+            return callback(err);
         }
 
-        var key = depKeys[index];
-        var splits = key.split("/");
-        var module = new modules.Module(splits[0], splits[1], splits[2], splits[3]);
+        // gather all dependencies
+        var dependencies = {};
+        for (var miid in descriptor.miids) {
+            dependencies[descriptor.miids[miid].module] = -1;
+        }
 
-        modules.installModule(module, function(err, installedDependencies) {
+        var moduleRoot = CONFIG.MODULE_ROOT;
+        var depKeys = Object.keys(dependencies);
+        var count = depKeys.length;
+        var errors = [];
+        var index = 0;
 
-            if (err) {
-                console.error("Could not install dependency: " + module.getVersionPath() + ". Reason:");
-                console.error(JSON.stringify(err));
-                errors.push(err);
-            } else if (module._vid != undefined) {
-                console.log("Installed dependency: " + module.getVersionPath());
+        function installDependenciesSequential(index) {
 
-                // add this module to the dependency list
-                dependencies[module.getVersionPath()] = module._vid;
-
-                // add sub-dependencies to this app dependencies
-                for (var key in installedDependencies) {
-                    dependencies[key] = installedDependencies[key];
-                }
+            if (index >= count) {
+                return callback(null, dependencies);
             }
 
-            installDependenciesSequential(++index);
-        })
-    }
+            var key = depKeys[index];
+            var splits = key.split("/");
+            var module = new modules.Module(splits[0], splits[1], splits[2], splits[3]);
 
-    installDependenciesSequential(index);
+            modules.installModule(module, function(err, installedDependencies) {
+
+                if (err) {
+                    console.error("Could not install dependency: " + module.getVersionPath() + ". Reason:");
+                    console.error(JSON.stringify(err));
+                    errors.push(err);
+                } else if (module._vid != undefined) {
+                    console.log("Installed dependency: " + module.getVersionPath());
+
+                    // add this module to the dependency list
+                    dependencies[module.getVersionPath()] = module._vid;
+
+                    // add sub-dependencies to this app dependencies
+                    for (var key in installedDependencies) {
+                        dependencies[key] = installedDependencies[key];
+                    }
+                }
+
+                // copy this module to the application directory
+                server.copyDirectory(moduleRoot + module.getVersionPath(), CONFIG.APPLICATION_ROOT + descriptor.appId + "/mono_modules/" + module.getVersionPath(), function(err) {
+
+                    if (err) {
+                        console.error("Could not install dependency: " + module.getVersionPath() + ". Reason:");
+                        console.error(JSON.stringify(err));
+                        errors.push(err);
+                    }
+
+                    installDependenciesSequential(++index);
+                });
+            });
+        }
+
+        installDependenciesSequential(index);
+    });
 }
 
 /**
