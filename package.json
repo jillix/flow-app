@@ -39,6 +39,7 @@
         "nodemailer"    : "*",
         "request"       : "*",
         "node-static"   : "*",
+        "csv"           : "*",
         "syntax-error"  : "*"
     },
     "devDependencies": {
