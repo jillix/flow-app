@@ -33,6 +33,7 @@ function throwError(message) {
 for (var i in argv) {
     switch (i) {
         case "_":
+            config.argv = argv._;
         case "$0":
             continue;
         case "log":

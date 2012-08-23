@@ -109,6 +109,9 @@ function installFromObject(descriptor, callback) {
         // **************
         // 1. APPLICATION
         // **************
+        if (CONFIG.log.applicationInstallation || CONFIG.logLevel === "verbose") {
+            console.log("Adding new application: " + descriptor.appId);
+        }
         db.addApplication(
                 descriptor.appId,
                 descriptor.name || "Unnamed application",
@@ -126,6 +129,9 @@ function installFromObject(descriptor, callback) {
             // ************
             // 2.a. DOMAINS
             // ************
+            if (CONFIG.log.applicationInstallation || CONFIG.logLevel === "verbose") {
+                console.log("Adding domains for application: " + descriptor.appId);
+            }
             installDomains(descriptor, function(err) {
 
                 if (err) {
@@ -136,6 +142,9 @@ function installFromObject(descriptor, callback) {
             // *****************
             // 2.b. DEPENDENCIES
             // *****************
+            if (CONFIG.log.applicationInstallation || CONFIG.logLevel === "verbose") {
+                console.log("Installing dependencies for application: " + descriptor.appId);
+            }
             installDependencies(descriptor, function(err, dependencies) {
                 descriptor.dependencies = dependencies;
 
@@ -145,6 +154,9 @@ function installFromObject(descriptor, callback) {
                 // ********
                 // 3. ROLES
                 // ********
+                if (CONFIG.log.applicationInstallation || CONFIG.logLevel === "verbose") {
+                    console.log("Adding roles for application: " + descriptor.appId);
+                }
                 installRoles(descriptor, function(err) {
 
                     // TODO cleanup
@@ -153,6 +165,9 @@ function installFromObject(descriptor, callback) {
                     // ********
                     // 4. USERS
                     // ********
+                    if (CONFIG.log.applicationInstallation || CONFIG.logLevel === "verbose") {
+                        console.log("Adding users for application: " + descriptor.appId);
+                    }
                     installUsers(descriptor, function(err, publicUser) {
 
                         // TODO cleanup
@@ -161,6 +176,9 @@ function installFromObject(descriptor, callback) {
                         // ********************
                         // 5.a. APP PUBLIC USER
                         // ********************
+                        if (CONFIG.log.applicationInstallation || CONFIG.logLevel === "verbose") {
+                            console.log("Configuring the public user for application: " + descriptor.appId);
+                        }
                         db.updatePublicUser(descriptor.appId, publicUser._id, function(err) {
                             if (err) {
                                 console.error(err);
@@ -170,6 +188,9 @@ function installFromObject(descriptor, callback) {
                         // ***************
                         // 5.b. USER-ROLES
                         // ***************
+                        if (CONFIG.log.applicationInstallation || CONFIG.logLevel === "verbose") {
+                            console.log("Assigning user roles for application: " + descriptor.appId);
+                        }
                         assignUserRoles(descriptor, function(err) {
 
                             // TODO cleanup
@@ -178,6 +199,9 @@ function installFromObject(descriptor, callback) {
                             // ************
                             // 6. ROLE USES
                             // ************
+                            if (CONFIG.log.applicationInstallation || CONFIG.logLevel === "verbose") {
+                                console.log("Granting role access for application: " + descriptor.appId);
+                            }
                             roleModuleUsage(descriptor, function(err) {
 
                                 // TODO cleanup
@@ -186,6 +210,9 @@ function installFromObject(descriptor, callback) {
                                 // ******************
                                 // 7. ROLE OPERATIONS
                                 // ******************
+                                if (CONFIG.log.applicationInstallation || CONFIG.logLevel === "verbose") {
+                                    console.log("Adding role operations for application: " + descriptor.appId);
+                                }
                                 roleOperations(descriptor, function(err) {
 
                                     // TODO cleanup

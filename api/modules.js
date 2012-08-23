@@ -327,7 +327,7 @@ function installModuleActions(module, callback) {
     // 1. DOWNLOAD
     // ***********
     if (CONFIG.log.moduleInstallation || CONFIG.logLevel === "verbose") {
-        console.log("Fetching  module: " + module.getModulePath());
+        console.log("Fetching module: " + module.getModulePath());
     }
     fetchModule(module, function(err) {
 
