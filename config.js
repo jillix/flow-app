@@ -19,10 +19,6 @@ var argv = require("optimist")
 // load the mono configuration file
 var config = module.exports = require(argv.config);
 
-if (argv.dev === true || config.dev === true) {
-    console.log("Using configuration file: " + argv.config);
-}
-
 config.log = config.log || {};
 
 function throwError(message) {
@@ -42,6 +38,26 @@ for (var i in argv) {
                 config.log[splits[j].trim()] = true;
                 //console.log("log." + splits[j] + "=true");
             }
+            break;
+        case "app":
+            var appid = argv[i];
+            //////////////////////////////////////////////////////////////
+            // this converts a number back to string because optimist will
+            // automatically parse arguments that lok like numbers 
+            //
+            function pad(number, length) {
+                var str = '' + number;
+                while (str.length < length) {
+                    str = '0' + str;
+                }
+                return str;
+            }
+            if (!isNaN(Number(appid))) {
+                appid = pad(appid, 32);
+            }
+            //
+            //////////////////////////////////////////////////////////////
+            config.app = appid;
             break;
         default:
             config[i] = true;
@@ -106,4 +122,8 @@ config.orient.db || throwError("The OrientDB configuration is missing the db key
 //
 config.MODULE_ROOT = config.root + "/modules/";
 config.APPLICATION_ROOT = config.root + "/apps/";
+
+if (!config.app && (argv.dev === true || config.dev === true)) {
+    console.log("Using configuration file: " + argv.config);
+}
 

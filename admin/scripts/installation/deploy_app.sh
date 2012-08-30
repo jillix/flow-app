@@ -1,7 +1,7 @@
 #!/bin/bash
 
 MONO_ROOT=~/mono
-cd $MONO_ROOT
+cd "$MONO_ROOT"
 
 APP_FILE_ARG=$1
 
@@ -12,7 +12,7 @@ function ce {
         then
             echo "$1"
         fi
-        rm -f $APP_FILE_ARG
+        rm -f "$APP_FILE_ARG"
         exit 1
     fi
 }
@@ -23,11 +23,11 @@ then
     exit 1
 fi
 
-TMP_APP_DIR=`mktemp -d $MONO_ROOT/apps/tmp/XXXXXX 2> /dev/null`
+TMP_APP_DIR=`mktemp -d "$MONO_ROOT/apps/tmp/XXXXXX" 2> /dev/null`
 ce "Failed to create application temporary directory"
 
 # unzip application archive in mono apps
-unzip $APP_FILE_ARG -d $TMP_APP_DIR > /dev/null
+unzip "$APP_FILE_ARG" -d "$TMP_APP_DIR" > /dev/null
 ce "Could not unarchive the application archive."
 
 # delete archive
@@ -42,12 +42,15 @@ APP_DESCRIPTOR=$MONO_ROOT/apps/$APP_ID/mono.json
 # clean up if already installed
 if [ -e "$MONO_ROOT/apps/$APP_ID" ]
 then
+    # stop application node
+    "$MONO_ROOT/admin/scripts/installation/stop_app.sh" "$APP_ID"
+
     # uninstall the application
-    node $MONO_ROOT/admin/scripts/installation/uninstall_app.js $APP_DESCRIPTOR
+    node "$MONO_ROOT/admin/scripts/installation/uninstall_app.js" "$APP_DESCRIPTOR"
     #ce "Could not uninstall application: $APP_ID"
 
     # and remove the application directory
-    rm -R "$MONO_ROOT/apps/$APP_ID"
+    rm -Rf "$MONO_ROOT/apps/$APP_ID"
     ce "Could not cleanup already existing application: $APP_ID"
 fi
 
@@ -56,23 +59,12 @@ mv "$TMP_APP_DIR" "$MONO_ROOT/apps/$APP_ID"
 ce "Could not move application to propper location: $APP_ID"
 
 # install the new application
-node $MONO_ROOT/admin/scripts/installation/install_app.js $APP_DESCRIPTOR
+node "$MONO_ROOT/admin/scripts/installation/install_app.js" "$APP_DESCRIPTOR"
 ce "Could not install application: $APP_ID"
 
-## stop mono
-#MONO_PID=`lsof -iTCP:8000 -sTCP:LISTEN -t`
-#if [ -n "$MONO_PID" ]
-#then
-#    kill $MONO_PID
-#fi
-#
-## install all applications in mono
-#cd $MONO_ROOT
-#npm install
-#ce "Could not deploy application: $APP_ID"
-#
-## starting mono
-#node $MONO_ROOT/server.js &
+# start application node
+"$MONO_ROOT/admin/scripts/installation/start_app.sh" "$APP_ID" &> "$MONO_ROOT/apps/$APP_ID/log.txt"
+
 
 echo "Succesfully deployed application $APP_ID"
 

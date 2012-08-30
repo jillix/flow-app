@@ -319,7 +319,7 @@ function cleanupApplicationDependencies(descriptor, callback) {
  */
 function installDependencies(descriptor, callback) {
 
-console.log("Removing application dependencies");
+    console.log("Removing application dependencies");
     cleanupApplicationDependencies(descriptor, function(err) {
 
         if (err) {
@@ -332,7 +332,6 @@ console.log("Removing application dependencies");
             dependencies[descriptor.miids[miid].module] = -1;
         }
 
-        var moduleRoot = CONFIG.MODULE_ROOT;
         var depKeys = Object.keys(dependencies);
         var count = depKeys.length;
         var errors = [];
@@ -366,12 +365,16 @@ console.log("Removing application dependencies");
                     }
                 }
 
-                // copy this module to the application directory
-                server.copyDirectory(moduleRoot + module.getVersionPath(), CONFIG.APPLICATION_ROOT + descriptor.appId + "/mono_modules/" + module.getVersionPath(), function(err) {
+                var appDependencies = {};
+                appDependencies[module.getVersionPath()] = 1;
+                for (var i in installedDependencies) {
+                    appDependencies[i] = 1;
+                }
+
+                copyApplicationDependencies(descriptor, appDependencies, function(err) {
 
                     if (err) {
-                        console.error("Could not install dependency: " + module.getVersionPath() + ". Reason:");
-                        console.error(JSON.stringify(err));
+                        console.error("ERROR: " + JSON.stringify(err));
                         errors.push(err);
                     }
 
@@ -382,6 +385,49 @@ console.log("Removing application dependencies");
 
         installDependenciesSequential(index);
     });
+}
+
+/**
+ *
+ */
+function copyApplicationDependencies(descriptor, dependencies, callback) {
+
+    var moduleRoot = CONFIG.MODULE_ROOT;
+    var appModuleRoot = CONFIG.APPLICATION_ROOT + descriptor.appId + "/mono_modules/";
+    var depKeys = Object.keys(dependencies);
+    var count = depKeys.length;
+    var errors = [];
+    var index = 0;
+
+    function copyApplicationDependenciesSequential(index) {
+
+        if (index >= count) {
+            return callback(null);
+        }
+
+        var key = depKeys[index];
+        var splits = key.split("/");
+        var module = new modules.Module(splits[0], splits[1], splits[2], splits[3]);
+        var modulePath = moduleRoot + module.getVersionPath();
+
+        if (fs.existsSync(depKeys[index])) {
+            copyApplicationDependenciesSequential(++index);
+            return;
+        }
+
+        server.copyDirectory(modulePath, appModuleRoot + module.getModulePath(), function(err) {
+
+            if (err) {
+                console.error("Could not install dependency: " + module.getVersionPath() + ". Reason:");
+                console.error(JSON.stringify(err));
+                errors.push(err);
+            }
+
+            copyApplicationDependenciesSequential(++index);
+        });
+    }
+
+    copyApplicationDependenciesSequential(index);
 }
 
 /**
