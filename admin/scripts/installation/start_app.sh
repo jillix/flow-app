@@ -24,6 +24,14 @@ then
     exit 3
 fi
 
-# noe start the application node
-node $MONO_ROOT/server.js --app "$1" &
+# find a free port
+FREE_PORT=`"$MONO_ROOT/admin/scripts/installation/find_port.sh"`
+if [ -z "$FREE_PORT" ]
+then
+    echo "Could not find a free port for starting application $1" 1>&2
+    exit 4
+fi
+
+# now start the application node
+node "$MONO_ROOT/server.js" --app "$1" --port "$FREE_PORT" &
 

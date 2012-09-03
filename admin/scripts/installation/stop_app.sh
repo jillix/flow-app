@@ -1,6 +1,6 @@
 #!/bin/bash
 
-MONO_ROOT=~/Work/mono
+MONO_ROOT=~/mono
 
 if [ -z "$1" ]
 then

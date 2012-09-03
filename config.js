@@ -59,6 +59,13 @@ for (var i in argv) {
             //////////////////////////////////////////////////////////////
             config.app = appid;
             break;
+        case "port":
+            if (config.dev) {
+                config.devPort = argv[i];
+            } else {
+                config.port = argv[i];
+            }
+            break;
         default:
             config[i] = true;
             //console.log(i + "=" + argv[i]);

@@ -7,7 +7,7 @@ var parseUrl  = require("url").parse,
     operator = require(CONFIG.root + "/core/operator"),
     route     = require(CONFIG.root + "/core/router.js").route,
     orient    = require(CONFIG.root + "/core/db/orient.js"),
-    exec      = require("child_process").exec;
+    model     = require(CONFIG.root + "/core/model/orient.js");
 
 var Server = exports.Server = function () {};
 
@@ -37,8 +37,15 @@ Server.prototype.start = function() {
         var handler = proxyHandler;
 
         if (CONFIG.app) {
-            port = 10001;
             var handler = requestHandler;
+
+            model.addApplicationPort(CONFIG.app, port, function(err) {
+
+                if (err) {
+                    send.internalservererror({ req: req, res: res }, err);
+                    return;
+                }
+            });
         }
 
         // start http server
@@ -52,20 +59,23 @@ function proxyHandler(req, res) {
     req.pause();
 
     var proxy = new (require('http-proxy')).RoutingProxy();
-    var getDomainApplication = require(CONFIG.root + "/core/model/orient.js").getDomainApplication;
 
     var host = CONFIG.dev ? req.headers.host.split(":")[0] : req.headers.host;
-    getDomainApplication(host, false, function(err, application) {
+    model.getDomainApplication(host, false, function(err, application) {
 
         if (err) {
-            send.notfound(res, err);
+            send.notfound({ req: req, res: res }, err);
             return;
         }
 
-        // TODO find the port for this application
+        if (!application.port) {
+            send.serviceunavailable({ req: req, res: res }, "This application did not start yet...");
+            return;
+        }
+
         proxy.proxyRequest(req, res, {
-            host: 'localhost',
-            port: 10001
+            host: "localhost",
+            port: application.port
         });
         req.resume();
     });
