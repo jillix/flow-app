@@ -4,10 +4,10 @@ var ip = require(CONFIG.root + "/core/util.js").ip;
 // imported functions
 var parseUrl  = require("url").parse,
     send      = require(CONFIG.root + "/core/send.js").send,
-    operation = require(CONFIG.root + "/core/operator.js").operation,
+    operator = require(CONFIG.root + "/core/operator"),
     route     = require(CONFIG.root + "/core/router.js").route,
     orient    = require(CONFIG.root + "/core/db/orient.js"),
-    exec      = require("child_process").exec;
+    model     = require(CONFIG.root + "/core/model/orient.js");
 
 var Server = exports.Server = function () {};
 
@@ -25,38 +25,61 @@ var Server = exports.Server = function () {};
 Server.prototype.start = function() {
 
     var self = this;
-    var startHTTPServer = function() {
-        
-        // establish the database connection
-        orient.connect(CONFIG.orient, function(err, db) {
 
-            if (err) {
-                throw new Error(JSON.stringify(err));
-            }
-            
-            // start http server
-            self.server = http.createServer(requestHandler);
-            self.server.listen(CONFIG.dev ? CONFIG.devPort : CONFIG.port, host);
-        });
-    };
-    
-    // start DB in dev mode
-    if (CONFIG.dev) {
-        
-        // start db server
-        exec(CONFIG.orient.exec);
-        
-        setTimeout(function() {
-            
-            startHTTPServer();
-        
-        }, CONFIG.orient.startTime);
-    }
-    else {
-        
-        startHTTPServer();
-    }
+    // establish the database connection
+    orient.connect(CONFIG.orient, function(err, db) {
+
+        if (err) {
+            throw new Error(JSON.stringify(err));
+        }
+
+        var port = CONFIG.dev ? CONFIG.devPort : CONFIG.port;
+        var handler = proxyHandler;
+
+        if (CONFIG.app) {
+            var handler = requestHandler;
+
+            model.addApplicationPort(CONFIG.app, port, function(err) {
+
+                if (err) {
+                    send.internalservererror({ req: req, res: res }, err);
+                    return;
+                }
+            });
+        }
+
+        // start http server
+        self.server = http.createServer(handler);
+        self.server.listen(port, host);
+    });
 };
+
+function proxyHandler(req, res) {
+
+    req.pause();
+
+    var proxy = new (require('http-proxy')).RoutingProxy();
+
+    var host = CONFIG.dev ? req.headers.host.split(":")[0] : req.headers.host;
+    model.getDomainApplication(host, false, function(err, application) {
+
+        if (err) {
+            send.notfound({ req: req, res: res }, err);
+            return;
+        }
+
+        if (!application.port) {
+            send.serviceunavailable({ req: req, res: res }, "This application did not start yet...");
+            return;
+        }
+
+        proxy.proxyRequest(req, res, {
+            host: "localhost",
+            port: application.port
+        });
+        req.resume();
+    });
+}
 
 function requestHandler(req, res) {
 
@@ -73,26 +96,23 @@ function requestHandler(req, res) {
     link.res.headers = {};
 
     if (path[0] == CONFIG.operationKey) {
-        
+
         if (path.length < 3) {
-        
             return send.badrequest(link, "incorrect operation url");
         }
         
         link.operation = {
-            
             module: path[1],
             method: path[2]
         };
         
         link.path = path.slice(3);
-        
-        operation(link);
+
+        operator.operation(link);
     }
     else {
-        
         link.path = path;
-        
         route(link);
     }
 }
+

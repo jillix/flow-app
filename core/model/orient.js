@@ -967,11 +967,27 @@ exports.addApplicationDomains = function(aid, domains, callback) {
 };
 
 
+exports.addApplicationPort = function(appId, port, callback) {
+
+    var command = "UPDATE VApplication SET port = " + port + " WHERE id = '" + appId + "'";
+
+    sql(command, function(err) {
+
+        if (err) {
+            return callback(err || "Failed to add port for application " + appId);
+        }
+
+        callback(null);
+    });
+};
+
+
 exports.getDomainApplication = function(domain, withRoutes, callback) {
 
     var command =
         "SELECT " +
             "application.id as appId, " +
+            "application.port as port, " +
             (withRoutes ? "application.routes AS routes, " : "") +
             "application.publicDir AS publicDir, " +
             "application.scripts AS scripts, " +
