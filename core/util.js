@@ -140,11 +140,11 @@ this.read = function(file, encoding, callback) {
     
     file =  CONFIG.root + file;
     
-    if (fileCache[file]) {
+    //if (fileCache[file]) {
         
-        callback(null, fileCache[file]);
-    }
-    else {
+    //    callback(null, fileCache[file]);
+    //}
+    //else {
         
         fs.readFile(file, encoding, function(err, data) {
         
@@ -180,7 +180,7 @@ this.read = function(file, encoding, callback) {
                 callback(null, data);
             }
         });
-    }
+    //}
 };
 
 //get ip adress
