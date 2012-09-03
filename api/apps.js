@@ -1,8 +1,9 @@
 var fs = require("fs");
 
-var orient = require(CONFIG.root + "/core/db/orient.js");
+var orient = require(CONFIG.root + "/core/db/orient");
 var modules = require(CONFIG.root + "/api/modules");
-var db = require(CONFIG.root + "/core/model/orient.js");
+var server = require(CONFIG.root + "/api/server");
+var db = require(CONFIG.root + "/core/model/orient");
 
 
 /**
@@ -303,53 +304,130 @@ function installDomains(descriptor, callback) {
 /**
  *
  */
+function cleanupApplicationDependencies(descriptor, callback) {
+
+    server.removeDirectory(CONFIG.APPLICATION_ROOT + descriptor.appId + "/mono_modules", function(err) {
+
+        if (err) { return callback; }
+
+        server.removeDirectory(CONFIG.APPLICATION_ROOT + descriptor.appId + "/node_modules", callback);
+    });
+}
+
+/**
+ *
+ */
 function installDependencies(descriptor, callback) {
 
-    // gather all dependencies
-    var dependencies = {};
-    for (var miid in descriptor.miids) {
-        dependencies[descriptor.miids[miid].module] = -1;
-    }
-    
-    var moduleRoot = CONFIG.root + "/modules/";
+    console.log("Removing application dependencies");
+    cleanupApplicationDependencies(descriptor, function(err) {
+
+        if (err) {
+            return callback(err);
+        }
+
+        // gather all dependencies
+        var dependencies = {};
+        for (var miid in descriptor.miids) {
+            dependencies[descriptor.miids[miid].module] = -1;
+        }
+
+        var depKeys = Object.keys(dependencies);
+        var count = depKeys.length;
+        var errors = [];
+        var index = 0;
+
+        function installDependenciesSequential(index) {
+
+            if (index >= count) {
+                return callback(null, dependencies);
+            }
+
+            var key = depKeys[index];
+            var splits = key.split("/");
+            var module = new modules.Module(splits[0], splits[1], splits[2], splits[3]);
+
+            modules.installModule(module, function(err, installedDependencies) {
+
+                if (err) {
+                    console.error("Could not install dependency: " + module.getVersionPath() + ". Reason:");
+                    console.error(JSON.stringify(err));
+                    errors.push(err);
+                } else if (module._vid != undefined) {
+                    console.log("Installed dependency: " + module.getVersionPath());
+
+                    // add this module to the dependency list
+                    dependencies[module.getVersionPath()] = module._vid;
+
+                    // add sub-dependencies to this app dependencies
+                    for (var key in installedDependencies) {
+                        dependencies[key] = installedDependencies[key];
+                    }
+                }
+
+                var appDependencies = {};
+                appDependencies[module.getVersionPath()] = 1;
+                for (var i in installedDependencies) {
+                    appDependencies[i] = 1;
+                }
+
+                copyApplicationDependencies(descriptor, appDependencies, function(err) {
+
+                    if (err) {
+                        console.error("ERROR: " + JSON.stringify(err));
+                        errors.push(err);
+                    }
+
+                    installDependenciesSequential(++index);
+                });
+            });
+        }
+
+        installDependenciesSequential(index);
+    });
+}
+
+/**
+ *
+ */
+function copyApplicationDependencies(descriptor, dependencies, callback) {
+
+    var moduleRoot = CONFIG.MODULE_ROOT;
+    var appModuleRoot = CONFIG.APPLICATION_ROOT + descriptor.appId + "/mono_modules/";
     var depKeys = Object.keys(dependencies);
     var count = depKeys.length;
     var errors = [];
     var index = 0;
 
-    function installDependenciesSequential(index) {
+    function copyApplicationDependenciesSequential(index) {
 
         if (index >= count) {
-            return callback(null, dependencies);
+            return callback(null);
         }
 
         var key = depKeys[index];
         var splits = key.split("/");
         var module = new modules.Module(splits[0], splits[1], splits[2], splits[3]);
+        var modulePath = moduleRoot + module.getVersionPath();
 
-        modules.installModule(module, function(err, installedDependencies) {
+        if (fs.existsSync(depKeys[index])) {
+            copyApplicationDependenciesSequential(++index);
+            return;
+        }
+
+        server.copyDirectory(modulePath, appModuleRoot + module.getModulePath(), function(err) {
 
             if (err) {
                 console.error("Could not install dependency: " + module.getVersionPath() + ". Reason:");
                 console.error(JSON.stringify(err));
                 errors.push(err);
-            } else if (module._vid != undefined) {
-                console.log("Installed dependency: " + module.getVersionPath());
-
-                // add this module to the dependency list
-                dependencies[module.getVersionPath()] = module._vid;
-
-                // add sub-dependencies to this app dependencies
-                for (var key in installedDependencies) {
-                    dependencies[key] = installedDependencies[key];
-                }
             }
 
-            installDependenciesSequential(++index);
-        })
+            copyApplicationDependenciesSequential(++index);
+        });
     }
 
-    installDependenciesSequential(index);
+    copyApplicationDependenciesSequential(index);
 }
 
 /**
