@@ -1,11 +1,13 @@
 var fs = require("fs");
 var cp = require("child_process");
 
-var db = require(CONFIG.root + "/core/model/orient.js");
+var server = require(CONFIG.root + "/api/server");
+var db = require(CONFIG.root + "/core/model/orient");
 
-var MODULE_ROOT = CONFIG.root + "/modules/";
 
-
+/*
+    Clones a git repo to a certain directory. The directory must exist
+*/
 function gitClone(url, dirName, baseName, callback) {
 
     fs.exists(dirName + "/" + baseName, function(exists) {
@@ -61,18 +63,8 @@ function gitCheckoutTag(repoDir, tag, callback) {
 
 function addModuleDir(source, owner, module, callback) {
 
-    var options = {
-        cwd: MODULE_ROOT
-    };
-    var mkdir = cp.spawn("mkdir", ["-p", source + "/" + owner + "/" + module], options);
-
-    mkdir.on("exit", function(code) {
-
-        if (code) {
-            return callback({ error: "Failed to create module directory: " + source + "/" + owner + "/" + module, code: 203 });
-        }
-        callback(null);
-    });
+    var dirName = CONFIG.MODULE_ROOT + source + "/" + owner + "/" + module;
+    server.makeDirectory(dirName, callback);
 }
 
 
@@ -104,7 +96,7 @@ function cloneModuleVersion(module, callback) {
         return callback({ error: "Invalid source: " + module.source, code: 204 });
     }
 
-    var dirName = MODULE_ROOT + module.getModulePath();
+    var dirName = CONFIG.MODULE_ROOT + module.getModulePath();
     var version = module.version;
 
     // clone the repo now from url, in the target directory, in a directory having the version name
@@ -126,7 +118,7 @@ function fetchModule(module, callback) {
         if (err) { return callback(err); }
 
         // if this commit version is already present give up
-        if (fs.existsSync(MODULE_ROOT + module.getVersionPath())) {
+        if (fs.existsSync(CONFIG.MODULE_ROOT + module.getVersionPath())) {
             return;
         }
 
@@ -135,23 +127,13 @@ function fetchModule(module, callback) {
 }
 
 function removeModule(module, callback) {
-
-    var options = {
-        cwd: MODULE_ROOT
-    };
-    var git = cp.spawn("rm", ["-Rf", module.getVersionPath()], options);
-
-    git.on("exit", function(code) {
-        if (code) {
-            return callback("Could not remove module: " + module.getVersionPath());
-        }
-        callback(null);
-    });
+    var dirName = CONFIG.MODULE_ROOT + module.getVersionPath();
+    server.removeDirectory(dirName, callback);
 }
 
 function getModuleOperations(module, callback) {
 
-    fs.readFile(MODULE_ROOT + module.getVersionPath() + "/mono.json", function (err, data) {
+    fs.readFile(CONFIG.MODULE_ROOT + module.getVersionPath() + "/mono.json", function (err, data) {
 
         if (err) { return callback("Error while reading the mono.json file for module " + module.getVersionPath()) };
 
@@ -177,11 +159,11 @@ function getModuleOperations(module, callback) {
 function readModuleDescriptor(module, callback) {
 
     // if the module version does not exists, throw error 
-    if (!fs.existsSync(MODULE_ROOT + module.getVersionPath())) {
+    if (!fs.existsSync(CONFIG.MODULE_ROOT + module.getVersionPath())) {
         return callback("The module does not exist: " + module.getVersionPath());
     }
 
-    var file = MODULE_ROOT + module.getVersionPath() + "/mono.json";
+    var file = CONFIG.MODULE_ROOT + module.getVersionPath() + "/mono.json";
 
     fs.readFile(file, function (err, data) {
 
@@ -212,7 +194,7 @@ function installDependencies(descriptor, callback) {
         return callback(null, {});
     }
 
-    var moduleRoot = CONFIG.root + "/modules/";
+    var moduleRoot = CONFIG.MODULE_ROOT;
     var depKeys = Object.keys(descriptor.dependencies);
     var count = depKeys.length;
     var errors = [];
@@ -290,7 +272,7 @@ function addDependencyLinks(module, descriptor, installedDependencies, callback)
 function installModule(module, callback) {
 
     // if the module exists, just get it's id (unless it's a "dev" version)
-    if (fs.existsSync(MODULE_ROOT + module.getVersionPath())) {
+    if (fs.existsSync(CONFIG.MODULE_ROOT + module.getVersionPath())) {
         // id not a dev module
         if (module.version !== "dev") {
             console.log("Skipping " + module.getVersionPath());
@@ -449,27 +431,11 @@ function uninstallModule(module, callback) {
     });
 }
 
-function setLatestVersion(module, callback) {
-
-    var options = {
-        cwd: MODULE_ROOT + module.getModulePath()
-    };
-    var ln = cp.spawn("ln", ["-shf", module.latest, "latest"], options);
-
-    ln.on("exit", function(code) {
-        if (code) {
-            return callback({ error: "ln error: ln exited with code " + code, code: 210 });
-        }
-        callback(null);
-    });
-}
-
 
 exports.fetchModule = fetchModule;
 exports.removeModule = removeModule;
 exports.installModule = installModule;
 exports.uninstallModule = uninstallModule;
-exports.setLatestVersion = setLatestVersion;
 
 exports.Module = function(source, owner, name, version) {
 

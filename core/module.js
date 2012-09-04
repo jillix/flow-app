@@ -3,9 +3,8 @@ var send = require(CONFIG.root + "/core/send.js").send,
     stat = require("node-static").Server,
     model = require(CONFIG.root + "/core/model/orient.js"),
     client = new stat(CONFIG.root + "/core/client"),
-    modules = new stat(CONFIG.root + "/modules"),
+    modules = new stat(CONFIG.root + "/apps/" + CONFIG.app + "/mono_modules"),
     publicFiles = require(CONFIG.root + "/core/send").publicFiles;
-
 
 function buildModule(link, module) {
 

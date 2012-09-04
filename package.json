@@ -33,6 +33,7 @@
         "forever"       : "*",
         "formidable"    : "*",
         "github"        : "*",
+        "http-proxy"    : "*",
         "optimist"      : "*",
         "orientdb"      : "0.x",
         "mongodb"       : "*",

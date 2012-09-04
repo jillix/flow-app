@@ -1,8 +1,10 @@
 var formidable      = require("formidable"),
+    httpProxy       = require('http-proxy'),
     fs              = require("fs"),
     util            = require(CONFIG.root + "/core/util.js"),
     send            = require(CONFIG.root + "/core/send.js").send,
     mods            = require(CONFIG.root + "/core/module.js"),
+    apps            = require(CONFIG.root + "/core/apps.js"),
     auth            = require(CONFIG.root + "/core/auth.js"),
     getSession      = require(CONFIG.root + "/core/session.js").get,
     getOperation    = require(CONFIG.root + "/core/model/orient.js").getUserOperation;
@@ -35,7 +37,7 @@ exports.operation = function(link) {
         if (link.operation.module === CONFIG.coreKey) {
 
             var methodName = link.operation.method;
-            var method = mods[methodName] || auth[methodName];
+            var method = mods[methodName] || auth[methodName] || apps[methodName];
 
             checkAndCallFunction(link, resume, method);
             return;
@@ -48,7 +50,7 @@ exports.operation = function(link) {
                 resume(true);
             }
 
-            send.badrequest(link, "Missing module instance or method name");
+            send.badrequest(link, "Missing module instance ID or operation name");
             return;
         }
 
@@ -61,14 +63,14 @@ exports.operation = function(link) {
             }
 
             var modulePath = operation.source + "/" + operation.owner + "/" + operation.name + "/" + operation.version;
-            var file = CONFIG.root + "/modules/" + modulePath + "/" + operation.file;
+            var file = CONFIG.APPLICATION_ROOT + link.session.appid + "/mono_modules/" + modulePath + "/" + operation.file;
             var method = util.load(file, link.operation.method);
 
+            // TODO forward the request to the application process
             checkAndCallFunction(link, resume, method, operation.params);
         });
     });
 };
-
 
 function checkAndCallFunction(link, resume, method, params) {
 
@@ -113,6 +115,7 @@ function handlePostRequest(link, method, resume) {
 
         // buffer data
         link.req.on("data", function(chunk) {
+console.log(chunk.toString());
             jsonString += chunk.toString("utf-8");
         });
 

@@ -87,14 +87,14 @@ this.pause = function(req) {
 // TODO limit memory usage
 this.load = function(file, method) {
 
-    var fileName = file.replace("/home/mono/mono/modules/", "");
+    var fileName = file.replace(CONFIG.APPLICATION_ROOT, "");
 
     if (!require.cache[file]) {
 
         // TODO this should only be done when a module is deployed
         var parseError = checkSyntax(file);
         if (parseError) {
-            parseError.annotated = parseError.annotated.replace("/home/mono/mono/modules/", "");
+            parseError.annotated = parseError.annotated.replace(CONFIG.APPLICATION_ROOT, "");
             parseError.fileName = file;
             return parseError;
         }
@@ -116,7 +116,7 @@ this.load = function(file, method) {
     if (result instanceof Error) {
         result.fileName = fileName;
         result.message = result.toString();
-        result.annotated = result.stack.replace("/home/mono/mono/modules/", "");
+        result.annotated = result.stack.replace(CONFIG.APPLICATION_ROOT, "");
         return result;
     }
 
@@ -140,11 +140,11 @@ this.read = function(file, encoding, callback) {
     
     file =  CONFIG.root + file;
     
-    if (fileCache[file]) {
+    //if (fileCache[file]) {
         
-        callback(null, fileCache[file]);
-    }
-    else {
+    //    callback(null, fileCache[file]);
+    //}
+    //else {
         
         fs.readFile(file, encoding, function(err, data) {
         
@@ -180,7 +180,7 @@ this.read = function(file, encoding, callback) {
                 callback(null, data);
             }
         });
-    }
+    //}
 };
 
 //get ip adress
