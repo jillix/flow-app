@@ -414,7 +414,7 @@
                     {
                         "name": "miid",
                         "type": "STRING",
-                        "mandatory": true,
+                        "mandatory": false,
                         "not-null": true
                     },
                     {
@@ -440,7 +440,7 @@
                     {
                         "name": "miid",
                         "type": "STRING",
-                        "mandatory": true,
+                        "mandatory": false,
                         "not-null": true
                     }
                 ]
