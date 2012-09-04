@@ -1251,13 +1251,7 @@ function sql(command, callback) {
 
 
 function edge(srid, drid, hash, options, callback) {
-
     var db = CONFIG.orient.DB;
-
-    db.loadRecord(srid, function(err, srecord) {
-        db.loadRecord(drid, function(err, drecord) {
-            db.createEdge(srecord, drecord, hash, options, callback);
-        });
-    });
+    db.createEdge(srid, drid, hash, options, callback);
 }
 

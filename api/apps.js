@@ -584,12 +584,13 @@ function addModuleInstanceUses(descriptor, miid, miidObj, callback) {
     }
 
     var _ids = [];
+    var errors = [];
 
     function addModuleInstanceUsesSequential(roleIndex) {
 
         if (roleIndex >= roleCount) {
             miidObj._ids = _ids;
-            return callback(null);
+            return callback(errors.length ? errors : null);
         }
 
         db.addModuleInstance(miid, descriptor.roles[roles[roleIndex]]._id, descriptor.dependencies[module], miidObj.config, function(err, id) {
