@@ -306,7 +306,7 @@ function import_legacy_databases {
 
     # now restore all databases
     mongorestore dump
-exit
+
     rm -Rf dump*
 
     # convert the articles in the new format
