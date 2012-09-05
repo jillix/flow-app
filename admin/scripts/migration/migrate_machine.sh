@@ -88,7 +88,7 @@ function configure_nginx {
         return
     fi
 
-    echo "*** Installing nginx ***"
+    echo "*** Configuring nginx ***"
     cp /home/$USERNAME/legacy/scripts/shell/migration/nginx.conf /etc/nginx/nginx.conf
 
     nginx -s reload
@@ -261,12 +261,15 @@ function import_legacy_databases {
     # remove the old sag and liqshop since we have one dump for them
     if [ -d dump/sag ]
     then
+        echo "*** Removing the sag database dump ***"
         rm -R dump/sag
     fi
     if [ -d dump/liqshop ]
     then
+        echo "*** Removing the liqshop database dump ***"
         rm -R dump/liqshop
     fi
+    echo "*** Unpacking the new sag and liqshop database dumps ***"
     unzip -d dump/ /home/$USERNAME/legacy/scripts/shell/migration/sag-liqshop.zip
 
     # now that we have a new dup, clean up the old databases in this dump
