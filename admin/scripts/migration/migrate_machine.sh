@@ -270,6 +270,14 @@ function import_legacy_databases {
     unzip dump_sag.zip
     mv dump/sag dump/sag_old
 
+    echo "*** Overwriting the article_group with ones from $OLD_SOURCE_SERVER ***"
+    # this corrects the latest article groups
+    mv dump/sag_old/article_groups.bson dump/sag
+
+    echo "*** Overwriting the orders with ones from $OLD_SOURCE_SERVER ***"
+    # this prepares the orders for the conversion script below
+    mv dump/sag_old/orders.bson dump/sag
+
     # remove the old sag and liqshop since we have one dump for them
     if [ -d dump/sag ]
     then
@@ -295,12 +303,12 @@ function import_legacy_databases {
 
     # now restore all databases
     mongorestore dump
-
+exit
     rm -Rf dump*
 
-    # TODO now we need to go and get the latest articles (and images? and users?)
-    # import the newest articles
     # convert the articles in the new format
+    echo "*** Converting the latest liqshop articles to the new format"
+    mongo /home/$USERNAME/legacy/scripts/shell/migration/convert_liqshop_articles.js
 
     # convert the orders in the new format
     echo "*** Importing the old orders in the new common order format in sag.orders_new"
