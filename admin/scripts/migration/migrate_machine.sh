@@ -260,8 +260,8 @@ function import_legacy_databases {
 
     echo "*** Importing the liqshop databases from $OLD_SOURCE_SERVER ***"
     # perform a mongo dump on machine14
-    scp /home/$USERNAME/legacy/scripts/shell/migration/export_mongo.sh $OLD_SOURCE_USERNAME@$OLD_SOURCE_SERVER:/home/$OLD_SOURCE_USERNAME/
-    ssh -o StrictHostKeyChecking=no $OLD_SOURCE_USERNAME@$OLD_SOURCE_SERVER "~/export_mongo.sh $COMPLETE"
+    scp /home/$USERNAME/legacy/scripts/shell/migration/export_liqshop_machine14.sh $OLD_SOURCE_USERNAME@$OLD_SOURCE_SERVER:/home/$OLD_SOURCE_USERNAME/
+    ssh -o StrictHostKeyChecking=no $OLD_SOURCE_USERNAME@$OLD_SOURCE_SERVER "~/export_liqshop_machine14.sh $COMPLETE"
 
     # bring the mongo dump locally 
     scp $OLD_SOURCE_USERNAME@$OLD_SOURCE_SERVER:/home/$OLD_SOURCE_USERNAME/dump.zip dump_sag.zip
