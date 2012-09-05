@@ -268,6 +268,7 @@ function import_legacy_databases {
 
     # unzip, restore, and cleanup
     unzip dump_sag.zip
+    mv dump/sag dump/sag_old
 
     # remove the old sag and liqshop since we have one dump for them
     if [ -d dump/sag ]
