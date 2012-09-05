@@ -258,17 +258,16 @@ function import_legacy_databases {
     # unzip, restore, and cleanup
     unzip dump.zip
 
-    # do we need to correct liqshop roles?
-    if [ -f "/home/$USERNAME/legacy/scripts/shell/migration/liqshop_roles.bson" ]
+    # remove the old sag and liqshop since we have one dump for them
+    if [ -d dump/sag ]
     then
-        cp /home/$USERNAME/legacy/scripts/shell/migration/liqshop_roles.bson dump/sag/roles.bson
+        rm -R dump/sag
     fi
-
-    # do we need to correct liqshop content?
-    if [ -f "/home/$USERNAME/legacy/scripts/shell/migration/liqshop_content.bson" ]
+    if [ -d dump/liqshop ]
     then
-        cp /home/$USERNAME/legacy/scripts/shell/migration/liqshop_content.bson dump/liqshop/content.bson
+        rm -R dump/liqshop
     fi
+    unzip -d dump/ /home/$USERNAME/legacy/scripts/shell/migration/sag-liqshop.zip
 
     # now that we have a new dup, clean up the old databases in this dump
     DB_DIRS=dump/*
@@ -282,15 +281,13 @@ function import_legacy_databases {
     # now restore all databases
     mongorestore dump
 
-    # do we need to add liqshop extra users?
-    if [ -f "/home/$USERNAME/legacy/scripts/shell/migration/liqshop_extra_users.json" ]
-    then
-        mongo --eval 'db.users.remove({ "auth.pub": { $in: [ "sag", "dd-ch", "dd-at", "tm-ch" ] } })' sag
-        mongoimport -d sag -c users /home/$USERNAME/legacy/scripts/shell/migration/liqshop_extra_users.json --upsert
-    fi
-
     rm -Rf dump*
 
+    # TODO now we need to go and get the latest articles (and images? and users?)
+    # import the newest articles
+    # convert the articles in the new format
+
+    # convert the orders in the new format
     echo "*** Importing the old orders in the new common order format in sag.orders_new"
     mongo /home/$USERNAME/legacy/scripts/shell/migration/import_orders_new.js
 }
@@ -314,7 +311,7 @@ function initialize_mono {
 
     HOME=/home/$USERNAME sudo -u $USERNAME sh -c "cd /home/$USERNAME/mono ; npm install"
 
-    mkdir -p /home/mono/images
+    mkdir -p /home/$USERNAME/images
 
     echo "####################################"
     echo "############### TODO ###############"
@@ -327,13 +324,6 @@ function initialize_mono {
     echo "####################################"
 
     chown -R mono:mono /home/$USERNAME/images
-
-    echo ""
-    echo "####################################"
-    echo "############# TEMPORARY ############"
-    echo "####################################"
-    echo "Switching to the mono liqshop branch"
-    git checkout liqshop
 }
 
 
