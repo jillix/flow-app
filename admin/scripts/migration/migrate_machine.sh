@@ -270,13 +270,6 @@ function import_legacy_databases {
     unzip dump_sag.zip
     mv dump/sag dump/sag_old
 
-    echo "*** Overwriting the article_group with ones from $OLD_SOURCE_SERVER ***"
-    # this corrects the latest article groups
-    mv dump/sag_old/article_groups.bson dump/sag
-
-    echo "*** Overwriting the orders with ones from $OLD_SOURCE_SERVER ***"
-    # this prepares the orders for the conversion script below
-    mv dump/sag_old/orders.bson dump/sag
 
     # remove the old sag and liqshop since we have one dump for them
     if [ -d dump/sag ]
@@ -291,6 +284,16 @@ function import_legacy_databases {
     fi
     echo "*** Unpacking the new sag and liqshop database dumps ***"
     unzip -d dump/ /home/$USERNAME/legacy/scripts/shell/migration/sag-liqshop.zip
+
+
+    echo "*** Overwriting the article_group with ones from $OLD_SOURCE_SERVER ***"
+    # this corrects the latest article groups
+    mv dump/sag_old/article_groups.bson dump/sag
+
+    echo "*** Overwriting the orders with ones from $OLD_SOURCE_SERVER ***"
+    # this prepares the orders for the conversion script below
+    mv dump/sag_old/orders.bson dump/sag
+
 
     # now that we have a new dup, clean up the old databases in this dump
     DB_DIRS=dump/*
