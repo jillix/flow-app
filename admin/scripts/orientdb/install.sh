@@ -9,7 +9,13 @@ mkdir -p "$TMP_DIR"
 
 ORIENTDB_ROOT=bin/orientdb
 ORIENTDB_VERSION=`curl --silent https://oss.sonatype.org/content/repositories/releases/com/orientechnologies/orientdb/maven-metadata.xml | grep "release" | cut -d ">" -f 2 | cut -d "<" -f 1`
-#ORIENTDB_VERSION=1.1.0
+# uncomment this to block the installation to a fixed OrientDB version
+ORIENTDB_VERSION=1.1.0
+if [ -z "$ORIENTDB_VERSION" ]
+then
+    echo "Could not determine the latest OrientDB version. Aborting!" 2>&1
+    exit 1
+fi
 ORIENTDB_ROOT_USER=root
 ORIENTDB_MONO_SQL=mono.sql
 ORIENTDB_MONO_DROP_SQL=mono_drop.sql
@@ -88,6 +94,8 @@ function install_orientdb {
         if [ "$SERVER_PID" != "" ]
         then
             echo "Hearing OrientDB server!"
+            echo "But waiting a few more seconds until the server generates the root password..."
+            sleep 5
             break
         fi
         sleep 1
@@ -121,9 +129,16 @@ function install_orientdb {
         echo "Configuring OrientDB mono drop SQL file: $SCRIPT_DIR/$ORIENTDB_MONO_DROP_SQL"
         sed -e "s/@ORIENTDB_ROOT_PASSWORD@/$ORIENTDB_ROOT_PASSWORD/" "$SCRIPT_DIR/$ORIENTDB_MONO_DROP_SQL" > "$TMP_DIR/$ORIENTDB_MONO_DROP_SQL"
 
-        $ORIENTDB_ROOT/bin/console.sh "$TMP_DIR/$ORIENTDB_MONO_DROP_SQL" 2>&1 > "$IMPORT_LOG"
-
+        $ORIENTDB_ROOT/bin/console.sh "$TMP_DIR/$ORIENTDB_MONO_DROP_SQL" &> /dev/null
+        # TODO On Ubuntu DROP DATABASE only works when called a 2nd time
+        # see issue: http://code.google.com/p/orient/issues/detail?id=1044
+        DROPPING=true
+        if [ `uname` != "Darwin" ]
+        then
+            $ORIENTDB_ROOT/bin/console.sh "$TMP_DIR/$ORIENTDB_MONO_DROP_SQL" &> "$IMPORT_LOG"
+        fi
     fi
+
     if [ -d "$ORIENTDB_MONO_DB_DIR" ]
     then
         echo "Failed to properly drop mono database from: $ORIENTDB_MONO_DB_DIR"
@@ -131,8 +146,14 @@ function install_orientdb {
     fi
 
     echo "Installing the OrientDB database from: $TMP_DIR/$ORIENTDB_MONO_SQL"
-    $ORIENTDB_ROOT/bin/console.sh "$TMP_DIR/$ORIENTDB_MONO_SQL" 2>&1 > "$IMPORT_LOG"
-    
+    $ORIENTDB_ROOT/bin/console.sh "$TMP_DIR/$ORIENTDB_MONO_SQL" &> /dev/null
+    # TODO On Ubuntu CREATE DATABASE only works when called a 2nd time
+    # see issue: http://code.google.com/p/orient/issues/detail?id=1044
+    if [ `uname` != "Darwin" -a "$DROPPING" != "true" ]
+    then
+        $ORIENTDB_ROOT/bin/console.sh "$TMP_DIR/$ORIENTDB_MONO_SQL" &> "$IMPORT_LOG"
+    fi
+
     # TODO Whu doesn't console return non-zero on error?
     if [ $? -eq 0 ]
     then

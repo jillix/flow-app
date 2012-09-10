@@ -4,8 +4,8 @@ USERNAME=mono
 ADMINNAME=$SUDO_USER
 
 # Old Machine 14
-#SOURCE_USERNAME=webadmin
-#SOURCE_SERVER=machine14.abc4it.com
+OLD_SOURCE_USERNAME=webadmin
+OLD_SOURCE_SERVER=machine14.abc4it.com
 
 # AWS Micro Instance
 SOURCE_USERNAME=ubuntu
@@ -88,7 +88,7 @@ function configure_nginx {
         return
     fi
 
-    echo "*** Installing nginx ***"
+    echo "*** Configuring nginx ***"
     cp /home/$USERNAME/legacy/scripts/shell/migration/nginx.conf /etc/nginx/nginx.conf
 
     nginx -s reload
@@ -258,17 +258,42 @@ function import_legacy_databases {
     # unzip, restore, and cleanup
     unzip dump.zip
 
-    # do we need to correct liqshop roles?
-    if [ -f "/home/$USERNAME/legacy/scripts/shell/migration/liqshop_roles.bson" ]
-    then
-        cp /home/$USERNAME/legacy/scripts/shell/migration/liqshop_roles.bson dump/sag/roles.bson
-    fi
+    echo "*** Importing the liqshop databases from $OLD_SOURCE_SERVER ***"
+    # perform a mongo dump on machine14
+    scp /home/$USERNAME/legacy/scripts/shell/migration/export_liqshop_machine14.sh $OLD_SOURCE_USERNAME@$OLD_SOURCE_SERVER:/home/$OLD_SOURCE_USERNAME/
+    ssh -o StrictHostKeyChecking=no $OLD_SOURCE_USERNAME@$OLD_SOURCE_SERVER "~/export_liqshop_machine14.sh $COMPLETE"
 
-    # do we need to correct liqshop content?
-    if [ -f "/home/$USERNAME/legacy/scripts/shell/migration/liqshop_content.bson" ]
+    # bring the mongo dump locally 
+    scp $OLD_SOURCE_USERNAME@$OLD_SOURCE_SERVER:/home/$OLD_SOURCE_USERNAME/dump.zip dump_sag.zip
+
+    # unzip, restore, and cleanup
+    unzip dump_sag.zip
+    mv dump/sag dump/sag_old
+
+
+    # remove the old sag and liqshop since we have one dump for them
+    if [ -d dump/sag ]
     then
-        cp /home/$USERNAME/legacy/scripts/shell/migration/liqshop_content.bson dump/liqshop/content.bson
+        echo "*** Removing the sag database dump ***"
+        rm -R dump/sag
     fi
+    if [ -d dump/liqshop ]
+    then
+        echo "*** Removing the liqshop database dump ***"
+        rm -R dump/liqshop
+    fi
+    echo "*** Unpacking the new sag and liqshop database dumps ***"
+    unzip -d dump/ /home/$USERNAME/legacy/scripts/shell/migration/sag-liqshop.zip
+
+
+    echo "*** Overwriting the article_group with ones from $OLD_SOURCE_SERVER ***"
+    # this corrects the latest article groups
+    mv dump/sag_old/article_groups.bson dump/sag
+
+    echo "*** Overwriting the orders with ones from $OLD_SOURCE_SERVER ***"
+    # this prepares the orders for the conversion script below
+    mv dump/sag_old/orders.bson dump/sag
+
 
     # now that we have a new dup, clean up the old databases in this dump
     DB_DIRS=dump/*
@@ -282,15 +307,13 @@ function import_legacy_databases {
     # now restore all databases
     mongorestore dump
 
-    # do we need to add liqshop extra users?
-    if [ -f "/home/$USERNAME/legacy/scripts/shell/migration/liqshop_extra_users.json" ]
-    then
-        mongo --eval 'db.users.remove({ "auth.pub": { $in: [ "sag", "dd-ch", "dd-at", "tm-ch" ] } })' sag
-        mongoimport -d sag -c users /home/$USERNAME/legacy/scripts/shell/migration/liqshop_extra_users.json --upsert
-    fi
-
     rm -Rf dump*
 
+    # convert the articles in the new format
+    echo "*** Converting the latest liqshop articles to the new format"
+    mongo /home/$USERNAME/legacy/scripts/shell/migration/convert_liqshop_articles.js
+
+    # convert the orders in the new format
     echo "*** Importing the old orders in the new common order format in sag.orders_new"
     mongo /home/$USERNAME/legacy/scripts/shell/migration/import_orders_new.js
 }
@@ -314,7 +337,7 @@ function initialize_mono {
 
     HOME=/home/$USERNAME sudo -u $USERNAME sh -c "cd /home/$USERNAME/mono ; npm install"
 
-    mkdir -p /home/mono/images
+    mkdir -p /home/$USERNAME/images
 
     echo "####################################"
     echo "############### TODO ###############"
@@ -327,13 +350,6 @@ function initialize_mono {
     echo "####################################"
 
     chown -R mono:mono /home/$USERNAME/images
-
-    echo ""
-    echo "####################################"
-    echo "############# TEMPORARY ############"
-    echo "####################################"
-    echo "Switching to the mono liqshop branch"
-    git checkout liqshop
 }
 
 function final_steps {
