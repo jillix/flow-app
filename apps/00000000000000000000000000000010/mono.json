@@ -24,6 +24,68 @@
         },
         {
             "id": 1,
+            "username": "sag",
+            "password": "3cc849279ba298b587a34cabaeffc5ecb3a044bbf97c516fab7ede9d1af77cfa",
+            "data": {
+                "fullname": "Liqshop Admin User",
+                "language": "de"
+            },
+            "roles": [2,1,0]
+        },
+        {
+            "id": 2,
+            "username": "ddchlq",
+            "password": "3cc849279ba298b587a34cabaeffc5ecb3a044bbf97c516fab7ede9d1af77cfa",
+            "data": {
+                "fullname": "DDCH Orders Liqshop Admin",
+                "language": "de",
+                "session": {
+                    "company": "DDCHLQ"
+                }
+            },
+            "roles": [3,1,0]
+        },
+        {
+            "id": 3,
+            "username": "ddchhb",
+            "password": "3cc849279ba298b587a34cabaeffc5ecb3a044bbf97c516fab7ede9d1af77cfa",
+            "data": {
+                "fullname": "DDCH Orders Happybonus Admin",
+                "language": "de",
+                "session": {
+                    "company": "DDCHHB"
+                }
+            },
+            "roles": [4,1,0]
+        },
+        {
+            "id": 4,
+            "username": "ddatlq",
+            "password": "3cc849279ba298b587a34cabaeffc5ecb3a044bbf97c516fab7ede9d1af77cfa",
+            "data": {
+                "fullname": "DDAT Liqshop Admin",
+                "language": "de",
+                "session": {
+                    "company": "DDATLQ"
+                }
+            },
+            "roles": [5,1,0]
+        },
+        {
+            "id": 5,
+            "username": "tmchlq",
+            "password": "3cc849279ba298b587a34cabaeffc5ecb3a044bbf97c516fab7ede9d1af77cfa",
+            "data": {
+                "fullname": "TMCH Liqshop Admin",
+                "language": "de",
+                "session": {
+                    "company": "TMCHLQ"
+                }
+            },
+            "roles": [6,1,0]
+        },
+        {
+            "id": 6,
             "username": "ddaarau",
             "password": "3cc849279ba298b587a34cabaeffc5ecb3a044bbf97c516fab7ede9d1af77cfa",
             "data": {
@@ -35,30 +97,36 @@
                 }
             },
             "roles": [1,0]
-        },
-        {
-            "id": 2,
-            "username": "sag",
-            "password": "3cc849279ba298b587a34cabaeffc5ecb3a044bbf97c516fab7ede9d1af77cfa",
-            "data": {
-                "fullname": "Liqshop Admin User",
-                "language": "de"
-            },
-            "roles": [2,1,0]
         }
     ],
     "roles": [
         {
             "id": 0,
-            "name": "Liqshop Public Role"
+            "name": "SAG Orders Public Role"
         },
         {
             "id": 1,
-            "name": "Liqshop Branch Role"
+            "name": "SAG Orders Branch Role"
         },
         {
             "id": 2,
-            "name": "Liqshop Admin Role"
+            "name": "SAG Orders Admin Role"
+        },
+        {
+            "id": 3,
+            "name": "DDCH Orders Liqshop Admin Role"
+        },
+        {
+            "id": 4,
+            "name": "DDCH Orders Happybonus Admin Role"
+        },
+        {
+            "id": 5,
+            "name": "DDAT Liqshop Admin Role"
+        },
+        {
+            "id": 6,
+            "name": "TMCH Liqshop Admin Role"
         }
     ],
     "miids": {
