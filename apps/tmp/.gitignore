@@ -1,3 +1,5 @@
-# ignoring all content of this directory 
+# this directory is used during application deployment
+# 
+# ignoring all content of this directory
 *
 !.gitignore
