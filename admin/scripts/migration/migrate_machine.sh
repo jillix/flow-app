@@ -206,6 +206,9 @@ function setup_user {
     
     # give mono user ownership over .ssh directory
     chown -R $USERNAME:$USERNAME /home/$USERNAME/.ssh
+
+    # give mono user ownership over the (most probably) orphaned screen files in /var/run/screen/S-mono/
+    chown -R $USERNAME:$USERNAME /var/run/screen/S-mono/
 }
 
 function install_software {
@@ -352,6 +355,11 @@ function initialize_mono {
     chown -R mono:mono /home/$USERNAME/images
 }
 
+function final_steps {
+    # install the cronjobs for the mono user
+    crontab -u $USERNAME /home/$USERNAME/mono/admin/scripts/migration/cronjobs.txt
+}
+
 
 # perform the necessary tests
 checks
@@ -379,4 +387,7 @@ initialize_legacy
 
 # initialize mono
 initialize_mono
+
+# final steps
+final_steps
 
