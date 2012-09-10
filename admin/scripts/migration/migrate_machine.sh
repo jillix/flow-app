@@ -354,7 +354,7 @@ function initialize_mono {
 
 function final_steps {
     # install the cronjobs for the mono user
-    crontab -u $USERNAME /home/$USERNAME/mono/admin/migration/cronjobs.txt
+    crontab -u $USERNAME /home/$USERNAME/mono/admin/scripts/migration/cronjobs.txt
 }
 
 
