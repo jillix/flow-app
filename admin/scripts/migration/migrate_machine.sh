@@ -206,6 +206,9 @@ function setup_user {
     
     # give mono user ownership over .ssh directory
     chown -R $USERNAME:$USERNAME /home/$USERNAME/.ssh
+
+    # give mono user ownership over the (most probably) orphaned screen files in /var/run/screen/S-mono/
+    chown -R $USERNAME:$USERNAME /var/run/screen/S-mono/
 }
 
 function install_software {
