@@ -336,6 +336,11 @@ function initialize_mono {
     git checkout liqshop
 }
 
+function final_steps {
+    # install the cronjobs for the mono user
+    crontab -u $USERNAME /home/$USERNAME/mono/admin/migration/cronjobs.txt
+}
+
 
 # perform the necessary tests
 checks
@@ -363,4 +368,7 @@ initialize_legacy
 
 # initialize mono
 initialize_mono
+
+# final steps
+final_steps
 

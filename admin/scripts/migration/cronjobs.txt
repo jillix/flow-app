@@ -1,0 +1,46 @@
+# Edit this file to introduce tasks to be run by cron.
+# 
+# Each task to run has to be defined through a single line
+# indicating with different fields when the task will be run
+# and what command to run for the task
+# 
+# To define the time you can provide concrete values for
+# minute (m), hour (h), day of month (dom), month (mon),
+# and day of week (dow) or use '*' in these fields (for 'any').# 
+# Notice that tasks will be started based on the cron's system
+# daemon's notion of time and timezones.
+# 
+# Output of the crontab jobs (including errors) is sent through
+# email to the user the crontab file belongs to (unless redirected).
+# 
+# For example, you can run a backup of all your user accounts
+# at 5 a.m every week with:
+# 0 5 * * 1 tar -zcf /var/backups/home.tgz /home/
+# 
+# For more information see the manual pages of crontab(5) and cron(8)
+# 
+# m h  dom mon dow   command
+
+MAILTO=admin@jillix.com
+
+# backing up MongoDB and image directory to S3
+30 4 * * * /home/mono/mono/admin/scripts/backup/backup.sh production
+
+# this will copy the happy exports from machine14.abc.it
+# TODO this will be obsolete when the ftp uploads will arive directly in ~/ftp
+30 2 * * * scp -i ~/.ssh/id_rsa_machine14 webadmin@machine14.abc4it.com:/mono/data/ftp/happy_export.zip ~/ftp > /dev/null
+45 2 * * * unzip -jo ~/ftp/happy_export.zip -d ~/ftp > /dev/null
+
+# SAG FTP file imports
+#
+00 3 * * * node ~/legacy/scripts/happybonus_customers.js ~/ftp/HappyBonusKundenExport.txt  > ~/logs/import_happybonus_customers.log
+15 3 * * * NODE_PATH=~/legacy/mono/lib5 node ~/legacy/scripts/happybonus_points.js ~/ftp/HappyBonusLiefDatExport.txt > ~/logs/import_happybonus_points.log
+55 3 * * * node ~/legacy/scripts/happybonus_nodefemail.js > ~/logs/import_happybonus_nodefemail.log
+00 4 * * * node ~/legacy/scripts/import.js > ~/logs/import_liqshop.log
+
+# Node keep-alives
+#
+# This is a temporary sollution to keep nodes running if something bad happens.
+*/5 * * * * ~/legacy/scripts/shell/starter.sh
+*/2 * * * * ~/mono/admin/scripts/keep_alive.sh
+
