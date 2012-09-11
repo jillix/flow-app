@@ -6,6 +6,8 @@ ADMINNAME=$SUDO_USER
 # Old Machine 14
 OLD_SOURCE_USERNAME=webadmin
 OLD_SOURCE_SERVER=machine14.abc4it.com
+# this adds the machine 14 to the known hosts
+echo exit | ssh -T -o StrictHostKeyChecking=no webadmin@machine14.abc4it.com
 
 # AWS Micro Instance
 SOURCE_USERNAME=ubuntu
