@@ -188,6 +188,25 @@ function setup_user {
     MONOUSER_ENTRY=`cat /etc/passwd | grep ":/home/$USERNAME:"`
     if [ "$MONOUSER_ENTRY" != "" ]
     then
+        # delete first the crontab entries (if any)
+        if [ -e "/var/spool/cron/crontabs/$USERNAME" ]
+        then
+            crontab -u $USERNAME -r
+        fi
+
+        # kill the user screens (if any)
+        HAS_SCREEN=`ps aux | grep SCREEN | grep -v grep`
+        if [ "$HAS_SCREEN" != "" ] then
+        then
+            ps aux | grep SCREEN | grep -v grep | awk '{ print $2 }' | xargs kill
+        fi
+        # and remove the user screen sockets
+        rm -rf /var/run/screen/S-$USERNAME
+
+        # kill any remaining running nodes
+        ps aux | grep node | grep -v grep | awk '{ print $2 }' | sudo xargs kill
+
+        # now delete the user
         userdel -r $USERNAME
     fi
 
@@ -206,9 +225,6 @@ function setup_user {
     
     # give mono user ownership over .ssh directory
     chown -R $USERNAME:$USERNAME /home/$USERNAME/.ssh
-
-    # give mono user ownership over the (most probably) orphaned screen files in /var/run/screen/S-mono/
-    chown -R $USERNAME:$USERNAME /var/run/screen/S-mono/
 }
 
 function install_software {
@@ -239,6 +255,9 @@ function install_software {
     
     # install graphicsmagick
     install graphicsmagick gm
+    
+    # install s3cmd if not present (for backups)
+    install s3cmd
 }
 
 function import_legacy_databases {
@@ -342,9 +361,18 @@ function initialize_mono {
 
     mkdir -p /home/$USERNAME/images
 
+    # this are temp files created to make sure happy and liqshop don't crash
+    # because the steps below have to be perdormed manually
+    mkdir /home/$USERNAME/images/happy
+    mkdir /home/$USERNAME/images/liqshop
+    touch /home/$USERNAME/images/happy/_sml.png
+    touch /home/$USERNAME/images/happy/_big.png
+
     echo "####################################"
     echo "############### TODO ###############"
+    echo "Manually execute the commands below!"
     echo "####################################"
+    echo "rm -R /home/$USERNAME/images/*"
     echo "mount /dev/xvdi1 /home/$USERNAME/images"
     echo "ln --symbolic /home/mono/images/happy /home/$USERNAME/legacy/projects/happybonus/mods/article/img"
     echo "ln --symbolic /home/mono/images/liqshop /home/$USERNAME/legacy/projects/liqshop/files/pub/articles"
