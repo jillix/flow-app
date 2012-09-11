@@ -118,7 +118,7 @@ function checkout_mono {
 
     echo "*** Checking out mono source code ***"
 
-    # add the github host key to the known_host to avoid being asked later
+    # add the github host key to the known_hosts to avoid being asked later
     ssh -T -o StrictHostKeyChecking=no git@github.com
 
     MONO_TMP=/tmp/mono_checkout
@@ -236,9 +236,11 @@ function setup_user {
 
     # add this user's keys to the mono user keys
     cp ~/.ssh/authorized_keys /home/$USERNAME/.ssh/
+    cp ~/.ssh/known_hosts /home/$USERNAME/.ssh/
 
     # give the correct permissions to the .ssh directory
     chmod 0600 /home/$USERNAME/.ssh/authorized_keys
+    chmod 0644 /home/$USERNAME/.ssh/known_hosts
     chmod 0700 /home/$USERNAME/.ssh
     
     # give mono user ownership over .ssh directory
