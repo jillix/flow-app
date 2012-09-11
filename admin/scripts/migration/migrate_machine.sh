@@ -370,6 +370,11 @@ function install_legacy_software {
 
     # install ftp for nightly sag import jobs
     install vsftpd
+    # TODO one needs to add the sagag user if not added
+    # now set up our configuration
+    cp /home/$USERNAME/mono/admin/scripts/migration/vsftpd.conf /etc/vsftpd.conf
+    # and restart the ftp daemon
+    service vsftpd restart
 }
 
 function initialize_legacy {
