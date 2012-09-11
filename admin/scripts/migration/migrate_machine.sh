@@ -177,6 +177,20 @@ function checkout_legacy {
     chown -R $USERNAME:$USERNAME /home/$USERNAME/s*.sh
 }
 
+function kill_pattern {
+    # exit if no pattern was provided
+    if [ "$1" == "" ]
+    then
+        return
+    fi
+
+    HAS_PATTERN=`ps aux | grep "$1" | grep -v grep`
+    if [ "$HAS_PATTERN" != "" ]
+    then
+        ps aux | grep "$1" | grep -v grep | awk '{ print $2 }' | xargs kill
+    fi
+}
+
 function setup_user {
     # TODO for test purposes only
     MONO_IMG_MNT=`mount | grep /home/$USERNAME/images`
@@ -195,16 +209,12 @@ function setup_user {
         fi
 
         # kill the user screens (if any)
-        HAS_SCREEN=`ps aux | grep SCREEN | grep -v grep`
-        if [ "$HAS_SCREEN" != "" ]
-        then
-            ps aux | grep SCREEN | grep -v grep | awk '{ print $2 }' | xargs kill
-        fi
+        kill_pattern "SCREEN"
         # and remove the user screen sockets
         rm -rf /var/run/screen/S-$USERNAME
 
-        # kill any remaining running nodes
-        ps aux | grep node | grep -v grep | awk '{ print $2 }' | sudo xargs kill
+        # kill any remaining running nodes (if any)
+        kill_pattern "node"
 
         # now delete the user
         userdel -r $USERNAME
