@@ -196,7 +196,7 @@ function setup_user {
 
         # kill the user screens (if any)
         HAS_SCREEN=`ps aux | grep SCREEN | grep -v grep`
-        if [ "$HAS_SCREEN" != "" ] then
+        if [ "$HAS_SCREEN" != "" ]
         then
             ps aux | grep SCREEN | grep -v grep | awk '{ print $2 }' | xargs kill
         fi
