@@ -36,7 +36,7 @@ MAILTO=admin@jillix.com
 00 3 * * * node ~/legacy/scripts/happybonus_customers.js ~/ftp/HappyBonusKundenExport.txt  > ~/logs/import_happybonus_customers.log
 15 3 * * * NODE_PATH=~/legacy/mono/lib5 node ~/legacy/scripts/happybonus_points.js ~/ftp/HappyBonusLiefDatExport.txt > ~/logs/import_happybonus_points.log
 55 3 * * * node ~/legacy/scripts/happybonus_nodefemail.js > ~/logs/import_happybonus_nodefemail.log
-00 4 * * * node ~/legacy/scripts/import.js > ~/logs/import_liqshop.log
+00 4 * * * NODE_PATH=~/legacy/mono/lib5 node ~/legacy/scripts/import.js > ~/logs/import_liqshop.log
 
 # Node keep-alives
 #
