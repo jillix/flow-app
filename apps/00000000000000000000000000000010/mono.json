@@ -25,7 +25,7 @@
         {
             "id": 1,
             "username": "sag",
-            "password": "3cc849279ba298b587a34cabaeffc5ecb3a044bbf97c516fab7ede9d1af77cfa",
+            "password": "75b2e3e3b7f220bd829055f0335fa417c0e64050369a85654bed6c7ba9f9ddc4",
             "data": {
                 "fullname": "Liqshop Admin User",
                 "language": "de"
@@ -35,7 +35,7 @@
         {
             "id": 2,
             "username": "ddchlq",
-            "password": "3cc849279ba298b587a34cabaeffc5ecb3a044bbf97c516fab7ede9d1af77cfa",
+            "password": "d9f3626523c9ecebe2ccdfe4c589f5d8b4c2c764e9fc7e7b0c8e33ca4142ff22",
             "data": {
                 "fullname": "DDCH Orders Liqshop Admin",
                 "language": "de",
@@ -48,7 +48,7 @@
         {
             "id": 3,
             "username": "ddchhb",
-            "password": "3cc849279ba298b587a34cabaeffc5ecb3a044bbf97c516fab7ede9d1af77cfa",
+            "password": "d9f3626523c9ecebe2ccdfe4c589f5d8b4c2c764e9fc7e7b0c8e33ca4142ff22",
             "data": {
                 "fullname": "DDCH Orders Happybonus Admin",
                 "language": "de",
@@ -61,7 +61,7 @@
         {
             "id": 4,
             "username": "ddatlq",
-            "password": "3cc849279ba298b587a34cabaeffc5ecb3a044bbf97c516fab7ede9d1af77cfa",
+            "password": "c20d0d56ab6a407b79d14d397aa68c2c9c94d0626289d5ef28c3a43dad323795",
             "data": {
                 "fullname": "DDAT Liqshop Admin",
                 "language": "de",
@@ -74,7 +74,7 @@
         {
             "id": 5,
             "username": "tmchlq",
-            "password": "3cc849279ba298b587a34cabaeffc5ecb3a044bbf97c516fab7ede9d1af77cfa",
+            "password": "7fac29bea7f87384a65710c8d170f08dcb32e7a2b72568926446fbfe646c1d7c",
             "data": {
                 "fullname": "TMCH Liqshop Admin",
                 "language": "de",
@@ -85,18 +85,823 @@
             "roles": [6,1,0]
         },
         {
-            "id": 6,
-            "username": "ddaarau",
-            "password": "3cc849279ba298b587a34cabaeffc5ecb3a044bbf97c516fab7ede9d1af77cfa",
-            "data": {
-                "fullname": "Liqshop Branch User",
-                "fullname": "DD | Aarau",
-                "language": "de",
-                "session": {
-                    "branch": "AA"
-                }
-            },
-            "roles": [1,0]
+           "id": "6",
+           "username": "ddchmar",
+           "password": "d9f3626523c9ecebe2ccdfe4c589f5d8b4c2c764e9fc7e7b0c8e33ca4142ff22",
+           "data": {
+               "fullname": "DD | Marketing",
+               "language": "de",
+               "session": {
+                   "branch": "DDCHMAR,LAUPER"
+               }
+           },
+           "roles": [1,0]
+        },
+        {
+           "id": "7",
+           "username": "lauper",
+           "password": "e69060dafc3d43b4fac08726eaecd3b289f2f9158688260b1935ffb432210acf",
+           "data": {
+               "fullname": "LC | Lauper",
+               "language": "de",
+               "session": {
+                   "branch": "LAUPER"
+               }
+           },
+           "roles": [1,0]
+        },
+        {
+           "id": "8",
+           "username": "dativg",
+           "password": "479bf3ae07bd3a4ce459db2313434bfcf1de9cd8fba498ba51b86d3c2ae538da",
+           "data": {
+               "fullname": "DAT | Investitionsgüter",
+               "language": "de",
+               "session": {
+                   "branch": "DDAT"
+               }
+           },
+           "roles": [1,0]
+        },
+        {
+           "id": "9",
+           "username": "datvg",
+           "password": "479bf3ae07bd3a4ce459db2313434bfcf1de9cd8fba498ba51b86d3c2ae538da",
+           "data": {
+               "fullname": "DAT | Verbrauchsgüter",
+               "language": "de",
+               "session": {
+                   "branch": "DDAT"
+               }
+           },
+           "roles": [1,0]
+        },
+        {
+           "id": "10",
+           "username": "dchaa",
+           "password": "e9a82b29d0a309758a434777091f8c92673ba8853bc06a59f399b92f7ba361b7",
+           "data": {
+               "fullname": "DD | Aarau",
+               "language": "de",
+               "session": {
+                   "branch": "AA"
+               }
+           },
+           "roles": [1,0]
+        },
+        {
+           "id": "11",
+           "username": "dchbe",
+           "password": "95d3a6437b56fbcc23f34db6b519c4956c53e2955c76a9e46f24dc87d4c6fd58",
+           "data": {
+               "fullname": "DD | Bern",
+               "language": "de",
+               "session": {
+                   "branch": "BE"
+               }
+           },
+           "roles": [1,0]
+        },
+        {
+           "id": "12",
+           "username": "dchbs",
+           "password": "2f302204c451cd9a0d9f1b23ad9733b3dd71ea3f74a8924a12f5829903e5e92a",
+           "data": {
+               "fullname": "DD | Basel",
+               "language": "de",
+               "session": {
+                   "branch": "BS"
+               }
+           },
+           "roles": [1,0]
+        },
+        {
+           "id": "13",
+           "username": "dchbur",
+           "password": "6e80132e298a210fe4cc677b43cbc9c0c09a3b8b235c7663a1237d7e61fc53b4",
+           "data": {
+               "fullname": "DD | Burgdorf",
+               "language": "de",
+               "session": {
+                   "branch": "BUR"
+               }
+           },
+           "roles": [1,0]
+        },
+        {
+           "id": "14",
+           "username": "dchla",
+           "password": "4f90f57995205e8e464da0003d837a18dbe017f7290ea22edafe4709cb1e67cc",
+           "data": {
+               "fullname": "DD | Langnau",
+               "language": "de",
+               "session": {
+                   "branch": "LA"
+               }
+           },
+           "roles": [1,0]
+        },
+        {
+           "id": "15",
+           "username": "dchlu",
+           "password": "44021a167f13d094844b227e9d97d834de20cf0473c99a9eddc5c702a1f66697",
+           "data": {
+               "fullname": "DD | Luzern",
+               "language": "de",
+               "session": {
+                   "branch": "LU"
+               }
+           },
+           "roles": [1,0]
+        },
+        {
+           "id": "16",
+           "username": "dchoen",
+           "password": "0da43cdf1450379df99443aee87dd26fe79d4392cf44b4676e58682eddebd921",
+           "data": {
+               "fullname": "DD | Oensingen",
+               "language": "de",
+               "session": {
+                   "branch": "OEN"
+               }
+           },
+           "roles": [1,0]
+        },
+        {
+           "id": "17",
+           "username": "dchsol",
+           "password": "1089c7c8b99b159441206d96e5bd6246556f0d8d4d41d3b8a96a9298354bd19f",
+           "data": {
+               "fullname": "DD | Solothurn",
+               "language": "de",
+               "session": {
+                   "branch": "SOL"
+               }
+           },
+           "roles": [1,0]
+        },
+        {
+           "id": "18",
+           "username": "dchth",
+           "password": "e7cb53c0f89e9bd4374a3a8576bbdfb07c078cb65c81b2fad21aa5efee4994b7",
+           "data": {
+               "fullname": "DD | Thun",
+               "language": "de",
+               "session": {
+                   "branch": "TH"
+               }
+           },
+           "roles": [1,0]
+        },
+        {
+           "id": "19",
+           "username": "dchbd",
+           "password": "04ccbbfcc42066a050c9b86778fea1c113b9ff4d4607df2ecf158ade6b290e2a",
+           "data": {
+               "fullname": "DD | Baden",
+               "language": "de",
+               "session": {
+                   "branch": "BD"
+               }
+           },
+           "roles": [1,0]
+        },
+        {
+           "id": "20",
+           "username": "dchbul",
+           "password": "7636f4f8ac1a321c6f25e010d7f4a855ead7aeafa67cafd33d5470a50127b4a2",
+           "data": {
+               "fullname": "DD | Bülach",
+               "language": "de",
+               "session": {
+                   "branch": "BUL"
+               }
+           },
+           "roles": [1,0]
+        },
+        {
+           "id": "21",
+           "username": "dchcm",
+           "password": "420cb7cc928da8d5ddbddc96db86a4c0f97d3f644dad6cad4b89bc9452e5ee72",
+           "data": {
+               "fullname": "DD | Cham",
+               "language": "de",
+               "session": {
+                   "branch": "CM"
+               }
+           },
+           "roles": [1,0]
+        },
+        {
+           "id": "22",
+           "username": "dchdi",
+           "password": "b138c0b35a91131122875f960be18c9873bd9bd0034ba7847caa364b91462473",
+           "data": {
+               "fullname": "DD | Dietlikon",
+               "language": "de",
+               "session": {
+                   "branch": "DI"
+               }
+           },
+           "roles": [1,0]
+        },
+        {
+           "id": "23",
+           "username": "dchjo",
+           "password": "0fd688a63532750bf141b1a85117bdb5d4ff5c77d7533fe4df1ad0bfffa1e1ea",
+           "data": {
+               "fullname": "DD | Jona",
+               "language": "de",
+               "session": {
+                   "branch": "JO"
+               }
+           },
+           "roles": [1,0]
+        },
+        {
+           "id": "24",
+           "username": "dchru",
+           "password": "40480ac89b799811d17d14579704134d43b7c33631f9aa9e553389cd1ee65ddf",
+           "data": {
+               "fullname": "DD | Rüschlikon",
+               "language": "de",
+               "session": {
+                   "branch": "RU"
+               }
+           },
+           "roles": [1,0]
+        },
+        {
+           "id": "25",
+           "username": "dchsh",
+           "password": "8a541e403b7f7dd048d2b9b0c807ed86169bd712228075f82ba414e6a5979f5b",
+           "data": {
+               "fullname": "DD | Schaffhausen",
+               "language": "de",
+               "session": {
+                   "branch": "SH"
+               }
+           },
+           "roles": [1,0]
+        },
+        {
+           "id": "26",
+           "username": "dchwt",
+           "password": "ed94c5f6054f08b04e63dbf01dd58ffcb5cc6f9b56bd292a6e271968b767e724",
+           "data": {
+               "fullname": "DD | Winterthur",
+               "language": "de",
+               "session": {
+                   "branch": "WT"
+               }
+           },
+           "roles": [1,0]
+        },
+        {
+           "id": "27",
+           "username": "dchza",
+           "password": "86398e14cd5311a002b3ed08ceef69909b7836d87aebd360df032d3ec8686e36",
+           "data": {
+               "fullname": "DD | Altstetten",
+               "language": "de",
+               "session": {
+                   "branch": "ZA"
+               }
+           },
+           "roles": [1,0]
+        },
+        {
+           "id": "28",
+           "username": "dchzo",
+           "password": "a2e06365327c05110f5eeb6192068ff9d10ffbbaecdbbf63d2f96c90b20e8768",
+           "data": {
+               "fullname": "DD | Örlikon",
+               "language": "de",
+               "session": {
+                   "branch": "ZO"
+               }
+           },
+           "roles": [1,0]
+        },
+        {
+           "id": "29",
+           "username": "dchchu",
+           "password": "acdb6ad98461c90ab18cdd29e060885d4157ed77d2c00807c05d05bc53792947",
+           "data": {
+               "fullname": "DD | Chur",
+               "language": "de",
+               "session": {
+                   "branch": "CHU"
+               }
+           },
+           "roles": [1,0]
+        },
+        {
+           "id": "30",
+           "username": "dchsg",
+           "password": "f0936a4c96e1cd88ee480c9f2e807c58175b4dfd83ddd4b077bf0d82c59a4c31",
+           "data": {
+               "fullname": "DD | St. Gallen",
+               "language": "de",
+               "session": {
+                   "branch": "SG"
+               }
+           },
+           "roles": [1,0]
+        },
+        {
+           "id": "31",
+           "username": "dchwf",
+           "password": "04a3f8e2566e0ef5b107ba23af7821fb9e59f9db37c6a25317c76b51a48ab934",
+           "data": {
+               "fullname": "DD | Weinfelden",
+               "language": "de",
+               "session": {
+                   "branch": "WF"
+               }
+           },
+           "roles": [1,0]
+        },
+        {
+           "id": "32",
+           "username": "dchwil",
+           "password": "7940bd361dc822c0c1f26f28d451ed6c61c54a22b09689c62c335966f15ca35e",
+           "data": {
+               "fullname": "DD | Wil",
+               "language": "de",
+               "session": {
+                   "branch": "WIL"
+               }
+           },
+           "roles": [1,0]
+        },
+        {
+           "id": "33",
+           "username": "dchbz",
+           "password": "f8e01d1b17e6402bd31cbdd545aa03cdc46b85a41ec92f69509aa3108f9b1255",
+           "data": {
+               "fullname": "DD | Bellinzona",
+               "language": "it",
+               "session": {
+                   "branch": "BZ"
+               }
+           },
+           "roles": [1,0]
+        },
+        {
+           "id": "34",
+           "username": "dchlg",
+           "password": "e19a9ae5dcac7e14ae1bbeb9e1da90f260025ba590cb9bae8447d5d34ebecd4d",
+           "data": {
+               "fullname": "DD | Lugano",
+               "language": "it",
+               "session": {
+                   "branch": "LG"
+               }
+           },
+           "roles": [1,0]
+        },
+        {
+           "id": "35",
+           "username": "dchdel",
+           "password": "0ee8a4188cd4fa518a64f0af0d26dcd88756fe5dcf36bcb909368b10289967fb",
+           "data": {
+               "fullname": "DD | Delémont",
+               "language": "fr",
+               "session": {
+                   "branch": "DEL"
+               }
+           },
+           "roles": [1,0]
+        },
+        {
+           "id": "36",
+           "username": "dchfr",
+           "password": "d729564426a4d3e77cfdc9b4c4805ba06dc20a1130a33bd203cb181e79ef0063",
+           "data": {
+               "fullname": "DD | Fribourg",
+               "language": "fr",
+               "session": {
+                   "branch": "FR"
+               }
+           },
+           "roles": [1,0]
+        },
+        {
+           "id": "37",
+           "username": "dchge",
+           "password": "d2f3e99d4770ae2ade2f006809ca3648350f706ca5a97b23858942aae95000d9",
+           "data": {
+               "fullname": "DD | Genève",
+               "language": "fr",
+               "session": {
+                   "branch": "GE"
+               }
+           },
+           "roles": [1,0]
+        },
+        {
+           "id": "38",
+           "username": "dchls",
+           "password": "7c508dc5b5da21da5fa49b312bacbf77c5635f0b31a4c1af47fd979bc2e779f1",
+           "data": {
+               "fullname": "DD | Lausanne",
+               "language": "fr",
+               "session": {
+                   "branch": "LS"
+               }
+           },
+           "roles": [1,0]
+        },
+        {
+           "id": "39",
+           "username": "dchma",
+           "password": "0da4b104c4d8589fcb96a03aa0787549a2631935b0f499097acd4d422aa61824",
+           "data": {
+               "fullname": "DD | Marin",
+               "language": "fr",
+               "session": {
+                   "branch": "MA"
+               }
+           },
+           "roles": [1,0]
+        },
+        {
+           "id": "40",
+           "username": "dchsi",
+           "password": "955812820ffdc5a2920a01d4572a2ad1cc932b87b75acddec054ca05c85cbaf1",
+           "data": {
+               "fullname": "DD | Sion",
+               "language": "fr",
+               "session": {
+                   "branch": "SI"
+               }
+           },
+           "roles": [1,0]
+        },
+        {
+           "id": "41",
+           "username": "dchvne",
+           "password": "ad34f18dea2b9ebbdc778885bc2f96ec62faf2527dc907c96084ddb9a2390625",
+           "data": {
+               "fullname": "DD | Villeneuve",
+               "language": "fr",
+               "session": {
+                   "branch": "VNE"
+               }
+           },
+           "roles": [1,0]
+        },
+        {
+           "id": "42",
+           "username": "dchyve",
+           "password": "c4e4983265729588b857eada9770674964537185582ec7aee9f0b1cf751725c2",
+           "data": {
+               "fullname": "DD | Yverdon",
+               "language": "fr",
+               "session": {
+                   "branch": "YVE"
+               }
+           },
+           "roles": [1,0]
+        },
+        {
+           "id": "43",
+           "username": "tet",
+           "password": "0c554e6743700fec3718af5f9bd2dabe5bd77ab56aa44430ad67cc37c3ae667b",
+           "data": {
+               "fullname": "TM | Etagnières",
+               "language": "fr",
+               "session": {
+                   "branch": "TET"
+               }
+           },
+           "roles": [1,0]
+        },
+        {
+           "id": "44",
+           "username": "tls",
+           "password": "ecf1ec1fa28f1da21934df1b36bd7baa4b63a0ece3f6d619e257b85ec321e450",
+           "data": {
+               "fullname": "TM | Lausanne",
+               "language": "fr",
+               "session": {
+                   "branch": "TLS"
+               }
+           },
+           "roles": [1,0]
+        },
+        {
+           "id": "45",
+           "username": "tro",
+           "password": "db3924bf73bced933b41c0d4ab53f8d1470d2590f5f4d1c6a1f0009635707626",
+           "data": {
+               "fullname": "TM | Romont",
+               "language": "fr",
+               "session": {
+                   "branch": "TRO"
+               }
+           },
+           "roles": [1,0]
+        },
+        {
+           "id": "46",
+           "username": "tsi",
+           "password": "b5e91c059fd73705a35d6551ffc7ce5b673c9618f9a635ee43ddf61b5e842636",
+           "data": {
+               "fullname": "TM | Sion",
+               "language": "fr",
+               "session": {
+                   "branch": "TSI"
+               }
+           },
+           "roles": [1,0]
+        },
+        {
+           "id": "47",
+           "username": "tge",
+           "password": "e7681bd48eaf6ff72559ab6eb0d18c0ba53c1d663a3e5ee0349f6c2515a9fdc5",
+           "data": {
+               "fullname": "TM | Genève",
+               "language": "fr",
+               "session": {
+                   "branch": "TGE"
+               }
+           },
+           "roles": [1,0]
+        },
+        {
+           "id": "48",
+           "username": "tve",
+           "password": "57d0ce8481e92bd4d2a0c51cb6a0fcb39e7266f5737bac4dee050d5b495471e9",
+           "data": {
+               "fullname": "TM | Vernier",
+               "language": "fr",
+               "session": {
+                   "branch": "TVE"
+               }
+           },
+           "roles": [1,0]
+        },
+        {
+           "id": "49",
+           "username": "tbe",
+           "password": "323ffa49fe23683712e89c19c1247ab948d2cad411f11e76b83d7c6ca3855b08",
+           "data": {
+               "fullname": "TM | Bern",
+               "language": "de",
+               "session": {
+                   "branch": "TBE"
+               }
+           },
+           "roles": [1,0]
+        },
+        {
+           "id": "50",
+           "username": "tlt",
+           "password": "69b19797326f64f96704c342d0e79cd4f41d67b7be7d877f0464af0968fb7241",
+           "data": {
+               "fullname": "TM | Langenthal",
+               "language": "de",
+               "session": {
+                   "branch": "TLT"
+               }
+           },
+           "roles": [1,0]
+        },
+        {
+           "id": "51",
+           "username": "twa",
+           "password": "962192edf60d0da2c36886f67112bca990991a63b339b3f31620e31ceb87f6d7",
+           "data": {
+               "fullname": "TM | Wangen",
+               "language": "de",
+               "session": {
+                   "branch": "TWA"
+               }
+           },
+           "roles": [1,0]
+        },
+        {
+           "id": "52",
+           "username": "ths",
+           "password": "89726b34c0c126813ab38fb3a9047af06e3ebbad7ce8e0d0e3d3d0fe7810a669",
+           "data": {
+               "fullname": "TM | Hunzenschwil",
+               "language": "de",
+               "session": {
+                   "branch": "THS"
+               }
+           },
+           "roles": [1,0]
+        },
+        {
+           "id": "53",
+           "username": "tth",
+           "password": "037bfe430e39df854794815f146fb92e3edf7c0d9cbf476fe114a4e35a2f8ff1",
+           "data": {
+               "fullname": "TM | Thun",
+               "language": "de",
+               "session": {
+                   "branch": "TTH"
+               }
+           },
+           "roles": [1,0]
+        },
+        {
+           "id": "54",
+           "username": "tit",
+           "password": "8243707107fbb7fd1aaa69e90d1eff399cab697b075942fd98d1debc129fdc23",
+           "data": {
+               "fullname": "TM | Ittigen",
+               "language": "de",
+               "session": {
+                   "branch": "TIT"
+               }
+           },
+           "roles": [1,0]
+        },
+        {
+           "id": "55",
+           "username": "tbr",
+           "password": "a0756a3fecb3f5bb37539765370e9298bdb88b052ea7c3f34b984a0d827c1b8e",
+           "data": {
+               "fullname": "TM | Brügg",
+               "language": "de",
+               "session": {
+                   "branch": "TBR"
+               }
+           },
+           "roles": [1,0]
+        },
+        {
+           "id": "56",
+           "username": "tbs",
+           "password": "bb01ee51e8360ac98ff209a305dfac6d4843bb9a9461aa20c21e9cf8838e98a6",
+           "data": {
+               "fullname": "TM | Birsfelden",
+               "language": "de",
+               "session": {
+                   "branch": "TBS"
+               }
+           },
+           "roles": [1,0]
+        },
+        {
+           "id": "57",
+           "username": "tlu",
+           "password": "b597febc1a62161ccd18cc369b08f2171646837c3ca2c877424fa5d02d5f1eb1",
+           "data": {
+               "fullname": "TM | Luzern/Kriens",
+               "language": "de",
+               "session": {
+                   "branch": "TLU"
+               }
+           },
+           "roles": [1,0]
+        },
+        {
+           "id": "58",
+           "username": "twt",
+           "password": "76ad2ce3ad6e7778524e85098288e3eeab049a555219328559b5eba0e786ea12",
+           "data": {
+               "fullname": "TM | Winterthur",
+               "language": "de",
+               "session": {
+                   "branch": "TWT"
+               }
+           },
+           "roles": [1,0]
+        },
+        {
+           "id": "59",
+           "username": "tza",
+           "password": "3e4013599bd105b1404589cdc84704d0f51d9c7a305a804081572df44e1a07d2",
+           "data": {
+               "fullname": "TM | Zürich",
+               "language": "de",
+               "session": {
+                   "branch": "TZA"
+               }
+           },
+           "roles": [1,0]
+        },
+        {
+           "id": "60",
+           "username": "tda",
+           "password": "97757bbac929ac019da1abf7bb40f1ec4561b6b0fdfbbd86b2efeb70e262c74a",
+           "data": {
+               "fullname": "TM | Dällikon",
+               "language": "de",
+               "session": {
+                   "branch": "TDA"
+               }
+           },
+           "roles": [1,0]
+        },
+        {
+           "id": "61",
+           "username": "tal",
+           "password": "36c714ee6ee8eeb3dddafd34797fb9fb8f9b6c9889f6acea62bf6ec022ae47d4",
+           "data": {
+               "fullname": "TM | Altendorf",
+               "language": "de",
+               "session": {
+                   "branch": "TAL"
+               }
+           },
+           "roles": [1,0]
+        },
+        {
+           "id": "62",
+           "username": "tsg",
+           "password": "16a16b9670fe28bcb642bbb739ebb0c2ed33b0c870498becd2d6b02cf48a0106",
+           "data": {
+               "fullname": "TM | St. Gallen",
+               "language": "de",
+               "session": {
+                   "branch": "TSG"
+               }
+           },
+           "roles": [1,0]
+        },
+        {
+           "id": "63",
+           "username": "tch",
+           "password": "1e1c016a5f5c527378c162fb287412b51712b3935a97ecd2034fa0b99659223a",
+           "data": {
+               "fullname": "TM | Chur",
+               "language": "de",
+               "session": {
+                   "branch": "TCH"
+               }
+           },
+           "roles": [1,0]
+        },
+        {
+           "id": "64",
+           "username": "tga",
+           "password": "913822278e279804959e5f1706bab701484a86cd77339e3ef9f909c27be0caf2",
+           "data": {
+               "fullname": "TM | Gams",
+               "language": "de",
+               "session": {
+                   "branch": "TGA"
+               }
+           },
+           "roles": [1,0]
+        },
+        {
+           "id": "65",
+           "username": "tlg",
+           "password": "41ff5b657ac24743ca1604ee593b80ecfe65c190e4a7899dd3c106808184de09",
+           "data": {
+               "fullname": "TM | Viganello",
+               "language": "it",
+               "session": {
+                   "branch": "TLG"
+               }
+           },
+           "roles": [1,0]
+        },
+        {
+           "id": "66",
+           "username": "tgi",
+           "password": "f44aa2b3053cee2ef05129c0238d072435a2f65927531fd4f49f1178d5454d03",
+           "data": {
+               "fullname": "TM | Giubiasco",
+               "language": "it",
+               "session": {
+                   "branch": "TGI"
+               }
+           },
+           "roles": [1,0]
+        },
+        {
+           "id": "67",
+           "username": "tny",
+           "password": "b3ea8b6e915d7296c6894583b2dc09c6bc2781dd9619ebae8cc3b472eaed1230",
+           "data": {
+               "fullname": "TM | Nyon",
+               "language": "fr",
+               "session": {
+                   "branch": "TNY"
+               }
+           },
+           "roles": [1,0]
+        },
+        {
+           "id": "68",
+           "username": "twe",
+           "password": "0b1f758298225df529f07bff2ebd75773c82eb2b22199144adcd0da09af7f067",
+           "data": {
+               "fullname": "TM | Wetzikon",
+               "language": "de",
+               "session": {
+                   "branch": "TWE"
+               }
+           },
+           "roles": [1,0]
         }
     ],
     "roles": [
@@ -149,7 +954,7 @@
             }
         },
         "liqshop_order_list": {
-            "module": "bitbucket/jillix/liqshopOrderList/v0.1.0",
+            "module": "bitbucket/jillix/liqshopOrderList/v0.1.1",
             "roles": [1],
             "config": {
                 "html": {
