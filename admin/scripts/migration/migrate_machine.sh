@@ -221,6 +221,9 @@ function setup_user {
         # kill orient if running
         kill_pattern "orient"
 
+        # waiting a little for orient to die
+        sleep 3
+
         # now delete the user
         userdel -r $USERNAME
         if [ $? != 0 ]
@@ -250,6 +253,10 @@ function setup_user {
 
     # give mono user ownership over .ssh directory
     chown -R $USERNAME:$USERNAME /home/$USERNAME/.ssh
+
+    # create the ftp directory for temporary ftp uploads from machine14
+    mkdir /home/$USERNAME/ftp
+    chown -R $USERNAME:$USERNAME /home/$USERNAME/ftp
 }
 
 function install_software {
