@@ -8,6 +8,7 @@
     "domains": [
         "liqshop.ch",
         "orders.happybonus.ch",
+        "orders.test.happybonus.ch",
         "liqshop.jillix.net"
     ],
     "publicDir": "public",
