@@ -6,6 +6,8 @@ ADMINNAME=$SUDO_USER
 # Old Machine 14
 OLD_SOURCE_USERNAME=webadmin
 OLD_SOURCE_SERVER=machine14.abc4it.com
+# this adds the machine 14 to the known hosts
+echo exit | sudo -E -u ubuntu ssh -T -o StrictHostKeyChecking=no webadmin@machine14.abc4it.com
 
 # AWS Micro Instance
 SOURCE_USERNAME=ubuntu
@@ -26,17 +28,17 @@ function checks {
 
     if [ "$ADMINNAME" = "" ]
     then
-        echo "This script must be run as super user. Use:"
-        echo "    sudo -E $0"
+        echo "This script must be run as super user. Use:" 1>&2
+        echo "    sudo -E $0" 1>&2
         exit 1
     fi
 
     if [ "$SSH_AUTH_SOCK" = "" ]
     then
-        echo "In order to access git repos you must enable SSH Agent Forwarding."
-        echo "For this you must:"
-        echo "    - connect to this server using the ssh -A option and"
-        echo "    - run this script with sudo -E option to preserve the environement variables"
+        echo "In order to access git repos you must enable SSH Agent Forwarding." 1>&2
+        echo "For this you must:" 1>&2
+        echo "    - connect to this server using the ssh -A option and" 1>&2
+        echo "    - run this script with sudo -E option to preserve the environement variables" 1>&2
         exit 2
     fi
 
@@ -46,8 +48,8 @@ function install {
 
     if [ "$1" = "" ]
     then
-        echo "install called with no arguments."
-        echo "Aborting!"
+        echo "install called with no arguments." 1>&2
+        echo "Aborting!" 1>&2
         exit 3
     fi
 
@@ -116,7 +118,7 @@ function checkout_mono {
 
     echo "*** Checking out mono source code ***"
 
-    # add the github host key to the known_host to avoid being asked later
+    # add the github host key to the known_hosts to avoid being asked later
     ssh -T -o StrictHostKeyChecking=no git@github.com
 
     MONO_TMP=/tmp/mono_checkout
@@ -146,18 +148,18 @@ function check_latest_script {
 
     if [ ! -f $MIGRATION_SCRIPT ]
     then
-        echo "The migration script file is missing from the mono repo. Looking for: $MONO_MIGRATION_SCRIPT"
-        echo "Aborting!"
-        exit 4
+        echo "The migration script file is missing from the mono repo. Looking for: $MONO_MIGRATION_SCRIPT" 1>&2
+        echo "Aborting!" 1>&2
+        exit 5
     fi
 
     diff $0 "$MIGRATION_SCRIPT" > /dev/null
     if [ $? != 0 ]
     then
-        echo "This script has changed. Updating with the latest from the repository. Please run this script again."
-        echo "Aborting!"
+        echo "This script has changed. Updating with the latest from the repository. Please run this script again." 1>&2
+        echo "Aborting!" 1>&2
         cp "$MIGRATION_SCRIPT" $0
-        exit 5
+        exit 6
     fi
 }
 
@@ -177,6 +179,20 @@ function checkout_legacy {
     chown -R $USERNAME:$USERNAME /home/$USERNAME/s*.sh
 }
 
+function kill_pattern {
+    # exit if no pattern was provided
+    if [ "$1" == "" ]
+    then
+        return
+    fi
+
+    HAS_PATTERN=`ps aux | grep "$1" | grep -v grep`
+    if [ "$HAS_PATTERN" != "" ]
+    then
+        ps aux | grep "$1" | grep -v grep | awk '{ print $2 }' | xargs kill
+    fi
+}
+
 function setup_user {
     # TODO for test purposes only
     MONO_IMG_MNT=`mount | grep /home/$USERNAME/images`
@@ -188,7 +204,34 @@ function setup_user {
     MONOUSER_ENTRY=`cat /etc/passwd | grep ":/home/$USERNAME:"`
     if [ "$MONOUSER_ENTRY" != "" ]
     then
+        # delete first the crontab entries (if any)
+        if [ -e "/var/spool/cron/crontabs/$USERNAME" ]
+        then
+            crontab -u $USERNAME -r
+        fi
+
+        # kill the user screens (if any)
+        kill_pattern "SCREEN"
+        # and remove the user screen sockets
+        rm -rf /var/run/screen/S-$USERNAME
+
+        # kill any remaining running nodes (if any)
+        kill_pattern "node"
+
+        # kill orient if running
+        kill_pattern "orient"
+
+        # waiting a little for orient to die
+        sleep 3
+
+        # now delete the user
         userdel -r $USERNAME
+        if [ $? != 0 ]
+        then
+            echo "Something went wrong when trying to delete the $USERNAME user. Try to kill all his remaining processes manually and try again." 1>&2
+            echo "Aborting!" 1>&2
+            exit 4
+        fi
     fi
 
     # create user account
@@ -199,13 +242,21 @@ function setup_user {
 
     # add this user's keys to the mono user keys
     cp ~/.ssh/authorized_keys /home/$USERNAME/.ssh/
+    cp ~/.ssh/known_hosts /home/$USERNAME/.ssh/
+    cp ~/.ssh/id_rsa_machine14 /home/$USERNAME/.ssh/
 
     # give the correct permissions to the .ssh directory
     chmod 0600 /home/$USERNAME/.ssh/authorized_keys
+    chmod 0644 /home/$USERNAME/.ssh/known_hosts
+    chmod 0600 /home/$USERNAME/.ssh/id_rsa_machine14
     chmod 0700 /home/$USERNAME/.ssh
-    
+
     # give mono user ownership over .ssh directory
     chown -R $USERNAME:$USERNAME /home/$USERNAME/.ssh
+
+    # create the ftp directory for temporary ftp uploads from machine14
+    mkdir /home/$USERNAME/ftp
+    chown -R $USERNAME:$USERNAME /home/$USERNAME/ftp
 }
 
 function install_software {
@@ -236,6 +287,9 @@ function install_software {
     
     # install graphicsmagick
     install graphicsmagick gm
+    
+    # install s3cmd if not present (for backups)
+    install s3cmd
 }
 
 function import_legacy_databases {
@@ -325,6 +379,11 @@ function install_legacy_software {
 
     # install ftp for nightly sag import jobs
     install vsftpd
+    # TODO one needs to add the sagag user if not added
+    # now set up our configuration
+    cp /home/$USERNAME/mono/admin/scripts/migration/vsftpd.conf /etc/vsftpd.conf
+    # and restart the ftp daemon
+    service vsftpd restart
 }
 
 function initialize_legacy {
@@ -339,9 +398,18 @@ function initialize_mono {
 
     mkdir -p /home/$USERNAME/images
 
+    # this are temp files created to make sure happy and liqshop don't crash
+    # because the steps below have to be perdormed manually
+    mkdir /home/$USERNAME/images/happy
+    mkdir /home/$USERNAME/images/liqshop
+    touch /home/$USERNAME/images/happy/_sml.png
+    touch /home/$USERNAME/images/happy/_big.png
+
     echo "####################################"
     echo "############### TODO ###############"
+    echo "Manually execute the commands below!"
     echo "####################################"
+    echo "rm -R /home/$USERNAME/images/*"
     echo "mount /dev/xvdi1 /home/$USERNAME/images"
     echo "ln --symbolic /home/mono/images/happy /home/$USERNAME/legacy/projects/happybonus/mods/article/img"
     echo "ln --symbolic /home/mono/images/liqshop /home/$USERNAME/legacy/projects/liqshop/files/pub/articles"
@@ -354,7 +422,7 @@ function initialize_mono {
 
 function final_steps {
     # install the cronjobs for the mono user
-    crontab -u $USERNAME /home/$USERNAME/mono/admin/migration/cronjobs.txt
+    crontab -u $USERNAME /home/$USERNAME/mono/admin/scripts/migration/cronjobs.txt
 }
 
 

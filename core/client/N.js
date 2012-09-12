@@ -15,8 +15,7 @@
 
 // TODO send error to server
 window.onerror = function(error, url, line) {
-
-    //console.log( error + "\n" + url + "\n" + line );
+    //console.error( error + "\n" + url + "\n" + line );
 };
 
 /**

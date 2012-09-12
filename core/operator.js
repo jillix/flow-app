@@ -114,7 +114,6 @@ function handlePostRequest(link, method, resume) {
 
         // buffer data
         link.req.on("data", function(chunk) {
-console.log(chunk.toString());
             jsonString += chunk.toString("utf-8");
         });
 
