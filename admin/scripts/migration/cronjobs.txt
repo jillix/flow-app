@@ -28,7 +28,7 @@ MAILTO=admin@jillix.com
 
 # this will copy the happy exports from machine14.abc.it
 # TODO this will be obsolete when the ftp uploads will arive directly in ~/ftp
-30 2 * * * scp webadmin@machine14.abc4it.com:/mono/data/ftp/happy_export.zip ~/ftp > /dev/null
+30 2 * * * scp -i .ssh/id_rsa_machine14 webadmin@machine14.abc4it.com:/mono/data/ftp/happy_export.zip ~/ftp > /dev/null
 45 2 * * * unzip -jo ~/ftp/happy_export.zip -d ~/ftp > /dev/null
 
 # SAG FTP file imports

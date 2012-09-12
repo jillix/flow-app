@@ -240,12 +240,14 @@ function setup_user {
     # add this user's keys to the mono user keys
     cp ~/.ssh/authorized_keys /home/$USERNAME/.ssh/
     cp ~/.ssh/known_hosts /home/$USERNAME/.ssh/
+    cp ~/.ssh/id_rsa_machine14 /home/$USERNAME/.ssh/
 
     # give the correct permissions to the .ssh directory
     chmod 0600 /home/$USERNAME/.ssh/authorized_keys
     chmod 0644 /home/$USERNAME/.ssh/known_hosts
+    chmod 0600 /home/$USERNAME/.ssh/id_rsa_machine14
     chmod 0700 /home/$USERNAME/.ssh
-    
+
     # give mono user ownership over .ssh directory
     chown -R $USERNAME:$USERNAME /home/$USERNAME/.ssh
 }
