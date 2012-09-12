@@ -1,5 +1,4 @@
 var formidable      = require("formidable"),
-    httpProxy       = require('http-proxy'),
     fs              = require("fs"),
     util            = require(CONFIG.root + "/core/util.js"),
     send            = require(CONFIG.root + "/core/send.js").send,
