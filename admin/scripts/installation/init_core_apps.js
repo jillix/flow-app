@@ -5,7 +5,6 @@ var cp = require('child_process');
 var fs = require('fs');
 
 var appsApi = require(CONFIG.root + "/api/apps");
-var model = require(CONFIG.root + "/core/model/orient");
 
 var apps = fs.readdirSync(CONFIG.APPLICATION_ROOT);
 

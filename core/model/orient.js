@@ -865,6 +865,27 @@ function translateAppId(appId, callback) {
 }
 
 
+exports.getApplications = function(callback) {
+
+    var command =
+        "SELECT " +
+            "* " +
+        "FROM " +
+            "VApplication";
+
+    sql(command, function(err, results) {
+
+        if (err) {
+            return callback("An error occurred while retrieving the applications: " + JSON.stringify(err));
+        }
+
+        var applications = results || [];
+
+        callback(null, applications);
+    });
+}
+
+
 exports.getApplication = function(appId, callback) {
 
     translateAppId(appId, function(err, id) {

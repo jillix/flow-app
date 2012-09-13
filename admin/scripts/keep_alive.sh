@@ -95,3 +95,5 @@ then
     execute_in_screen "$ORIENT_SCREEN_NAME" "$ORIENT_SERVER" "$ORIENT_LOG"
 fi
 
+MONO_ROOT=~/mono node "admin/scrips/keep_apps_alive.js"
+

@@ -1,6 +1,10 @@
 #!/bin/bash
 
-MONO_ROOT=~/mono
+if [ "$MONO_ROOT" == "" ]
+then
+    echo "Please set the MONO_ROOT environment variable" 1>&2
+    exit 10
+fi
 
 if [ -z "$1" ]
 then
@@ -26,6 +30,7 @@ fi
 
 # find a free port
 FREE_PORT=`"$MONO_ROOT/admin/scripts/installation/find_port.sh"`
+echo "Found port: $FREE_PORT" 1>&2
 if [ -z "$FREE_PORT" ]
 then
     echo "Could not find a free port for starting application $1" 1>&2

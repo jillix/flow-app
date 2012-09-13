@@ -63,7 +63,7 @@ node "$MONO_ROOT/admin/scripts/installation/install_app.js" "$APP_DESCRIPTOR"
 ce "Could not install application: $APP_ID"
 
 # start application node
-"$MONO_ROOT/admin/scripts/installation/start_app.sh" "$APP_ID" &> "$MONO_ROOT/apps/$APP_ID/log.txt"
+MONO_ROOT=$MONO_ROOT "$MONO_ROOT/admin/scripts/installation/start_app.sh" "$APP_ID" &> "$MONO_ROOT/apps/$APP_ID/log.txt"
 
 
 echo "Succesfully deployed application $APP_ID"

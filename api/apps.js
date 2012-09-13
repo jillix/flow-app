@@ -93,7 +93,7 @@ function uninstallFromFile(file, callback) {
  */
 function installFromObject(descriptor, callback) {
 
-    // todo validate the descriptor
+    // TODO validate the descriptor
     orient.connect(CONFIG.orient, function(err) {
 
         if (err) {
@@ -695,9 +695,41 @@ function addModuleInstanceOperations(descriptor, miid, miidObj, callback) {
 }
 
 
+function getApplications(callback) {
+    db.getApplications(callback);
+}
+
+
+var cp = require("child_process");
+
+function isApplicationRunning(appId, callback) {
+
+    var apid = cp.spawn(CONFIG.root + "/admin/scripts/app_pid.sh", [appId]);
+
+    var error = "";
+    apid.stderr.on("data", function (data) {
+        error += data.toString();
+    });
+
+    apid.on("exit", function(code) {
+        switch (code) {
+            case 0:
+                return callback(null, true);
+            case 1:
+                return callback(null, false);
+            default:
+                return callback(error);
+        }
+    });
+}
+
+
 exports.install = install;
 exports.uninstall = uninstall;
 exports.installDependencies = installDependencies;
 exports.installUsers = installUsers;
 exports.installRoles = installRoles;
+
+exports.getApplications = getApplications;
+exports.isApplicationRunning = isApplicationRunning;
 
