@@ -8,7 +8,7 @@ function _require(file) {
     }
     catch (err) {
         if (CONFIG.dev) {
-            console.log("File: " + file + "\n" + err);
+            console.error("File: " + file + "\n" + err);
         }
         return err;
     }

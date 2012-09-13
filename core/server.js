@@ -1,4 +1,5 @@
 var http = require("http");
+var fs = require("fs");
 var ip = require(CONFIG.root + "/core/util.js").ip;
 
 // imported functions
@@ -68,10 +69,45 @@ function proxyHandler(req, res) {
             return;
         }
 
+        // if port not set or port set to 0 (this happens when application was installed
+        // but not deployed or when it died and other application took over the port)
         if (!application.port) {
             send.serviceunavailable({ req: req, res: res }, "This application did not start yet...");
             return;
         }
+
+        proxy.on("proxyError", function(error, req, res) {
+
+            // TODO check if the application is still using the port and remove it from the
+            // database in order not to screw future admin statistics
+
+            var logOperationUrl = "/@/core/getLog";
+            var logFilePath = CONFIG.APPLICATION_ROOT + application.appId + "/log.txt";
+
+            if (req.url === logOperationUrl) {
+                fs.readFile(logFilePath, function(err, data) {
+
+                    if (err) {
+                        send.internalservererror({ req: req, res: res }, "Sorry! This application crashed and there's not a shred of evidence why this happened. :(");
+                        return;
+                    }
+
+                    send.ok(res, data);
+                });
+                return;
+            }
+
+            fs.exists(logFilePath, function(exists) {
+
+                if (!exists) {
+                    send.internalservererror({ req: req, res: res }, "Sorry! This application crashed and there's not a shred of evidence why this happened. :(");
+                } else {
+                    res.headers = res.headers || {};
+                    res.headers["content-type"] = "text/html";
+                    send.internalservererror({ req: req, res: res }, "Sorry! This application crashed. Maybe if you check out the <a href='" + logOperationUrl + "'>log</a> you find out why.");
+                }
+            });
+        });
 
         proxy.proxyRequest(req, res, {
             host: "localhost",

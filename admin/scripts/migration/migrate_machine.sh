@@ -7,7 +7,7 @@ ADMINNAME=$SUDO_USER
 OLD_SOURCE_USERNAME=webadmin
 OLD_SOURCE_SERVER=machine14.abc4it.com
 # this adds the machine 14 to the known hosts
-echo exit | ssh -T -o StrictHostKeyChecking=no webadmin@machine14.abc4it.com
+echo exit | sudo -E -u ubuntu ssh -T -o StrictHostKeyChecking=no webadmin@machine14.abc4it.com
 
 # AWS Micro Instance
 SOURCE_USERNAME=ubuntu
@@ -218,6 +218,12 @@ function setup_user {
         # kill any remaining running nodes (if any)
         kill_pattern "node"
 
+        # kill orient if running
+        kill_pattern "orient"
+
+        # waiting a little for orient to die
+        sleep 5
+
         # now delete the user
         userdel -r $USERNAME
         if [ $? != 0 ]
@@ -237,14 +243,20 @@ function setup_user {
     # add this user's keys to the mono user keys
     cp ~/.ssh/authorized_keys /home/$USERNAME/.ssh/
     cp ~/.ssh/known_hosts /home/$USERNAME/.ssh/
+    cp ~/.ssh/id_rsa_machine14 /home/$USERNAME/.ssh/
 
     # give the correct permissions to the .ssh directory
     chmod 0600 /home/$USERNAME/.ssh/authorized_keys
     chmod 0644 /home/$USERNAME/.ssh/known_hosts
+    chmod 0600 /home/$USERNAME/.ssh/id_rsa_machine14
     chmod 0700 /home/$USERNAME/.ssh
-    
+
     # give mono user ownership over .ssh directory
     chown -R $USERNAME:$USERNAME /home/$USERNAME/.ssh
+
+    # create the ftp directory for temporary ftp uploads from machine14
+    mkdir /home/$USERNAME/ftp
+    chown -R $USERNAME:$USERNAME /home/$USERNAME/ftp
 }
 
 function install_software {
@@ -367,6 +379,11 @@ function install_legacy_software {
 
     # install ftp for nightly sag import jobs
     install vsftpd
+    # TODO one needs to add the sagag user if not added
+    # now set up our configuration
+    cp /home/$USERNAME/mono/admin/scripts/migration/vsftpd.conf /etc/vsftpd.conf
+    # and restart the ftp daemon
+    service vsftpd restart
 }
 
 function initialize_legacy {
@@ -392,15 +409,35 @@ function initialize_mono {
     echo "############### TODO ###############"
     echo "Manually execute the commands below!"
     echo "####################################"
+    echo "1. Copy the machine14 liqshop images to the EBS volume vol-49ef7d21 (currently attached to micro) (the volume contains obolete liqshop images but GOOD happybonus ones)."
+    echo "####################################"
+    echo "2. Attach the volume vol-49ef7d21 to the new production instance."
+    echo "####################################"
+    echo "3. To mount the image directories (use mono user, no sudo):"
+    echo "####################################"
     echo "rm -R /home/$USERNAME/images/*"
     echo "mount /dev/xvdi1 /home/$USERNAME/images"
     echo "ln --symbolic /home/mono/images/happy /home/$USERNAME/legacy/projects/happybonus/mods/article/img"
     echo "ln --symbolic /home/mono/images/liqshop /home/$USERNAME/legacy/projects/liqshop/files/pub/articles"
     echo "####################################"
+    echo "4. Enable backups (follow the instructions in the email containing 's3cmd' configuration instructions):"
+    echo "####################################"
+    echo "s3cmd --configure"
+    echo "####################################"
+    echo "5. Manually start mono applications with --app and --port options"
     echo "####################################"
     echo "####################################"
 
     chown -R mono:mono /home/$USERNAME/images
+}
+
+function start_apps {
+    # do not allow the cron jobs to start applications since they will send false negative emails
+    HOME=/home/$USERNAME sudo -u $USERNAME sh -c "cd /home/$USERNAME; ~/legacy/scripts/shell/starter.sh"
+    HOME=/home/$USERNAME sudo -u $USERNAME sh -c "cd /home/$USERNAME; ~/mono/admin/scripts/keep_alive.sh"
+    # wait a little and call again because it takes a while to start orient
+    sleep 5
+    HOME=/home/$USERNAME sudo -u $USERNAME sh -c "cd /home/$USERNAME; ~/mono/admin/scripts/keep_alive.sh"
 }
 
 function final_steps {
@@ -435,6 +472,9 @@ initialize_legacy
 
 # initialize mono
 initialize_mono
+
+# start apps before the cron jobs
+start_apps
 
 # final steps
 final_steps

@@ -1,5 +1,4 @@
 var formidable      = require("formidable"),
-    httpProxy       = require('http-proxy'),
     fs              = require("fs"),
     util            = require(CONFIG.root + "/core/util.js"),
     send            = require(CONFIG.root + "/core/send.js").send,
@@ -115,7 +114,6 @@ function handlePostRequest(link, method, resume) {
 
         // buffer data
         link.req.on("data", function(chunk) {
-console.log(chunk.toString());
             jsonString += chunk.toString("utf-8");
         });
 

@@ -58,7 +58,7 @@ this.send = (function(){
 
                     res.writeHead(statusCode, res.headers || ct);
                     res.end();
-		        };
+                };
             }
             // for error responses
             else {
@@ -97,8 +97,8 @@ this.send = (function(){
                         warnOldUsage();
                     }
 
-	                res.writeHead(statusCode, ct);
-	                res.end(message || null);
+                    res.writeHead(statusCode, res.headers || ct);
+                    res.end(message || null);
                 };
             }
 
