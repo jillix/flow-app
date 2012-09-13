@@ -969,15 +969,24 @@ exports.addApplicationDomains = function(aid, domains, callback) {
 
 exports.addApplicationPort = function(appId, port, callback) {
 
-    var command = "UPDATE VApplication SET port = " + port + " WHERE id = '" + appId + "'";
+    var command = "UPDATE VApplication SET port = " + 0 + " WHERE port = " + port;
 
     sql(command, function(err) {
 
         if (err) {
-            return callback(err || "Failed to add port for application " + appId);
+            return callback(err || "Failed to remove obsolete ports from other applications.");
         }
 
-        callback(null);
+        var command = "UPDATE VApplication SET port = " + port + " WHERE id = '" + appId + "'";
+
+        sql(command, function(err) {
+
+            if (err) {
+                return callback(err || "Failed to add port for application " + appId);
+            }
+
+            callback(null);
+        });
     });
 };
 

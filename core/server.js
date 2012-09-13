@@ -69,12 +69,17 @@ function proxyHandler(req, res) {
             return;
         }
 
+        // if port not set or port set to 0 (this happens when application was installed
+        // but not deployed or when it died and other application took over the port)
         if (!application.port) {
             send.serviceunavailable({ req: req, res: res }, "This application did not start yet...");
             return;
         }
 
         proxy.on("proxyError", function(error, req, res) {
+
+            // TODO check if the application is still using the port and remove it from the
+            // database in order not to screw future admin statistics
 
             var logOperationUrl = "/@/core/getLog";
             var logFilePath = CONFIG.APPLICATION_ROOT + application.appId + "/log.txt";
