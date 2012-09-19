@@ -46,7 +46,10 @@ exports.getConfig = function(link) {
         send.badrequest(link, "No miid defined");
         return;
     }
-
+    
+    // send no cache headers IE bug
+    link.res.headers["cache-control"] = "no-cache";
+    
     model.getAppId(link.host, function(err, appid) {
 
         if (err || !appid) {
