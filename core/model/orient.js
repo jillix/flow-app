@@ -988,9 +988,29 @@ exports.addApplicationDomains = function(aid, domains, callback) {
 };
 
 
+// TODO not used currently
+exports.setApplicationStatus = function(appId, status, callback) {
+
+    callback = callback || function() {};
+
+    // save the port in this application
+    var command = "UPDATE VApplication SET status = '" + status + "' WHERE id = '" + appId + "'";
+
+    sql(command, function(err) {
+
+        if (err) {
+            return callback(err || "Failed set status '" + status + "' for application " + appId);
+        }
+
+        callback(null);
+    });
+};
+
+
 exports.addApplicationPort = function(appId, port, callback) {
 
-    var command = "UPDATE VApplication SET port = " + 0 + " WHERE port = " + port;
+    // if there is another application registered with this port, set its port to 0
+    var command = "UPDATE VApplication SET port = 0  WHERE port = " + port + " AND id <> '" + appId + "'";
 
     sql(command, function(err) {
 
@@ -998,6 +1018,7 @@ exports.addApplicationPort = function(appId, port, callback) {
             return callback(err || "Failed to remove obsolete ports from other applications.");
         }
 
+        // save the port in this application
         var command = "UPDATE VApplication SET port = " + port + " WHERE id = '" + appId + "'";
 
         sql(command, function(err) {
@@ -1016,8 +1037,8 @@ exports.getDomainApplication = function(domain, withRoutes, callback) {
 
     var command =
         "SELECT " +
-            "application.id as appId, " +
-            "application.port as port, " +
+            "application.id AS appId, " +
+            "application.port AS port, " +
             (withRoutes ? "application.routes AS routes, " : "") +
             "application.publicDir AS publicDir, " +
             "application.scripts AS scripts, " +

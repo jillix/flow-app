@@ -30,7 +30,6 @@ fi
 
 # find a free port
 FREE_PORT=`"$MONO_ROOT/admin/scripts/installation/find_port.sh"`
-echo "Found port: $FREE_PORT" 1>&2
 if [ -z "$FREE_PORT" ]
 then
     echo "Could not find a free port for starting application $1" 1>&2
