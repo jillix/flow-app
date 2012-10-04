@@ -1,6 +1,10 @@
 #!/bin/bash
 
-MONO_ROOT=~/mono
+if [ "$MONO_ROOT" == "" ]
+then
+    echo "Please set the MONO_ROOT environment variable" 1>&2
+    exit 10
+fi
 
 if [ -z "$1" ]
 then

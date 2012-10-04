@@ -42,6 +42,7 @@ Server.prototype.start = function() {
 
             model.addApplicationPort(CONFIG.app, port, function(err) {
 
+                // TODO if err, an error is thrown because req is not defined. Why?
                 if (err) {
                     send.internalservererror({ req: req, res: res }, err);
                     return;
@@ -55,6 +56,31 @@ Server.prototype.start = function() {
     });
 };
 
+
+var startingApps = {};
+
+
+function startApplication(appId) {
+
+    if (startingApps[appId]) {
+        return;
+    }
+
+    startingApps[appId] = true;
+
+    var spawn = require("child_process").spawn;
+
+    // add the required MONO_ROOT variable to the environment
+    var env = process.env;
+    env.MONO_ROOT = CONFIG.root;
+    var node = spawn(CONFIG.root + "/admin/scripts/installation/start_app.sh", [ appId ], { env: env });
+
+    var log = fs.createWriteStream(CONFIG.APPLICATION_ROOT + appId + "/log.txt");
+    node.stdout.pipe(log);
+    node.stderr.pipe(log);
+}
+
+
 function proxyHandler(req, res) {
 
     req.pause();
@@ -62,6 +88,8 @@ function proxyHandler(req, res) {
     var proxy = new (require('http-proxy')).RoutingProxy();
 
     var host = CONFIG.dev ? req.headers.host.split(":")[0] : req.headers.host;
+
+    // find the application for this domain (without the routing table)
     model.getDomainApplication(host, false, function(err, application) {
 
         if (err) {
@@ -72,7 +100,12 @@ function proxyHandler(req, res) {
         // if port not set or port set to 0 (this happens when application was installed
         // but not deployed or when it died and other application took over the port)
         if (!application.port) {
-            send.serviceunavailable({ req: req, res: res }, "This application did not start yet...");
+            // let the user know we are trying to work here
+            send.serviceunavailable({ req: req, res: res }, "This application is starting...\nTry again in a few seconds.");
+
+            // now try to start this application
+            startApplication(application.appId);
+
             return;
         }
 
@@ -83,12 +116,15 @@ function proxyHandler(req, res) {
 
             var logOperationUrl = "/@/core/getLog";
             var logFilePath = CONFIG.APPLICATION_ROOT + application.appId + "/log.txt";
+            var restartMessage = "In the meanwhile we are hardly working to revive it.";
 
             if (req.url === logOperationUrl) {
                 fs.readFile(logFilePath, function(err, data) {
 
                     if (err) {
-                        send.internalservererror({ req: req, res: res }, "Sorry! This application crashed and there's not a shred of evidence why this happened. :(");
+                        // let the user know that his application crashed
+                        var message = "Sorry! This application crashed and there's not a shred of evidence why this happened. :(";
+                        send.internalservererror({ req: req, res: res }, message);
                         return;
                     }
 
@@ -100,13 +136,22 @@ function proxyHandler(req, res) {
             fs.exists(logFilePath, function(exists) {
 
                 if (!exists) {
-                    send.internalservererror({ req: req, res: res }, "Sorry! This application crashed and there's not a shred of evidence why this happened. :(");
+                    send.internalservererror({ req: req, res: res }, "Sorry! This application crashed and there's not a shred of evidence why this happened. :(\n" + restartMessage);
                 } else {
                     res.headers = res.headers || {};
                     res.headers["content-type"] = "text/html";
-                    send.internalservererror({ req: req, res: res }, "Sorry! This application crashed. Maybe if you check out the <a href='" + logOperationUrl + "'>log</a> you find out why.");
+                    send.internalservererror({ req: req, res: res }, "Sorry! This application crashed. Maybe if you check out the <a href='" + logOperationUrl + "'>log</a> you find out why.\n" + restartMessage);
                 }
+
+                // now try to start this application
+                startApplication(application.appId);
             });
+        });
+
+        proxy.on("end", function(error, req, res) {
+            if (startingApps[application.appId]) {
+                delete startingApps[application.appId];
+            }
         });
 
         proxy.proxyRequest(req, res, {

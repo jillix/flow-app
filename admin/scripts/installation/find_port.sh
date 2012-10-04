@@ -12,7 +12,7 @@ containsElement () {
 }
 
 # find all the running mono application pids
-declare -a pids=$(lsof -P -iTCP:8000-11000 -sTCP:LISTEN | grep node | awk '{ print $9 }' | cut -d ":" -f 2 | {
+declare -a pids=$(lsof -P -iTCP:10001-10999 -sTCP:LISTEN | grep node | awk '{ print $9 }' | cut -d ":" -f 2 | {
     while read line
     do
         pids="${pids} '$line'"
