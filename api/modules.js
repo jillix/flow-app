@@ -453,6 +453,8 @@ exports.Module = function(source, owner, name, version) {
     }
     
     function getSourceUrl() {
+        
+        // over HTTPS
         switch (source) {
             case "github":
                 return "https://github.com/" + owner + "/" + name + ".git";
@@ -469,6 +471,16 @@ exports.Module = function(source, owner, name, version) {
             default:
                 return null;
         }
+        
+        // over SSH
+        /*switch (source) {
+            case "github":
+                return "git@github.com:" + owner + "/" + name + ".git";
+            case "bitbucket":
+                return "git@bitbucket.org:" + owner + "/" + name + ".git";
+            default:
+                return null;
+        }*/
     }
 
     return {
