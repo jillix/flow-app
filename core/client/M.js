@@ -3,7 +3,7 @@
 "use strict";
 
 // TODO send error to server
-window.onerror = function(error, url, line) {
+/*window.onerror = function(error, url, line) {
     
     console.log(error + "\n" + url + "\n" + line);
 };
@@ -11,7 +11,7 @@ window.onerror = function(error, url, line) {
 require.onError = function(err){
     
     console.log(err);
-};
+};*/
 
 // exent object (object inherits from inherit)
 Object.extend = function(object, inherit) {
@@ -282,7 +282,7 @@ var M = (function() {
                 var attributes = {
                         rel:    "stylesheet",
                         type:   "text/css",
-                        href:   operationKey + "/core/getFile/" + config.css[i]
+                        href:   operationKey + "/core/getFile" + (config.css[i][0] == "/" ? "" : "/") + config.css[i]
                     };
                 
                 for (var name in attributes) {
