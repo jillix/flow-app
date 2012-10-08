@@ -1,53 +1,56 @@
-var send = require(CONFIG.root + "/core/send").send,
-    publicFiles = require(CONFIG.root + "/core/send").publicFiles;
-    getDomainApplication = require(CONFIG.root + "/core/model/orient.js").getDomainApplication;
+var send = require(CONFIG.root + "/core/send").send;
+var publicFiles = require(CONFIG.root + "/core/send").publicFiles;
+var getDomainApplication = require(CONFIG.root + "/core/model/orient.js").getDomainApplication;
 
-function initScripts(module, application, ie7) {
+var baseUrl = "/" + CONFIG.operationKey + "/core/getModule";
+var nl = (CONFIG.dev ? "\r\n" : "");
+
+function initScripts(module, application, ieVersion) {
+
+    var supportScrips = "";
     
-    var baseUrl = "/" + CONFIG.operationKey + "/core/getModule";
-    var nl = (CONFIG.dev ? "\r\n" : "");
-
-    var appScripts = "";
-    for (var i in application.scripts) {
-        appScripts += "<script type='text/javascript' src='" + application.scripts[i] + "'></script>" + nl;
+    if (ieVersion < 8) {
+        
+        supportScrips += "<script src='/" + CONFIG.operationKey + "/core/getClient/json2.js'></script>" + nl;
     }
-
-    var appCss = "";
-    for (var i in application.css) {
-        appCss += "<link rel='stylesheet' type='text/css' href='" + application.css[i] + "'/>" + nl;
+    
+    if (ieVersion < 9) {
+        
+        supportScrips += "<script src='http://html5shim.googlecode.com/svn/trunk/html5.js'></script>" + nl;
     }
-
-    var ieHtml5 =
-        "<!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->" + nl +
-        "<!--[if lt IE 9]>" + nl +
-        "<script src='http://html5shim.googlecode.com/svn/trunk/html5.js'></script>" + nl +
-        "<![endif]-->";
-
+    
     return "<!DOCTYPE html>" + nl +
         "<html>" + nl +
-        "<head>" + nl +
-        "<title>" + application.title + "</title>" + nl +
-        appScripts +
-        appCss +
-        "<script type='text/javascript'>" + nl +
-        (CONFIG.dev ? "// require.js reads this global property, if available" : "") + nl +
-        "var require={" + nl +
-            "baseUrl:'" + baseUrl + "'" + nl +
-        "};" + nl +
-        "window.onload=function(){" + nl +
-            "N.ok='/"+ CONFIG.operationKey  + "';" + nl +
-            (application.errorMiid ? "N.em = '" + application.errorMiid + "';" : "") +
-            "N.mod(document.getElementsByTagName('body')[0],'" + module + "')" + nl +
-        "}" + nl +
-        "</script>" + nl +
-        (ie7 ? "<script src='/" + CONFIG.operationKey + "/core/getClient/json2.js'></script>" + nl : "") +
-        "<script src='/" + CONFIG.operationKey + "/core/getClient/require.js'></script>" + nl +
-        "<script src='/" + CONFIG.operationKey + "/core/getClient/N.js'></script>" + nl +
-        "<meta http-equiv='content-type' content='text/html; charset=utf-8'/>" + nl +
-        ieHtml5 + nl +
-        "</head>" + nl +
-        "<body></body>" + nl +
+            "<head>" + nl +
+                "<title>" + application.title + "</title>" + nl +
+                "<meta http-equiv='content-type' content='text/html; charset=utf-8'/>" + nl +
+                "<script type='text/javascript'>" + nl +
+                    (CONFIG.dev ? "// require.js reads this global property, if available" : "") + nl +
+                    "var require={" + nl +
+                        "baseUrl:'" + baseUrl + "'" + nl +
+                    "};" + nl +
+                    "window.onload=function(){" + nl +
+                        "M(document.getElementsByTagName('body')[0],'" + module + "')" + nl +
+                    "}" + nl +
+                "</script>" + nl + supportScrips +
+                "<script src='/" + CONFIG.operationKey + "/core/getClient/require.js'></script>" + nl +
+                "<script src='/" + CONFIG.operationKey + "/core/getClient/M.js'></script>" + nl +
+            "</head>" + nl +
+            "<body></body>" + nl +
         "</html>";
+}
+
+// IE version
+function getIeVersion(userAgent) {
+    
+    var match = userAgent.match(/MSIE [0-9]/g);
+    
+    if (!match) {
+        
+        return NaN;
+    }
+    
+    return parseInt(match[0].replace(/[^0-9]/g, ""), 10) || NaN;
 }
 
 exports.route = function(link) {
@@ -73,7 +76,7 @@ exports.route = function(link) {
             link.res.headers["content-style-type"] = "text/css";
             link.res.headers["content-type"]       = "text/html; charset=utf-8";
             
-            send.ok(link.res, initScripts(module, application, (link.req.headers['user-agent'].indexOf("MSIE 7.0") > -1 ? true : false)));
+            send.ok(link.res, initScripts(module, application, getIeVersion(link.req.headers['user-agent'])));
         }
         else {
             publicFiles(link, application.appId, application.publicDir);
