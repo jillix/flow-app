@@ -277,12 +277,23 @@ var M = (function() {
             // load css
             for (var i in config.css) {
                 
+                var href;
+                
+                if (config.css[i].indexOf("http") > -1) {
+                    
+                    href = config.css[i];
+                }
+                else {
+                    
+                    href = operationKey + "/core/getFile" + (config.css[i][0] == "/" ? "" : "/") + config.css[i]
+                }
+                
                 // create link and append it to the DOM
                 var link = document.createElement("link");
                 var attributes = {
                         rel:    "stylesheet",
                         type:   "text/css",
-                        href:   operationKey + "/core/getFile" + (config.css[i][0] == "/" ? "" : "/") + config.css[i]
+                        href:   href
                     };
                 
                 for (var name in attributes) {
