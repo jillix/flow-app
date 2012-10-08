@@ -155,7 +155,7 @@ function handlePostRequest(link, method, resume) {
         }
 
         if (uploadDir.indexOf(appDir) != 0) {
-            send.forbidden(link, "You are only granted write access in your application directory.");
+            send.forbidden(link, "You are only granted write access in your application directory. Also make sure the upload directory exists in your application.");
             return;
         }
 
