@@ -695,6 +695,19 @@ function addModuleInstanceOperations(descriptor, miid, miidObj, callback) {
 }
 
 
+function getApplication(id, callback) {
+
+    db.getApplication(id, function(err, app) {
+
+        // TODO do not return all information, define an API !!!
+
+        // TODO also get the application domains
+
+        callback(err, app);
+    });
+}
+
+
 function getApplications(callback) {
     db.getApplications(callback);
 }
@@ -730,6 +743,7 @@ exports.installDependencies = installDependencies;
 exports.installUsers = installUsers;
 exports.installRoles = installRoles;
 
+exports.getApplication = getApplication;
 exports.getApplications = getApplications;
 exports.isApplicationRunning = isApplicationRunning;
 
