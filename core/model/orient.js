@@ -927,7 +927,8 @@ exports.getAppId = function(domain, callback) {
 
         var command =
             "SELECT " +
-                "application.id AS appId " +
+                "application.id AS appId, " +
+                "application.error AS errorMiid " +
             "FROM " +
                 "VDomain " +
             "WHERE " +
@@ -956,7 +957,7 @@ exports.getAppId = function(domain, callback) {
                 return callback("Missing application ID: " + JSON.stringify(application));
             }
 
-            callback(null, application.appId);
+            callback(null, application.appId, application.errorMiid);
         });
 };
 

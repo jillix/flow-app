@@ -39,8 +39,7 @@ function buildModule(link, module) {
 exports.getConfig = function(link) {
 
     // get the module instance id
-    var miid = link.path[0] ? link.path[0].replace(/[^0-9a-z_\-\.]/gi, "") : null,
-        errMiid = link.path[1] ? link.path[1].replace(/[^0-9a-z_\-\.]/gi, "") : null;
+    var miid = link.path[0] ? link.path[0].replace(/[^0-9a-z_\-\.]/gi, "") : null;
 
     if (!miid) {
         send.badrequest(link, "No miid defined");
@@ -50,7 +49,7 @@ exports.getConfig = function(link) {
     // send no cache headers IE bug
     link.res.headers["cache-control"] = "no-cache";
     
-    model.getAppId(link.host, function(err, appid) {
+    model.getAppId(link.host, function(err, appid, errMiid) {
 
         if (err || !appid) {
             send.internalservererror(link, err || "Missing appid");
