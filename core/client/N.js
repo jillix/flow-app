@@ -420,7 +420,9 @@ var N = {
             require([response.path + "/main"], function(module) {
                 
                 // TODO register module states
-                
+
+                target.appendChild(div);
+
                 // init module
                 if (typeof module === "function") {
                     
@@ -437,8 +439,6 @@ var N = {
 
                 // TODO: init state
                 
-                target.appendChild(div);
-
                 callback(module);
             });
         };
