@@ -1,0 +1,70 @@
+@import url(http://fonts.googleapis.com/css?family=Lobster);
+
+.title {
+    display: block;
+    font-family: "Lobster", cursive;
+    font-size: 140px;
+    line-height: 140px;
+    color: #EEE;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, .42);
+    margin-bottom: 100px;
+}
+
+section {
+    padding-bottom: 30px;
+}
+
+#throbber {
+    width: 30px;
+    height: 30px;
+    margin: auto;
+}
+
+.centered {
+    margin: auto;
+    width: auto;
+}
+
+#ghuser {
+    height: 27px;
+    font-size: 18px;
+}
+
+.template {
+    display: none;
+}
+
+#errorMessage {
+    display: none;
+}
+
+.left {
+    float: left;
+}
+
+.right {
+    float: right;
+}
+
+.space {
+    margin-bottom: 20px;
+}
+
+#navTitle {
+    text-align: center;
+    width: 100%;
+    display: inline-block;
+}
+
+#backSpan {
+    margin-left: 5px;
+}
+
+#providers {
+    display: inline-block;
+}
+
+.mauto {
+    text-align: center;
+    margin: auto;
+}
