@@ -76,9 +76,16 @@ exports.getConfig = function(link) {
                 }
 
                 if (module.html) {
-
-                    var path = (module.html.type === "a" ? "/apps/" + appid : "/modules/" + module.source + "/" + module.owner + "/" + module.name + "/" + module.version) + "/" + module.html.path + ".html";
-
+                    
+                    // get module from app folder
+                    var path = "/apps/" + appid + "/";
+                    
+                    // get module from module folder
+                    if (module.html.type == "m") {
+                        
+                        path += "mono_modules/" + module.source + "/" + module.owner + "/" + module.name + "/" + module.version + "/" + module.html.path + ".html";
+                    }
+                    
                     read(path, "utf8", function(err, html) {
 
                         if (err) {
@@ -90,7 +97,7 @@ exports.getConfig = function(link) {
                                 html += "<p>Error: " + err + "</p>"
                             }
                         }
-
+                        
                         module.html = html;
 
                         send.ok(link.res, buildModule(link, module));
