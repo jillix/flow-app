@@ -10,11 +10,6 @@ MONO_SCREEN_NAME=mono
 MONO_SERVER=~/mono/server.js
 MONO_LOG=~/logs/mono.log
 
-DEPLOY_PID=`ps aux | grep "blueimp-file-upload-node/server.js" | grep -v grep | awk '{print $2}'`
-DEPLOY_SCREEN_NAME=deploy
-DEPLOY_SERVER=~/mono/admin/temp_deploy_app/node_modules/blueimp-file-upload-node/server.js
-DEPLOY_LOG=~/logs/deploy.log
-
 ORIENT_PID=`lsof -iTCP:2424 -sTCP:LISTEN -t`
 ORIENT_SCREEN_NAME=orient
 ORIENT_SERVER="cd ~/mono/bin/orientdb/bin; ./server.sh"
@@ -85,15 +80,8 @@ then
     execute_in_screen "$MONO_SCREEN_NAME" "$MONO_SERVER" "$MONO_LOG"
 fi
 
-if [ -z "$DEPLOY_PID" ]
-then
-    execute_in_screen "$DEPLOY_SCREEN_NAME" "$DEPLOY_SERVER" "$DEPLOY_LOG"
-fi
-
 if [ -z "$ORIENT_PID" ]
 then
     execute_in_screen "$ORIENT_SCREEN_NAME" "$ORIENT_SERVER" "$ORIENT_LOG"
 fi
-
-MONO_ROOT=~/mono node "admin/scrips/keep_apps_alive.js"
 
