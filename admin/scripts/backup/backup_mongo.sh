@@ -39,7 +39,7 @@ zip -r "$TMP_DIR/$ZIP_NAME" "$TMP_DIR"/* > /dev/null
 mv "$TMP_DIR/$ZIP_NAME" ~/backups/
 
 # delete the old backups
-find ~/backups/ -type f -name "*_mongo.zip" -mtime +8 | xargs rm -f
+find ~/backups/ -type f -name "*_mongo.zip" -mtime +7 | xargs rm -f
 
 # copy the dump to S3
 s3cmd --delete-removed --no-progress --include=*_mongo.zip sync ~/backups/ "s3://backup.jillix/$MACHINE_NAME/" > /dev/null
