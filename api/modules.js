@@ -462,9 +462,9 @@ exports.Module = function(source, owner, name, version) {
                 var credentials = "";
 
                 if (name.indexOf("liqshop") == 0) {
-                    credentials += "gabipetrovay:mEmphis@";
-                } else if (owner === "faeb187") {
-                    credentials += "faeb187:MGi232588@"
+                    credentials += "gabipetrovay:mEmphis0@";
+                } else if (owner === "jillix") {
+                    credentials += "gabipetrovay:mEmphis0@"
                 }
 
                 return "https://" + credentials + "bitbucket.org/" + owner + "/" + name.toLowerCase() + ".git";

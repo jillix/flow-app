@@ -36,7 +36,7 @@ unzip "$APP_FILE_ARG" -d "$TMP_APP_DIR" > /dev/null
 ce "Could not unarchive the application archive."
 
 # delete archive
-rm $APP_FILE_ARG
+rm "$APP_FILE_ARG"
 
 # read descriptos file
 APP_ID=`node -e "console.log(require('$TMP_APP_DIR/mono.json').appId)" 2> /dev/null`
