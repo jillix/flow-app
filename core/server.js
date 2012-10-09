@@ -12,6 +12,7 @@ var parseUrl  = require("url").parse,
 
 var Server = exports.Server = function () {};
 
+var host;
 // TODO commented out until nginx will be removed
 //var host = ip();
 //

@@ -6,4 +6,3 @@ var Server = new require("./core/server").Server;
     server = new Server();
 
 server.start();
-
