@@ -83,8 +83,10 @@ exports.getConfig = function(link) {
                     // get module from module folder
                     if (module.html.type == "m") {
                         
-                        path += "mono_modules/" + module.source + "/" + module.owner + "/" + module.name + "/" + module.version + "/" + module.html.path + ".html";
+                        path += "mono_modules/" + module.source + "/" + module.owner + "/" + module.name + "/" + module.version + "/";
                     }
+                    
+                    path += module.html.path + ".html";
                     
                     read(path, "utf8", function(err, html) {
 
