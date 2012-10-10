@@ -51,46 +51,70 @@ var M = (function() {
     var Mono = {
         
         // listen to events
-        on: function(module, name, method) {
+        /*
+            this.on("setSomething", "miid", function () {});
+            this.on("setSomething", function () {});
+        */
+        on: function(event, miid, handler) {
             
-            if (module) {
+            var module = modules[miid];
             
-                var events = this.events;
+            if (arguments.length < 3) {
                 
-                method = typeof name == "function" ? name : module[name];
+                handler = arguments[1];
+                module = modules[this.miid];
+            }
+            
+            if (module && typeof handler == 'function') {
                 
-                if (typeof method == 'function') {
+                var events = module.events;
                 
-                    if (!events[name]) {
+                if (!events[event]) {
                 
-                        events[name] = [];
-                    }
-                
-                    events[name].push([module, method]);
+                    events[event] = [];
                 }
+                
+                events[event].push(handler);
             }
             
             return this;
         },
         
         // remove listeners
-        off: function(event, handler) {
-        
-            if (this.events[event]) {
+        /*
+            this.off("setSomething", "miid", function () {});
+            this.off("setSomething", function () {});
+        */
+        off: function(event, miid, handler) {
+            
+            var module = modules[miid];
+            
+            if (arguments.length < 3) {
                 
-                if (handler) {
+                handler = arguments[1];
+                module = modules[this.miid];
+            }
+            
+            if (module) {
+                
+                var events = module.events;
+                
+                if (events[event]) {
                     
-                    for (var i = 0, l = this.events[event].length; i < l; ++i) {
+                    if (handler) {
                         
-                        if (this.events[event][i] == handler) {
+                        for (var i = 0, l = events[event].length; i < l; ++i) {
                             
-                            this.events[event][i] = null;
+                            if (events[event][i] === handler) {
+                                
+                                events[event][i] = null;
+                            }
                         }
                     }
-                }
-                else {
-                    
-                    delete this.events[event];
+                    else {
+                        
+                        delete events[event];
+                    }
                 }
             }
             
@@ -98,28 +122,31 @@ var M = (function() {
         },
         
         // emit event on module
-        emit: function(miid, name) {
+        /*
+            this.emit("setSomething", arg1, arg2, ...);
+        */
+        emit: function(event) {
             
-            var module = modules[miid];
+            var module = this;
             
-            if (!module || !name) {
+            if (!module || !event) {
                 
                 return;
             }
             
-            var events = module.events[name];
+            var events = module.events[event];
             
             // Fire registred Methods
             if (events) {
                 
                 // slice first argument and apply the others to the callback function
-                var args = Array.prototype.slice.call(arguments).slice(2);
+                var args = Array.prototype.slice.call(arguments).slice(1);
                 
                 for (var i = 0, l = events.length; i < l; ++i) {
                     
                     if (events[i]) {
                         
-                        events[i][1].apply(events[i][0], args);
+                        events[i].apply(module, args);
                     }
                 }
             }
@@ -128,6 +155,19 @@ var M = (function() {
         },
         
         // make requests to backend
+        /*
+            this.link("operationName", function() {});
+            this.link("operationName", OPTIONS, function () {});
+            
+            OPTIONS: {
+                
+                miid: "miid",
+                path: "path/to/some/thing",
+                data: {POST DATA},
+                upload: function () {},
+                download: function () {}
+            }
+        */
         link: function(method, options, callback) {
             
             if (typeof method === "object") {
