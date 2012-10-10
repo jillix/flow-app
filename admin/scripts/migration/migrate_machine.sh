@@ -432,6 +432,11 @@ function initialize_mono {
 }
 
 function start_apps {
+
+    # before we start the apps, insert the users into the happybonus and liqshop apps
+    node /home/$USERNAME/legacy/scripts/liqshop_users.js
+    node /home/$USERNAME/legacy/scripts/happybonus_users.js
+
     # do not allow the cron jobs to start applications since they will send false negative emails
     HOME=/home/$USERNAME sudo -u $USERNAME sh -c "cd /home/$USERNAME; ~/legacy/scripts/shell/starter.sh"
     HOME=/home/$USERNAME sudo -u $USERNAME sh -c "cd /home/$USERNAME; ~/mono/admin/scripts/keep_alive.sh"
