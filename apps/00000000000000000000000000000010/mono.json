@@ -937,7 +937,7 @@
     ],
     "miids": {
         "liqshop_layout": {
-            "module": "github/adioo/layout/v0.0.1",
+            "module": "github/adioo/layout/v0.0.4",
             "roles": [1],
             "config": {
                 "html": {
