@@ -60,27 +60,25 @@ var M = (function() {
         */
         on: function(event, miid, handler) {
             
-            var moduleEvents = events[miid];
-            
             if (arguments.length < 3) {
                 
                 handler = arguments[1];
-                moduleEvents = events[this.miid];
+                miid = this.miid;
             }
             
             if (typeof handler == 'function') {
                 
-                if (!moduleEvents) {
+                if (!events[miid]) {
                     
-                    moduleEvents = [];
+                    events[miid] = [];
                 }
                 
-                if (!moduleEvents[event]) {
+                if (!events[miid][event]) {
                 
-                    moduleEvents[event] = [];
+                    events[miid][event] = [];
                 }
                 
-                moduleEvents[event].push(handler);
+                events[miid][event].push(handler);
             }
             
             return this;
@@ -93,31 +91,29 @@ var M = (function() {
         */
         off: function(event, miid, handler) {
             
-            var moduleEvents = events[miid];
-            
             if (arguments.length < 3) {
                 
                 handler = arguments[1];
-                moduleEvents = events[this.miid];
+                miid = this.miid;
             }
             
-            if (moduleEvents) {
+            if (events[miid]) {
                 
-                if (moduleEvents[event]) {
+                if (events[miid][event]) {
                     
                     if (handler) {
                         
-                        for (var i = 0, l = moduleEvents[event].length; i < l; ++i) {
+                        for (var i = 0, l = events[miid][event].length; i < l; ++i) {
                             
-                            if (moduleEvents[event][i] === handler) {
+                            if (events[miid][event][i] === handler) {
                                 
-                                moduleEvents[event][i] = null;
+                                events[miid][event][i] = null;
                             }
                         }
                     }
                     else {
                         
-                        delete moduleEvents[event];
+                        delete events[miid][event];
                     }
                 }
             }
