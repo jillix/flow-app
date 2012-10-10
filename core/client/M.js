@@ -77,19 +77,19 @@ var M = (function() {
         off: function(event, handler) {
         
             if (this.events[event]) {
-
+                
                 if (handler) {
-
+                    
                     for (var i = 0, l = this.events[event].length; i < l; ++i) {
-
+                        
                         if (this.events[event][i] == handler) {
-
+                            
                             this.events[event][i] = null;
                         }
                     }
                 }
                 else {
-
+                    
                     delete this.events[event];
                 }
             }
@@ -111,14 +111,14 @@ var M = (function() {
             
             // Fire registred Methods
             if (events) {
-
+                
                 // slice first argument and apply the others to the callback function
                 var args = Array.prototype.slice.call(arguments).slice(2);
-
+                
                 for (var i = 0, l = events.length; i < l; ++i) {
-
+                    
                     if (events[i]) {
-
+                        
                         events[i][1].apply(events[i][0], args);
                     }
                 }
@@ -237,53 +237,23 @@ var M = (function() {
                                     response = link.responseText;
                                 }
                             }
-            
+                            
                             // fire callback
                             callback(err, response, link);
                         }
                     }
                 };
-            
+                
                 // send data
                 link.send(options.data);
-            
+                
                 return function() {
-            
+                    
                     link.A = 1;
                     link.abort();
                 };
             }
-        },
-
-        /**
-         * Wrapper for link with login core operation
-         * @param {string} user name
-         * @param {string} password
-         * @param {function} callback
-         */
-        login: function(username, password, callback) {
-
-            var linkData = {
-                miid: "core",
-                data: {
-                    user: username,
-                    pass: password
-                }
-            };
-
-            this.link("login", linkData, callback);
-        },
-        
-        /**
-         * Wrapper for link with logout core operation
-         * @param {function} callback
-         */
-        logout: function(callback) {
-
-            this.link("logout", { miid: "core" }, callback);
-        },
-        
-
+        }
     };
     
     // load mono modules
@@ -325,7 +295,7 @@ var M = (function() {
                         type:   "text/css",
                         href:   href
                     };
-                
+                    
                 for (var name in attributes) {
                     
                     link.setAttribute(name, attributes[name]);
