@@ -44,6 +44,9 @@ var M = (function() {
     // module cache
     var modules = {};
     
+    // event cache
+    var events = {};
+    
     // get head reference
     var head = document.getElementsByTagName("head")[0];
     
@@ -57,21 +60,24 @@ var M = (function() {
         */
         on: function(event, miid, handler) {
             
-            var module = modules[miid];
+            var moduleEvents = events[miid];
             
             if (arguments.length < 3) {
                 
                 handler = arguments[1];
-                module = modules[this.miid];
+                moduleEvents = events[this.miid];
             }
             
-            if (module && typeof handler == 'function') {
+            if (typeof handler == 'function') {
                 
-                var events = module.events;
+                if (!moduleEvents) {
+                    
+                    moduleEvents = [];
+                }
                 
-                if (!events[event]) {
+                if (!moduleEvents[event]) {
                 
-                    events[event] = [];
+                    moduleEvents[event] = [];
                 }
                 
                 events[event].push(handler);
@@ -87,33 +93,31 @@ var M = (function() {
         */
         off: function(event, miid, handler) {
             
-            var module = modules[miid];
+            var moduleEvents = events[miid];
             
             if (arguments.length < 3) {
                 
                 handler = arguments[1];
-                module = modules[this.miid];
+                moduleEvents = events[this.miid];
             }
             
-            if (module) {
+            if (moduleEvents) {
                 
-                var events = module.events;
-                
-                if (events[event]) {
+                if (moduleEvents[event]) {
                     
                     if (handler) {
                         
-                        for (var i = 0, l = events[event].length; i < l; ++i) {
+                        for (var i = 0, l = moduleEvents[event].length; i < l; ++i) {
                             
-                            if (events[event][i] === handler) {
+                            if (moduleEvents[event][i] === handler) {
                                 
-                                events[event][i] = null;
+                                moduleEvents[event][i] = null;
                             }
                         }
                     }
                     else {
                         
-                        delete events[event];
+                        delete moduleEvents[event];
                     }
                 }
             }
@@ -127,27 +131,22 @@ var M = (function() {
         */
         emit: function(event) {
             
-            var module = this;
-            
-            if (!module || !event) {
+            if (!events[this.miid] || !events[this.miid][event]) {
                 
-                return;
+                return this;
             }
             
-            var events = module.events[event];
+            var moduleEvents = events[this.miid][event];
             
-            // Fire registred Methods
-            if (events) {
+            // slice first argument and apply the others to the callback function
+            var args = Array.prototype.slice.call(arguments).slice(1);
+            
+            for (var i = 0, l = moduleEvents.length; i < l; ++i) {
                 
-                // slice first argument and apply the others to the callback function
-                var args = Array.prototype.slice.call(arguments).slice(1);
-                
-                for (var i = 0, l = events.length; i < l; ++i) {
+                if (moduleEvents[i]) {
                     
-                    if (events[i]) {
-                        
-                        events[i].apply(module, args);
-                    }
+                    // Fire registred Methods
+                    moduleEvents[i].apply(this, args);
                 }
             }
             
@@ -367,8 +366,7 @@ var M = (function() {
                     dom:    container,
                     miid:   miid,
                     lang:   config.lang,
-                    path:   config.path,
-                    events: {}
+                    path:   config.path
                     
                 }, Mono);
                 
