@@ -80,7 +80,7 @@ var M = (function() {
                     moduleEvents[event] = [];
                 }
                 
-                events[event].push(handler);
+                moduleEvents[event].push(handler);
             }
             
             return this;
