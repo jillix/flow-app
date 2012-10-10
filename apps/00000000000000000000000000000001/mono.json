@@ -9,8 +9,6 @@
         "admin.mono.ch"
     ],
     "scripts": [
-        "/jquery.js",
-        "/bootstrap/js/bootstrap-button.js"
     ],
     "publicDir": "public",
     "publicUser": 0,
@@ -33,7 +31,7 @@
     ],
     "miids": {
         "github_layout": {
-            "module": "github/adioo/layout/v0.0.1",
+            "module": "github/adioo/layout/v0.0.4",
             "roles": [0],
             "config": {
                 "html": {
