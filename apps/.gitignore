@@ -1,5 +1,9 @@
 # ignoring all content of this directory 
-*
-!000000000000000000000000000000*
-!tmp/
+/*
 !.gitignore
+
+# but include back the core applications
+!/000000000000000000000000000000*
+# and still exclude the logs and module directories
+/000000000000000000000000000000*/log.txt
+/000000000000000000000000000000*/mono_modules
