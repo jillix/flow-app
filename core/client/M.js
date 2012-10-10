@@ -253,7 +253,37 @@ var M = (function() {
                     link.abort();
                 };
             }
-        }
+        },
+
+        /**
+         * Wrapper for link with login core operation
+         * @param {string} user name
+         * @param {string} password
+         * @param {function} callback
+         */
+        login: function(username, password, callback) {
+
+            var linkData = {
+                miid: "core",
+                data: {
+                    user: username,
+                    pass: password
+                }
+            };
+
+            this.link("login", linkData, callback);
+        },
+        
+        /**
+         * Wrapper for link with logout core operation
+         * @param {function} callback
+         */
+        logout: function(callback) {
+
+            this.link("logout", { miid: "core" }, callback);
+        },
+        
+
     };
     
     // load mono modules
