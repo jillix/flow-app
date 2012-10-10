@@ -34,7 +34,7 @@ mkdir -p ~/backups
 zip -r ~/backups/"$ZIP_NAME" "$IMAGE_DIR"/ > /dev/null
 
 # delete the old backups
-find ~/backups/ -type f -name "*_images" -mtime +8 | xargs rm -f
+find ~/backups/ -type f -name "*_images.zip" -mtime +7 | xargs rm -f
 
 # copy the dump to S3
 s3cmd --delete-removed --no-progress --include=*_images.zip sync ~/backups/ "s3://backup.jillix/$MACHINE_NAME/" > /dev/null
