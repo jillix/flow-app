@@ -10,6 +10,7 @@ exports.login = function(link) {
     // invalid request of data is missing
     if (!link.data || !link.data.user || !link.data.pass) {
         send.badrequest(link, "Missing login data");
+        return;
     }
 
     var user = link.data.user,
