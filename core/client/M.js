@@ -51,7 +51,7 @@ var M = (function() {
     var head = document.getElementsByTagName("head")[0];
     
     // emit events
-    function eventEmitter(miid, args, sliceCount) {
+    function eventEmitter(event, miid, args, sliceCount) {
         
         if (!events[miid] || !events[miid][event]) {
             
@@ -71,7 +71,7 @@ var M = (function() {
                 moduleEvents[i].apply(this, args);
             }
         }
-        
+        console.log(event);
         return this;
     }
     
@@ -152,7 +152,7 @@ var M = (function() {
         */
         emit: function(event) {
             
-            return eventEmitter.call(this, this.miid, arguments, 1);
+            return eventEmitter.call(this, event, this.miid, arguments, 1);
         },
         
         // trigger event on a module
@@ -161,7 +161,7 @@ var M = (function() {
         */
         trigger: function(event, miid) {
             
-            return eventEmitter.call(this, miid, arguments, 2);
+            return eventEmitter.call(this, event, miid, arguments, 2);
         },
         
         // make requests to backend
