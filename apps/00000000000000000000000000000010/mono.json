@@ -955,7 +955,7 @@
             }
         },
         "liqshop_order_list": {
-            "module": "bitbucket/jillix/liqshopOrderList/v0.1.2",
+            "module": "bitbucket/jillix/liqshopOrderList/v0.2.0",
             "roles": [1],
             "config": {
                 "html": {
@@ -976,7 +976,7 @@
             }
         },
         "liqshop_order_details": {
-            "module": "bitbucket/jillix/liqshopOrderDetails/v0.1.0",
+            "module": "bitbucket/jillix/liqshopOrderDetails/v0.2.0",
             "roles": [1],
             "config": {
                 "html": {
@@ -993,7 +993,7 @@
             }
         },
         "liqshop_order_login": {
-            "module": "bitbucket/jillix/liqshopOrderLogin/v0.1.0",
+            "module": "bitbucket/jillix/liqshopOrderLogin/v0.2.0",
             "roles": [0],
             "config": {
                 "html": {

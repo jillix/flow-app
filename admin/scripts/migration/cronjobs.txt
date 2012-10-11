@@ -23,9 +23,6 @@
 
 MAILTO=admin@jillix.com
 
-# backing up MongoDB and image directory to S3
-30 4 * * * /home/mono/mono/admin/scripts/backup/backup.sh production
-
 # this will copy the happy exports from machine14.abc.it
 # TODO this will be obsolete when the ftp uploads will arive directly in ~/ftp
 # delete the following cronjobs and leave only the once commented out below under "SAG file imports"
