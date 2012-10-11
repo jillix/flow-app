@@ -50,6 +50,31 @@ var M = (function() {
     // get head reference
     var head = document.getElementsByTagName("head")[0];
     
+    // emit events
+    function eventEmitter(miid, args, sliceCount) {
+        
+        if (!events[miid] || !events[miid][event]) {
+            
+            return this;
+        }
+        
+        var moduleEvents = events[miid][event];
+        
+        // slice first argument and apply the others to the callback function
+        args = Array.prototype.slice.call(args).slice(sliceCount);
+        
+        for (var i = 0, l = moduleEvents.length; i < l; ++i) {
+            
+            if (moduleEvents[i]) {
+                
+                // Fire registred Methods
+                moduleEvents[i].apply(this, args);
+            }
+        }
+        
+        return this;
+    }
+    
     // module class
     var Mono = {
         
@@ -121,32 +146,22 @@ var M = (function() {
             return this;
         },
         
-        // emit event on module
+        // emit event (this.miid)
         /*
             this.emit("setSomething", arg1, arg2, ...);
         */
         emit: function(event) {
             
-            if (!events[this.miid] || !events[this.miid][event]) {
-                
-                return this;
-            }
+            return eventEmitter.call(this, this.miid, arguments, 1);
+        },
+        
+        // trigger event on a module
+        /*
+            this.trigger("setSomething", "miid", arg1, arg2, ...);
+        */
+        trigger: function(event, miid) {
             
-            var moduleEvents = events[this.miid][event];
-            
-            // slice first argument and apply the others to the callback function
-            var args = Array.prototype.slice.call(arguments).slice(1);
-            
-            for (var i = 0, l = moduleEvents.length; i < l; ++i) {
-                
-                if (moduleEvents[i]) {
-                    
-                    // Fire registred Methods
-                    moduleEvents[i].apply(this, args);
-                }
-            }
-            
-            return this;
+            return eventEmitter.call(this, miid, arguments, 2);
         },
         
         // make requests to backend
