@@ -51,28 +51,26 @@ var M = (function() {
     var head = document.getElementsByTagName("head")[0];
     
     // emit events
-    function eventEmitter(event, miid, args, sliceCount) {
+    function eventEmitter(module, event, miid, args, sliceCount) {
         
-        if (!events[miid] || !events[miid][event]) {
+        if (events[miid] && events[miid][event]) {
+        
+            var moduleEvents = events[miid][event];
             
-            return this;
-        }
-        
-        var moduleEvents = events[miid][event];
-        
-        // slice first argument and apply the others to the callback function
-        args = Array.prototype.slice.call(args).slice(sliceCount);
-        
-        for (var i = 0, l = moduleEvents.length; i < l; ++i) {
+            // slice first argument and apply the others to the callback function
+            args = Array.prototype.slice.call(args).slice(sliceCount);
             
-            if (moduleEvents[i]) {
+            for (var i = 0, l = moduleEvents.length; i < l; ++i) {
                 
-                // Fire registred Methods
-                moduleEvents[i].apply(this, args);
+                if (moduleEvents[i]) {
+                    
+                    // Fire registred Methods
+                    moduleEvents[i].apply(module, args);
+                }
             }
         }
-        console.log(event);
-        return this;
+        
+        return module;
     }
     
     // module class
@@ -152,7 +150,7 @@ var M = (function() {
         */
         emit: function(event) {
             
-            return eventEmitter.call(this, event, this.miid, arguments, 1);
+            return eventEmitter(this, event, this.miid, arguments, 1);
         },
         
         // trigger event on a module
@@ -161,7 +159,7 @@ var M = (function() {
         */
         trigger: function(event, miid) {
             
-            return eventEmitter.call(this, event, miid, arguments, 2);
+            return eventEmitter(this, event, miid, arguments, 2);
         },
         
         // make requests to backend
@@ -231,7 +229,7 @@ var M = (function() {
             
                         // fire callback with error
                         if (callback) {
-            
+                            
                             callback(err);
                         }
             
