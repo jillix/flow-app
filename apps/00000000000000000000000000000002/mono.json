@@ -39,11 +39,7 @@
                     "type": "a",
                     "path": "html/layout"
                 },
-                "config": {
-                    "title": "Mono Dev",
-                    "modules": {
-                    }
-                },
+                "title": "Mono Dev",
                 "css": ["http://blueimp.github.com/cdn/css/bootstrap.min.css"]
             }
         },
@@ -51,15 +47,13 @@
             "module": "github/adioo/layout/v0.0.4",
             "roles": [0],
             "config": {
+                "title": "Mono Deployer",
+                "modules": {
+                    "deployer": "dev_deployer"
+                },
                 "html": {
                     "type": "a",
                     "path": "html/layout_deployer"
-                },
-                "config": {
-                    "title": "Mono Deployer",
-                    "modules": {
-                        "deployer": "dev_deployer"
-                    }
                 },
                 "css": ["http://blueimp.github.com/cdn/css/bootstrap.min.css", "http://blueimp.github.com/cdn/css/bootstrap-responsive.min.css"]
             }

@@ -1,0 +1,351 @@
+/* general */
+body {
+
+	font-family: 'Droid Sans';
+	font-size: 14px;
+	overflow: hidden;
+}
+
+a:link,
+a:visited {
+
+	color: #000;
+	text-decoration: none;
+}
+
+b {
+
+	font-weight: 700;
+}
+
+.pl {
+
+	padding-left: 5px;
+}
+
+.pr {
+
+	padding-right: 5px;
+}
+
+.navbar, .navbar .btn {
+
+	color: #fff !important;
+	font-weight: 700;
+}
+
+.abs { position: absolute; }
+.rel { position: relative; }
+.scroll { overflow-y: auto; }
+
+.filter,
+.ctrl {
+
+	left: 0;
+	right: 0;
+	height: 35px;
+	padding-top: 5px;
+	background: #f5f5f5;
+}
+
+.filter {
+
+	position: relative;
+	top: 0;
+	padding-left: 5px;
+	min-width: 750px;
+}
+
+.filter > * {
+
+	margin-right: 5px;
+}
+
+.ctrl {
+
+	bottom: 0;
+}
+
+.ctrl .btn-group {
+
+	margin: 0 5px;
+}
+
+.sec {
+
+	background: #f9f9f9;
+}
+
+#table,
+#detail {
+
+	position: absolute;
+	left: 250px;
+	right: 0;
+	top: 40px;
+	bottom: 0;
+}
+
+/* context menu */
+#cm {
+
+	position: absolute;
+	background: #fff;
+	width: 150px;
+	border: 1px #ddd solid;
+	border-radius: 3px;
+	z-index: 9999;
+}
+
+#cm > ul {
+
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+#cm > ul > li {
+
+	padding: 3px 10px;
+}
+
+#cm > ul > li:hover {
+
+	background: #0074cc;
+	color: #fff;
+	cursor: pointer;
+}
+
+#cm hr {
+
+	margin: 0;
+	padding: 0;
+	border-bottom: 1px solid #ddd;
+}
+
+/* list */
+#list {
+
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	top: 40px;
+	width: 249px;
+	border-right: 1px #000 solid;
+}
+
+#list > ul {
+
+	overflow-y: auto;
+}
+
+#list ul {
+
+	list-style: none;
+	top: 40px;
+	left: 0;
+	right: 0;
+	bottom: 40px;
+	margin: 0;
+	padding: 0;
+}
+
+#list > ul > li a {
+
+	display: block;
+	cursor: pointer;
+	padding: 10px;
+	border-bottom: 1px #dfdfdf solid;
+	text-decoration: none;
+}
+
+#list ul > li > a:hover {
+
+	background: #fff;
+}
+
+#list ul > li.active > a {
+
+	background: #0074cc;
+	color: #fff;
+}
+
+#list ul > li.folder > a {
+
+	background: #f5f5f5;
+}
+
+#list > ul > li > ul > li > a {
+
+	padding-left: 25px;
+}
+
+/* table */
+#table {
+
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+#table .th > table,
+#table .tb > table {
+
+	width: 100%;
+	min-width: 750px;
+}
+
+#table .th {
+
+	top: 40px;
+	left: 0;
+	right: 0;
+	height: 26px;
+	background: #0074cc;
+	color: #fff;
+}
+
+#table .th th {
+
+	font-weight: 700;
+	text-align: left;
+}
+
+#table .tb {
+
+	top: 66px;
+	left: 0;
+	right: 0;
+	bottom: 42px;
+	overflow-x: hidden;
+}
+
+#table .tb tr {
+
+	cursor: pointer;
+}
+
+th, td
+
+#table .th th,
+#table .tb td {
+
+	min-width: 60px;
+	padding: 5px;
+	border-right: 1px #000 solid;
+}
+
+.selected {
+
+	background: #d9d9d9 !important;
+}
+
+/* detail */
+#detail {
+
+	display: none;
+}
+
+#detail > .users {
+
+	top: 40px;
+	bottom: 40px;
+	left: 0;
+	width: 250px;
+}
+
+#detail > .users > table {
+
+	width: 100%;
+}
+
+#detail > .users > table tr {
+
+	cursor: pointer;
+}
+
+#detail > .users > table td {
+
+	padding: 5px;
+}
+
+#detail > .details {
+
+	top: 40px;
+	left: 250px;
+	right: 0;
+	bottom: 40px;
+}
+
+#detail > .details form {
+
+	width: 500px;
+	margin: 20px;
+}
+
+#detail > .details i.icon-remove {
+
+	margin-top: 4px;
+	cursor: pointer;
+}
+
+/* settings / import */
+#settings,
+#import {
+
+	position: absolute;
+	display: none;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 9999;
+}
+
+#settings tr,
+#settings td {
+
+	padding: 5px;
+	margin: 0;
+	height: 0;
+}
+
+.ovl {
+
+	background: #000;
+	opacity: 0.8;
+	filter: alpha(opacity=80);
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+}
+
+.drp {
+
+	background: #fff;
+	top: 20px;
+	left: 0;
+	right: 0;
+}
+
+.drp .nav > li {
+
+	cursor: pointer;
+}
+
+/* import */
+#import .dragover {
+
+	background-color: #0074cc;
+}
+
+/* login */
+#login {
+
+	text-align: center;
+	margin-top: 150px;
+}

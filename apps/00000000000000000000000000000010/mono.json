@@ -944,12 +944,10 @@
                     "type": "a",
                     "path": "html/layout"
                 },
-                "config": {
-                    "title": "Liqshop Orders",
-                    "modules": {
-                        "orderList": "liqshop_order_list",
-                        "orderDetails": "liqshop_order_details"
-                    }    
+                "title": "Liqshop Orders",
+                "modules": {
+                    "orderList": "liqshop_order_list",
+                    "orderDetails": "liqshop_order_details"
                 },
                 "css": ["/reset-min.css", "/main.css", "/tab.css", "/hpane.css", "/bar.css", "/list.css", "/form.css", "/table.css", "/orderDetail.css"]
             }
