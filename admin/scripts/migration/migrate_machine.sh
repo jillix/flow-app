@@ -130,12 +130,6 @@ function checkout_mono {
     # did the migration script change?
     check_latest_script $MONO_TMP
 
-    # initialize and update the submodules
-    cd $MONO_TMP
-    git submodule init
-    git submodule update
-    cd ~
-
     # now give this to the mono user
     chown -R $USERNAME:$USERNAME $MONO_TMP
     mv $MONO_TMP /home/$USERNAME/mono

@@ -669,6 +669,7 @@ function deleteRidsFromCommand(command, callback) {
 exports.addModuleInstance = function(miid, rid, vid, hash, callback) {
 
     callback = callback || function() {};
+    hash = hash || {};
 
     var rrid = ridFromId("VRole", rid);
     var vrid = ridFromId("VModuleVersion", vid);
