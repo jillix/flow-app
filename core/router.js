@@ -30,7 +30,7 @@ function initScripts(module, application, ieVersion) {
                         "baseUrl:'" + baseUrl + "'" + nl +
                     "};" + nl +
                     "window.onload=function(){" + nl +
-                        "M(document.getElementsByTagName('body')[0],'" + module + "')" + nl +
+                        "M('body','" + module + "')" + nl +
                     "}" + nl +
                 "</script>" + nl + supportScrips +
                 "<script src='/" + CONFIG.operationKey + "/core/getClient/require.js'></script>" + nl +

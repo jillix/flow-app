@@ -677,10 +677,8 @@ exports.addModuleInstance = function(miid, rid, vid, hash, callback) {
         "class" : "EUsesInstanceOf"
     };
 
-    hash.miid = miid;
-
     // first we add a Uses edge between the role and the version
-    edge(rrid, vrid, hash, options, function(err, edgeDoc) {
+    edge(rrid, vrid, {miid: miid, config: hash}, options, function(err, edgeDoc) {
 
         if (err) {
             return callback(err);
@@ -1042,8 +1040,8 @@ exports.getDomainApplication = function(domain, withRoutes, callback) {
             "application.port AS port, " +
             (withRoutes ? "application.routes AS routes, " : "") +
             "application.publicDir AS publicDir, " +
-            "application.scripts AS scripts, " +
-            "application.css AS css, " +
+            //"application.scripts AS scripts, " +
+            //"application.css AS css, " +
             "application.name AS title, " +
             "application.error AS errorMiid " +
         "FROM " +
@@ -1078,8 +1076,8 @@ exports.getDomainApplication = function(domain, withRoutes, callback) {
             return callback("The application object is not complete. Missing application routing table: " + JSON.stringify(application));
         }
 
-        application.scripts = application.scripts || [];
-        application.css = application.css || [];
+        //application.scripts = application.scripts || [];
+        //application.css = application.css || [];
 
         callback(null, application);
     });
@@ -1149,8 +1147,7 @@ exports.getModuleConfig = function(appId, miid, userId, callback) {
             "in.module.owner AS owner, " +
             "in.module.name AS name, " +
             "in.version AS version, " +
-            "config, html, " +
-            "css " +
+            "config " +
         "FROM " +
             "(TRAVERSE VUser.out, EMemberOf.in, VRole.out FROM #" + vuCluster.id + ":" + userId + ") " +
         "WHERE " +

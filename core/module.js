@@ -6,17 +6,12 @@ var send = require(CONFIG.root + "/core/send.js").send,
     modules = new stat(CONFIG.root + "/apps/" + CONFIG.app + "/mono_modules"),
     publicFiles = require(CONFIG.root + "/core/send").publicFiles;
 
-function buildModule(link, module) {
-
-    var response = {
-        path: module.source + "/" + module.owner + "/" + module.name + "/" + module.version,
-        lang: link.session.loc || "en"
-    };
-
-    if (module.config) {
-        response.conf = module.config;
-    }
-
+/*function buildModule(link, module) {
+    
+    module.path = module.source + "/" + module.owner + "/" + module.name + "/" + module.version;
+    module.lang = link.session.loc || "en";
+    
+    
     if (module.html) {
         response.html = module.html;
     }
@@ -33,8 +28,8 @@ function buildModule(link, module) {
         }
     }
     
-    return response;
-}
+    return module;
+}*/
 
 exports.getConfig = function(link) {
 
@@ -74,19 +69,24 @@ exports.getConfig = function(link) {
                     send.notfound(link, err || "No module found");
                     return;
                 }
-
-                if (module.html) {
+                console.log(module);
+                var response = module.config || {};
+                
+                response.path = module.source + "/" + module.owner + "/" + module.name + "/" + module.version;
+                response.lang = link.session.loc || module.lang || "en";
+                
+                if (module.config && module.config.html) {
                     
                     // get module from app folder
                     var path = "/apps/" + appid + "/";
                     
                     // get module from module folder
-                    if (module.html.type == "m") {
+                    if (module.config.html.type == "m") {
                         
                         path += "mono_modules/" + module.source + "/" + module.owner + "/" + module.name + "/" + module.version + "/";
                     }
                     
-                    path += module.html.path + ".html";
+                    path += module.config.html.path + ".html";
                     
                     read(path, "utf8", function(err, html) {
 
@@ -100,14 +100,14 @@ exports.getConfig = function(link) {
                             }
                         }
                         
-                        module.html = html;
+                        response.html = html;
 
-                        send.ok(link.res, buildModule(link, module));
+                        send.ok(link.res, response);
                     });
                 }
                 else {
 
-                    send.ok(link.res, buildModule(link, module));
+                    send.ok(link.res, response);
                 }
             });
         };
