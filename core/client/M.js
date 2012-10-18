@@ -44,6 +44,9 @@ var M = (function() {
     // event cache
     var events = {};
     
+    // get head reference
+    var head = document.getElementsByTagName("head")[0];
+    
     // emit events
     function eventEmitter(module, event, miid, args, sliceCount) {
         
@@ -325,13 +328,61 @@ var M = (function() {
                 return;
             }
             
+            // load css
+            if (config.css) {
+                
+                for (var i in config.css) {
+                    
+                    var href;
+                    
+                    if (config.css[i].indexOf("http") > -1) {
+                        
+                        href = config.css[i];
+                    }
+                    else {
+                        
+                        href = Mono.ok + "/core/getFile" + (config.css[i][0] == "/" ? "" : "/") + config.css[i]
+                    }
+                    
+                    // create link and append it to the DOM
+                    var link = document.createElement("link");
+                    var attributes = {
+                            rel:    "stylesheet",
+                            type:   "text/css",
+                            href:   href
+                        };
+                        
+                    for (var name in attributes) {
+                        
+                        link.setAttribute(name, attributes[name]);
+                    }
+                    
+                    head.appendChild(link);
+                }
+            }
+            
             // load and init module
             require([config.path + "/" + (config.file || "main")], function (module) {
+                
+                // create module container
+                var container = document.createElement("div");
+                
+                // add miid to html
+                container.setAttribute("id", miid);
+                
+                // add html
+                if (config.html) {
+                    
+                    container.innerHTML = config.html;
+                }
+                
+                // append module to the dom
+                target.appendChild(container);
                 
                 // create module
                 modules[miid] = Object.extend({
                     
-                    dom:    target,
+                    dom:    container,
                     miid:   miid,
                     lang:   config.lang,
                     path:   config.path
@@ -341,7 +392,7 @@ var M = (function() {
                 // call module constructor
                 if (typeof module === "function") {
                     
-                    module.call(modules[miid], config.conf);
+                    module.call(modules[miid], config);
                 }
                 
                 callback(null, modules[miid]);
