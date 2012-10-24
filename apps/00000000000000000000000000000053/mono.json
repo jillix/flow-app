@@ -1,0 +1,229 @@
+{
+    "appId": "00000000000000000000000000000053",
+    "name": "TruckShop",
+    "routes": {
+        "/": "layout"
+    },
+    "domains": [
+        "truckshop.jillix.net",
+        "truckshop.mono.ch"
+    ],
+    "publicDir": "public",
+    "publicUser": 0,
+    "users": [
+        {
+            "id": 0,
+            "username": "",
+            "password": "",
+            "roles": [0]
+        }
+    ],
+    "roles": [
+        {
+            "id": 0,
+            "name": ""
+        }
+    ],
+    "datasources": {
+        "categoriesDS": {
+            "type": "mongo",
+            "db": "truckshop",
+            "collection": "categories"
+        },
+        "articlesDS": {
+            "type": "mongo",
+            "db": "truckshop",
+            "collection": "articles"
+        }
+    },
+    "miids": {
+        "layout": {
+            "module": "github/adioo/layout/v0.0.4",
+            "roles": [0],
+            "config": {
+                "html": {
+                    "type": "a",
+                    "path": "html/layout"
+                },
+                "css": ["/css/resmi.css", "/css/front.css"],
+                "title": "TruckShop",
+                "modules": {
+                    "filterContainer": "filters",
+                    "left": "categories",
+                    "articleContainer": "articles"
+                }
+            }
+        },
+        "filters": {
+            "module": "github/jillix/filters/v0.0.1",
+            "roles": [0],
+            "config": {
+                "html": {
+                    "type": "a",
+                    "path": "html/filters"
+                },
+                "listen": {
+                    "categories": {
+                        "selectionChanged": "mergeCategoryFilter"
+                    }
+                }
+            }
+        },
+        "categories": {
+            "module": "github/adioo/bind-list/v0.1.0",
+            "roles": [0],
+            "config": {
+                "html": {
+                    "type": "a",
+                    "path": "html/categories"
+                },
+                "template": {
+                    "type": "selector",
+                    "value": ".template",
+                    "binds": [
+                        {
+                            "on": [{
+                                "name": "click",
+                                "handler": "selectItem"
+                            }]
+                        },
+                        {
+                            "attr": [
+                                {
+                                    "name": "id",
+                                    "value": {
+                                        "source": "id"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "target": ".text",
+                            "html": {
+                                "source": "name"
+                            }
+                        }
+                    ]
+                },
+                "container": ".categories",
+                "options": {
+                    "autofetch": true,
+                    "selection": "single",
+                    "classes": {
+                        "selected": "active"
+                    }
+                },
+                "controls": {
+                    "add": ".create",
+                    "delete": ".delete"
+                }
+            },
+            "operations": {
+                "create": {
+                    "roles": [0],
+                    "params": [{ "ds": "categoriesDS" }]
+                },
+                "read": {
+                    "roles": [0],
+                    "params": [{ "ds": "categoriesDS" }]
+                },
+                "update": {
+                    "roles": [0],
+                    "params": [{ "ds": "categoriesDS" }]
+                },
+                "remove": {
+                    "roles": [0],
+                    "params": [{ "ds": "categoriesDS" }]
+                }
+            }
+        },
+        "articles": {
+            "module": "github/adioo/bind-list/v0.1.0",
+            "roles": [0],
+            "config": {
+                "html": {
+                    "type": "a",
+                    "path": "html/articles"
+                },
+                "template": {
+                    "type": "selector",
+                    "value": ".template",
+                    "binds": [
+                        {
+                            "on": [{
+                                "name": "click",
+                                "handler": "selectItem"
+                            }]
+                        },
+                        {
+                            "attr": [
+                                {
+                                    "name": "id",
+                                    "value": {
+                                        "source": "id"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "target": ".description",
+                            "html": {
+                                "source": "description"
+                            }
+                        },
+                        {
+                            "target": ".netto",
+                            "html": {
+                                "source": "netto"
+                            }
+                        },
+                        {
+                            "target": ".brutto",
+                            "html": {
+                                "source": "brutto"
+                            }
+                        },
+                        {
+                            "target": ".caption",
+                            "html": {
+                                "source": "name"
+                            }
+                        }
+                    ]
+                },
+                "container": ".productList",
+                "options": {
+                    "selection": "none"
+                },
+                "listen": {
+                    "filters": {
+                        "filterChanged": "read"
+                    }
+                },
+                "controls": {
+                    "add": ".create",
+                    "delete": ".delete"
+                }
+            },
+            "operations": {
+                "create": {
+                    "roles": [0],
+                    "params": [{ "ds": "articlesDS" }]
+                },
+                "read": {
+                    "roles": [0],
+                    "params": [{ "ds": "articlesDS" }]
+                },
+                "update": {
+                    "roles": [0],
+                    "params": [{ "ds": "articlesDS" }]
+                },
+                "remove": {
+                    "roles": [0],
+                    "params": [{ "ds": "articlesDS" }]
+                }
+            }
+        }
+    }
+}
+

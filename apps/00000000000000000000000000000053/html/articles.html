@@ -1,0 +1,92 @@
+<div id="artContainer" style="display: block; ">
+    <h1 id="category">Top-Angebote</h1>
+    <span id="noart" style="display: none; ">Keine Artikel gefunden.</span>
+    <div class="paging clearfix" style="display: block; ">
+        <div class="button buttonRight" style="display: none; "></div>
+        <div class="button buttonLeft" style="display: none; "></div>
+        <div class="text">
+            <span class="label page">Seite</span>
+            <span class="pageNr">1</span>
+            <span class="separator of">von</span>
+            <span class="nrOfPages">1</span>
+        </div>
+    </div>
+    <img class="spinner" src="/images/spinner.gif" style="display: none; ">
+    <ul class="productList">
+        <li class="clearfix template">
+            <div class="imageContainer">
+                <!--<img src="/file/articles/1000000000193204670_small.jpg" style="visibility: hidden; ">-->
+            </div>
+            <div class="textContainer">
+                <h2 class="caption">????</h2>
+                <p class="description">????</p>
+                <div class="price clearfix">
+                    <div class="priceLabel">
+                        <span class="currency">CHF</span>
+                        <span class="price netto">????</span>
+                    </div>
+                </div>
+                <div class="oldPrice">
+                    <span class="stead">statt</span>
+                    <span class="price">
+                        <span class="currency">CHF</span>
+                        <span class="brutto">????</span>
+                    </span>
+                </div>
+            </div>
+        </li>
+    </ul>
+    <div class="paging clearfix" style="display: block; ">
+        <div class="button buttonRight" style="display: none; "></div>
+        <div class="button buttonLeft" style="display: none; "></div>
+        <div class="text">
+            <span class="label page">Seite</span>
+            <span class="pageNr">1</span>
+            <span class="separator of">von</span>
+            <span class="nrOfPages">1</span>
+        </div>
+    </div>
+</div>
+
+<div id="artDetContainer" style="display: none; ">
+    <span class="link" id="btov">Zurück zur Übersicht</span>
+    <h1 id="caption"></h1>
+    <div class="detailView">
+        <div class="imageContainer">
+            <img id="imgBig">
+        </div>
+        <div class="buyContainer">
+            <p class="orderNumber">
+                <span id="articleNr"></span>
+            </p>
+            <div class="price clearfix">
+                <div class="priceLabel">
+                    <span class="currency">CHF</span>
+                    <span class="price" id="netto"></span>
+                    <span class="tax">exkl. MwSt</span>
+                </div>
+            </div>
+            <div class="oldPrice">
+                <span class="stead">statt</span>
+                <span class="price">
+                    <span class="currency">CHF</span>
+                    <span id="brutto"></span>
+                </span>
+            </div>
+            <div class="stock">
+                <span class="label">
+                    <span id="stock">Verfügbar</span>:
+                    <span id="stockLab"></span>
+                </span>
+            </div>
+            <div class="quantity">
+                <span class="label">
+                    <span class="number">Anzahl</span>:
+                </span>
+                <input class="quantity" value="1" id="aqu">
+            </div>
+            <span class="button" id="incart">In den Warenkorb</span>
+        </div>
+        <div class="textContainer" id="description"></div>
+    </div>
+</div>
