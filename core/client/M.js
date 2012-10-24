@@ -203,104 +203,100 @@ var M = (function() {
             
             // create new link
             var link = new XMLHttpRequest();
-            
-            if (link) {
-                
-                var url = this.ok + "/" + (options.miid || this.miid) + "/" + method + (options.path || options.path === "" ? "/" + options.path : "") + (options.query || "");
-                
-                // open the connection
-                link.open(options.data ? "post" : "get", url, !options.sync);
-                
-                // handle data
-                if (options.data && !(typeof FormData !== "undefined" && options.data instanceof FormData)) {
-            
-                    try {
-            
-                        // set content-type header to application/json
-                        link.setRequestHeader("content-type", "application/json");
-            
-                        // stringify object to JSON
-                        options.data = JSON.stringify(options.data);
-            
-                    } catch(err) {
-            
-                        // abort request
-                        link.abort();
-            
-                        // fire callback with error
-                        if (callback) {
-                            
-                            callback(err);
-                        }
-            
-                        // exit function
-                        return;
-                    }
-                }
-            
-                // attach callback to upload progress event
-                if (link.upload && options.upload) {
-            
-                    link.upload.onprogress = options.upload;
-                }
-            
-                // attach callback to download progress event
-                if (options.downlaod) {
-            
-                    link.onprogress = options.download;
-                }
-            
-                // request complete callback
-                link.onreadystatechange = function() {
-                
-                    //check if request is complete
-                    if (link.readyState == 4) {
-            
-                        // get error message
-                        var err = link.A ? "A" : link.status < 400 ? null : link.responseText || "E";
-            
-                        // reset abort status
-                        link.A = 0;
-            
-                        if (callback) {
-            
-                            var response = null;
-            
-                            if (!err) {
-            
-                                // parse result as JSON
-                                if ((link.getResponseHeader("content-type") || "").indexOf("application/json") > -1) {
-            
-                                    try {
-            
-                                        response = JSON.parse(link.responseText);
-                                    }
-                                    catch (e) {
-            
-                                        err = e;
-                                    }
-                                }
-                                else {
-            
-                                    response = link.responseText;
-                                }
-                            }
-                            
-                            // fire callback
-                            callback(err, response, link);
-                        }
-                    }
-                };
-                
-                // send data
-                link.send(options.data);
-                
-                return function() {
-                    
-                    link.A = 1;
-                    link.abort();
-                };
+            if (!link) {
+                return;
             }
+
+            var url = this.ok + "/" + (options.miid || this.miid) + "/" + method + (options.path || options.path === "" ? "/" + options.path : "") + (options.query || "");
+            
+            // open the connection
+            link.open(options.data ? "post" : "get", url, !options.sync);
+            
+            // handle data
+            if (options.data && !(typeof FormData !== "undefined" && options.data instanceof FormData)) {
+        
+                try {
+        
+                    // set content-type header to application/json
+                    link.setRequestHeader("content-type", "application/json");
+        
+                    // stringify object to JSON
+                    options.data = JSON.stringify(options.data);
+        
+                } catch(err) {
+        
+                    // abort request
+                    link.abort();
+        
+                    // fire callback with error
+                    if (callback) {
+                        
+                        callback(err);
+                    }
+        
+                    // exit function
+                    return;
+                }
+            }
+        
+            // attach callback to upload progress event
+            if (link.upload && options.upload) {
+        
+                link.upload.onprogress = options.upload;
+            }
+        
+            // attach callback to download progress event
+            if (options.downlaod) {
+        
+                link.onprogress = options.download;
+            }
+        
+            // request complete callback
+            link.onload = function() {
+            
+                // get error message
+                var err = link.A ? "A" : link.status < 400 ? null : link.responseText || "E";
+    
+                // reset abort status
+                link.A = 0;
+    
+                if (callback) {
+    
+                    var response = null;
+    
+                    if (!err) {
+    
+                        // parse result as JSON
+                        if ((link.getResponseHeader("content-type") || "").indexOf("application/json") > -1) {
+    
+                            try {
+    
+                                response = JSON.parse(link.responseText);
+                            }
+                            catch (e) {
+    
+                                err = e;
+                            }
+                        }
+                        else {
+    
+                            response = link.responseText;
+                        }
+                    }
+
+                    // fire callback
+                    callback(err, response, link);
+                }
+            };
+            
+            // send data
+            link.send(options.data);
+            
+            return function() {
+                
+                link.A = 1;
+                link.abort();
+            };
         }
     };
     
