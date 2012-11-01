@@ -69,7 +69,7 @@ exports.getConfig = function(link) {
                     send.notfound(link, err || "No module found");
                     return;
                 }
-                console.log(module);
+                
                 var response = module.config || {};
                 
                 response.path = module.source + "/" + module.owner + "/" + module.name + "/" + module.version;
