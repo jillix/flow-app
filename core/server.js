@@ -79,6 +79,11 @@ function startApplication(appId) {
     var log = fs.createWriteStream(CONFIG.APPLICATION_ROOT + appId + "/log.txt");
     node.stdout.pipe(log);
     node.stderr.pipe(log);
+    
+    if (CONFIG.logTerm) {
+        node.stdout.pipe(process.stdout);
+        node.stderr.pipe(process.stderr);
+    }
 }
 
 
