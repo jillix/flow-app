@@ -410,7 +410,7 @@ function copyApplicationDependencies(descriptor, dependencies, callback) {
         var module = new modules.Module(splits[0], splits[1], splits[2], splits[3]);
         var modulePath = moduleRoot + module.getVersionPath();
 
-        if (fs.existsSync(depKeys[index])) {
+        if (fs.existsSync(appModuleRoot + depKeys[index])) {
             copyApplicationDependenciesSequential(++index);
             return;
         }
