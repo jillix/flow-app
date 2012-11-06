@@ -1,63 +1,76 @@
-<div id="container">
-    <div id="header">
-        <img id="logo" class="logo" alt="Derendinger" src="/images/derendinger.jpg">
-        <div class="search">
-            <input id="search" type="search" class="placeholder" placeholder="Suche">
-        </div>
-        <div class="lang">
-            <ul>
-                <li id="de_CH">D</li>
-                <li id="fr_CH" class="last">F</li>
-            </ul>
+<div class="navbar navbar-fixed-top headerbar">
+    <div class="navbar-inner">
+        <div class="container">
+            <a id="search-btn" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <i class="icon-reorder"></i>
+            </a>
+            <a class="brand" href="#">
+                <img id="logo" class="logo" alt="Derendinger" src="/images/logo.png">
+            </a>
+            <div class="nav-collapse collapse">
+                <form class="navbar-search pull-right">
+                    <input type="text" class="search-query hidden-tablet hidden-phone" placeholder="Search">
+                    <input type="text" class="search-query hidden-desktop span11" placeholder="Search">
+                </form>
+                <ul class="nav nav-list categories hidden-desktop hidden-tablet">
+                    <li class="active"><a href="articles_cart_empty.html">Top-Angebote</a></li>
+                    <li><a href="articles_cart_empty.html">Chemieprodukte</a></li>
+                    <li><a href="articles_cart_empty.html">Fahrzeug-Zubehör</a></li>
+                    <li><a href="articles_cart_empty.html">Verbrauchsmaterial</a></li>
+                    <li><a href="articles_cart_empty.html">Werkstatteinrichtungen</a></li>
+                    <li><a href="articles_cart_empty.html">Werkzeuge</a></li>
+                </ul>
+            </div><!--/.nav-collapse -->
         </div>
     </div>
-    <div id="body" class="clearfix">
-        <div id="left"></div>
-        <div id="middle">
+</div>
+
+<div class="container">
+    <div class="row-fluid">
+        <div class="span3 main-nav hidden-tablet hidden-phone">
+            <div class="sidebar-nav" id="sideNavContainer"></div>
+        </div>
+        <div class="span6">
             <div id="filterContainer"></div>
             <div id="articleContainer"></div>
+            <div id="detailContainer"></div>
         </div>
-        <div id="right">
-            <div class="cart">
-                <h2 id="cartTitle">Warenkorb</h2>
-                <div class="cartContent">
-                    <div class="empty">Ihr Warenkorb ist leer.</div>
-                    <div class="confirm">Vielen Dank für Ihre Bestellung.</div>
-                    <div class="content" style="display:none">
-                        <ul class="cartList">
-                            <li>
-                                <h4></h4>
-                                <div>
-                                    <span class="quantity">
-                                        <span class="number">Anzahl</span>:
-                                    </span>
-                                    <input type="text" class="quantity" value="1">
-                                </div>
-                                <div>
-                                    <span class="currency">CHF</span>
-                                    <span class="price"></span>
-                                </div>
-                                <div class="deleter"></div>
-                            </li>
-                        </ul>
-                        <h3 id="totalCaption">Total</h3>
-                        <div class="total">
-                            <span class="currency">CHF</span>
-                            <span id="total"></span>
-                            <span class="tax">exkl. MwSt</span>
+        <div class="span3">
+            <div class="row-fluid">
+                <div class="cart">
+                    <h5 class="cartTitle">Warenkorb</h5>
+                    <div class="cartContent">
+                        <div class="empty" style="display:block;">Ihr Warenkorb ist leer.</div>
+                        <div class="confirm" style="display:none;">Vielen Dank für Ihre Bestellung.</div>
+                        <div class="content" style="display:none;">
+                            <ul class="cartList"></ul>
+                            <h3 id="totalCaption">Total</h3>
+                            <div class="total">
+                                <span class="currency">CHF</span>
+                                <span id="total">0.00</span>
+                                <span class="tax">exkl. MwSt</span>
+                            </div>
+                            <h4></h4>
+                            <div class="agb clearfix">
+                                <div id="abgck" class="checkbox"></div>
+                                <p id="agbtxt">
+                                    Ich habe die <a class="agbLink" target="_blank" href="/file/agb_liqshop_dd_de.pdf">AGBs</a> gelesen und akzeptiert.
+                                </p>
+                            </div>
+                            <span class="button inactive" id="order">Bestellen</span>
                         </div>
-                        <h4></h4>
-                        <div class="agb clearfix">
-                            <div id="abgck" class="checkbox"></div>
-                            <p id="agbtxt">Ich habe die <a class="agbLink" target="_blank" href="/file/agb_liqshop_dd_de.pdf">AGBs</a> gelesen und akzeptiert.</p>
-                        </div>
-                        <span class="button inactive" id="order">Bestellen</span>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <div id="footer">
-        <span class="copyright">© Derendinger AG | Ein Unternehmen der <a href="http://www.sag-ag.ch/" target="_blank">Swiss Automotive Group AG</a> | <a href="http://www.derendinger.ch/de/allgemeine-geschaeftsbedingungen/" target="_blank">AGB</a> | <a href="/file/agb_liqshop_dd_de.pdf" target="_blank">AGB Liq-Shop</a> | <a href="http://www.derendinger.ch/de/datenschutz/" target="_blank">Datenschutz</a></span>
-    </div>
+    
+    <footer>
+        <p>
+            © <a href="http://derendinger.ch/">Derendinger AG</a> |
+            Ein Unternehmen der <a href="http://www.sag-ag.ch/">Swiss Automotive Group AG</a> |
+            AGB | AGB Liq-Shop | Datenschutz | DE | FR | IT
+            <a class="pull-right" href="articles_admin.html">Login</a>
+        </p>
+    </footer>
 </div>

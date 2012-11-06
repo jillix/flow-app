@@ -45,13 +45,17 @@
                     "type": "a",
                     "path": "html/layout"
                 },
-                "css": ["/css/resmi.css", "/css/front.css"],
-                "title": "TruckShop",
+                "css": ["/css/bootstrap.css", "/css/font-awesome.css", "/css/overwrite.css", "/css/bootstrap-responsive.css"],
+                "title": "Derend sdfsdfsd inger TruckShop",
                 "modules": {
                     "filterContainer": "filters",
-                    "left": "categories",
-                    "articleContainer": "articles"
-                }
+                    "sideNavContainer": "categories",
+                    "articleContainer": "articles",
+                    "detailContainer": "details"
+                },
+                "scripts": [
+                    "/js/bootstrap-collapse.js"
+                ]
             }
         },
         "filters": {
@@ -64,7 +68,9 @@
                 },
                 "listen": {
                     "categories": {
-                        "selectionChanged": "mergeCategoryFilter"
+                        "selectionChanged": [
+                            { "handler": "mergeCategoryFilter" }
+                        ]
                     }
                 }
             }
@@ -101,7 +107,15 @@
                             "target": ".text",
                             "html": {
                                 "source": "name"
-                            }
+                            },
+                            "attr": [
+                                {
+                                    "name": "href",
+                                    "value": {
+                                        "source": "id"
+                                    }
+                                }
+                            ]
                         }
                     ]
                 },
@@ -152,7 +166,8 @@
                         {
                             "on": [{
                                 "name": "click",
-                                "handler": "selectItem"
+                                "handler": "hide",
+                                "emit": "viewArticleDetails"
                             }]
                         },
                         {
@@ -191,13 +206,21 @@
                         }
                     ]
                 },
-                "container": ".productList",
+                "container": ".articles",
                 "options": {
                     "selection": "none"
                 },
                 "listen": {
                     "filters": {
-                        "filterChanged": "read"
+                        "filterChanged": [
+                            { "handler": "show" },
+                            { "handler": "read" }
+                        ]
+                    },
+                    "details": {
+                        "backToArticleList": [
+                            { "handler": "show" }
+                        ]
                     }
                 },
                 "controls": {
@@ -221,6 +244,51 @@
                 "remove": {
                     "roles": [0],
                     "params": [{ "ds": "articlesDS" }]
+                }
+            }
+        },
+        "details": {
+            "module": "github/adioo/bind-html/v0.1.0",
+            "roles": [0],
+            "config": {
+                "html": {
+                    "type": "a",
+                    "path": "html/details"
+                },
+                "scripts": [
+                    "/js/bootstrap-carousel.js"
+                ],
+                "options": {
+                    "hidden": true
+                },
+                "binds": [
+                    {
+                        "target": ".back",
+                        "on": [{
+                            "name": "click",
+                            "handler": "hide",
+                            "emit": "backToArticleList"
+                        }]
+                    },
+                    {
+                        "target": ".btn-primary",
+                        "on": [{
+                            "name": "click",
+                            "emit": "addToCart"
+                        }]
+                    }
+                ],
+                "listen": {
+                    "articles": {
+                        "viewArticleDetails": [
+                            { "handler": "show" }
+                        ]
+                    },
+                    "filters": {
+                        "filterChanged": [
+                            { "handler": "hide" }
+                        ]
+                    }
                 }
             }
         }
