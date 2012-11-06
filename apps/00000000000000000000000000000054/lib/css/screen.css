@@ -349,3 +349,15 @@ th, td
 	text-align: center;
 	margin-top: 150px;
 }
+
+#list .filter {
+    
+    padding: 10px 0 0 20px;
+}
+
+.itemCount {
+    
+    font-size: 18px;
+    font-weight: bold;
+    padding: 5px 0 0 20px;
+}

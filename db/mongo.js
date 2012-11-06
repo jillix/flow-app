@@ -69,7 +69,7 @@ this.db = (function(){
 			
 			callback_buffer[ key ].push( callback );
 			
-			new mongo.Db( db_name, new mongo.Server( host, port, { native_parser: true })).open(function( err, db ){
+			new mongo.Db( db_name, new mongo.Server( host, port), { native_parser: true, safe: false }).open(function( err, db ){
 				
 			    if( err ) callbacks( key, err, null );
 			    

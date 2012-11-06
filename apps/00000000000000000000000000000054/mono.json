@@ -149,7 +149,7 @@
         
         "list": {
         
-        	"module": "bitbucket/jillix/crm_list/v0.0.4",
+        	"module": "bitbucket/jillix/crm_list/v0.0.5",
         	"roles": [1],
         	
         	"config": {
@@ -183,7 +183,7 @@
         
         "table": {
         
-        	"module": "bitbucket/jillix/crm_table/v0.0.3",
+        	"module": "bitbucket/jillix/crm_table/v0.0.4",
         	"roles": [1],
         	
         	"config": {
@@ -217,7 +217,7 @@
         
         "db": {
         
-        	"module": "bitbucket/jillix/crm_db/v0.0.4",
+        	"module": "bitbucket/jillix/crm_db/v0.0.5",
         	"roles": [1],
         	"config": {},
         	"operations": {
