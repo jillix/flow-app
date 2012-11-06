@@ -323,7 +323,12 @@ var M = (function() {
                 callback(err || "no config.");
                 return;
             }
-            
+
+            // load scripts
+            if (config.scripts) {
+                require(config.scripts);
+            }
+
             // load css
             if (config.css) {
                 

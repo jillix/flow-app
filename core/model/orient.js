@@ -588,7 +588,7 @@ exports.deleteApplication = function(aid, callback) {
     sql(command, function(err, results) {
 
         if (err) {
-            return callback("Failed to delete application with ID " + aid + ": "+ JSON.stringify(err));
+            return callback("Failed to delete application with ID " + aid + ": " + JSON.stringify(err));
         }
 
         if (results && results.length > 0) {
