@@ -46,12 +46,13 @@
                     "path": "html/layout"
                 },
                 "css": ["/css/bootstrap.css", "/css/font-awesome.css", "/css/overwrite.css", "/css/bootstrap-responsive.css"],
-                "title": "Derend sdfsdfsd inger TruckShop",
+                "title": "Derendinger TruckShop",
                 "modules": {
                     "filterContainer": "filters",
                     "sideNavContainer": "categories",
                     "articleContainer": "articles",
-                    "detailContainer": "details"
+                    "detailContainer": "details",
+                    "cartContainer": "cart"
                 },
                 "scripts": [
                     "/js/bootstrap-collapse.js"
@@ -222,10 +223,6 @@
                             { "handler": "show" }
                         ]
                     }
-                },
-                "controls": {
-                    "add": ".create",
-                    "delete": ".delete"
                 }
             },
             "operations": {
@@ -258,6 +255,43 @@
                 "scripts": [
                     "/js/bootstrap-carousel.js"
                 ],
+                "template": {
+                    "type": "selector",
+                    "value": ".template",
+                    "binds": [
+                        {
+                            "target": ".addToCart",
+                            "on": [{
+                                "name": "click",
+                                "emit": "addToCart"
+                            }]
+                        },
+                        {
+                            "target": ".description",
+                            "html": {
+                                "source": "description"
+                            }
+                        },
+                        {
+                            "target": ".netto",
+                            "html": {
+                                "source": "netto"
+                            }
+                        },
+                        {
+                            "target": ".brutto",
+                            "html": {
+                                "source": "brutto"
+                            }
+                        },
+                        {
+                            "target": ".caption",
+                            "html": {
+                                "source": "name"
+                            }
+                        }
+                    ]
+                },
                 "options": {
                     "hidden": true
                 },
@@ -269,19 +303,13 @@
                             "handler": "hide",
                             "emit": "backToArticleList"
                         }]
-                    },
-                    {
-                        "target": ".btn-primary",
-                        "on": [{
-                            "name": "click",
-                            "emit": "addToCart"
-                        }]
                     }
                 ],
                 "listen": {
                     "articles": {
                         "viewArticleDetails": [
-                            { "handler": "show" }
+                            { "handler": "show" },
+                            { "handler": "update" }
                         ]
                     },
                     "filters": {
@@ -289,6 +317,80 @@
                             { "handler": "hide" }
                         ]
                     }
+                }
+            }
+        },
+        "cart": {
+            "module": "github/adioo/bind-list/v0.1.0",
+            "roles": [0],
+            "config": {
+                "html": {
+                    "type": "a",
+                    "path": "html/cart"
+                },
+                "template": {
+                    "type": "selector",
+                    "value": ".template",
+                    "binds": [
+                        {
+                           "target": ".close",
+                            "on": [{
+                                "name": "click",
+                                "handler": "removeItem"
+                            }]
+                        },
+                        {
+                            "attr": [
+                                {
+                                    "name": "id",
+                                    "value": {
+                                        "source": "id"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "target": ".netto",
+                            "html": {
+                                "source": "netto"
+                            }
+                        },
+                        {
+                            "target": ".caption",
+                            "html": {
+                                "source": "name"
+                            }
+                        }
+                    ]
+                },
+                "container": ".cartList",
+                "options": {
+                    "type": ["memory", "cookie", "server"]
+                },
+                "listen": {
+                    "details": {
+                        "addToCart": [
+                            { "handler": "createItem" }
+                        ]
+                    }
+                }
+            },
+            "operations": {
+                "create": {
+                    "roles": [0],
+                    "params": [{ "ds": "articlesDS" }]
+                },
+                "read": {
+                    "roles": [0],
+                    "params": [{ "ds": "articlesDS" }]
+                },
+                "update": {
+                    "roles": [0],
+                    "params": [{ "ds": "articlesDS" }]
+                },
+                "remove": {
+                    "roles": [0],
+                    "params": [{ "ds": "articlesDS" }]
                 }
             }
         }
