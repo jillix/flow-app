@@ -393,13 +393,18 @@ exports.getUser = function(appId, userName, callback) {
 
 exports.addApplication = function(appId, name, routes, publicDir, errorMiid, scripts, callback) {
 
-    // #7:0 should be the default public user
+    var vuCluster = CONFIG.orient.DB.getClusterByClass("VUser");
+
+    if (!vuCluster) { return callback("Could not find the VUser cluster ID."); }
+
+    // VUser:0 should be the default public user
+    var publicUserRid = "#" + vuCluster.id + ":0";
     var command =
         "INSERT INTO VApplication SET " +
             "id = '" + appId + "', " +
             "name = '" + name + "', " +
             "publicDir = '" + publicDir + "', " +
-            "publicUser = #7:0, " +
+            "publicUser = " + publicUserRid + ", " +
             "error = " + (errorMiid ? "'" + errorMiid + "'" : "null") + ", " +
             "routes = " + JSON.stringify(routes) + ", " +
             "scripts = " + JSON.stringify(scripts);
