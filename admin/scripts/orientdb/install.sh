@@ -1,8 +1,7 @@
 #!/bin/bash
 
-
-SCRIPT=`which $0`
-SCRIPT_DIR=`dirname $SCRIPT`
+SCRIPT=`which "$0"`
+SCRIPT_DIR=`dirname "$SCRIPT"`
 
 TMP_DIR=tmp
 mkdir -p "$TMP_DIR"
@@ -23,7 +22,6 @@ if [ `uname` == "Darwin" ]
 then
     ORIENTDB_MONO_DROP_SQL=mono_drop.sql.mac
 fi
-
 
 function download_orientdb {
 
@@ -78,6 +76,7 @@ function install_orientdb {
         echo "Starting OrientDB server..."
         # start OrientDB to make sure the root user and password are generated
         TMP_CUR_DIR=`pwd`
+        
         cd "$ORIENTDB_ROOT/bin/"
         ./server.sh > /dev/null 2>&1 &
         cd "$TMP_CUR_DIR"
@@ -135,7 +134,7 @@ function install_orientdb {
         DROPPING=true
         if [ `uname` != "Darwin" ]
         then
-            $ORIENTDB_ROOT/bin/console.sh "$TMP_DIR/$ORIENTDB_MONO_DROP_SQL" &> "$IMPORT_LOG"
+            "$ORIENTDB_ROOT/bin/console.sh" "$TMP_DIR/$ORIENTDB_MONO_DROP_SQL" &> "$IMPORT_LOG"
         fi
     fi
 
@@ -151,7 +150,7 @@ function install_orientdb {
     # see issue: http://code.google.com/p/orient/issues/detail?id=1044
     if [ `uname` != "Darwin" -a "$DROPPING" != "true" ]
     then
-        $ORIENTDB_ROOT/bin/console.sh "$TMP_DIR/$ORIENTDB_MONO_SQL" &> "$IMPORT_LOG"
+        "$ORIENTDB_ROOT/bin/console.sh" "$TMP_DIR/$ORIENTDB_MONO_SQL" &> "$IMPORT_LOG"
     fi
 
     # TODO Whu doesn't console return non-zero on error?
