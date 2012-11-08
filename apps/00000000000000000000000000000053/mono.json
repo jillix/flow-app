@@ -255,9 +255,6 @@
                 "scripts": [
                     "/js/bootstrap-carousel.js"
                 ],
-                "options": {
-                    "hidden": true
-                },
                 "binds": [
                     {
                         "target": ".back",
