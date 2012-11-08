@@ -207,6 +207,7 @@ exports.getModuleVersionId = function(module, callback) {
 
         if (err) { return callback(err); }
         if (!modDoc) { return callback("Could not find module version in the database: " + module.getVersionPath()); }
+
         return callback(null, idFromRid(modDoc["@rid"]));
     });
 };
@@ -297,6 +298,9 @@ exports.deleteModuleVersion = function(module, callback) {
 
     // find the module version
     exports.getModuleVersion(module, function(err, modVer) {
+
+        if (err) { return callback(err); }
+        if (!modVer) { return callback("Could not find module version in the database: " + module.getVersionPath()); }
 
         var rid = modVer['@rid'];
 
@@ -755,9 +759,7 @@ exports.addCanPerform = function(miid, rid, operation, params, callback) {
     // find operation id for miid
     getOperationId(rid, miid, operation, function(err, id) {
 
-        if (err) {
-            return callback(err);
-        }
+        if (err) { return callback(err); }
 
         var vrCluster = CONFIG.orient.DB.getClusterByClass("VRole");
         var voCluster = CONFIG.orient.DB.getClusterByClass("VOperation");

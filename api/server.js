@@ -13,10 +13,20 @@ function _copyDirectory(source, destination, callback) {
     });
 }
 
-function copyDirectory(source, destination, callback) {
+function copyDirectory(source, destination, options, callback) {
 
-    if (!fs.existsSync(destination)) {
+    if (typeof options === "function") {
+        callback = options;
+        options = {};
+    }
 
+    if (options.createParents && !fs.existsSync(destination)) {
+
+        // TODO this is not quite correct:
+        // if destination was on purpose a missing directory
+        // such that a renaming also takes place, we create
+        // the destination directory and copy the source INSIDE
+        // of this. As a workaround we created the createParents option
         makeDirectory(destination, function(err) {
 
             if (err) { return callback(err); }
@@ -55,8 +65,29 @@ function removeDirectory(directory, callback) {
     });
 }
 
+function readDescriptor(path, callback) {
+
+    fs.readFile(path, function (err, data) {
+
+        if (err) {
+            return callback("Error while reading the descriptor file: " + path);
+        }
+
+        var descriptor = null;
+
+        try {
+            descriptor = JSON.parse(data);
+        } catch (err) {
+            var error = "Invalid descriptor file (" + path + "): " + data.toString();
+            return callback(error);
+        }
+
+        callback(null, descriptor);
+    });
+}
 
 exports.copyDirectory = copyDirectory;
 exports.makeDirectory = makeDirectory;
 exports.removeDirectory = removeDirectory;
 
+exports.readDescriptor = readDescriptor;

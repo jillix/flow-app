@@ -45,20 +45,9 @@ function uninstall(descriptor, callback) {
  */
 function installFromFile(file, callback) {
 
-    fs.readFile(file, function (err, data) {
+    server.readDescriptor(file, function(err, descriptor) {
 
-        if (err) {
-            return callback("Error while reading the application descriptor file: " + file);
-        }
-
-        var descriptor = null;
-
-        try {
-            descriptor = JSON.parse(data);
-        } catch (err) {
-            var error = "Invalid descriptor file (" + file + "): " + data.toString();
-            return callback(error);
-        }
+        if (err) { return callback(err); }
 
         installFromObject(descriptor, callback);
     });
@@ -69,20 +58,9 @@ function installFromFile(file, callback) {
  */
 function uninstallFromFile(file, callback) {
 
-    fs.readFile(file, function (err, data) {
+    server.readDescriptor(file, function(err, descriptor) {
 
-        if (err) {
-            return callback("Error while reading the application descriptor file: " + file);
-        }
-
-        var descriptor = null;
-
-        try {
-            descriptor = JSON.parse(data);
-        } catch (err) {
-            var error = "Invalid descriptor file (" + file + "): " + data.toString();
-            return callback(error);
-        }
+        if (err) { return callback(err); }
 
         uninstallFromObject(descriptor, callback);
     });
@@ -415,7 +393,7 @@ function copyApplicationDependencies(descriptor, dependencies, callback) {
             return;
         }
 
-        server.copyDirectory(modulePath, appModuleRoot + module.getModulePath(), function(err) {
+        server.copyDirectory(modulePath, appModuleRoot + module.getModulePath(), { createParents: true }, function(err) {
 
             if (err) {
                 console.error("Could not install dependency: " + module.getVersionPath() + ". Reason:");

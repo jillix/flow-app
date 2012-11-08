@@ -111,7 +111,12 @@ function cloneModuleVersion(module, callback) {
 
 // ************** API **************
 
-function fetchModule(module, callback) {
+function fetchModule(module, local, callback) {
+
+    if (typeof local === "function") {
+        callback = local;
+        local = false;
+    }
 
     addModuleDir(module.source, module.owner, module.name, function(err) {
 
@@ -122,7 +127,14 @@ function fetchModule(module, callback) {
             return;
         }
 
-        cloneModuleVersion(module, callback);
+        // if local installation, copy the module
+        if (local) {
+            server.copyDirectory(module.local, CONFIG.MODULE_ROOT + module.getVersionPath(), { createParents: false },  callback);
+        }
+        // else clone from the web
+        else {
+            cloneModuleVersion(module, callback);
+        }
     });
 }
 
@@ -165,19 +177,10 @@ function readModuleDescriptor(module, callback) {
 
     var file = CONFIG.MODULE_ROOT + module.getVersionPath() + "/mono.json";
 
-    fs.readFile(file, function (err, data) {
+    server.readDescriptor(file, function(err, descriptor) {
 
         if (err) {
             return callback("Error while reading the module descriptor file: " + file);
-        }
-
-        var descriptor = null;
-
-        try {
-            descriptor = JSON.parse(data);
-        } catch (err) {
-            var error = "Invalid descriptor file (" + file + "): " + data.toString();
-            return callback(error);
         }
 
         // TODO validate descriptor
@@ -269,11 +272,31 @@ function addDependencyLinks(module, descriptor, installedDependencies, callback)
     addDependencyLinksSequential(index);
 }
 
+function installLocalModule(module, callback) {
+
+    // local module must have a local flag pointing to the module directory
+    if (!module.local || !fs.existsSync(module.local)) {
+        return callback("The local module does not exist: " + module.getVersionPath());
+    }
+
+    // the module must not be already installed
+    db.getModuleVersion(module, function(err, version) {
+
+        if (err) { return callback(err); }
+
+        // if this version already exists in the database throw error
+        if (version) { return callback("This module version is already installed: " + module.getVersionPath()); }
+
+        // now we can install this module locally
+        installModuleActions(module, true, callback);
+    });
+}
+
 function installModule(module, callback) {
 
     // if the module exists, just get it's id (unless it's a "dev" version)
     if (fs.existsSync(CONFIG.MODULE_ROOT + module.getVersionPath())) {
-        // id not a dev module
+        // if not the "dev" version, skip this module
         if (module.version !== "dev") {
             console.log("Skipping " + module.getVersionPath());
             db.getModuleVersionId(module, function(err, id) {
@@ -285,7 +308,9 @@ function installModule(module, callback) {
                 db.getModuleVersionDependencies(module._vid, callback);
             });
             return;
-        } else {
+        }
+        // ifthe "dev" version, always reinstall this module
+        else {
             // uninstall first for dev modules
             uninstallModule(module, function(err) {
 
@@ -302,7 +327,12 @@ function installModule(module, callback) {
     installModuleActions(module, callback);
 }
 
-function installModuleActions(module, callback) {
+function installModuleActions(module, local, callback) {
+
+    if (typeof local === "function") {
+        callback = local;
+        local = false;
+    }
 
     // wrap the callback to perform cleanup on error
     var initialCallback = callback;
@@ -327,9 +357,10 @@ function installModuleActions(module, callback) {
     // 1. DOWNLOAD
     // ***********
     if (CONFIG.log.moduleInstallation || CONFIG.logLevel === "verbose") {
-        console.log("Fetching module: " + module.getModulePath());
+        console.log("Fetching module: " + module.getModulePath() + (local ? " (local: " + module.local + ")" : ""));
     }
-    fetchModule(module, function(err) {
+
+    fetchModule(module, local, function(err) {
 
         if (err) { return callback(err); }
 
@@ -436,6 +467,8 @@ exports.fetchModule = fetchModule;
 exports.removeModule = removeModule;
 exports.installModule = installModule;
 exports.uninstallModule = uninstallModule;
+
+exports.installLocalModule = installLocalModule;
 
 exports.Module = function(source, owner, name, version) {
 
