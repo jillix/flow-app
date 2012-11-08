@@ -255,43 +255,6 @@
                 "scripts": [
                     "/js/bootstrap-carousel.js"
                 ],
-                "template": {
-                    "type": "selector",
-                    "value": ".template",
-                    "binds": [
-                        {
-                            "target": ".addToCart",
-                            "on": [{
-                                "name": "click",
-                                "emit": "addToCart"
-                            }]
-                        },
-                        {
-                            "target": ".description",
-                            "html": {
-                                "source": "description"
-                            }
-                        },
-                        {
-                            "target": ".netto",
-                            "html": {
-                                "source": "netto"
-                            }
-                        },
-                        {
-                            "target": ".brutto",
-                            "html": {
-                                "source": "brutto"
-                            }
-                        },
-                        {
-                            "target": ".caption",
-                            "html": {
-                                "source": "name"
-                            }
-                        }
-                    ]
-                },
                 "options": {
                     "hidden": true
                 },
@@ -303,6 +266,37 @@
                             "handler": "hide",
                             "emit": "backToArticleList"
                         }]
+                    },
+                    {
+                        "target": ".addToCart",
+                        "on": [{
+                            "name": "click",
+                            "emit": "addToCart"
+                        }]
+                    },
+                    {
+                        "target": ".description",
+                        "html": {
+                            "source": "description"
+                        }
+                    },
+                    {
+                        "target": ".netto",
+                        "html": {
+                            "source": "netto"
+                        }
+                    },
+                    {
+                        "target": ".brutto",
+                        "html": {
+                            "source": "brutto"
+                        }
+                    },
+                    {
+                        "target": ".caption",
+                        "html": {
+                            "source": "name"
+                        }
                     }
                 ],
                 "listen": {
