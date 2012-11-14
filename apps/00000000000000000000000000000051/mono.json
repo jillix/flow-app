@@ -36,7 +36,7 @@
         {
             "id": 2,
             "username": "ddchlq",
-            "password": "d9f3626523c9ecebe2ccdfe4c589f5d8b4c2c764e9fc7e7b0c8e33ca4142ff22",
+            "password": "a5d3b54a4e39121875fce5fd1c38dcb7388b1a65552d7aa468a262d430eee896",
             "data": {
                 "fullname": "DDCH Orders Liqshop Admin",
                 "language": "de",
@@ -49,7 +49,7 @@
         {
             "id": 3,
             "username": "ddchhb",
-            "password": "d9f3626523c9ecebe2ccdfe4c589f5d8b4c2c764e9fc7e7b0c8e33ca4142ff22",
+            "password": "a5d3b54a4e39121875fce5fd1c38dcb7388b1a65552d7aa468a262d430eee896",
             "data": {
                 "fullname": "DDCH Orders Happybonus Admin",
                 "language": "de",
@@ -88,7 +88,7 @@
         {
            "id": "6",
            "username": "ddchmar",
-           "password": "d9f3626523c9ecebe2ccdfe4c589f5d8b4c2c764e9fc7e7b0c8e33ca4142ff22",
+           "password": "a5d3b54a4e39121875fce5fd1c38dcb7388b1a65552d7aa468a262d430eee896",
            "data": {
                "fullname": "DD | Marketing",
                "language": "de",
@@ -101,7 +101,7 @@
         {
            "id": "7",
            "username": "lauper",
-           "password": "e69060dafc3d43b4fac08726eaecd3b289f2f9158688260b1935ffb432210acf",
+           "password": "4ff11db7fb9ab2275508b7355289f47baa699c33ba172aacfd46b288cde31d97",
            "data": {
                "fullname": "LC | Lauper",
                "language": "de",
@@ -953,7 +953,7 @@
             }
         },
         "liqshop_order_list": {
-            "module": "bitbucket/jillix/liqshopOrderList/v0.2.0",
+            "module": "bitbucket/jillix/liqshopOrderList/v0.2.1",
             "roles": [1],
             "config": {
                 "html": {
@@ -974,7 +974,7 @@
             }
         },
         "liqshop_order_details": {
-            "module": "bitbucket/jillix/liqshopOrderDetails/v0.2.0",
+            "module": "bitbucket/jillix/liqshopOrderDetails/v0.2.1",
             "roles": [1],
             "config": {
                 "html": {
