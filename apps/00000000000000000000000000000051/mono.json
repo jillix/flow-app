@@ -6,10 +6,12 @@
     },
     "error": "liqshop_order_login",
     "domains": [
-        "liqshop.ch",
+        "sagorders.jillix.net",
+        "sagorders.mono.ch",
         "orders.happybonus.ch",
-        "orders.test.happybonus.ch",
-        "liqshop.jillix.net"
+        "orders.derendinger.ch",
+        "orders.derendinger.at",
+        "orders.technomag.ch"
     ],
     "publicDir": "public",
     "publicUser": 0,
