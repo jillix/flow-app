@@ -23,21 +23,12 @@
 
 MAILTO=admin@jillix.com
 
-# this will copy the happy exports from machine14.abc.it
-# TODO this will be obsolete when the ftp uploads will arive directly in ~/ftp
-# delete the following cronjobs and leave only the once commented out below under "SAG file imports"
-30 2 * * * scp -i .ssh/id_rsa_machine14 webadmin@machine14.abc4it.com:/mono/data/ftp/happy_export.zip ~/ftp > /dev/null
-45 2 * * * unzip -jo ~/ftp/happy_export.zip -d ~/ftp > /dev/null
-00 3 * * * node ~/legacy/scripts/happybonus_customers.js ~/ftp/HappyBonusKundenExport.txt  > ~/logs/import_happybonus_customers.log
-15 3 * * * NODE_PATH=~/legacy/mono/lib5 node ~/legacy/scripts/happybonus_points.js ~/ftp/HappyBonusLiefDatExport.txt > ~/logs/import_happybonus_points.log
-55 3 * * * node ~/legacy/scripts/happybonus_nodefemail.js > ~/logs/import_happybonus_nodefemail.log
-00 4 * * * NODE_PATH=~/legacy/mono/lib5 node ~/legacy/scripts/import.js ~/ftp > ~/logs/import_liqshop.log
 ## SAG FTP file imports
 ##
-#00 3 * * * node ~/legacy/scripts/happybonus_customers.js /var/ftp_data/sagag/HappyBonusKundenExport.txt  > ~/logs/import_happybonus_customers.log
-#15 3 * * * NODE_PATH=~/legacy/mono/lib5 node ~/legacy/scripts/happybonus_points.js /var/ftp_data/sagag/HappyBonusLiefDatExport.txt > ~/logs/import_happybonus_points.log
-#55 3 * * * node ~/legacy/scripts/happybonus_nodefemail.js > ~/logs/import_happybonus_nodefemail.log
-#00 4 * * * NODE_PATH=~/legacy/mono/lib5 node ~/legacy/scripts/import.js /var/ftp_data/sagag > ~/logs/import_liqshop.log
+00 3 * * * node ~/legacy/scripts/happybonus_customers.js /var/ftp_data/sagag/HappyBonusKundenExport.txt  > ~/logs/import_happybonus_customers.log
+15 3 * * * NODE_PATH=~/legacy/mono/lib5 node ~/legacy/scripts/happybonus_points.js /var/ftp_data/sagag/HappyBonusLiefDatExport.txt > ~/logs/import_happybonus_points.log
+55 3 * * * node ~/legacy/scripts/happybonus_nodefemail.js > ~/logs/import_happybonus_nodefemail.log
+00 4 * * * NODE_PATH=~/legacy/mono/lib5 node ~/legacy/scripts/import.js /var/ftp_data/sagag > ~/logs/import_liqshop.log
 
 # Node keep-alives
 #
