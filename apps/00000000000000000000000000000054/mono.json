@@ -8,7 +8,7 @@
     
     "error": "login",
     
-    "domains": ["crm.jillix.net"],
+    "domains": ["crm.mono.ch", "crm.jillix.net"],
     
     "publicDir": "lib",
     "publicUser": 0,
