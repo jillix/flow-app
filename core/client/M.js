@@ -250,10 +250,9 @@ var M = (function() {
         
                 link.onprogress = options.download;
             }
-        
-            // request complete callback
-            link.onload = function() {
             
+            var handleComplete = function () {
+                
                 // get error message
                 var err = link.A ? "A" : link.status < 400 ? null : link.responseText || "E";
     
@@ -289,6 +288,23 @@ var M = (function() {
                 }
             };
             
+            //request complete callback
+            if (link.onload) {
+                
+                link.onload = handleComplete;
+            
+            } else {
+                
+                link.onreadystatechange = function() {
+                    
+                    //check if request is complete
+                    if (link.readyState == 4) {
+    
+                        handleComplete();
+                    }
+                };
+            }
+            
             // send data
             link.send(options.data);
             
@@ -303,7 +319,8 @@ var M = (function() {
     // load mono modules
     return function (target, miid, callback) {
         
-        target = target instanceof Element ? target : document.querySelector(target);
+        //target = target instanceof Element ? target : document.querySelector(target);
+        target = typeof target === "string" ? document.querySelector(target) : target;
         
         if (!miid || !target) {
             
