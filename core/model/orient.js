@@ -752,12 +752,12 @@ exports.addRoleAccesses = function(rid, depIds, callback) {
 };
 
 
-exports.addCanPerform = function(miid, rid, operation, params, callback) {
+exports.addCanPerform = function(mvid, miid, rid, operation, params, callback) {
 
     callback = callback || function() {};
 
     // find operation id for miid
-    getOperationId(rid, miid, operation, function(err, id) {
+    getOperationId(mvid, operation, function(err, id) {
 
         if (err) { return callback(err); }
 
@@ -791,35 +791,34 @@ exports.addCanPerform = function(miid, rid, operation, params, callback) {
 }
 
 
-function getOperationId(rid, miid, name, callback) {
+function getOperationId(mvid, name, callback) {
 
     var vrCluster = CONFIG.orient.DB.getClusterByClass("VRole");
-    
-    var rrid = "#" + vrCluster.id + ":" + rid;
+    var vmvCluster = CONFIG.orient.DB.getClusterByClass("VModuleVersion");
+
+    var mvrid = "#" + vmvCluster.id + ":" + mvid;
 
     var command =
         "SELECT @rid as id FROM VOperation " +
         "WHERE " +
             "method = '" + name + "' AND " +
-            "module IN " +
-                "(SELECT in FROM EHasAccessTo WHERE out = " + rrid + ")";
-                //"(SELECT in FROM EHasAccessTo WHERE out = " + rrid + " AND miid = '" + miid + "')";
+            "module = '" + mvrid + "'";
 
     sql(command, function(err, results) {
 
         if (err) {
-            return callback("An error occurred while finding operation id for role: " + rrid + " and miid: " + miid + ". " + JSON.stringify(err));
+            return callback("An error occurred while finding operation '" + name + "' for module version: " + mvid + ". " + JSON.stringify(err));
         }
 
         // if there is no result
         if (!results || results.length == 0) {
-            return callback("Could not find operation id for role: " + rrid + " and miid: " + miid);
+            return callback("Could not find operation '" + name + "' for module version: " + mvid);
         }
 
         // if there are too many results
-        //if (results.length > 1) {
-        //    return callback("Coould not uniquely identify operation id for role: " + rrid + " and miid: " + miid);
-        //}
+        if (results.length > 1) {
+            return callback("Coould not uniquely identify operation '" + name + "' for module version: " + mvid);
+        }
         
         callback(null, idFromRid(results[0].id));
     });

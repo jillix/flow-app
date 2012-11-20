@@ -659,7 +659,7 @@ function addModuleInstanceOperations(descriptor, miid, miidObj, callback) {
 
         var canPerform = canPerforms[index];
 
-        db.addCanPerform(miid, canPerform.role, canPerform.name, canPerform.params, function(err, id) {
+        db.addCanPerform(module, miid, canPerform.role, canPerform.name, canPerform.params, function(err, id) {
 
             if (err) {
                 errors.push(err);
