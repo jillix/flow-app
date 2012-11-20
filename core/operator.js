@@ -42,7 +42,7 @@ exports.operation = function(link) {
             return;
         }
 
-        // id no operation was found in the request URL
+        // if no operation was found in the request URL
         if (!link.operation.module || !link.operation.method) {
 
             if (resume) {
