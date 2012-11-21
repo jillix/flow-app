@@ -250,20 +250,18 @@ footer {
     border-color: white #DDD #DDD white;    
 }
 
-.cart .empty {
-    font-size: 86%;
-    line-height: 130%;
-    color: #999;    
-}
-
-.cart .agb .checkbox {
-    font-size: 86%;
-    color: #999;    
-}
-
 .cart .cartList input {
     height: 15px;
     width: 40px;
+}
+
+.cart .empty, .cart .confirm, .cart .error, .cart .agb .checkbox {
+    font-size: 86%;
+    color: #999;    
+}
+
+.cart .error {
+    color: red;
 }
 
 /*---------------------------------- ARTICLE TABLE*/

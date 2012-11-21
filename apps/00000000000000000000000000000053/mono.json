@@ -21,7 +21,7 @@
     "roles": [
         {
             "id": 0,
-            "name": ""
+            "name": "TruckShop Public Role"
         }
     ],
     "datasources": {
@@ -34,6 +34,11 @@
             "type": "mongo",
             "db": "truckshop",
             "collection": "articles"
+        },
+        "cartsDS": {
+            "type": "mongo",
+            "db": "truckshop",
+            "collection": "carts"
         }
     },
     "miids": {
@@ -312,7 +317,7 @@
             }
         },
         "cart": {
-            "module": "github/adioo/bind-list/v0.1.0",
+            "module": "github/adioo/bind-cart/v0.0.1",
             "roles": [0],
             "config": {
                 "html": {
@@ -335,7 +340,7 @@
                                 {
                                     "name": "id",
                                     "value": {
-                                        "source": "id"
+                                        "source": "_id"
                                     }
                                 }
                             ]
@@ -355,33 +360,52 @@
                     ]
                 },
                 "container": ".cartList",
+                "agree": ".agb",
                 "options": {
-                    "type": ["memory", "cookie", "server"]
+                    "type": "cookie",
+                    "possible_types": ["memory", "cookie", "server"],
+                    "classes": {
+                        "empty": "empty",
+                        "content": "content",
+                        "confitm": "confirm"
+                    }
                 },
                 "listen": {
                     "details": {
                         "addToCart": [
-                            { "handler": "createItem" }
+                            { "handler": "addItem" }
                         ]
                     }
-                }
+                },
+                "binds": [
+                    {
+                        "target": "#order",
+                        "on": [{
+                            "name": "click",
+                            "handler": "checkout"
+                        }]
+                    }
+                ],
+                "scripts": [
+                    "/jquery.cookie.js"
+                ]
             },
             "operations": {
                 "create": {
                     "roles": [0],
-                    "params": [{ "ds": "articlesDS" }]
+                    "params": [{ "ds": "cartDS" }]
                 },
                 "read": {
                     "roles": [0],
-                    "params": [{ "ds": "articlesDS" }]
+                    "params": [{ "ds": "cartDS" }]
                 },
                 "update": {
                     "roles": [0],
-                    "params": [{ "ds": "articlesDS" }]
+                    "params": [{ "ds": "cartDS" }]
                 },
                 "remove": {
                     "roles": [0],
-                    "params": [{ "ds": "articlesDS" }]
+                    "params": [{ "ds": "cartDS" }]
                 }
             }
         }

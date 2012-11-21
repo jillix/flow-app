@@ -1,7 +1,7 @@
 <div class="cart">
     <h5 class="cartTitle">Warenkorb</h5>
     <div class="cartContent">
-        <div class="empty" style="display:block;">Ihr Warenkorb ist leer.</div>
+        <div class="empty">Ihr Warenkorb ist leer.</div>
         <div class="confirm" style="display:none;">Vielen Dank für Ihre Bestellung.</div>
         <div class="content">
             <ul class="cartList unstyled">
@@ -10,7 +10,7 @@
                         <button type="button" class="close" data-dismiss="item">×</button>
                     </h6>
                     <div>
-                        <span class="quantity">
+                        <span>
                             <span class="number">Anzahl</span>:
                         </span>
                         <input type="text" class="quantity" value="1">
@@ -30,9 +30,12 @@
             <h4></h4>
             <div class="agb">
                 <label class="checkbox">
-                    <input type="checkbox"> Ich habe die <a class="agbLink" target="_blank" href="/file/agb_liqshop_dd_de.pdf">AGBs</a> gelesen und akzeptiert.
+                    <input type="checkbox" class="agbCheck"> Ich habe die <a class="agbLink" target="_blank" href="/file/agb_liqshop_dd_de.pdf">AGBs</a> gelesen und akzeptiert.
                 </label>
             </div>
+        </div>
+        <div class="error" style="display:none;"></div>
+        <div class="content">
             <a href="#" class="btn" id="order">Bestellen</a>
         </div>
     </div>
