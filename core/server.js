@@ -1,6 +1,8 @@
 var http = require("http");
 var fs = require("fs");
-var ip = require(CONFIG.root + "/core/util.js").ip;
+var util = require(CONFIG.root + "/core/util.js");
+
+var connect = require("connect");
 
 // imported functions
 var parseUrl  = require("url").parse,
@@ -14,7 +16,7 @@ var Server = exports.Server = function () {};
 
 var host;
 // TODO commented out until nginx will be removed
-//var host = ip();
+//var host = util.ip();
 //
 //if (!host) {
 //    if (CONFIG.dev) {
@@ -39,7 +41,28 @@ Server.prototype.start = function() {
         var handler = proxyHandler;
 
         if (CONFIG.app) {
+
             var handler = requestHandler;
+
+            // TODO add an application session option
+            // currently testing this with the TruckShop only
+            if (CONFIG.app === "00000000000000000000000000000053") {
+                var connect = require("connect");
+                var cookieParser = connect.cookieParser();
+                var session = connect.session({ secret: "mono", key: "mono.sid" });
+
+                handler = function(req, res) {
+                    cookieParser(req, res, function() {
+                        req.originalUrl = req.url;
+                        session(req, res, function() {
+                            req.session.appid = CONFIG.app;
+                            // TODO hardcoded user: use getDomainPublicUser for this
+                            req.session.uid = 74;
+                            requestHandler(req, res);
+                        });
+                    });
+                }
+            }
 
             model.addApplicationPort(CONFIG.app, port, function(err) {
 
@@ -89,7 +112,7 @@ function startApplication(appId) {
 
 function proxyHandler(req, res) {
 
-    req.pause();
+    var resume = util.pause(req);
 
     var proxy = new (require('http-proxy')).RoutingProxy();
 
@@ -164,11 +187,14 @@ function proxyHandler(req, res) {
             host: "localhost",
             port: application.port
         });
-        req.resume();
+        resume();
     });
 }
 
 function requestHandler(req, res) {
+
+    // resume the request for POST requests
+    var resume = req.method === "POST" ? util.pause(req) : function() {};
 
     var url = parseUrl(req.url, true),
         path = url.pathname.replace(/\/$|^\//g, "").split("/", 42);
@@ -177,7 +203,8 @@ function requestHandler(req, res) {
             res:        res,
             query:      url.query || {},
             pathname:   url.pathname,
-            host:       CONFIG.dev ? req.headers.host.split(":")[0] : req.headers.host
+            host:       CONFIG.dev ? req.headers.host.split(":")[0] : req.headers.host,
+            resume:     resume
         };
 
     link.res.headers = {};

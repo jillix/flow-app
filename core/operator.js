@@ -11,22 +11,10 @@ var formidable      = require("formidable"),
 
 exports.operation = function(link) {
 
-    var resume = null;
-
-    // pause on POST requests (cache data until resume is called)
-    if (link.req.method == "POST") {
-        resume = util.pause(link.req);
-    }
-
     getSession(link, function(err, session) {
 
         // if no session or an error getting it
         if (err || !session || typeof session.uid !== "number" || typeof session.appid !== "string") {
-
-            if (resume) {
-                resume(true);
-            }
-
             send.forbidden(link, err || "No valid session");
             return;
         }
@@ -38,17 +26,12 @@ exports.operation = function(link) {
             var methodName = link.operation.method;
             var method = mods[methodName] || auth[methodName] || apps[methodName];
 
-            checkAndCallFunction(link, resume, method);
+            checkAndCallFunction(link, method);
             return;
         }
 
         // if no operation was found in the request URL
         if (!link.operation.module || !link.operation.method) {
-
-            if (resume) {
-                resume(true);
-            }
-
             send.badrequest(link, "Missing module instance ID or operation name");
             return;
         }
@@ -56,7 +39,6 @@ exports.operation = function(link) {
         getOperation(link.operation.module, link.operation.method, session.uid, function(err, operation) {
 
             if (err) {
-                if (resume) { resume(true); }
                 send.internalservererror(link, err);
                 return;
             }
@@ -65,26 +47,19 @@ exports.operation = function(link) {
             var file = CONFIG.APPLICATION_ROOT + link.session.appid + "/mono_modules/" + modulePath + "/" + operation.file;
             var method = util.load(file, link.operation.method);
 
-            // TODO forward the request to the application process
-            checkAndCallFunction(link, resume, method, operation.params);
+            checkAndCallFunction(link, method, operation.params);
         });
     });
 };
 
-function checkAndCallFunction(link, resume, method, params) {
+function checkAndCallFunction(link, method, params) {
 
     if (method instanceof Error) {
-        if (resume) {
-            resume(true);
-        }
         send.internalservererror(link, method);
         return;
     }
 
     if (typeof method !== "function") {
-        if (resume) {
-            resume(true);
-        }
         send.notfound(link, "Method must be a function");
         return;
     }
@@ -93,16 +68,17 @@ function checkAndCallFunction(link, resume, method, params) {
         link.params = params;
     }
 
-    if (resume) {
-        handlePostRequest(link, method, resume);
+    if (link.req.method === "POST") {
+        handlePostRequest(link, method);
     }
     else {
         method(link);
+        link.resume();
     }
 }
 
 
-function handlePostRequest(link, method, resume) {
+function handlePostRequest(link, method) {
 
     var contentType = link.req.headers['content-type'] || "";
 
@@ -134,6 +110,8 @@ function handlePostRequest(link, method, resume) {
 
             method(link);
         });
+
+        link.resume();
     }
     // handle form data requests
     else if (contentType.indexOf("multipart/form-data" ) > -1 || contentType.indexOf("application/x-www-form-urlencoded" ) > -1) {
@@ -192,12 +170,12 @@ function handlePostRequest(link, method, resume) {
             }
 
             method(link);
+            link.resume();
         });
     }
     else {
         method(link);
+        link.resume();
     }
-
-    resume();
 }
 

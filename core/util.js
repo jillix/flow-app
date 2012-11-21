@@ -1,5 +1,6 @@
 var fs = require("fs");
 var os = require("os");
+var pause = require("pause");
 
 function _require(file) {
     
@@ -15,68 +16,35 @@ function _require(file) {
 }
 
 /**
- * description:  generate universal unique idetifier ( uuid )
+ * description:  generate unique idetifier (uid)
  * author:       Adrian Ottiker
  * date:         14.12.2010
  */
-this.uuid = function(len, uuid) {
-        
-    uuid = "";
-    
-    for(var i = 0, l = len || 23; i < l; ++i) {
-        
-        uuid += "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"[0 | Math.random() * 62];
+exports.uid = function(len) {
+    uid = "";
+    for (var i = 0, l = len || 24; i < l; ++i) {
+        uid += "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"[0 | Math.random() * 62];
     }
-    
-    return uuid;
+    return uid;
 };
 
 /**
  * description:  Buffers streamed Data and release them when resume function is called
- * author:       Adrian Ottiker
- * date:         22.11.2011
+ * author:       Gabriel Petrovay
+ * date:         20.11.2012
  * example:
  *  var resume = pause(req);
  *  resume(true|undefined);
  */
-this.pause = function(req) {
-    
-    req.pause();
-
-    var onData, onEnd,
-        events = [];
-    
-    // buffer data
-    req.on('data', onData = function( data, encoding ) {
-    
-        events.push([ 'data', data, encoding ]);
-    });
-    
-    // buffer end
-    req.on('end', onEnd = function( data, encoding ) {
-    
-        events.push([ 'end', data, encoding ]);
-    });
-    
+exports.pause = function(req) {
+    var handlers = pause(req);
     return function(abort) {
-
         if (abort) {
-            events = null;
+            handlers.end();
+        } else {
+            handlers.resume();
         }
-        else {
-
-            while (events.length) {
-                req.emit.apply(req, events.shift());
-            }
-
-            req.removeListener('data', onData);
-            req.removeListener('end', onEnd);
-
-            req.resume();
-
-            events = null;
-        }
-    };
+    }
 };
 
 /**
@@ -85,7 +53,7 @@ this.pause = function(req) {
  * date:        22.11.2011
  */
 // TODO limit memory usage
-this.load = function(file, method) {
+exports.load = function(file, method) {
 
     var fileName = file.replace(CONFIG.APPLICATION_ROOT, "");
 
@@ -136,7 +104,7 @@ function checkSyntax(file) {
  */
 // TODO limit memory usage
 var fileCache = {};
-this.read = function(file, encoding, callback) {
+exports.read = function(file, encoding, callback) {
     
     file =  CONFIG.root + file;
     
@@ -184,7 +152,7 @@ this.read = function(file, encoding, callback) {
 };
 
 //get ip adress
-this.ip = function(version, internal) {
+exports.ip = function(version, internal) {
     
     var netIf = os.networkInterfaces();
     
@@ -208,5 +176,28 @@ this.ip = function(version, internal) {
     }
     
     return null;
+};
+
+/**
+ * Merge object b with object a.
+ *
+ *     var a = { foo: 'bar' }
+ *       , b = { bar: 'baz' };
+ *     
+ *     utils.merge(a, b);
+ *     // => { foo: 'bar', bar: 'baz' }
+ *
+ * @param {Object} a
+ * @param {Object} b
+ * @return {Object}
+ * @api private
+ */
+exports.merge = function(a, b){
+  if (a && b) {
+    for (var key in b) {
+      a[key] = b[key];
+    }
+  }
+  return a;
 };
 

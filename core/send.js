@@ -45,16 +45,16 @@ this.send = (function(){
 
                 functions[name] = function(link) {
 
+                    if (!link.req) {
+                        warnOldUsage();
+                    }
+
                     // this way one can also pass a mono link object literal to the send functions
                     var res = link.res || link;
                     var req = link.req || {};
                     var url = req.url || "MISSING_URL";
 
                     log(logLevel, statusCode + " " + url);
-
-                    if (!req.url) {
-                        warnOldUsage();
-                    }
 
                     res.writeHead(statusCode, res.headers || ct);
                     res.end();
@@ -64,6 +64,14 @@ this.send = (function(){
             else {
 
                 functions[name] = function(link, message) {
+
+                    if (!link.req) {
+                        warnOldUsage();
+                    }
+
+                    if (link.resume) {
+                        link.resume(true);
+                    }
 
                     // this way one can also pass a mono link object literal to the send functions
                     var res = link.res || link;
@@ -92,10 +100,6 @@ this.send = (function(){
                     }
 
                     log("debug", new Error(message).stack)
-
-                    if (!req.url) {
-                        warnOldUsage();
-                    }
 
                     res.writeHead(statusCode, res.headers || ct);
                     res.end(message || null);

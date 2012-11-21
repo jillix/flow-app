@@ -1,4 +1,4 @@
-var uuid = require(CONFIG.root + "/core/util" ).uuid,
+var util = require(CONFIG.root + "/core/util" ),
     queries = require(CONFIG.root + "/db/queries"),
     model_o = require(CONFIG.root + "/core/model/orient.js"),
     model_m = require(CONFIG.root + "/core/model/mongo.js");
@@ -47,12 +47,11 @@ var Session = {
 //------------------------------------------------------------------------------------------
 exports.get = function(link, callback) {
 
+    if (link.req.session) { return callback(null, link.req.session); }
+
     var sid = null;
 
-    // if we have a sid header or cookie
-    if (link.req.headers["x-sid"]) {
-        sid = link.req.headers["x-sid"];
-    } else if (link.req.headers["cookie"]) {
+    if (link.req.headers["cookie"]) {
         sid = link.req.headers["cookie"].split("=")[1];
     }
 
@@ -84,7 +83,7 @@ exports.get = function(link, callback) {
 exports.start = function(uid, appid, locale, data, callback) {
 
     var session = {
-        'sid': uuid(23), // generate session id
+        'sid': util.uid(23), // generate session id
         'exp': expire(expire_time),
         'uid': uid,
         'appid': appid,
@@ -134,7 +133,7 @@ function update( sid, data, newId, callback ){
 	var q_update = { '$set': { 'data': data, 'exp': expire( expire_time ) } };
 			
 	//generate new sid
-	if( newId ) q_update.$set.sid = uuid();
+	if( newId ) q_update.$set.sid = util.uid();
 	
 	queries.updateSession( sid, q_update, function( err ){
 		
