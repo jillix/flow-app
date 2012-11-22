@@ -1,6 +1,7 @@
 var http = require("http");
 var fs = require("fs");
 var util = require(CONFIG.root + "/core/util.js");
+var httpProxy = require('http-proxy');
 
 var connect = require("connect");
 
@@ -11,6 +12,8 @@ var parseUrl  = require("url").parse,
     route     = require(CONFIG.root + "/core/router.js").route,
     orient    = require(CONFIG.root + "/core/db/orient.js"),
     model     = require(CONFIG.root + "/core/model/orient.js");
+
+var runningApplications = {};
 
 var Server = exports.Server = function () {};
 
@@ -39,8 +42,7 @@ Server.prototype.start = function() {
         }
 
         var port = CONFIG.port;
-        var handler = proxyHandler;
-
+        
         if (CONFIG.app) {
 
             var handler = requestHandler;
@@ -73,17 +75,22 @@ Server.prototype.start = function() {
                     return;
                 }
             });
+            
+            // start http server
+            self.server = http.createServer(handler);
+        
+        } else {
+            
+            // start http proxy server
+            self.server = httpProxy.createServer(proxyHandler);
+            listenToHttpProxyEvents(self.server);
         }
 
-        // start http server
-        self.server = http.createServer(handler);
         self.server.listen(port, host);
     });
 };
 
-
 var startingApps = {};
-
 
 function startApplication(appId) {
 
@@ -110,86 +117,95 @@ function startApplication(appId) {
     }
 }
 
-
-function proxyHandler(req, res) {
-
-    var resume = util.pause(req);
-
-    var proxy = new (require('http-proxy')).RoutingProxy();
+function proxyHandler(req, res, proxy) {
     
     // TODO: is a domain with port a diffrent host?
     var host = req.headers.host.split(":")[0];
-
-    // find the application for this domain (without the routing table)
-    model.getDomainApplication(host, false, function(err, application) {
-
-        if (err) {
-            send.notfound({ req: req, res: res }, err);
-            return;
-        }
-
-        // if port not set or port set to 0 (this happens when application was installed
-        // but not deployed or when it died and other application took over the port)
-        if (!application.port) {
-            // let the user know we are trying to work here
-            send.serviceunavailable({ req: req, res: res }, "This application is starting...\nTry again in a few seconds.");
-
-            // now try to start this application
-            startApplication(application.appId);
-
-            return;
-        }
-
-        proxy.on("proxyError", function(error, req, res) {
-
-            // TODO check if the application is still using the port and remove it from the
-            // database in order not to screw future admin statistics
-
-            var logOperationUrl = "/@/core/getLog";
-            var logFilePath = CONFIG.APPLICATION_ROOT + application.appId + "/log.txt";
-            var restartMessage = "In the meanwhile we are hardly working to revive it.";
-
-            if (req.url === logOperationUrl) {
-                fs.readFile(logFilePath, function(err, data) {
-
-                    if (err) {
-                        // let the user know that his application crashed
-                        var message = "Sorry! This application crashed and there's not a shred of evidence why this happened. :(";
-                        send.internalservererror({ req: req, res: res }, message);
-                        return;
-                    }
-
-                    send.ok(res, data);
-                });
+    
+    if (!runningApplications[host]) {
+        
+        // find the application for this domain (without the routing table)
+        model.getDomainApplication(host, false, function(err, application) {
+        
+            if (err) {
+                send.notfound({ req: req, res: res }, err);
                 return;
             }
-
-            fs.exists(logFilePath, function(exists) {
-
-                if (!exists) {
-                    send.internalservererror({ req: req, res: res }, "Sorry! This application crashed and there's not a shred of evidence why this happened. :(\n" + restartMessage);
-                } else {
-                    res.headers = res.headers || {};
-                    res.headers["content-type"] = "text/html";
-                    send.internalservererror({ req: req, res: res }, "Sorry! This application crashed. Maybe if you check out the <a href='" + logOperationUrl + "'>log</a> you find out why.\n" + restartMessage);
-                }
-
-                // now try to start this application
-                startApplication(application.appId);
-            });
+            
+            // let the user know we are trying to work here
+            send.serviceunavailable({ req: req, res: res }, "This application is starting...\nTry again in a few seconds.");
+    
+            // now try to start this application
+            startApplication(application.appId);
+            
+            runningApplications[host] = application;
+    
+            return;
         });
-
-        proxy.on("end", function(error, req, res) {
-            if (startingApps[application.appId]) {
-                delete startingApps[application.appId];
-            }
-        });
-
+        
+    } else {
+        
         proxy.proxyRequest(req, res, {
             host: "localhost",
-            port: application.port
+            port: runningApplications[host].port
         });
-        resume();
+    }
+}
+
+function listenToHttpProxyEvents(server) {
+    
+    server.on("proxyError", function(error, req, res) {
+        
+        // TODO: is a domain with port a diffrent host?
+        var host = req.headers.host.split(":")[0];
+        var application = runningApplications[host];
+        
+        // TODO check if the application is still using the port and remove it from the
+        // database in order not to screw future admin statistics
+    
+        var logOperationUrl = "/@/core/getLog";
+        var logFilePath = CONFIG.APPLICATION_ROOT + application.appId + "/log.txt";
+        var restartMessage = "In the meanwhile we are hardly working to revive it.";
+    
+        if (req.url === logOperationUrl) {
+            fs.readFile(logFilePath, function(err, data) {
+    
+                if (err) {
+                    // let the user know that his application crashed
+                    var message = "Sorry! This application crashed and there's not a shred of evidence why this happened. :(";
+                    send.internalservererror({ req: req, res: res }, message);
+                    return;
+                }
+    
+                send.ok(res, data);
+            });
+            return;
+        }
+    
+        fs.exists(logFilePath, function(exists) {
+    
+            if (!exists) {
+                send.internalservererror({ req: req, res: res }, "Sorry! This application crashed and there's not a shred of evidence why this happened. :(\n" + restartMessage);
+            } else {
+                res.headers = res.headers || {};
+                res.headers["content-type"] = "text/html";
+                send.internalservererror({ req: req, res: res }, "Sorry! This application crashed. Maybe if you check out the <a href='" + logOperationUrl + "'>log</a> you find out why.\n" + restartMessage);
+            }
+    
+            // now try to start this application
+            startApplication(application.appId);
+        });
+    });
+    
+    server.on("end", function(error, req, res) {
+        
+        // TODO: is a domain with port a diffrent host?
+        var host = req.headers.host.split(":")[0];
+        var application = runningApplications[host];
+        
+        if (startingApps[application.appId]) {
+            delete startingApps[application.appId];
+        }
     });
 }
 
