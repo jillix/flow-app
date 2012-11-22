@@ -4,6 +4,7 @@ var getDomainApplication = require(CONFIG.root + "/core/model/orient.js").getDom
 
 var baseUrl = "/" + CONFIG.operationKey + "/core/getModule";
 var nl = (CONFIG.logLevel == "debug" ? "\r\n" : "");
+var routingTables = {};
 
 function initScripts(module, application, ieVersion) {
 
@@ -53,6 +54,23 @@ function getIeVersion(userAgent) {
     return parseInt(match[0].replace(/[^0-9]/g, ""), 10) || NaN;
 }
 
+function route(link, application) {
+    
+    var module = traverse(link.pathname != "/" ? link.pathname.replace(/\/$/, "") : link.pathname, application.routes, "");
+
+    if (typeof module == "string") {
+
+        // set headers
+        link.res.headers["content-style-type"] = "text/css";
+        link.res.headers["content-type"]       = "text/html; charset=utf-8";
+        
+        send.ok(link.res, initScripts(module, application, getIeVersion(link.req.headers['user-agent'])));
+    }
+    else {
+        publicFiles(link, application.appId, application.publicDir);
+    }
+}
+
 exports.route = function(link) {
 
     // TODO add a favicon
@@ -61,27 +79,24 @@ exports.route = function(link) {
         return;
     }
     
-    getDomainApplication(link.host, true, function(err, application) {
-
-        if (err || !application.routes) {
-            send.notfound(link, err || "No routing table found");
-            return;
-        }
-
-        var module = traverse(link.pathname != "/" ? link.pathname.replace(/\/$/, "") : link.pathname, application.routes, "");
-
-        if (typeof module == "string") {
-
-            // set headers
-            link.res.headers["content-style-type"] = "text/css";
-            link.res.headers["content-type"]       = "text/html; charset=utf-8";
+    if (!routingTables[link.host]) {
+        
+        getDomainApplication(link.host, true, function(err, application) {
             
-            send.ok(link.res, initScripts(module, application, getIeVersion(link.req.headers['user-agent'])));
-        }
-        else {
-            publicFiles(link, application.appId, application.publicDir);
-        }
-    });
+            if (err || !application.routes) {
+                send.notfound(link, err || "No routing table found");
+                return;
+            }
+    
+            routingTables[link.host] = application;
+            
+            route(link, application);
+        });
+        
+    } else {
+        
+        route(link, routingTables[link.host]);
+    }
 };
 
 /*
