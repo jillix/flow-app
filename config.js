@@ -12,12 +12,21 @@ Object.defineProperty(Object.prototype, "clone", {
 });
 
 // use optimist to parse the command line options
+var DEFAULT_CONFIG_PATH = __dirname + "/conf/dev_local.json";
 var argv = require("optimist")
-    .default("config", __dirname + "/mono.json")
+    .default("config", DEFAULT_CONFIG_PATH)
     .argv;
 
 // load the mono configuration file
-var config = module.exports = require(argv.config);
+var config = {};
+
+try {
+    config = module.exports = require(argv.config);
+} catch (err) {
+    console.error("Invalid or missing configuration file: " + DEFAULT_CONFIG_PATH);
+    console.error(err.toString());
+    process.exit(1);
+}
 
 config.log = config.log || {};
 
@@ -60,11 +69,10 @@ for (var i in argv) {
             config.app = appid;
             break;
         case "port":
-            if (config.dev) {
-                config.devPort = argv[i];
-            } else {
-                config.port = argv[i];
-            }
+            config.port = argv[i];
+            break;
+        case "proxy":
+            config.proxy = argv[i];
             break;
         default:
             config[i] = true;
@@ -83,12 +91,8 @@ config.root = __dirname;
 //
 config.logLevel = argv.logLevel || config.logLevel;
 if (!config.logLevel) {
-    if (config.dev) {
-        config.logLevel = "debug";
-    }
-    else {
-        config.logLevel = "error";
-    }
+    
+    config.logLevel = "error";
 }
 else {
     switch (config.logLevel) {
@@ -130,7 +134,7 @@ config.orient.db || throwError("The OrientDB configuration is missing the db key
 config.MODULE_ROOT = config.root + "/modules/";
 config.APPLICATION_ROOT = config.root + "/apps/";
 
-if (!config.app && (argv.dev === true || config.dev === true)) {
+if (!config.app && (argv.dev === true || config.logLevel === "debug")) {
     console.log("Using configuration file: " + argv.config);
 }
 

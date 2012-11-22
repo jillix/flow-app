@@ -95,7 +95,7 @@ exports.getConfig = function(link) {
                             // TODO let the module define it's missing module placeholder
                             html = "<p>An error occurred while retrieving this module HTML.</p>";
 
-                            if (CONFIG.dev) {
+                            if (CONFIG.logLevel == "debug") {
                                 html += "<p>Error: " + err + "</p>"
                             }
                         }

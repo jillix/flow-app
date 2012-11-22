@@ -6,7 +6,7 @@ function connect(config, callback) {
 
     openDb(config, function(err) {
 
-        //if (err && err.indexOf("ECONNREFUSED" != -1) && CONFIG.dev) {
+        //if (err && err.indexOf("ECONNREFUSED" != -1) && CONFIG.logLevel == "debug") {
         //    // start the server and retry the connection
         //    startServer(function(err) {
         //        if (err) { return callback(err); }
