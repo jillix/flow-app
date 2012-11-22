@@ -8,7 +8,7 @@ function _require(file) {
         return require(file)
     }
     catch (err) {
-        if (CONFIG.dev) {
+        if (CONFIG.logLevel == "debug") {
             console.error("File: " + file + "\n" + err);
         }
         return err;

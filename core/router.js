@@ -3,7 +3,7 @@ var publicFiles = require(CONFIG.root + "/core/send").publicFiles;
 var getDomainApplication = require(CONFIG.root + "/core/model/orient.js").getDomainApplication;
 
 var baseUrl = "/" + CONFIG.operationKey + "/core/getModule";
-var nl = (CONFIG.dev ? "\r\n" : "");
+var nl = (CONFIG.logLevel == "debug" ? "\r\n" : "");
 
 function initScripts(module, application, ieVersion) {
 
@@ -25,7 +25,7 @@ function initScripts(module, application, ieVersion) {
                 "<title>" + application.title + "</title>" + nl +
                 "<meta http-equiv='content-type' content='text/html; charset=utf-8'/>" + nl +
                 "<script type='text/javascript'>" + nl +
-                    (CONFIG.dev ? "// require.js reads this global property, if available" : "") + nl +
+                    (CONFIG.logLevel == "debug" ? "// require.js reads this global property, if available" : "") + nl +
                     "var require={" + nl +
                         "baseUrl:'" + baseUrl + "'" + nl +
                     "};" + nl +

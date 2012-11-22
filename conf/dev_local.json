@@ -1,13 +1,12 @@
 {
-    "port"          : 80,
-    "dev"           : true,
-    "devPort"       : 8000,
+    "port"          : 8000,
+    "proxy"         : true,
     "operationKey"  : "@",
     "coreKey"       : "core",
     "adminEmail"    : "admin@jillix.com",
-    
     "monoServer"    : "server.js",
-
+    "logLevel"      : "debug",
+    
     "orient": {
         "server": {
             "host"          : "localhost",

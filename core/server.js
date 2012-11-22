@@ -7,24 +7,25 @@ var connect = require("connect");
 // imported functions
 var parseUrl  = require("url").parse,
     send      = require(CONFIG.root + "/core/send.js").send,
-    operator = require(CONFIG.root + "/core/operator"),
+    operator  = require(CONFIG.root + "/core/operator"),
     route     = require(CONFIG.root + "/core/router.js").route,
     orient    = require(CONFIG.root + "/core/db/orient.js"),
     model     = require(CONFIG.root + "/core/model/orient.js");
 
 var Server = exports.Server = function () {};
 
-var host;
-// TODO commented out until nginx will be removed
-//var host = util.ip();
-//
-//if (!host) {
-//    if (CONFIG.dev) {
-        host = "127.0.0.1";
-//    } else {
-//        throw new Error("Missing IP Address");
-//    }
-//}
+var host = "127.0.0.1";
+
+// get the right host adress, if no external proxy is available
+if (!CONFIG.app && !CONFIG.proxy) {
+    
+    host = util.ip();
+    
+    if (!host) {
+        
+        throw new Error("Missing IP Address");
+    }
+}
 
 Server.prototype.start = function() {
 
@@ -37,7 +38,7 @@ Server.prototype.start = function() {
             throw new Error(JSON.stringify(err));
         }
 
-        var port = CONFIG.dev ? CONFIG.devPort : CONFIG.port;
+        var port = CONFIG.port;
         var handler = proxyHandler;
 
         if (CONFIG.app) {
@@ -115,8 +116,9 @@ function proxyHandler(req, res) {
     var resume = util.pause(req);
 
     var proxy = new (require('http-proxy')).RoutingProxy();
-
-    var host = CONFIG.dev ? req.headers.host.split(":")[0] : req.headers.host;
+    
+    // TODO: is a domain with port a diffrent host?
+    var host = req.headers.host.split(":")[0];
 
     // find the application for this domain (without the routing table)
     model.getDomainApplication(host, false, function(err, application) {
@@ -203,7 +205,8 @@ function requestHandler(req, res) {
             res:        res,
             query:      url.query || {},
             pathname:   url.pathname,
-            host:       CONFIG.dev ? req.headers.host.split(":")[0] : req.headers.host,
+            // TODO is a domain with port a diffrent host?
+            host:       req.headers.host.split(":")[0],
             resume:     resume
         };
 
