@@ -2,7 +2,8 @@
     "appId": "00000000000000000000000000000053",
     "name": "TruckShop",
     "routes": {
-        "/": "layout"
+        "/": "layout",
+        "login": "layout_login"
     },
     "domains": [
         "truckshop.jillix.net",
@@ -16,12 +17,22 @@
             "username": "",
             "password": "",
             "roles": [0]
+        },
+        {
+            "id": 1,
+            "username": "user",
+            "password": "",
+            "roles": [1, 0]
         }
     ],
     "roles": [
         {
             "id": 0,
             "name": "TruckShop Public Role"
+        },
+        {
+            "id": 1,
+            "name": "TruckShop User Role"
         }
     ],
     "datasources": {
@@ -35,7 +46,7 @@
             "db": "truckshop",
             "collection": "articles"
         },
-        "cartsDS": {
+        "cartDS": {
             "type": "mongo",
             "db": "truckshop",
             "collection": "carts"
@@ -48,7 +59,7 @@
             "config": {
                 "html": {
                     "type": "a",
-                    "path": "html/layout"
+                    "path": "html/layout_shop"
                 },
                 "css": ["/css/bootstrap.css", "/css/font-awesome.css", "/css/overwrite.css", "/css/bootstrap-responsive.css"],
                 "title": "Derendinger TruckShop",
@@ -62,6 +73,21 @@
                 "scripts": [
                     "/js/bootstrap-collapse.js"
                 ]
+            }
+        },
+        "layout_login": {
+            "module": "github/adioo/layout/v0.0.4",
+            "roles": [0],
+            "config": {
+                "html": {
+                    "type": "a",
+                    "path": "html/layout_login"
+                },
+                "css": ["/css/bootstrap.css", "/css/font-awesome.css", "/css/overwrite.css", "/css/bootstrap-responsive.css"],
+                "title": "Derendinger TruckShop",
+                "modules": {
+                    "loginContainer": "login"
+                }
             }
         },
         "filters": {
@@ -81,9 +107,26 @@
                 }
             }
         },
+        "login": {
+            "module": "bitbucket/jillix/sag-login/v0.0.1",
+            "roles": [0],
+            "config": {
+                "html": {
+                    "type": "m",
+                    "path": "login"
+                },
+                "successPage": "/"
+            },
+            "operations": {
+                "login": {
+                    "roles": [0],
+                    "params": ["dd_CH"]
+                }
+            }
+        },
         "categories": {
             "module": "github/adioo/bind-list/v0.1.0",
-            "roles": [0],
+            "roles": [0, 1],
             "config": {
                 "html": {
                     "type": "a",
@@ -140,7 +183,7 @@
             },
             "operations": {
                 "create": {
-                    "roles": [0],
+                    "roles": [1],
                     "params": [{ "ds": "categoriesDS" }]
                 },
                 "read": {
@@ -148,18 +191,18 @@
                     "params": [{ "ds": "categoriesDS" }]
                 },
                 "update": {
-                    "roles": [0],
+                    "roles": [1],
                     "params": [{ "ds": "categoriesDS" }]
                 },
                 "remove": {
-                    "roles": [0],
+                    "roles": [1],
                     "params": [{ "ds": "categoriesDS" }]
                 }
             }
         },
         "articles": {
             "module": "github/adioo/bind-list/v0.1.0",
-            "roles": [0],
+            "roles": [0, 1],
             "config": {
                 "html": {
                     "type": "a",
@@ -232,7 +275,7 @@
             },
             "operations": {
                 "create": {
-                    "roles": [0],
+                    "roles": [1],
                     "params": [{ "ds": "articlesDS" }]
                 },
                 "read": {
@@ -240,11 +283,11 @@
                     "params": [{ "ds": "articlesDS" }]
                 },
                 "update": {
-                    "roles": [0],
+                    "roles": [1],
                     "params": [{ "ds": "articlesDS" }]
                 },
                 "remove": {
-                    "roles": [0],
+                    "roles": [1],
                     "params": [{ "ds": "articlesDS" }]
                 }
             }
@@ -318,7 +361,7 @@
         },
         "cart": {
             "module": "github/adioo/bind-cart/v0.0.1",
-            "roles": [0],
+            "roles": [0, 1],
             "config": {
                 "html": {
                     "type": "a",
