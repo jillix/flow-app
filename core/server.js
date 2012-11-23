@@ -206,6 +206,8 @@ function listenToHttpProxyEvents(server) {
         if (startingApps[application.appId]) {
             delete startingApps[application.appId];
         }
+        
+        delete runningApplications[host];
     });
 }
 
