@@ -22,7 +22,13 @@
             "id": 1,
             "username": "user",
             "password": "",
-            "roles": [1, 0]
+            "roles": [1]
+        },
+        {
+            "id": 2,
+            "username": "admin",
+            "password": "",
+            "roles": [2]
         }
     ],
     "roles": [
@@ -33,6 +39,10 @@
         {
             "id": 1,
             "name": "TruckShop User Role"
+        },
+        {
+            "id": 2,
+            "name": "TruckShop Admin Role"
         }
     ],
     "datasources": {
@@ -53,28 +63,6 @@
         }
     },
     "miids": {
-        "layout": {
-            "module": "github/adioo/layout/v0.0.4",
-            "roles": [0],
-            "config": {
-                "html": {
-                    "type": "a",
-                    "path": "html/layout_shop"
-                },
-                "css": ["/css/bootstrap.css", "/css/font-awesome.css", "/css/overwrite.css", "/css/bootstrap-responsive.css"],
-                "title": "Derendinger TruckShop",
-                "modules": {
-                    "filterContainer": "filters",
-                    "sideNavContainer": "categories",
-                    "articleContainer": "articles",
-                    "detailContainer": "details",
-                    "cartContainer": "cart"
-                },
-                "scripts": [
-                    "/js/bootstrap-collapse.js"
-                ]
-            }
-        },
         "layout_login": {
             "module": "github/adioo/layout/v0.0.4",
             "roles": [0],
@@ -87,23 +75,6 @@
                 "title": "Derendinger TruckShop",
                 "modules": {
                     "loginContainer": "login"
-                }
-            }
-        },
-        "filters": {
-            "module": "github/jillix/filters/v0.0.1",
-            "roles": [0],
-            "config": {
-                "html": {
-                    "type": "a",
-                    "path": "html/filters"
-                },
-                "listen": {
-                    "categories": {
-                        "selectionChanged": [
-                            { "handler": "mergeCategoryFilter" }
-                        ]
-                    }
                 }
             }
         },
@@ -124,9 +95,48 @@
                 }
             }
         },
+        "layout": {
+            "module": "github/adioo/layout/v0.0.4",
+            "roles": [0, 1, 2],
+            "config": {
+                "html": {
+                    "type": "a",
+                    "path": "html/layout_shop"
+                },
+                "css": ["/css/bootstrap.css", "/css/font-awesome.css", "/css/overwrite.css", "/css/bootstrap-responsive.css"],
+                "title": "Derendinger TruckShop",
+                "modules": {
+                    "filterContainer": "filters",
+                    "sideNavContainer": "categories",
+                    "articleContainer": "articles",
+                    "detailContainer": "details",
+                    "cartContainer": "cart"
+                },
+                "scripts": [
+                    "/js/bootstrap-collapse.js"
+                ]
+            }
+        },
+        "filters": {
+            "module": "github/jillix/filters/v0.0.1",
+            "roles": [0, 1, 2],
+            "config": {
+                "html": {
+                    "type": "a",
+                    "path": "html/filters"
+                },
+                "listen": {
+                    "categories": {
+                        "selectionChanged": [
+                            { "handler": "mergeCategoryFilter" }
+                        ]
+                    }
+                }
+            }
+        },
         "categories": {
             "module": "github/adioo/bind-list/v0.1.0",
-            "roles": [0, 1],
+            "roles": [0, 1, 2],
             "config": {
                 "html": {
                     "type": "a",
@@ -183,19 +193,19 @@
             },
             "operations": {
                 "create": {
-                    "roles": [1],
+                    "roles": [2],
                     "params": [{ "ds": "categoriesDS" }]
                 },
                 "read": {
-                    "roles": [0],
-                    "params": [{ "ds": "categoriesDS" }]
+                    "roles": [0, 1, 2],
+                    "params": [{ "ds": "categoriesDS" }, { "ds": "categoriesDS" }, { "ds": "categoriesDS" }]
                 },
                 "update": {
-                    "roles": [1],
+                    "roles": [2],
                     "params": [{ "ds": "categoriesDS" }]
                 },
                 "remove": {
-                    "roles": [1],
+                    "roles": [2],
                     "params": [{ "ds": "categoriesDS" }]
                 }
             }
@@ -279,8 +289,8 @@
                     "params": [{ "ds": "articlesDS" }]
                 },
                 "read": {
-                    "roles": [0],
-                    "params": [{ "ds": "articlesDS" }]
+                    "roles": [0, 1],
+                    "params": [{ "ds": "articlesDS" }, { "ds": "articlesDS" }]
                 },
                 "update": {
                     "roles": [1],
@@ -294,7 +304,7 @@
         },
         "details": {
             "module": "github/adioo/bind-html/v0.1.0",
-            "roles": [0],
+            "roles": [0, 1],
             "config": {
                 "html": {
                     "type": "a",
@@ -361,7 +371,7 @@
         },
         "cart": {
             "module": "github/adioo/bind-cart/v0.0.1",
-            "roles": [0, 1],
+            "roles": [1],
             "config": {
                 "html": {
                     "type": "a",
@@ -435,19 +445,19 @@
             },
             "operations": {
                 "create": {
-                    "roles": [0],
+                    "roles": [1],
                     "params": [{ "ds": "cartDS" }]
                 },
                 "read": {
-                    "roles": [0],
+                    "roles": [1],
                     "params": [{ "ds": "cartDS" }]
                 },
                 "update": {
-                    "roles": [0],
+                    "roles": [1],
                     "params": [{ "ds": "cartDS" }]
                 },
                 "remove": {
-                    "roles": [0],
+                    "roles": [1],
                     "params": [{ "ds": "cartDS" }]
                 }
             }
