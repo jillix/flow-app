@@ -60,7 +60,7 @@ Server.prototype.start = function() {
                         session(req, res, function() {
                             req.session.appid = CONFIG.app;
                             // TODO hardcoded user: use getDomainPublicUser for this
-                            var publicUser = 74;
+                            var publicUser = 76;
                             req.session.uid = req.session.uid || publicUser;
                             requestHandler(req, res);
                         });
