@@ -91,7 +91,7 @@
             "operations": {
                 "login": {
                     "roles": [0],
-                    "params": ["dd_CH"]
+                    "params": ["truckshop"]
                 }
             }
         },
