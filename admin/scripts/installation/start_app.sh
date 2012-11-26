@@ -37,5 +37,5 @@ then
 fi
 
 # now start the application node
-node "$MONO_ROOT/server.js" --app "$1" --port "$FREE_PORT" &
+node "$MONO_ROOT/server.js" --app "$1" --port "$FREE_PORT" --log orientQueries1 &
 
