@@ -120,6 +120,12 @@ function startApplication(appId) {
 
 function proxyHandler(req, res, proxy) {
     
+    if (!req.headers.host) {
+        
+        send.badrequest({req: req, res: res}, "No host in request headers.");
+        return;
+    }
+    
     // TODO: is a domain with port a diffrent host?
     var host = req.headers.host.split(":")[0];
     
@@ -156,6 +162,12 @@ function proxyHandler(req, res, proxy) {
 function listenToHttpProxyEvents(server) {
     
     server.on("proxyError", function(error, req, res) {
+        
+        if (!req.headers.host) {
+            
+            send.badrequest({req: req, res: res}, "No host in request headers.");
+            return;
+        }
         
         // TODO: is a domain with port a diffrent host?
         var host = req.headers.host.split(":")[0];
@@ -200,6 +212,12 @@ function listenToHttpProxyEvents(server) {
     
     server.on("end", function(error, req, res) {
         
+        if (!req.headers.host) {
+            
+            send.badrequest({req: req, res: res}, "No host in request headers.");
+            return;
+        }
+        
         // TODO: is a domain with port a diffrent host?
         var host = req.headers.host.split(":")[0];
         var application = runningApplications[host];
@@ -207,11 +225,19 @@ function listenToHttpProxyEvents(server) {
         if (startingApps[application.appId]) {
             delete startingApps[application.appId];
         }
+        
+        delete runningApplications[host];
     });
 }
 
 function requestHandler(req, res) {
-
+    
+    if (!req.headers.host) {
+        
+        send.badrequest({req: req, res: res}, "No host in request headers.");
+        return;
+    }
+    
     // resume the request for POST requests
     var resume = req.method === "POST" ? util.pause(req) : function() {};
 

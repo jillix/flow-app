@@ -170,8 +170,9 @@ function handlePostRequest(link, method) {
             }
 
             method(link);
-            link.resume();
         });
+        
+        link.resume();
     }
     else {
         method(link);
