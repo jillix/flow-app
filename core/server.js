@@ -128,8 +128,16 @@ function proxyHandler(req, res, proxy) {
     
     // TODO: is a domain with port a diffrent host?
     var host = req.headers.host.split(":")[0];
+
+    if (runningApplications[host] === 1) {
+        
+        send.serviceunavailable({ req: req, res: res }, "This application is starting...\nTry again in a few seconds.");
+        return;
+    }
     
     if (!runningApplications[host]) {
+        
+        runningApplications[host] = 1;
         
         // find the application for this domain (without the routing table)
         model.getDomainApplication(host, false, function(err, application) {
