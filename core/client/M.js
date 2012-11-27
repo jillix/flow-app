@@ -288,19 +288,25 @@ var M = (function() {
                 }
             };
             
-            //request complete callback
-            if (link.onload) {
-                
+            // request complete callback
+
+            // for browsers that implement XMLHttpRequestEventTarget
+            if (link.hasOwnProperty('onload')) {
                 link.onload = handleComplete;
-            
-            } else {
-                
+            }
+
+            // for browsers implementing only XMLHttpRequest (not XMLHttpRequestEventTarget)
+            else {
                 link.onreadystatechange = function() {
-                    
-                    //check if request is complete
+                    // check if request is complete
                     if (link.readyState == 4) {
-    
-                        handleComplete();
+                        // TODO BUG: onreadystatechange is called multiple times in Chrome in debug mode
+                        //      http://code.google.com/p/chromium/issues/detail?can=2&start=0&num=100&q=&colspec=ID%20Pri%20Mstone%20ReleaseBlock%20OS%20Area%20Feature%20Status%20Owner%20Summary&groupby=&sort=&id=162837
+                        //      http://stackoverflow.com/questions/12761255/can-xhr-trigger-onreadystatechange-multiple-times-with-readystate-done/13585135#13585135
+                        if (link.onreadystatechange) {
+                            delete link.onreadystatechange;
+                            handleComplete();
+                        }
                     }
                 };
             }
