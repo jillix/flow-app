@@ -2,7 +2,14 @@
 CONFIG = require("./config");
 
 // now start a mono server
-var Server = new require("./core/server").Server;
+
+var starter = "mono_server";
+if (CONFIG.app) {
+    starter = "app_server";
+}
+
+var Server = require("./core/" + starter).Server;
     server = new Server();
 
 server.start();
+

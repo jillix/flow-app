@@ -74,6 +74,7 @@ exports.getConfig = function(link) {
                 
                 response.path = module.source + "/" + module.owner + "/" + module.name + "/" + module.version;
                 response.lang = link.session.loc || module.lang || "en";
+                response.role = link.session.role;
                 
                 if (module.config && module.config.html) {
                     
