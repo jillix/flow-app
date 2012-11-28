@@ -142,7 +142,7 @@
             }
         },
         "categories": {
-            "module": "github/adioo/bind-list/v0.1.0",
+            "module": "github/adioo/bind-list/v0.1.1",
             "roles": [0, 1, 2],
             "config": {
                 "html": {
@@ -203,7 +203,7 @@
             }
         },
         "articles": {
-            "module": "github/adioo/bind-list/v0.1.0",
+            "module": "github/adioo/bind-list/v0.1.1",
             "roles": [0, 1, 2],
             "config": {
                 "html": {
@@ -350,7 +350,7 @@
             }
         },
         "cart": {
-            "module": "github/adioo/bind-cart/v0.0.1",
+            "module": "github/adioo/bind-cart/v0.0.2",
             "roles": [1],
             "config": {
                 "html": {
@@ -439,6 +439,10 @@
                 "remove": {
                     "roles": [1],
                     "params": [{ "ds": "cartDS" }]
+                },
+                "checkout": {
+                    "roles": [1],
+                    "params": [{ "ds": "cartDS" }]
                 }
             }
         },
@@ -484,7 +488,7 @@
             }
         },
         "categories_admin": {
-            "module": "github/adioo/bind-list/v0.1.0",
+            "module": "github/adioo/bind-list/v0.1.1",
             "roles": [2],
             "config": {
                 "html": {
@@ -561,7 +565,7 @@
             }
         },
         "articles_admin": {
-            "module": "github/adioo/bind-list/v0.1.0",
+            "module": "github/adioo/bind-list/v0.1.1",
             "roles": [2],
             "config": {
                 "html": {
