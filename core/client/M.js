@@ -348,7 +348,7 @@ var M = (function() {
             }
 
             // load scripts
-            if (config.scripts) {
+            if (config.scripts && config.scripts.length) {
                 require(config.scripts);
             }
 
