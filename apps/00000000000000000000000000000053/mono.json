@@ -142,7 +142,7 @@
             }
         },
         "categories": {
-            "module": "github/adioo/bind-list/v0.1.0",
+            "module": "github/adioo/bind-list/v0.1.1",
             "roles": [0, 1, 2],
             "config": {
                 "html": {
@@ -197,13 +197,13 @@
             },
             "operations": {
                 "read": {
-                    "roles": [0, 1],
-                    "params": [{ "ds": "categoriesDS" }, { "ds": "categoriesDS" }]
+                    "roles": [0, 1, 2],
+                    "params": [{ "ds": "categoriesDS" }, { "ds": "categoriesDS" }, { "ds": "categoriesDS" }]
                 }
             }
         },
         "articles": {
-            "module": "github/adioo/bind-list/v0.1.0",
+            "module": "github/adioo/bind-list/v0.1.1",
             "roles": [0, 1, 2],
             "config": {
                 "html": {
@@ -226,7 +226,7 @@
                                 {
                                     "name": "id",
                                     "value": {
-                                        "source": "id"
+                                        "source": "_id"
                                     }
                                 }
                             ]
@@ -276,113 +276,9 @@
                 }
             },
             "operations": {
-                "create": {
-                    "roles": [1],
-                    "params": [{ "ds": "articlesDS" }]
-                },
                 "read": {
-                    "roles": [0, 1],
-                    "params": [{ "ds": "articlesDS" }, { "ds": "articlesDS" }]
-                },
-                "update": {
-                    "roles": [1],
-                    "params": [{ "ds": "articlesDS" }]
-                },
-                "remove": {
-                    "roles": [1],
-                    "params": [{ "ds": "articlesDS" }]
-                }
-            }
-        },
-        "articles": {
-            "module": "github/adioo/bind-list/v0.1.0",
-            "roles": [0, 1, 2],
-            "config": {
-                "html": {
-                    "type": "a",
-                    "path": "html/articles"
-                },
-                "template": {
-                    "type": "selector",
-                    "value": ".template",
-                    "binds": [
-                        {
-                            "on": [{
-                                "name": "click",
-                                "handler": "hide",
-                                "emit": "viewArticleDetails"
-                            }]
-                        },
-                        {
-                            "attr": [
-                                {
-                                    "name": "id",
-                                    "value": {
-                                        "source": "id"
-                                    }
-                                }
-                            ]
-                        },
-                        {
-                            "target": ".description",
-                            "html": {
-                                "source": "description"
-                            }
-                        },
-                        {
-                            "target": ".netto",
-                            "html": {
-                                "source": "netto"
-                            }
-                        },
-                        {
-                            "target": ".brutto",
-                            "html": {
-                                "source": "brutto"
-                            }
-                        },
-                        {
-                            "target": ".caption",
-                            "html": {
-                                "source": "name"
-                            }
-                        }
-                    ]
-                },
-                "container": ".articles",
-                "options": {
-                    "selection": "none"
-                },
-                "listen": {
-                    "filters": {
-                        "filterChanged": [
-                            { "handler": "show" },
-                            { "handler": "read" }
-                        ]
-                    },
-                    "details": {
-                        "backToArticleList": [
-                            { "handler": "show" }
-                        ]
-                    }
-                }
-            },
-            "operations": {
-                "create": {
-                    "roles": [1],
-                    "params": [{ "ds": "articlesDS" }]
-                },
-                "read": {
-                    "roles": [0, 1],
-                    "params": [{ "ds": "articlesDS" }, { "ds": "articlesDS" }]
-                },
-                "update": {
-                    "roles": [1],
-                    "params": [{ "ds": "articlesDS" }]
-                },
-                "remove": {
-                    "roles": [1],
-                    "params": [{ "ds": "articlesDS" }]
+                    "roles": [0, 1, 2],
+                    "params": [{ "ds": "articlesDS" }, { "ds": "articlesDS" }, { "ds": "articlesDS" }]
                 }
             }
         },
@@ -454,7 +350,7 @@
             }
         },
         "cart": {
-            "module": "github/adioo/bind-cart/v0.0.1",
+            "module": "github/adioo/bind-cart/v0.0.2",
             "roles": [1],
             "config": {
                 "html": {
@@ -499,7 +395,7 @@
                 "container": ".cartList",
                 "agree": ".agb",
                 "options": {
-                    "type": "cookie",
+                    "type": "server",
                     "possible_types": ["memory", "cookie", "server"],
                     "classes": {
                         "empty": "empty",
@@ -543,6 +439,10 @@
                 "remove": {
                     "roles": [1],
                     "params": [{ "ds": "cartDS" }]
+                },
+                "checkout": {
+                    "roles": [1],
+                    "params": [{ "ds": "cartDS" }]
                 }
             }
         },
@@ -555,7 +455,7 @@
             "config": {
                 "html": {
                     "type": "a",
-                    "path": "html/layout_shop"
+                    "path": "html/layout_admin"
                 },
                 "css": ["/css/bootstrap.css", "/css/font-awesome.css", "/css/overwrite.css", "/css/bootstrap-responsive.css"],
                 "title": "Derendinger TruckShop",
@@ -579,7 +479,7 @@
                     "path": "html/filters"
                 },
                 "listen": {
-                    "categories": {
+                    "categories_admin": {
                         "selectionChanged": [
                             { "handler": "mergeCategoryFilter" }
                         ]
@@ -588,7 +488,7 @@
             }
         },
         "categories_admin": {
-            "module": "github/adioo/bind-list/v0.1.0",
+            "module": "github/adioo/bind-list/v0.1.1",
             "roles": [2],
             "config": {
                 "html": {
@@ -665,12 +565,12 @@
             }
         },
         "articles_admin": {
-            "module": "github/adioo/bind-list/v0.1.0",
-            "roles": [0, 1, 2],
+            "module": "github/adioo/bind-list/v0.1.1",
+            "roles": [2],
             "config": {
                 "html": {
                     "type": "a",
-                    "path": "html/articles"
+                    "path": "html/articles_admin"
                 },
                 "template": {
                     "type": "selector",
@@ -688,31 +588,13 @@
                                 {
                                     "name": "id",
                                     "value": {
-                                        "source": "id"
+                                        "source": "_id"
                                     }
                                 }
                             ]
                         },
                         {
-                            "target": ".description",
-                            "html": {
-                                "source": "description"
-                            }
-                        },
-                        {
-                            "target": ".netto",
-                            "html": {
-                                "source": "netto"
-                            }
-                        },
-                        {
-                            "target": ".brutto",
-                            "html": {
-                                "source": "brutto"
-                            }
-                        },
-                        {
-                            "target": ".caption",
+                            "target": ".art-caption",
                             "html": {
                                 "source": "name"
                             }
@@ -724,13 +606,13 @@
                     "selection": "none"
                 },
                 "listen": {
-                    "filters": {
+                    "filters_admin": {
                         "filterChanged": [
                             { "handler": "show" },
                             { "handler": "read" }
                         ]
                     },
-                    "details": {
+                    "details_admin": {
                         "backToArticleList": [
                             { "handler": "show" }
                         ]
@@ -739,30 +621,30 @@
             },
             "operations": {
                 "create": {
-                    "roles": [1],
+                    "roles": [2],
                     "params": [{ "ds": "articlesDS" }]
                 },
                 "read": {
-                    "roles": [0, 1],
-                    "params": [{ "ds": "articlesDS" }, { "ds": "articlesDS" }]
+                    "roles": [2],
+                    "params": [{ "ds": "articlesDS" }]
                 },
                 "update": {
-                    "roles": [1],
+                    "roles": [2],
                     "params": [{ "ds": "articlesDS" }]
                 },
                 "remove": {
-                    "roles": [1],
+                    "roles": [2],
                     "params": [{ "ds": "articlesDS" }]
                 }
             }
         },
         "details_admin": {
             "module": "github/adioo/bind-html/v0.1.0",
-            "roles": [0, 1, 2],
+            "roles": [2],
             "config": {
                 "html": {
                     "type": "a",
-                    "path": "html/details"
+                    "path": "html/details_admin"
                 },
                 "scripts": [
                     "/js/bootstrap-carousel.js"
@@ -809,13 +691,13 @@
                     }
                 ],
                 "listen": {
-                    "articles": {
+                    "articles_admin": {
                         "viewArticleDetails": [
                             { "handler": "show" },
                             { "handler": "update" }
                         ]
                     },
-                    "filters": {
+                    "filters_admin": {
                         "filterChanged": [
                             { "handler": "hide" }
                         ]
