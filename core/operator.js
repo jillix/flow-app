@@ -1,13 +1,14 @@
-var formidable      = require("formidable"),
-    fs              = require("fs"),
-    util            = require(CONFIG.root + "/core/util.js"),
-    send            = require(CONFIG.root + "/core/send.js").send,
-    mods            = require(CONFIG.root + "/core/module.js"),
-    apps            = require(CONFIG.root + "/core/apps.js"),
-    auth            = require(CONFIG.root + "/core/auth.js"),
-    getSession      = require(CONFIG.root + "/core/session.js").get,
-    getOperation    = require(CONFIG.root + "/core/model/orient.js").getUserOperation;
+var formidable      = require("formidable");
+var fs              = require("fs");
+var util            = require(CONFIG.root + "/core/util.js");
+var send            = require(CONFIG.root + "/core/send.js").send;
+var getSession      = require(CONFIG.root + "/core/session.js").get;
+var getOperation    = require(CONFIG.root + "/core/model/orient.js").getUserOperation;
 
+// core operations modules
+var mods    = require(CONFIG.root + "/core/operations/module.js");
+var apps    = require(CONFIG.root + "/core/operations/apps.js");
+var auth    = require(CONFIG.root + "/core/operations/auth.js");
 
 exports.operation = function(link) {
 

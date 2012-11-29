@@ -70,4 +70,3 @@ exports.logout = function(link) {
     send.badrequest(link, "Tried to logout session " + session.sid + " but session.end was not a function.");
     return;
 };
-
