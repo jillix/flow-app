@@ -77,25 +77,24 @@ footer {
     color: #fff;
 }
 
-.adminCategories i {
+.adminCategories i, .adminArticles i {
     font-size: 110%;
     cursor: pointer;
-    display:none;
 }
 
-.adminCategories .icon-remove {
+.adminCategories .icon-remove, .adminArticles .icon-remove {
     color: #f88;
 }
 
-.adminCategories .icon-remove:hover {
+.adminCategories .icon-remove:hover, .adminCategories .icon-remove:hover {
     color: #e00;
 }
 
-.adminCategories .icon-pencil {
+.adminCategories .icon-pencil, .adminCategories .icon-pencil {
     color: #888;
 }
 
-.adminCategories .icon-pencil:hover {
+.adminCategories .icon-pencil:hover, .adminCategories .icon-pencil:hover {
     color: #333;
 }
 

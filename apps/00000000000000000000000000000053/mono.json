@@ -65,8 +65,6 @@
     },
     "miids": {
 
-
-
         "layout_login": {
             "module": "github/adioo/layout/v0.0.4",
             "roles": [0],
@@ -463,10 +461,11 @@
                     "filterContainer": "filters_admin",
                     "sideNavContainer": "categories_admin",
                     "articleContainer": "articles_admin",
-                    "detailContainer": "details_admin"
+                    "detailContainer": "details_admin",
+                    "modalContainer": "edit_modal"
                 },
                 "scripts": [
-                    "/js/bootstrap-collapse.js"
+                    "/js/bootstrap-modal.js"
                 ]
             }
         },
@@ -528,6 +527,20 @@
                                     }
                                 }
                             ]
+                        },
+                        {
+                            "target": ".edit",
+                            "on": [{
+                                "name": "click",
+                                "emit": "requestEditItem"
+                            }]
+                        },
+                        {
+                            "target": ".delete",
+                            "on": [{
+                                "name": "click",
+                                "handler": "removeItem"
+                            }]
                         }
                     ]
                 },
@@ -594,10 +607,36 @@
                             ]
                         },
                         {
+                            "target": ".art-nr",
+                            "html": {
+                                "source": "nr"
+                            }
+                        },
+                        {
                             "target": ".art-caption",
                             "html": {
                                 "source": "name"
                             }
+                        },
+                        {
+                            "target": ".art-visible",
+                            "html": {
+                                "source": "visible"
+                            }
+                        },
+                        {
+                            "target": ".edit",
+                            "on": [{
+                                "name": "click",
+                                "emit": "requestEditItem"
+                            }]
+                        },
+                        {
+                            "target": ".delete",
+                            "on": [{
+                                "name": "click",
+                                "handler": "removeItem"
+                            }]
                         }
                     ]
                 },
@@ -617,6 +656,10 @@
                             { "handler": "show" }
                         ]
                     }
+                },
+                "controls": {
+                    "add": ".create",
+                    "delete": ".delete"
                 }
             },
             "operations": {
@@ -646,9 +689,6 @@
                     "type": "a",
                     "path": "html/details_admin"
                 },
-                "scripts": [
-                    "/js/bootstrap-carousel.js"
-                ],
                 "binds": [
                     {
                         "target": ".back",
@@ -663,6 +703,13 @@
                         "on": [{
                             "name": "click",
                             "emit": "addToCart"
+                        }]
+                    },
+                    {
+                        "target": ".edit",
+                        "on": [{
+                            "name": "click",
+                            "emit": "requestEditItem"
                         }]
                     },
                     {
@@ -702,6 +749,64 @@
                             { "handler": "hide" }
                         ]
                     }
+                }
+            }
+        },
+        "edit_modal": {
+            "module": "bitbucket/jillix/sag-modal/v0.0.1",
+            "roles": [2],
+            "config": {
+                "html": {
+                    "type": "a",
+                    "path": "html/edit_dialog"
+                },
+                "scripts": [
+                    "/js/bootstrap-collapse.js"
+                ],
+                "views": {
+                    "categories": {
+                        "title": "Add/Edit Category",
+                        "html": "html/category_form",
+                        "binds": [
+                        ]
+                    },
+                    "articles": {
+                        "title": "Add/Edit Article",
+                        "html": "html/article_form",
+                        "binds": [
+                        ]
+                    }
+                },
+                "binds": [
+                ],
+                "listen": {
+                    "categories_admin": {
+                        "requestNewItem": [
+                            { "handler": { "name": "show", "args": ["categories"] } }
+                        ],
+                        "requestEditItem": [
+                            { "handler": { "name": "show", "args": ["categories"] } }
+                        ]
+                    },
+                    "articles_admin": {
+                        "requestNewItem": [
+                            { "handler": { "name": "show", "args": ["articles"] } }
+                        ],
+                        "requestEditItem": [
+                            { "handler": { "name": "show", "args": ["articles"] } }
+                        ]
+                    },
+                    "details_admin": {
+                        "requestEditItem": [
+                            { "handler": { "name": "show", "args": ["articles"] } }
+                        ]
+                    }
+                }
+            },
+            "operations": {
+                "view": {
+                    "roles": [2],
+                    "params": []
                 }
             }
         }
