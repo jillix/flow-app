@@ -1,35 +1,10 @@
-var send = require(CONFIG.root + "/core/send.js").send,
-    read = require(CONFIG.root + "/core/util.js").read,
-    stat = require("node-static").Server,
-    model = require(CONFIG.root + "/core/model/orient.js"),
-    client = new stat(CONFIG.root + "/core/client"),
-    modules = new stat(CONFIG.root + "/apps/" + CONFIG.app + "/mono_modules"),
-    publicFiles = require(CONFIG.root + "/core/send").publicFiles;
-
-/*function buildModule(link, module) {
-    
-    module.path = module.source + "/" + module.owner + "/" + module.name + "/" + module.version;
-    module.lang = link.session.loc || "en";
-    
-    
-    if (module.html) {
-        response.html = module.html;
-    }
-
-    if (module.css) {
-
-        response.css = [];
-
-        // add the module css in the third response object
-        for (var i in module.css) {
-
-            // TODO append D/ for domain css and M/ for module css
-            response.css.push(module.css[i]);
-        }
-    }
-    
-    return module;
-}*/
+var send = require(CONFIG.root + "/core/send.js").send;
+var read = require(CONFIG.root + "/core/util.js").read;
+var stat = require("node-static").Server;
+var model = require(CONFIG.root + "/core/model/orient.js");
+var client = new stat(CONFIG.root + "/core/client");
+var modules = new stat(CONFIG.root + "/apps/" + CONFIG.app + "/mono_modules");
+var publicFiles = require(CONFIG.root + "/core/send").publicFiles;
 
 exports.getConfig = function(link) {
 
@@ -160,19 +135,4 @@ exports.getClient = function(link){
     link.req.url = link.path[0];
 
     client.serve(link.req, link.res);
-};
-
-// ONLY PUBLIC FILES
-exports.getFile = function(link) {
-
-    model.getDomainApplication(link.host, false, function(err, result) {
-
-        if (err || !result) {
-
-            send.notfound(link, "File not found: " + link.req.url);
-            return;
-        }
-
-        publicFiles(link, result.appId, result.publicDir);
-    });
 };
