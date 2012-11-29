@@ -118,7 +118,7 @@ function listenToHttpProxyEvents(server) {
         var application = runningApplications[host];
 
         if (runningApplications[host] === 0) {
-            send.badrequest(link, "App starting...");
+            send.badrequest({ req: req, res: res }, "App starting...");
             return;
         }
 
