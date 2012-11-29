@@ -12,11 +12,8 @@ var route     = require(CONFIG.root + "/core/router.js").route;
 var orient    = require(CONFIG.root + "/core/db/orient.js");
 var model     = require(CONFIG.root + "/core/model/orient.js");
 
-var Server = exports.Server = function () {};
-
-
-Server.prototype.start = function() {
-
+function appServerStart() {
+    
     if (!CONFIG.app) {
         console.error("This server cannot be started without and application ID");
         process.exit(1);
@@ -67,7 +64,7 @@ Server.prototype.start = function() {
         // start http server
         http.createServer(handler).listen(port, host);
     });
-};
+}
 
 function requestHandler(req, res) {
 
@@ -114,3 +111,5 @@ function requestHandler(req, res) {
     }
 }
 
+// export start application server
+exports.start = appServerStart;
