@@ -115,7 +115,8 @@
                     "sideNavContainer": "categories",
                     "articleContainer": "articles",
                     "detailContainer": "details",
-                    "cartContainer": "cart"
+                    "cartContainer": "cart",
+                    "loginButtonsContainer": "loginButtons"
                 },
                 "scripts": [
                     "/js/bootstrap-collapse.js"
@@ -186,6 +187,7 @@
                 "container": ".categories",
                 "options": {
                     "autofetch": true,
+                    "autoselect": "first",
                     "sort": { "pos": 1 },
                     "selection": "single",
                     "classes": {
@@ -444,6 +446,28 @@
                 }
             }
         },
+        "loginButtons": {
+            "module": "bitbucket/jillix/sag-login-buttons/v0.0.1",
+            "roles": [0, 1, 2],
+            "config": {
+                "html": {
+                    "type": "a",
+                    "path": "html/login-buttons"
+                },
+                "options": {
+                }
+            },
+            "operations": {
+                "logout": {
+                    "roles": [0, 1, 2],
+                    "params": []
+                },
+                "userinfo": {
+                    "roles": [0, 1, 2],
+                    "params": []
+                }
+            }
+        },
 
 
 
@@ -547,6 +571,7 @@
                 "container": ".adminCategories",
                 "options": {
                     "autofetch": true,
+                    "autoselect": "first",
                     "sort": { "pos": 1 },
                     "selection": "single",
                     "classes": {
