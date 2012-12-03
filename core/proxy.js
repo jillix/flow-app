@@ -2,7 +2,6 @@ var http = require("http");
 var fs = require("fs");
 var util = require(CONFIG.root + "/core/util.js");
 var httpProxy = require('http-proxy');
-var pause = require("pause");
 
 // imported functions
 var startApp    = require(CONFIG.root + "/core/app_starter.js").startApp;
@@ -27,7 +26,7 @@ if (!CONFIG.proxy) {
 }
 
 // check orient connection and start proxy server
-function startProxy() {
+exports.start = function() {
     
     // establish the database connection
     orient.connect(CONFIG.orient, function(err, db) {
@@ -46,8 +45,13 @@ function startProxy() {
 // handle proxy errors
 function onProxyError(error, req, res) {
     
+    var link = {
+        req: req,
+        res: res
+    };
+
     if (!req.headers.host) {
-        send.badrequest({ req: req, res: res }, "No host in request headers.");
+        send.badrequest(link, "No host in request headers.");
         return;
     }
 
@@ -75,7 +79,7 @@ function onProxyError(error, req, res) {
             if (err) {
                 // let the user know that his application crashed
                 var message = "Sorry! This application crashed and there's not a shred of evidence why this happened. :(";
-                send.internalservererror({ req: req, res: res }, message);
+                send.internalservererror(link, message);
                 return;
             }
 
@@ -87,11 +91,11 @@ function onProxyError(error, req, res) {
     fs.exists(logFilePath, function(exists) {
 
         if (!exists) {
-            send.internalservererror({ req: req, res: res }, "Sorry! This application crashed and there's not a shred of evidence why this happened. :(\n" + restartMessage);
+            send.internalservererror(link, "Sorry! This application crashed and there's not a shred of evidence why this happened. :(\n" + restartMessage);
         } else {
             res.headers = res.headers || {};
             res.headers["content-type"] = "text/html";
-            send.internalservererror({ req: req, res: res }, "Sorry! This application crashed. Maybe if you check out the <a href='" + logOperationUrl + "'>log</a> you find out why.\n" + restartMessage);
+            send.internalservererror(link, "Sorry! This application crashed. Maybe if you check out the <a href='" + logOperationUrl + "'>log</a> you find out why.\n" + restartMessage);
         }
 
         // now try to start this application
@@ -120,7 +124,7 @@ function proxyHandler(req, res, proxy) {
         req: req,
         res: res,
         resume: util.pause(req)
-    }
+    };
 
     if (!req.headers.host) {
         send.badrequest(link, "No host in request headers.");
@@ -137,7 +141,7 @@ function proxyHandler(req, res, proxy) {
 
     // the application is being started
     if (runningApplications[host] === 0) {
-        send.serviceunavailable({ req: req, res: res }, "This application is starting...\nTry again in a few seconds.");
+        send.serviceunavailable(link, "This application is starting...\nTry again in a few seconds.");
         return;
     }
 
@@ -148,14 +152,14 @@ function proxyHandler(req, res, proxy) {
     model.getDomainApplication(host, false, function(err, application) {
 
         if (err) {
-            send.internalservererror({ req: req, res: res }, err);
+            send.internalservererror(link, err);
             return;
         }
 
         var forwardRequest = function(err, application) {
 
             if (err) {
-                send.internalservererror({ req: req, res: res }, err);
+                send.internalservererror(link, err);
                 return;
             }
 
@@ -175,5 +179,3 @@ function proxyHandler(req, res, proxy) {
     });
 }
 
-// export start proxy function
-exports.start = startProxy;

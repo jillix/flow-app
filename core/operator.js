@@ -7,6 +7,7 @@ var getOperation    = require(CONFIG.root + "/core/model/orient.js").getUserOper
 
 // core operations modules
 var mods    = require(CONFIG.root + "/core/operations/module.js");
+var static  = require(CONFIG.root + "/core/operations/static.js");
 var apps    = require(CONFIG.root + "/core/operations/apps.js");
 var auth    = require(CONFIG.root + "/core/operations/auth.js");
 
@@ -25,7 +26,7 @@ exports.operation = function(link) {
         if (link.operation.module === CONFIG.coreKey) {
 
             var methodName = link.operation.method;
-            var method = mods[methodName] || auth[methodName] || apps[methodName];
+            var method = mods[methodName] || static[methodName] || auth[methodName] || apps[methodName];
 
             checkAndCallFunction(link, method);
             return;

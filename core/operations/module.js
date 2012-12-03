@@ -4,7 +4,7 @@ var stat = require("node-static").Server;
 var model = require(CONFIG.root + "/core/model/orient.js");
 var client = new stat(CONFIG.root + "/core/client");
 var modules = new stat(CONFIG.root + "/apps/" + CONFIG.app + "/mono_modules");
-var publicFiles = require(CONFIG.root + "/core/send").publicFiles;
+
 
 exports.getConfig = function(link) {
 

@@ -1,5 +1,5 @@
 var send = require(CONFIG.root + "/core/send").send;
-var publicFiles = require(CONFIG.root + "/core/send").publicFiles;
+var serve = require(CONFIG.root + "/core/operations/static").serve;
 var getDomainApplication = require(CONFIG.root + "/core/model/orient.js").getDomainApplication;
 
 var baseUrl = "/" + CONFIG.operationKey + "/core/getModule";
@@ -67,7 +67,7 @@ function route(link, application) {
         send.ok(link.res, initScripts(module, application, getIeVersion(link.req.headers['user-agent'])));
     }
     else {
-        publicFiles(link, application.appId, application.publicDir);
+        serve(link, application.appId, application.publicDir);
     }
 }
 
