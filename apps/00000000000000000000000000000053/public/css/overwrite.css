@@ -51,16 +51,22 @@ footer {
     font-size: 71%
 }
 
+/*---------------------------------- LOGIN BUTTONS */
+
+#loginButtons {
+    text-align: right;
+}
+
 /*---------------------------------- NAVIGATION*/
 
 .categories li a {
-    border:1px solid;
-    border-color:#fff #ddd #ddd #ddd;
+    border: 1px solid;
+    border-color: #fff #ddd #ddd #ddd;
 	
     background-color: #fff;
     color: #666;
-    font-size:14px;
-	line-height:33px;
+    font-size: 14px;
+	line-height: 33px;
 	
 	margin-bottom: 1px;
 }

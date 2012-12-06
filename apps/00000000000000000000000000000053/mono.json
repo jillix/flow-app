@@ -116,7 +116,8 @@
                     "articleContainer": "articles",
                     "detailContainer": "details",
                     "cartContainer": "cart",
-                    "loginButtonsContainer": "loginButtons"
+                    "loginButtonsContainer": "loginButtons",
+                    "adminLinkContainer": "adminLink"
                 },
                 "scripts": [
                     "/js/bootstrap-collapse.js"
@@ -453,8 +454,6 @@
                 "html": {
                     "type": "a",
                     "path": "html/login-buttons"
-                },
-                "options": {
                 }
             },
             "operations": {
@@ -466,6 +465,16 @@
                     "roles": [0, 1, 2],
                     "params": []
                 }
+            }
+        },
+        "adminLink": {
+            "module": "github/adioo/layout/v0.0.4",
+            "roles": [2],
+            "config": {
+                "html": {
+                    "type": "a",
+                    "path": "html/link_admin"
+                }    
             }
         },
 
@@ -486,7 +495,8 @@
                     "sideNavContainer": "categories_admin",
                     "articleContainer": "articles_admin",
                     "detailContainer": "details_admin",
-                    "modalContainer": "edit_modal"
+                    "modalContainer": "edit_modal",
+                    "loginButtonsContainer": "loginButtons"
                 },
                 "scripts": [
                     "/js/bootstrap-modal.js"
@@ -574,6 +584,7 @@
                     "autoselect": "first",
                     "sort": { "pos": 1 },
                     "selection": "single",
+                    "deleteConfirmation": true,
                     "classes": {
                         "selected": "active"
                     }
@@ -795,6 +806,12 @@
                         "binds": [
                         ]
                     },
+                    "categoryRemove": {
+                        "title": "Remove Category",
+                        "html": "html/category_remove_form",
+                        "binds": [
+                        ]
+                    },
                     "articles": {
                         "title": "Add/Edit Article",
                         "html": "html/article_form",
@@ -811,6 +828,9 @@
                         ],
                         "requestEditItem": [
                             { "handler": { "name": "show", "args": ["categories"] } }
+                        ],
+                        "requestRemoveItem": [
+                            { "handler": { "name": "show", "args": ["categoryRemove"] } }
                         ]
                     },
                     "articles_admin": {
