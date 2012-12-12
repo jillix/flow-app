@@ -64,7 +64,7 @@ check_screen() {
 # params: screen_name executable log params
 execute_in_screen() {
     check_screen $1
-    COMMAND=`echo -e "node $2 $4 &>> $3\n"`
+    COMMAND=`echo -e "node \"$2\" $4 &>> $3\n"`
     if [ "$1" == "$ORIENT_SCREEN_NAME" ]
     then
         COMMAND=`echo -e "$2 &>> $3\n"`
@@ -79,9 +79,9 @@ mkdir -p ~/logs
 
 if [ -z "$MONO_PID" ]
 then
-    if [ -z "$MONO_CONFIG" ]
+    if [ "$MONO_CONFIG" != "" ]
     then
-        MONO_PARAMS=--config "$MONO_CONFIG"
+        MONO_PARAMS="--config \"$MONO_CONFIG\""
     fi
     execute_in_screen "$MONO_SCREEN_NAME" "$MONO_SERVER" "$MONO_LOG" "$MONO_PARAMS"
 fi
