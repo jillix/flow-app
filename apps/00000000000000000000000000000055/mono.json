@@ -1,0 +1,93 @@
+{
+    "appId": "00000000000000000000000000000055",
+    "name": "CRM 2",
+    
+    "routes": {
+        "/": "layout"
+    },
+    
+    "error": "login",
+    
+    "domains": ["crm2.mono.ch", "crm2.jillix.net"],
+    
+    "publicDir": "public",
+    "publicUser": 0,
+    
+    "users": [
+    
+        {
+            "id": 0,
+            "username": "",
+            "password": "",
+            
+            "data": {
+            
+                "fullname": "Public"
+            },
+            
+            "roles": [0]
+        },
+        {
+        	"id": 1,
+        	"username": "admin",
+        	"password": "3cc849279ba298b587a34cabaeffc5ecb3a044bbf97c516fab7ede9d1af77cfa",
+        	
+        	"data": {
+        	
+        		"fullname": "Admin"
+        	},
+        	
+        	"roles": [1]
+        }
+    ],
+    
+    "roles": [
+    
+        {
+            "id": 0,
+            "name": "Public"
+        },
+        
+        {
+        	"id": 1,
+        	"name": "Admin"
+        }
+    ],
+    
+    "miids": {
+    
+        "layout": {
+        
+            "module": "github/adioo/layout/v0.0.4",
+            "roles": [1],
+            
+            "config": {
+            
+                "html": {
+                
+                    "type": "a",
+                    "path": "public"
+                },
+                
+                "title": "CRM 2",
+                    
+                "modules": {
+                    
+                },
+                
+                "css": [
+                    
+                    "css/bootstrap.css",
+                    "css/font-awesome.css",
+                	"css/bootstrap-responsive.css",
+                    "css/overwrite.css"
+                ]
+            }
+        },
+        
+        "test": {
+            
+        }
+    }
+}
+

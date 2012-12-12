@@ -7,29 +7,33 @@ body {
     padding: 9px 0;
 }
 .navbar-inner {
+    
     background-image: none;
     background-color: #fff;
-
+    
     min-height: 120px;
-
+    
     border: none;
     border-bottom: solid 1px #ccc;
-
+    
     background-repeat: no-repeat;
-    background-image: url("/images/eyecatcher.png");
+    background-image: url("../img/eyecatcher.png");
     background-position: center;
 }
 
 .navbar-inner .container {
+    
     margin-top: 5px;
 }
 
 .navbar-search {
+    
     padding: 0;
     margin-top: 36px;
 }
 
 #search-btn {
+    
     margin-top: 10px;
     border: none;
     font-size: 24px;
@@ -41,81 +45,83 @@ body {
 }
 
 footer {
+    
     min-height: 140px;
     border-top: solid 1px #ccc;
-
+    
     margin-top: 40px;
     padding-top: 20px;
-
+    
     color: #888;
     font-size: 71%
-}
-
-/*---------------------------------- LOGIN BUTTONS */
-
-#loginButtons {
-    text-align: right;
 }
 
 /*---------------------------------- NAVIGATION*/
 
 .categories li a {
-    border: 1px solid;
-    border-color: #fff #ddd #ddd #ddd;
+    
+    border:1px solid;
+    border-color:#fff #ddd #ddd #ddd;
 	
     background-color: #fff;
     color: #666;
-    font-size: 14px;
-	line-height: 33px;
+    font-size:14px;
+	line-height:33px;
 	
 	margin-bottom: 1px;
 }
 
 .categories li a:hover {
+    
     border:1px solid;
 	border-color: #fff #ddd #ddd #ddd;
-
+    
     color: #333;
 }
 
 .categories .active a {
+    
     border-color: #ccc;
     color: #fff;
 }
 
-.adminCategories i, .adminArticles i {
+.adminCategories i {
+    
     font-size: 110%;
     cursor: pointer;
+    display:none;
 }
 
-.adminCategories .icon-remove, .adminArticles .icon-remove {
+.adminCategories .icon-remove {
+    
     color: #f88;
 }
 
-.adminCategories .icon-remove:hover, .adminCategories .icon-remove:hover {
+.adminCategories .icon-remove:hover {
+    
     color: #e00;
 }
 
-.adminCategories .icon-pencil, .adminCategories .icon-pencil {
+.adminCategories .icon-pencil {
+    
     color: #888;
 }
 
-.adminCategories .icon-pencil:hover, .adminCategories .icon-pencil:hover {
+.adminCategories .icon-pencil:hover {
+    
     color: #333;
 }
 
 /*---------------------------------- ARTICLES*/
 
-.template {
-    display: none;
-}
-
 .articles {
+    
     list-style: none;
     margin: 35px 0 0 0;
 }
 
 .articles li {
+    
     position: relative;
     height: 160px;
     margin-top: 15px;
@@ -123,15 +129,18 @@ footer {
     border: 1px solid #ddd;
     cursor: pointer;
     overflow: hidden;
+    
     color: #666;
 }
 
 .articles li:hover {
+    
     border-color: #ccc;
     color: #333;
 }
 
 .articles .article_image {
+    
     position: absolute;
     top: 10px;
     left: 10px;
@@ -140,6 +149,7 @@ footer {
 }
 
 .articles .article_text {
+    
     position: absolute;
     top: 10px;
     left: 160px;
@@ -148,6 +158,7 @@ footer {
 }
 
 .articles .description {
+    
     font-size: 86%;
     max-height: 43px;
     overflow: hidden;
@@ -172,62 +183,75 @@ footer {
 /*---------------------------------- DETAILS*/
 
 .articleTitle {
+    
     margin-top: 17px;
 }
 
 .articlePrice {
+    
     text-align: right;
 }
 
 .newPrice i {
+    
     font-size: 150%;
 }
 
 .newPrice .price {
+    
     height: 45px;
 }
 
 .newPrice .currency {
+    
     font-size: 81%;
     padding-right: 3px;
 }
 
 .newPrice .netto {
+    
     font-size: 150%;
     padding-right: 5px;
 }
 
 .orderNumber, .stead {
+    
     font-size: 71%;
 }
 
 .oldPrice .price {
+    
      font-size: 91%;
 }
 
 .articleImages {
+    
     margin: 20px 0;
 }
 
 #myCarousel .carousel-inner {
+    
     background-color: white;
     border: 1px solid;
     border-color: white #DDD #DDD white;
 }
 
 #myCarousel .carousel-inner .item {
+    
     text-align: center;
     padding: 10px;
     height: 300px;
 }
 
 #myCarousel .carousel-inner .item img {
+    
     display: inline;
     height: 300px;
     max-width: none;
 }
 
 .carousel-control {
+    
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     border-color: #bbb;
 }
@@ -235,6 +259,7 @@ footer {
 /*---------------------------------- CART*/
 
 .cart .cartTitle {
+    
     padding: 5px 10px;
     background-color: #CCC;
     border: 1px solid;
@@ -255,47 +280,44 @@ footer {
     border-color: white #DDD #DDD white;    
 }
 
-.cart .cartList input {
-    height: 15px;
-    width: 40px;
-}
-
-.cart .empty, .cart .confirm, .cart .error, .cart .agb .checkbox {
+.cart .empty {
     font-size: 86%;
+    line-height: 130%;
     color: #999;    
-}
-
-.cart .error {
-    color: red;
 }
 
 /*---------------------------------- ARTICLE TABLE*/
 
 .articleTable {
+    
     cursor: pointer;
     color: #666;
-
+    
     font-size: 91%;
     font-weight: normal;
-
+    
     margin-top: 20px;
 }
 
 .articleTable th {
+    
     font-size: 100%;
     font-weight: normal;
     white-space: nowrap; 
 }
 
 .articleTable tbody {
+    
     background-color: #fff;
 }
 
 .articleTable i {
+    
     color: #888;
 }
 
 .articleTable i:hover {
+    
     color: #333;
 }
 
@@ -309,18 +331,22 @@ footer {
 }
 
 .accordion a.accordion-toggle {
+    
     padding: 3px 10px;
 }
 
 .accordion-inner {
+    
     border: none;
 }
 
 .article-form {
+    
     margin-top: 13px;
 }
 
 .accordion-heading a {
+    
     padding: 5px 10px;
     background-color: #fff;
     line-height: 171%;
@@ -331,7 +357,7 @@ footer {
 }
 
 .accordion-heading a:hover {
-
+    
     color: #555;
     background-color: #ccc;
 }
@@ -339,25 +365,31 @@ footer {
 /*---------------------------------- MEDIA QUERIES*/
 
 @media (max-width: 979px) {
+    
     .navbar-inner {
+        
         background-image: none;
     }
 }
 
 @media (max-width: 480px) {
+    
     .articles .article_image {
+        
         width: 100px;
     }
     .articles .article_text {
+        
         left: 120px;
     }
-
+    
     #myCarousel .carousel-inner .item {
+        
         height: 200px
     }
-
+    
     #myCarousel .carousel-inner .item img {
+        
         height: 200px;
     }
 }
-
