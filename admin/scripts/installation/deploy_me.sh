@@ -3,7 +3,12 @@
 function ce {
     if [ $? -ne 0 ]
     then
-        echo "$1"
+        # show the error message if one is provided
+        if [ "$1" != "" ]
+        then
+            echo "$1" 1>&2
+        fi
+        # if an error is provided, exit with it
         if [ $2 != "" ]
         then
             exit $2
@@ -78,48 +83,4 @@ echo "*** Installing app: $APP_ID"
 pushd "$MONO_ROOT" > /dev/null
 node "$MONO_ROOT/admin/scripts/installation/install_app.js" "$MONO_ROOT/apps/$APP_ID/mono.json"
 popd > /dev/null
-
-
-exit
-
-
-
-
-
-
-if [ -e "$MONO_ROOT/apps/$APP_ID" ]
-then
-    echo "I cannot find the mono.json app descriptor in the current directory. You must call this script from an an application directory" 1>&2
-    exit 3
-fi
-
-echo $APP_ID
-exit
-
-APP_DESCRIPTOR=$MONO_ROOT/apps/$APP_ID/mono.json
-
-# clean up if already installed
-if [ -e "$MONO_ROOT/apps/$APP_ID" ]
-then
-    # stop application node
-    "$MONO_ROOT/admin/scripts/installation/stop_app.sh" "$APP_ID"
-
-    # uninstall the application
-    node "$MONO_ROOT/admin/scripts/installation/uninstall_app.js" "$APP_DESCRIPTOR"
-    #ce "Could not uninstall application: $APP_ID"
-
-    # and remove the application directory
-    rm -Rf "$MONO_ROOT/apps/$APP_ID"
-    ce "Could not cleanup already existing application: $APP_ID"
-fi
-
-# move the app to the app ID directory
-mv "$TMP_APP_DIR" "$MONO_ROOT/apps/$APP_ID"
-ce "Could not move application to propper location: $APP_ID"
-
-# install the new application
-node "$MONO_ROOT/admin/scripts/installation/install_app.js" "$APP_DESCRIPTOR"
-ce "Could not install application: $APP_ID"
-
-echo "Succesfully deployed application $APP_ID"
 
