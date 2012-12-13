@@ -59,7 +59,7 @@
             }
         },
         "dev_deployer": {
-            "module": "github/gabipetrovay/dev_deployer/v0.0.1",
+            "module": "github/gabipetrovay/dev_deployer/v0.0.2",
             "roles": [0],
             "config": {
                 "html": {
