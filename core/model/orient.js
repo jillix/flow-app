@@ -930,42 +930,78 @@ exports.getApplication = function(appId, callback) {
 
 exports.getAppId = function(domain, callback) {
 
+    var command =
+        "SELECT " +
+            "application.id AS appId, " +
+            "application.error AS errorMiid " +
+        "FROM " +
+            "VDomain " +
+        "WHERE " +
+            "name = '" + domain + "'";
+
+    sql(command, function(err, results) {
+
+        if (err) {
+            return callback("An error occurred while retrieving the application ID for domain '" + domain + "': " + JSON.stringify(err));
+        }
+
+        // if there is no result
+        if (!results || results.length == 0) {
+            return callback("Domain not found: " + domain);
+        }
+
+        // if there are too many results
+        if (results.length > 1) {
+            return callback("Could not uniquely determine the application ID for domain: " + domain);
+        }
+
+        var application = results[0];
+
+        // if the application does not have the required fields
+        if (!application || !application.appId) {
+            return callback("Missing application ID: " + JSON.stringify(application));
+        }
+
+        callback(null, application.appId, application.errorMiid);
+    });
+};
+
+exports.getApplicationDomains = function(appId, callback) {
+
+    translateAppId(appId, function(err, id) {
+
+        if (err) { return callback(err); }
+
+        var aid = ridFromId("VApplication", id);
+
         var command =
             "SELECT " +
-                "application.id AS appId, " +
-                "application.error AS errorMiid " +
+                "name " +
             "FROM " +
                 "VDomain " +
             "WHERE " +
-                "name = '" + domain + "'";
+                "application = " + aid;
 
         sql(command, function(err, results) {
 
             if (err) {
-                return callback("An error occurred while retrieving the application ID for domain '" + domain + "': " + JSON.stringify(err));
+                return callback("An error occurred while retrieving the domain for application " + appId + ": " + JSON.stringify(err));
             }
 
             // if there is no result
             if (!results || results.length == 0) {
-                return callback("Domain not found: " + domain);
+                return callback("No domains found for application " + appId);
             }
 
-            // if there are too many results
-            if (results.length > 1) {
-                return callback("Could not uniquely determine the application ID for domain: " + domain);
+            var domains = [];
+            for (var i in results) {
+                domains.push(results[i].name);
             }
 
-            var application = results[0];
-
-            // if the application does not have the required fields
-            if (!application || !application.appId) {
-                return callback("Missing application ID: " + JSON.stringify(application));
-            }
-
-            callback(null, application.appId, application.errorMiid);
+            callback(null, domains);
         });
-};
-
+    });
+}
 
 exports.addApplicationDomains = function(aid, domains, callback) {
 

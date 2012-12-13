@@ -686,6 +686,15 @@ function getApplication(id, callback) {
 }
 
 
+function getApplicationDomains(id, callback) {
+
+    db.getApplicationDomains(id, function(err, domains) {
+
+        callback(err, domains);
+    })
+}
+
+
 function getApplications(callback) {
     db.getApplications(callback);
 }
@@ -723,5 +732,6 @@ exports.installRoles = installRoles;
 
 exports.getApplication = getApplication;
 exports.getApplications = getApplications;
+exports.getApplicationDomains = getApplicationDomains;
 exports.isApplicationRunning = isApplicationRunning;
 
