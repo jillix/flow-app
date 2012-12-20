@@ -395,7 +395,7 @@ exports.getUser = function(appId, userName, callback) {
 };
 
 
-exports.addApplication = function(appId, name, routes, publicDir, errorMiid, scripts, callback) {
+exports.addApplication = function(appId, name, routes, publicDir, session, errorMiid, scripts, callback) {
 
     var vuCluster = CONFIG.orient.DB.getClusterByClass("VUser");
 
@@ -409,6 +409,7 @@ exports.addApplication = function(appId, name, routes, publicDir, errorMiid, scr
             "name = '" + name + "', " +
             "publicDir = '" + publicDir + "', " +
             "publicUser = " + publicUserRid + ", " +
+            "session = " + session + ", " +
             "error = " + (errorMiid ? "'" + errorMiid + "'" : "null") + ", " +
             "routes = " + JSON.stringify(routes) + ", " +
             "scripts = " + JSON.stringify(scripts);
@@ -1083,8 +1084,6 @@ exports.getDomainApplication = function(domain, withRoutes, callback) {
             "application.port AS port, " +
             (withRoutes ? "application.routes AS routes, " : "") +
             "application.publicDir AS publicDir, " +
-            //"application.scripts AS scripts, " +
-            //"application.css AS css, " +
             "application.name AS title, " +
             "application.error AS errorMiid " +
         "FROM " +

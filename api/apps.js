@@ -95,6 +95,7 @@ function installFromObject(descriptor, callback) {
                 descriptor.name || "Unnamed application",
                 descriptor.routes || null,
                 descriptor.publicDir || "",
+                descriptor.session || false,
                 descriptor.error || null,
                 descriptor.scripts || [],
                 function(err, _id) {

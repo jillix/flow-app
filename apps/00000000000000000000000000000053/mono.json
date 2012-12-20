@@ -6,6 +6,7 @@
         "admin": "layout_admin",
         "login": "layout_login"
     },
+    "session": true,
     "domains": [
         "truckshop.jillix.net",
         "truckshop.mono.ch"

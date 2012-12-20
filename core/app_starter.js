@@ -55,3 +55,4 @@ function startApplication(appId, host, callback) {
 }
 
 exports.startApp = startApplication;
+

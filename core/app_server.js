@@ -23,46 +23,59 @@ function appServerStart() {
     orient.connect(CONFIG.orient, function(err, db) {
 
         if (err) {
-            throw new Error(JSON.stringify(err));
+            console.error("Could not connect to the Orient database.");
+            console.error(err);
+            process.exit(2);
         }
 
-        var host = "127.0.0.1";
-        var port = CONFIG.port;
+        model.getApplication(CONFIG.app, function(err, application) {
 
-        var handler = requestHandler;
-
-        // TODO add an application session option
-        // currently testing this with the TruckShop only
-        if (CONFIG.app === "00000000000000000000000000000053") {
-            var connect = require("connect");
-            var cookieParser = connect.cookieParser();
-            var session = connect.session({ secret: "mono", key: "mono.sid" });
-
-            handler = function(req, res) {
-                cookieParser(req, res, function() {
-                    req.originalUrl = req.url;
-                    session(req, res, function() {
-                        req.session.appid = CONFIG.app;
-                        // TODO hardcoded user: use getDomainPublicUser for this
-                        var publicUser = 76;
-                        req.session.uid = req.session.uid || publicUser;
-                        requestHandler(req, res);
-                    });
-                });
-            }
-        }
-
-        model.addApplicationPort(CONFIG.app, port, function(err) {
-
-            // TODO if err, an error is thrown because req is not defined. Why?
             if (err) {
-                send.internalservererror({ req: req, res: res }, err);
-                return;
+                console.error(err);
+                process.exit(3);
             }
-        });
+            var publicUser = parseInt(application.publicUser.split(":")[1]);
+            if (isNaN(publicUser)) {
+                console.error("Could not determine the public user for application: " + application.id);
+                process.exit(4);
+            }
 
-        // start http server
-        http.createServer(handler).listen(port, host);
+            var host = "127.0.0.1";
+            var port = CONFIG.port;
+
+            var handler = requestHandler;
+
+            // TODO add an application session option
+            // currently testing this with the TruckShop only
+            if (application.session) {
+                var connect = require("connect");
+                var cookieParser = connect.cookieParser();
+                var session = connect.session({ secret: "mono", key: "mono.sid" });
+
+                handler = function(req, res) {
+                    cookieParser(req, res, function() {
+                        req.originalUrl = req.url;
+                        session(req, res, function() {
+                            req.session.appid = CONFIG.app;
+                            req.session.uid = req.session.uid || publicUser;
+                            requestHandler(req, res);
+                        });
+                    });
+                }
+            }
+
+            model.addApplicationPort(CONFIG.app, port, function(err) {
+
+                // TODO if err, an error is thrown because req is not defined. Why?
+                if (err) {
+                    send.internalservererror({ req: req, res: res }, err);
+                    return;
+                }
+            });
+
+            // start http server
+            http.createServer(handler).listen(port, host);
+        });
     });
 }
 
