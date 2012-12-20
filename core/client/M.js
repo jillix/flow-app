@@ -321,106 +321,132 @@ var M = (function() {
             };
         }
     };
-    
+
     // load mono modules
     return function (target, miid, callback) {
-        
+
         //target = target instanceof Element ? target : document.querySelector(target);
         target = typeof target === "string" ? document.querySelector(target) : target;
-        
-        if (!miid || !target) {
-            
-            return;
-        }
-        
+
         if (typeof callback != "function") {
-            
-            callback = function(){};
+            callback = function() {};
         }
-        
-        Mono.link("getConfig", {miid: "core", path: miid}, function (err, config) {
-            
+
+        if (!miid || !target) {
+            return callback(!miid ? "Empty miid not allowed" : "Could not determine module target");
+        }
+
+        Mono.link("getConfig", { miid: "core", path: miid }, function (err, result) {
+
             // error checks
-            if (err || !config) {
-                
-                callback(err || "no config.");
-                return;
+            if (err || !result) {
+                return callback(err || "Empty response");
             }
 
-            // load scripts
-            if (config.scripts && config.scripts.length) {
-                require(config.scripts);
-            }
-
-            // load css
-            if (config.css) {
-                
-                for (var i in config.css) {
-                    
-                    var href;
-                    
-                    if (config.css[i].indexOf("http") > -1) {
-                        
-                        href = config.css[i];
-                    }
-                    else {
-                        
-                        href = Mono.ok + "/core/getFile" + (config.css[i][0] == "/" ? "" : "/") + config.css[i]
-                    }
-                    
-                    // create link and append it to the DOM
-                    var link = document.createElement("link");
-                    var attributes = {
-                            rel:    "stylesheet",
-                            type:   "text/css",
-                            href:   href
-                        };
-                        
-                    for (var name in attributes) {
-                        
-                        link.setAttribute(name, attributes[name]);
-                    }
-                    
-                    head.appendChild(link);
-                }
-            }
+            function loadModule(config) {
             
-            // load and init module
-            require([config.path + "/" + (config.file || "main")], function (module) {
-                
-                // create module container
-                var container = document.createElement("div");
-                
-                // add miid to html
-                container.setAttribute("id", miid);
-                
-                // add html
-                if (config.html) {
+                // load scripts
+                if (config.scripts && config.scripts.length) {
+                    require(config.scripts);
+                }
+
+                // load css
+                if (config.css) {
                     
-                    container.innerHTML = config.html;
+                    for (var i in config.css) {
+                        
+                        var href;
+                        
+                        if (config.css[i].indexOf("http") > -1) {
+                            
+                            href = config.css[i];
+                        }
+                        else {
+                            
+                            href = Mono.ok + "/core/getFile" + (config.css[i][0] == "/" ? "" : "/") + config.css[i]
+                        }
+                        
+                        // create link and append it to the DOM
+                        var link = document.createElement("link");
+                        var attributes = {
+                                rel:    "stylesheet",
+                                type:   "text/css",
+                                href:   href
+                            };
+                            
+                        for (var name in attributes) {
+                            
+                            link.setAttribute(name, attributes[name]);
+                        }
+                        
+                        head.appendChild(link);
+                    }
                 }
                 
-                // append module to the dom
-                target.appendChild(container);
-                
-                // create module
-                modules[miid] = Object.extend({
+                // load and init module
+                require([config.path + "/" + (config.file || "main")], function (module) {
                     
-                    dom:    container,
-                    miid:   miid,
-                    lang:   config.lang,
-                    path:   config.path
+                    // create module container
+                    var container = document.createElement("div");
                     
-                }, Mono);
-                
-                // call module constructor
-                if (typeof module === "function") {
+                    // add miid to html
+                    container.setAttribute("id", miid);
                     
-                    module.call(modules[miid], config);
-                }
-                
-                callback(null, modules[miid]);
-            });
+                    // add html
+                    if (config.html) {
+                        
+                        container.innerHTML = config.html;
+                    }
+                    
+                    // append module to the dom
+                    target.appendChild(container);
+                    
+                    // create module
+                    modules[miid] = Object.extend({
+                        
+                        dom:    container,
+                        miid:   miid,
+                        lang:   config.lang,
+                        path:   config.path
+                        
+                    }, Mono);
+                    
+                    // call module constructor
+                    if (typeof module === "function") {
+                        
+                        module.call(modules[miid], config);
+                    }
+                    
+                    callback(null, modules[miid]);
+                });
+            }
+
+            switch (result.type) {
+                case "config":
+                    if (typeof result.data !== "object") {
+                        return callback("M config response data type must be an object");
+                    }
+                    loadModule(result.data);
+                    break;
+
+                case "miid":
+                    if (typeof result.data !== "string") {
+                        return callback("M miid response data type must be a string");
+                    }
+                    M(target, result.data, callback);
+                    break;
+
+                case "text":
+                    if (typeof result.data !== "string") {
+                        return callback("M text response data type must be a string");
+                    }
+                    target.innerHTML = result.data;
+                    break;
+
+                default:
+                    return callback("Invalid response type: " + result.type);
+            }
         });
     };
 })();
+

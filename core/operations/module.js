@@ -31,26 +31,21 @@ exports.getConfig = function(link) {
             model.getModuleConfig(appid, miid, link.session.uid, function(err, module) {
 
                 // error checks
-                // TODO what if the user defines an error module but there is an error retrieveing the module?
-                //      this will cause: RangeError: Maximum call stack size exceeded
-                //      because getModuleConfig() will always be called
                 if (err || !module) {
-
                     if (errMiid) {
-                        getModuleConfig(errMiid);
-                        return;
+                        send.ok(link.res, { type: "miid", data: errMiid });
+                    } else {
+                        send.ok(link.res, { type: "text", data: "No such module found: " + miid });
                     }
-
-                    send.notfound(link, err || "No module found");
                     return;
                 }
-                
+
                 var response = module.config || {};
                 
                 response.path = module.source + "/" + module.owner + "/" + module.name + "/" + module.version;
                 response.lang = link.session.loc || module.lang || "en";
                 response.role = link.session.role;
-                
+
                 if (module.config && module.config.html) {
                     
                     // get module from app folder
@@ -78,12 +73,11 @@ exports.getConfig = function(link) {
                         
                         response.html = html;
 
-                        send.ok(link.res, response);
+                        send.ok(link.res, { type: "config", data: response });
                     });
                 }
                 else {
-
-                    send.ok(link.res, response);
+                    send.ok(link.res, { type: "config", data: response });
                 }
             });
         };
