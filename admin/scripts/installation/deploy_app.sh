@@ -45,7 +45,7 @@ pushd "$MONO_ROOT" > /dev/null
 MONO_ROOT=`pwd`
 popd > /dev/null
 
-APP_FILE_ARG=$1
+APP_FILE_ARG="$1"
 
 if [ ! -f "$APP_FILE_ARG" ]
 then
@@ -64,7 +64,7 @@ NEW_APP_DESCRIPTOR="$TMP_APP_DIR/mono.json"
 # is the mono.json file is not in the archive root, assume we have a single directory
 if [ ! -f "$NEW_APP_DESCRIPTOR" ]
 then
-    pushd $TMP_APP_DIR > /dev/null
+    pushd "$TMP_APP_DIR" > /dev/null
     # get the first item in the directory
     FILES=(*)
     DIR=${FILES[@]:0:1}
@@ -103,7 +103,7 @@ then
 fi
 
 # move the app to the app ID directory
-NEW_APP_DIR=`dirname $NEW_APP_DESCRIPTOR`
+NEW_APP_DIR=`dirname "$NEW_APP_DESCRIPTOR"`
 mv "$NEW_APP_DIR" "$MONO_ROOT/apps/$APP_ID"
 ce "Could not move application to propper location: $APP_ID" 9
 
@@ -115,4 +115,3 @@ popd > /dev/null
 
 cleanup
 echo "Succesfully deployed application $APP_ID"
-
