@@ -429,19 +429,19 @@ var M = (function() {
                     loadModule(result.data);
                     break;
 
-                case "miid":
-                    if (typeof result.data !== "string") {
-                        return callback("M miid response data type must be a string");
-                    }
-                    M(target, result.data, callback);
-                    break;
+                //case "miid":
+                //    if (typeof result.data !== "string") {
+                //        return callback("M miid response data type must be a string");
+                //    }
+                //    M(target, result.data, callback);
+                //    break;
 
-                case "text":
-                    if (typeof result.data !== "string") {
-                        return callback("M text response data type must be a string");
-                    }
-                    target.innerHTML = result.data;
-                    break;
+                //case "text":
+                //    if (typeof result.data !== "string") {
+                //        return callback("M text response data type must be a string");
+                //    }
+                //    target.innerHTML = result.data;
+                //    break;
 
                 default:
                     return callback("Invalid response type: " + result.type);
