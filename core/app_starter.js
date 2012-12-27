@@ -10,15 +10,23 @@ function startApplication(appId, host, callback) {
 
     // TODO multiple-domain applications must be started only once
 
+    var appPath = CONFIG.APPLICATION_ROOT + appId;
+
+    // the application directory must be present
+    // otherwise the piped streams below will crash the mono server
+    if (!fs.existsSync(appPath)) {
+        return callback("Application directory not found: " + appId);
+    }
+
     // add the required MONO_ROOT variable to the environment
     var env = process.env;
     env.MONO_ROOT = CONFIG.root;
     var node = spawn(CONFIG.root + "/admin/scripts/installation/start_app.sh", [ appId ], { env: env });
 
-    var log = fs.createWriteStream(CONFIG.APPLICATION_ROOT + appId + "/log.txt");
+    var log = fs.createWriteStream(appPath + "/log.txt");
     node.stdout.pipe(log);
     node.stderr.pipe(log);
-    
+
     if (CONFIG.logTerm) {
         node.stdout.pipe(process.stdout);
         node.stderr.pipe(process.stderr);
