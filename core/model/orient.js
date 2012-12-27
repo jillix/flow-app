@@ -588,42 +588,43 @@ exports.deleteRoles = function(aid, callback) {
 };
 
 
-exports.deleteApplication = function(aid, callback) {
+exports.deleteApplication = function(appId, callback) {
 
-    var arid = ridFromId("VApplication", aid);
+    translateAppId(appId, function(err, id) {
 
-    // check if the application has roles and if it does, do not allow deletion it
-    var command = "SELECT FROM VRole WHERE app = " + arid;
+        if (err) { return callback(err); }
 
-    sql(command, function(err, results) {
+        var arid = ridFromId("VApplication", id);
 
-        if (err) {
-            return callback("Failed to delete application with ID " + aid + ": " + JSON.stringify(err));
-        }
+        // check if the application has roles and if it does, do not allow its deletion
+        var command = "SELECT FROM VRole WHERE app = " + arid;
 
-        if (results && results.length > 0) {
-            return callback("Cannot delete application with ID " + aid + " because it still has roles assigned to it. Delete the roles first.");
-        }
-
-        // now find all the RIDs of domain nodes and the application node
-        var command =
-            "SELECT @rid AS rid FROM (" +
-                "TRAVERSE " +
-                    "application " +
-                "FROM " +
-                    "VDomain " +
-                "WHERE " +
-                    "application = " + arid + " OR " +
-                    "@rid = " + arid +
-            ")";
-
-        deleteRidsFromCommand(command, function(err) {
+        sql(command, function(err, results) {
 
             if (err) {
-                return callback("Failed to delete the application and its domains for application with ID " + aid + ": " + JSON.stringify(err)); 
+                return callback("Failed to delete application " + appId + ": " + JSON.stringify(err));
             }
 
-            callback(null);
+            if (results && results.length > 0) {
+                return callback("Cannot delete application " + appId + " because it still has roles assigned to it. Delete the roles first.");
+            }
+
+            // now find all the RIDs of domain nodes and the application node
+            var command =
+                "DELETE " +
+                "FROM " +
+                    "VApplication " +
+                "WHERE " +
+                    "id = '" + appId + "'";
+
+            sql(command, function(err) {
+
+                if (err) {
+                    return callback("Failed to delete the application " + appId + ": " + JSON.stringify(err)); 
+                }
+
+                callback(null);
+            });
         });
     });
 }
@@ -1000,6 +1001,32 @@ exports.getApplicationDomains = function(appId, callback) {
             }
 
             callback(null, domains);
+        });
+    });
+}
+
+exports.deleteApplicationDomains = function(appId, callback) {
+
+    translateAppId(appId, function(err, id) {
+
+        if (err) { return callback(err); }
+
+        var aid = ridFromId("VApplication", id);
+
+        var command =
+            "DELETE " +
+            "FROM " +
+                "VDomain " +
+            "WHERE " +
+                "application = " + aid;
+
+        sql(command, function(err, results) {
+
+            if (err) {
+                return callback("An error occurred while deleting the domains for application " + appId + ": " + JSON.stringify(err));
+            }
+
+            callback(null);
         });
     });
 }

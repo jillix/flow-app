@@ -229,6 +229,9 @@ function uninstallFromObject(descriptor, callback) {
         // ******************
         // 1. GET APPLICATION
         // ******************
+        if (CONFIG.log.applicationInstallation || CONFIG.logLevel === "verbose") {
+            console.log("Finding application: " + descriptor.appId);
+        }
         db.getApplication(descriptor.appId, function(err, application) {
 
             // TODO cleanup
@@ -239,28 +242,49 @@ function uninstallFromObject(descriptor, callback) {
             // ***************
             // 2. DELETE USERS
             // ***************
+            if (CONFIG.log.applicationInstallation || CONFIG.logLevel === "verbose") {
+                console.log("Deleting application users ...");
+            }
             db.deleteUsers(aid, function(err) {
 
                 // TODO cleanup
                 if (err) { return callback(err, descriptor); }
 
-                // *********************
-                // 3. DELETE ROLE ACCESS
-                // *********************
+                // ***************
+                // 3. DELETE ROLES
+                // ***************
+                if (CONFIG.log.applicationInstallation || CONFIG.logLevel === "verbose") {
+                    console.log("Deleting application roles ...");
+                }
                 db.deleteRoles(aid, function(err) {
 
                     // TODO cleanup
                     if (err) { return callback(err, descriptor); }
 
-                    // *********************
-                    // 3. DELETE APPLICATION
-                    // *********************
-                    db.deleteApplication(aid, function(err) {
+                    // *****************
+                    // 4. DELETE DOMAINS
+                    // *****************
+                    if (CONFIG.log.applicationInstallation || CONFIG.logLevel === "verbose") {
+                        console.log("Deleting application domains ...");
+                    }
+                    db.deleteApplicationDomains(descriptor.appId, function(err) {
 
                         // TODO cleanup
                         if (err) { return callback(err, descriptor); }
 
-                        callback(null, descriptor);
+                        // *********************
+                        // 5. DELETE APPLICATION
+                        // *********************
+                        if (CONFIG.log.applicationInstallation || CONFIG.logLevel === "verbose") {
+                            console.log("Deleting application ...");
+                        }
+                        db.deleteApplication(descriptor.appId, function(err) {
+
+                            // TODO cleanup
+                            if (err) { return callback(err, descriptor); }
+
+                            callback(null, descriptor);
+                        });
                     });
                 });
             });
