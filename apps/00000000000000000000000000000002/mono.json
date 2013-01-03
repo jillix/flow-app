@@ -3,7 +3,8 @@
     "name": "MonoDev",
     "routes": {
         "/": "dev_layout",
-        "deployer": "dev_deployer_layout"
+        "deployer": "dev_deployer_layout",
+        "applications": "dev_applications_layout"
     },
     "domains": [
         "dev.jillix.net",
@@ -58,6 +59,21 @@
                 "css": ["http://blueimp.github.com/cdn/css/bootstrap.min.css", "http://blueimp.github.com/cdn/css/bootstrap-responsive.min.css"]
             }
         },
+       "dev_applications_layout": {
+            "module": "github/adioo/layout/v0.0.4",
+            "roles": [0],
+            "config": {
+                "title": "Mono Applications",
+                "modules": {
+                    "applications": "dev_applications"
+                },
+                "html": {
+                    "type": "a",
+                    "path": "html/layout_applications"
+                },
+                "css": ["http://blueimp.github.com/cdn/css/bootstrap.min.css", "http://blueimp.github.com/cdn/css/bootstrap-responsive.min.css"]
+            }
+        },
         "dev_deployer": {
             "module": "github/gabipetrovay/dev_deployer/v0.0.2",
             "roles": [0],
@@ -72,6 +88,39 @@
                 "upload": {
                     "roles": [0],
                     "params": [{ "uploadDir": "uploads" }]
+                }
+            }
+        },
+        "dev_applications": {
+            "module": "github/IonicaBizau/dev_applications/dev",
+            "roles": [0],
+            "config": {
+                "html": {
+                    "type": "a",
+                    "path": "html/applications"
+                },
+                "css": ["http://blueimp.github.com/Bootstrap-Image-Gallery/css/bootstrap-image-gallery.min.css", "uploader/css/jquery.fileupload-ui.css", "css/applications.css"]
+            },
+            "operations": {
+                "redeploy": {
+                    "roles": [0],
+                    "params": []
+                },
+                "start": {
+                    "roles": [0],
+                    "params": []
+                },
+                "stop": {
+                    "roles": [0],
+                    "params": []
+                },
+                "delete": {
+                    "roles": [0],
+                    "params": []
+                },
+                "applications": {
+                    "roles": [0],
+                    "params": []
                 }
             }
         }
