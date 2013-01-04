@@ -9,3 +9,16 @@
 .name {
     width: 60%;
 }
+
+
+.operations, .spinner {
+    display: inline-block;
+}
+
+.spinner {
+    height: 30px;
+    width: 30px;
+    float: right;
+    margin: auto;
+    display: none;
+}

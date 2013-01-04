@@ -71,6 +71,9 @@
                     "type": "a",
                     "path": "html/layout_applications"
                 },
+               "scripts": [
+                    "/jquery.js"
+                ],
                 "css": ["http://blueimp.github.com/cdn/css/bootstrap.min.css", "http://blueimp.github.com/cdn/css/bootstrap-responsive.min.css"]
             }
         },
