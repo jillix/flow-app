@@ -1,0 +1,11 @@
+.template {
+    display: none;
+}
+
+.alert {
+    display: none;
+}
+
+.name {
+    width: 60%;
+}
