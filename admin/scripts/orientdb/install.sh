@@ -9,7 +9,7 @@ mkdir -p "$TMP_DIR"
 ORIENTDB_ROOT=bin/orientdb
 ORIENTDB_VERSION=`curl --silent https://oss.sonatype.org/content/repositories/releases/com/orientechnologies/orientdb/maven-metadata.xml | grep "release" | cut -d ">" -f 2 | cut -d "<" -f 1`
 # uncomment this to block the installation to a fixed OrientDB version
-ORIENTDB_VERSION=1.1.0
+#ORIENTDB_VERSION=1.1.0
 if [ -z "$ORIENTDB_VERSION" ]
 then
     echo "Could not determine the latest OrientDB version. Aborting!" 2>&1
@@ -25,7 +25,7 @@ fi
 
 function download_orientdb {
 
-    ORIENTDB_ARCHIVE=orientdb-graphed-$ORIENTDB_VERSION.zip
+    ORIENTDB_ARCHIVE=orientdb-graphed-$ORIENTDB_VERSION.tar.gz
     if [ -e "$TMP_DIR/$ORIENTDB_ARCHIVE" ]
     then
         echo "Found OrientDB release archive: $TMP_DIR/$ORIENTDB_ARCHIVE"
@@ -43,10 +43,12 @@ function download_orientdb {
     mkdir -p bin
 
     echo "Unpacking OrientDB in: bin"
-    unzip -o -q -d bin "$TMP_DIR/$ORIENTDB_ARCHIVE"
+
+    pushd bin > /dev/null
+    tar -xzf ../"$TMP_DIR/$ORIENTDB_ARCHIVE"
+    popd > /dev/null
 
     mv "bin/orientdb-graphed-$ORIENTDB_VERSION" "$ORIENTDB_ROOT"
-    chmod +x bin/orientdb/bin/*sh
 }
 
 

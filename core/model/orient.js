@@ -227,10 +227,13 @@ exports.insertOperations = function(module, callback) {
     // build the INSERT VALUES string
     var vvCluster = CONFIG.orient.DB.getClusterByClass("VModuleVersion");
     var opsStr = "";
+    // TODO issue with query parging: for multiple values spaces around the comma are significant
+    // https://github.com/nuvolabase/orientdb/issues/1250
     for (var i in operations) {
-        opsStr += "(#" + vvCluster.id + ":" + module._vid + ", '" + operations[i].file + "', '" + operations[i]["function"] + "'),";
+        opsStr += "(#" + vvCluster.id + ":" + module._vid + ", '" + operations[i].file + "', '" + operations[i]["function"] + "') , ";
     }
-    opsStr = opsStr.slice(0, -1);
+    // TODO hence the slice -2
+    opsStr = opsStr.slice(0, -2);
 
     var command =
         "INSERT INTO VOperation (" +
@@ -1040,10 +1043,13 @@ exports.addApplicationDomains = function(aid, domains, callback) {
     // build the INSERT VALUES string
     var vaCluster = CONFIG.orient.DB.getClusterByClass("VApplication");
     var valuesStr = "";
+    // TODO issue with query parging: for multiple values spaces around the comma are significant
+    // https://github.com/nuvolabase/orientdb/issues/1250
     for (var i in domains) {
-        valuesStr += "(#" + vaCluster.id + ":" + aid + ", '" + domains[i] + "'),";
+        valuesStr += "(#" + vaCluster.id + ":" + aid + ", '" + domains[i] + "') , ";
     }
-    valuesStr = valuesStr.slice(0, -1);
+    // TODO hence the slice -2
+    valuesStr = valuesStr.slice(0, -2);
 
     var command =
         "INSERT INTO VDomain (" +
