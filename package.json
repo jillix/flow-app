@@ -37,7 +37,7 @@
         "github"        : "*",
         "http-proxy"    : "*",
         "optimist"      : "*",
-        "orientdb"      : "0.x",
+        "orientdb"      : "0.9.7",
         "mongodb"       : "*",
         "nodemailer"    : "*",
         "request"       : "*",
