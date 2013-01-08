@@ -26,31 +26,32 @@
     ],
     "miids": {
         "list": {
-            "module": "github/adioo/bind-list/v0.1.0",
+            "module": "github/adioo/bind-list/dev",
             "roles": [0],
             "config": {
                 "html": {
                     "type": "m",
                     "path": "list"
                 },
-                "css": ["/bootstrap/css/bootstrap.css"]
+                "css": ["/bootstrap/css/bootstrap.css"],
+                "sample": true
             },
             "operations": {
                 "create": {
                     "roles": [0],
-                    "params": [null]
+                    "params": [{ "ds": "testDS" }]
                 },
                 "read": {
                     "roles": [0],
-                    "params": [null]
+                    "params": [{ "ds": "testDS" }]
                 },
                 "update": {
                     "roles": [0],
-                    "params": [null]
+                    "params": [{ "ds": "testDS" }]
                 },
                 "remove": {
                     "roles": [0],
-                    "params": [null]
+                    "params": [{ "ds": "testDS" }]
                 }
             }
         }
