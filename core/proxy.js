@@ -32,7 +32,8 @@ exports.start = function() {
     orient.connect(CONFIG.orient, function(err, db) {
 
         if (err) {
-            throw new Error(JSON.stringify(err));
+            console.dir(err);
+            throw err;
         }
         
         // start http proxy server
