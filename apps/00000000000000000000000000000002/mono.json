@@ -49,24 +49,22 @@
             }
         },
         "tabs": {
-            "module": "github/adioo/bind-tab/v0.0.1",
+            "module": "github/adioo/bind-tab/v0.0.2",
             "roles": [0],
             "config": {
                 "html": {
                     "type": "a",
                     "path": "html/tabs"
                 },
-                "sample": false,
                 "container": "#container",
                 "tabs": "li",
                 "options": {
                     "classes": {
                         "selected": "active"
                     },
-                    "first": "dev_home_layout"
+                    "first": "dev_home_layout",
+                    "hash": true
                 }
-            },
-            "operations": {
             }
         },
         "dev_home_layout": {
