@@ -26,7 +26,7 @@
     ],
     "miids": {
         "tabs": {
-            "module": "github/adioo/bind-tab/dev",
+            "module": "github/adioo/bind-tab/v0.0.1",
             "roles": [0],
             "config": {
                 "html": {
@@ -38,38 +38,34 @@
             },
             "operations": {}
         },
-        
-       "sampleContent1": {
+       "tabContent1": {
             "module": "github/adioo/layout/v0.0.4",
             "roles": [0],
             "config": {
                 "html": {
                     "type": "a",
                     "path": "public/sample1"
-                },
-                "css": ["/bootstrap/css/bootstrap.css"]
+                }
             }
         },
-        "sampleContent2": {
+        "tabContent2": {
             "module": "github/adioo/layout/v0.0.4",
             "roles": [0],
             "config": {
                 "html": {
                     "type": "a",
                     "path": "public/sample2"
-                },
-                "css": ["/bootstrap/css/bootstrap.css"]
+                }
             }
         },
-       "sampleContent3": {
+       "tabContent3": {
             "module": "github/adioo/layout/v0.0.4",
             "roles": [0],
             "config": {
                 "html": {
                     "type": "a",
                     "path": "public/sample3"
-                },
-                "css": ["/bootstrap/css/bootstrap.css"]
+                }
             }
         }
     }

@@ -35,49 +35,85 @@
         "dev_layout": {
             "module": "github/adioo/layout/v0.0.4",
             "roles": [0],
+            
             "config": {
                 "html": {
                     "type": "a",
                     "path": "html/layout"
                 },
+                "css": ["http://blueimp.github.com/cdn/css/bootstrap.min.css"],
                 "title": "Mono Dev",
-                "css": ["http://blueimp.github.com/cdn/css/bootstrap.min.css"]
+                "modules": {
+                    "tabContainer": "tabs"
+                }
             }
         },
+        "tabs": {
+            "module": "github/adioo/bind-tab/v0.0.1",
+            "roles": [0],
+            "config": {
+                "html": {
+                    "type": "a",
+                    "path": "html/tabs"
+                },
+                "sample": false,
+                "container": "#container",
+                "tabs": "li",
+                "options": {
+                    "classes": {
+                        "selected": "active"
+                    },
+                    "first": "dev_home_layout"
+                }
+            },
+            "operations": {
+            }
+        },
+        "dev_home_layout": {
+           "module": "github/adioo/layout/v0.0.4",
+           "roles": [0],
+           "config": {
+               "html": {
+                   "type": "a",
+                   "path": "html/home"
+               },
+               "css": ["http://blueimp.github.com/cdn/css/bootstrap.min.css", "http://blueimp.github.com/cdn/css/bootstrap-responsive.min.css", "css/home.css"]
+           }
+       },
+       
         "dev_deployer_layout": {
-            "module": "github/adioo/layout/v0.0.4",
-            "roles": [0],
-            "config": {
-                "title": "Mono Deployer",
-                "modules": {
-                    "deployer": "dev_deployer"
-                },
-                "html": {
-                    "type": "a",
-                    "path": "html/layout_deployer"
-                },
-                "css": ["http://blueimp.github.com/cdn/css/bootstrap.min.css", "http://blueimp.github.com/cdn/css/bootstrap-responsive.min.css"]
-            }
-        },
+           "module": "github/adioo/layout/v0.0.4",
+           "roles": [0],
+           "config": {
+               "html": {
+                   "type": "a",
+                   "path": "html/layout_deployer"
+               },
+               "css": ["http://blueimp.github.com/cdn/css/bootstrap.min.css", "http://blueimp.github.com/cdn/css/bootstrap-responsive.min.css"],
+               "modules": {
+                   "deployer": "dev_deployer"
+               }
+           }
+       },
        "dev_applications_layout": {
-            "module": "github/adioo/layout/v0.0.4",
-            "roles": [0],
-            "config": {
-                "title": "Mono Applications",
-                "modules": {
-                    "applications": "dev_applications"
-                },
-                "html": {
-                    "type": "a",
-                    "path": "html/layout_applications"
-                },
+           "module": "github/adioo/layout/v0.0.4",
+           "roles": [0],
+           "config": {
+               "html": {
+                   "type": "a",
+                   "path": "html/layout_applications"
+               },
+               "css": ["http://blueimp.github.com/cdn/css/bootstrap.min.css", "http://blueimp.github.com/cdn/css/bootstrap-responsive.min.css"],
+               "modules": {
+                   "applications": "dev_applications"
+               },
                "scripts": [
-                    "/jquery.js"
-                ],
-                "css": ["http://blueimp.github.com/cdn/css/bootstrap.min.css", "http://blueimp.github.com/cdn/css/bootstrap-responsive.min.css"]
-            }
-        },
-        "dev_deployer": {
+                   "/jquery.js"
+               ],
+               "css": ["http://blueimp.github.com/cdn/css/bootstrap.min.css", "http://blueimp.github.com/cdn/css/bootstrap-responsive.min.css"]
+           }
+       }, 
+       "dev_deployer": {
             "module": "github/gabipetrovay/dev_deployer/v0.0.2",
             "roles": [0],
             "config": {
