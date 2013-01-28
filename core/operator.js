@@ -148,7 +148,7 @@ function handlePostRequest(link, method) {
         form.parse(link.req, function(err, fields, files) {
 
             if (err) {
-                send.badrequest(link, err);
+                send.badrequest(link, err.toString());
                 return;
             }
 
