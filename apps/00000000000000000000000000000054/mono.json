@@ -6,8 +6,6 @@
         "/": "crm_layout"
     },
     
-    "error": "login",
-    
     "domains": ["crm.mono.ch", "crm.jillix.net"],
     
     "publicDir": "lib",
@@ -58,8 +56,8 @@
     
         "crm_layout": {
         
-            "module": "github/adioo/layout/v0.0.4",
-            "roles": [1],
+            "module": "github/adioo/layout/v0.1.0",
+            "roles": [0, 1],
             
             "config": {
             
@@ -74,7 +72,7 @@
                 "modules": {
                     
                     "db_container": "db",
-                	"detail_wrapper": "detail",
+                	"detail_wrapper": ["detail", "login"],
                 	"import_wrapper": "import",
                     "list_wrapper": "list",
                     "settings_wrapper": "settings",
