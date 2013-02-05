@@ -11,12 +11,10 @@ function initScripts(module, application, ieVersion) {
     var supportScrips = "";
     
     if (ieVersion < 8) {
-        
         supportScrips += "<script src='/" + CONFIG.operationKey + "/core/getClient/json2.js'></script>" + nl;
     }
     
     if (ieVersion < 9) {
-        
         supportScrips += "<script src='http://html5shim.googlecode.com/svn/trunk/html5.js'></script>" + nl;
     }
     
@@ -27,9 +25,8 @@ function initScripts(module, application, ieVersion) {
                 "<meta http-equiv='content-type' content='text/html; charset=utf-8'/>" + nl +
                 "<script type='text/javascript'>" + nl +
                     (CONFIG.logLevel == "debug" ? "// require.js reads this global property, if available" : "") + nl +
-                    "var require={" + nl +
-                        "baseUrl:'" + baseUrl + "'" + nl +
-                    "};" + nl +
+                    "var require = { baseUrl: '" + baseUrl + "' };" + nl +
+                    "var language = '" + application.language + "';" + nl +
                     "window.onload=function(){" + nl +
                         "M('body','" + module + "')" + nl +
                     "}" + nl +
@@ -47,7 +44,6 @@ function getIeVersion(userAgent) {
     var match = userAgent.match(/MSIE [0-9]/g);
     
     if (!match) {
-        
         return NaN;
     }
     
@@ -56,14 +52,22 @@ function getIeVersion(userAgent) {
 
 function route(link, application) {
     
-    var module = traverse(link.pathname != "/" ? link.pathname.replace(/\/$/, "") : link.pathname, application.routes, "");
+    var module = traverse(link.pathname.replace(/\/$/, ""), application.routes, "");
 
     if (typeof module == "string") {
+        // handle possible i18n miids
+        var splits = module.split(":");
+        if (splits.length > 1) {
+            module = splits[0];
+            application.language = splits[1];
+        } else {
+            application.language = application.language || "*";
+        }
 
         // set headers
         link.res.headers["content-style-type"] = "text/css";
         link.res.headers["content-type"]       = "text/html; charset=utf-8";
-        
+
         send.ok(link.res, initScripts(module, application, getIeVersion(link.req.headers['user-agent'])));
     }
     else {
@@ -105,8 +109,8 @@ exports.route = function(link) {
 */
 function traverse(path, routes, current, result, exact, match) {
 
-    if (path === "/" && typeof routes[path] == "string") {
-        return routes[path];
+    if (path === current && typeof routes["/"] === "string") {
+        return routes["/"];
     }
 
     for (var r in routes) {
@@ -120,7 +124,7 @@ function traverse(path, routes, current, result, exact, match) {
                 continue;
             }
 
-            if (match[0] && match[0] == path) {
+            if (match[0] && match[0] == path && typeof routes[r] === "string") {
                 return routes[r];
             }
             

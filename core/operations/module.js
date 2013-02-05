@@ -41,38 +41,50 @@ exports.getConfig = function(link) {
                 }
 
                 var response = module.config || {};
-                
+
                 response.path = module.source + "/" + module.owner + "/" + module.name + "/" + module.version;
-                response.lang = link.session.loc || module.lang || "en";
+                // TODO is maybe another solution to let modules also define their language?
+                //response.lang = link.session.loc || module.lang || "en";
                 response.role = link.session.role;
 
                 if (module.config && module.config.html) {
                     
                     // get module from app folder
                     var path = "/apps/" + appid + "/";
-                    
+
                     // get module from module folder
                     if (module.config.html.type == "m") {
-                        
                         path += "mono_modules/" + module.source + "/" + module.owner + "/" + module.name + "/" + module.version + "/";
                     }
-                    
-                    path += module.config.html.path + ".html";
-                    
-                    read(path, "utf8", function(err, html) {
+
+                    var pathAll = path + module.config.html.path + ".html";
+                    var pathLang = path + module.config.html.path + (link.lang === "*" ? "" : "." + link.lang) + ".html";
+
+                    var setModuleHtml = function(err, html) {
 
                         if (err) {
-
                             // TODO let the module define it's missing module placeholder
                             html = "<p>An error occurred while retrieving this module HTML.</p>";
-
                             if (CONFIG.logLevel == "debug") {
                                 html += "<p>Error: " + err + "</p>"
                             }
                         }
-                        
                         response.html = html;
+                        send.ok(link.res, { type: "config", data: response });
+                    };
 
+                    read(pathLang, "utf8", function(err, html) {
+
+                        if (err) {
+                            if (link.lang !== "*") {
+                                read(pathAll, "utf8", setModuleHtml);
+                                return;
+                            }
+
+                            setModuleHtml(err);
+                        }
+
+                        response.html = html;
                         send.ok(link.res, { type: "config", data: response });
                     });
                 }

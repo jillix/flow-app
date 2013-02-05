@@ -211,6 +211,7 @@ var M = (function() {
             
             // open the connection
             link.open(options.data ? "post" : "get", url, !options.sync);
+            link.setRequestHeader("Accept-Language", language);
             
             // handle data
             if (options.data && !(typeof FormData !== "undefined" && options.data instanceof FormData)) {
@@ -394,19 +395,17 @@ var M = (function() {
                     
                     // add html
                     if (config.html) {
-                        
                         container.innerHTML = config.html;
                     }
                     
                     // append module to the dom
                     target.appendChild(container);
-                    
+
                     // create module
                     modules[miid] = Object.extend({
-                        
                         dom:    container,
                         miid:   miid,
-                        lang:   config.lang,
+                        lang:   language,
                         path:   config.path
                         
                     }, Mono);

@@ -98,6 +98,7 @@ function requestHandler(req, res) {
             pathname:   url.pathname,
             // TODO is a domain with port a diffrent host?
             host:       req.headers.host.split(":")[0],
+            lang:       req.headers['accept-language'],
             resume:     resume
         };
 
