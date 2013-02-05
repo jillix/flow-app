@@ -207,7 +207,7 @@ var M = (function() {
                 return;
             }
 
-            var url = this.ok + "/" + (options.miid || this.miid) + "/" + method + (options.path || options.path === "" ? "/" + options.path : "") + (options.query || "");
+            var url = "/" + this.ok + "/" + (options.miid || this.miid) + "/" + method + (options.path || options.path === "" ? "/" + options.path : "") + (options.query || "");
             
             // open the connection
             link.open(options.data ? "post" : "get", url, !options.sync);
@@ -364,7 +364,7 @@ var M = (function() {
                         }
                         else {
                             
-                            href = Mono.ok + "/core/getFile" + (config.css[i][0] == "/" ? "" : "/") + config.css[i]
+                            href = "/" + Mono.ok + "/core/getFile" + (config.css[i][0] == "/" ? "" : "/") + config.css[i]
                         }
                         
                         // create link and append it to the DOM
