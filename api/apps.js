@@ -98,6 +98,7 @@ function installFromObject(descriptor, callback) {
                 descriptor.session || false,
                 descriptor.error || null,
                 descriptor.scripts || [],
+                descriptor.language || null,
                 function(err, _id) {
 
             // TODO cleanup
