@@ -345,12 +345,7 @@ var M = (function() {
             }
 
             function loadModule(config) {
-            
-                // load scripts
-                if (config.scripts && config.scripts.length) {
-                    require(config.scripts);
-                }
-
+                
                 // load css
                 if (config.css) {
                     
@@ -384,8 +379,15 @@ var M = (function() {
                     }
                 }
                 
+                var modulesToLoad = [config.path + "/" + (config.file || "main")];
+                
+                // load scripts
+                if (config.scripts && config.scripts.length) {
+                    modulesToLoad = modulesToLoad.concat(config.scripts);
+                }
+                
                 // load and init module
-                require([config.path + "/" + (config.file || "main")], function (module) {
+                require(modulesToLoad, function (module) {
                     
                     // create module container
                     var container = document.createElement("div");
