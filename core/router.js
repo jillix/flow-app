@@ -6,17 +6,7 @@ var baseUrl = "/" + CONFIG.operationKey + "/core/getModule";
 var nl = (CONFIG.logLevel == "debug" ? "\r\n" : "");
 var routingTables = {};
 
-function initScripts(module, application, ieVersion) {
-
-    var supportScrips = "";
-    
-    if (ieVersion < 8) {
-        supportScrips += "<script src='/" + CONFIG.operationKey + "/core/getClient/json2.js'></script>" + nl;
-    }
-    
-    if (ieVersion < 9) {
-        supportScrips += "<script src='http://html5shim.googlecode.com/svn/trunk/html5.js'></script>" + nl;
-    }
+function initScripts(module, application) {
     
     return "<!DOCTYPE html>" + nl +
         "<html>" + nl +
@@ -30,24 +20,13 @@ function initScripts(module, application, ieVersion) {
                     "window.onload=function(){" + nl +
                         "M('body','" + module + "')" + nl +
                     "}" + nl +
-                "</script>" + nl + supportScrips +
+                "</script>" + nl +
+                "<!--[if lt IE 9]><script src='http://html5shim.googlecode.com/svn/trunk/html5.js'></script><![endif]-->" + nl +
                 "<script src='/" + CONFIG.operationKey + "/core/getClient/require.js'></script>" + nl +
                 "<script src='/" + CONFIG.operationKey + "/core/getClient/M.js'></script>" + nl +
             "</head>" + nl +
             "<body></body>" + nl +
         "</html>";
-}
-
-// IE version
-function getIeVersion(userAgent) {
-    
-    var match = userAgent.match(/MSIE [0-9]/g);
-    
-    if (!match) {
-        return NaN;
-    }
-    
-    return parseInt(match[0].replace(/[^0-9]/g, ""), 10) || NaN;
 }
 
 function route(link, application) {
@@ -68,7 +47,7 @@ function route(link, application) {
         link.res.headers["content-style-type"] = "text/css";
         link.res.headers["content-type"]       = "text/html; charset=utf-8";
 
-        send.ok(link.res, initScripts(module, application, getIeVersion(link.req.headers['user-agent'])));
+        send.ok(link.res, initScripts(module, application));
     }
     else {
         serve(link, application.appId, application.publicDir);
