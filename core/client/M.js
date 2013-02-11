@@ -292,7 +292,7 @@ var M = (function() {
             // request complete callback
 
             // for browsers that implement XMLHttpRequestEventTarget
-            if (link.hasOwnProperty('onload')) {
+            if (typeof link.onload === 'function') {
                 link.onload = handleComplete;
             }
 
