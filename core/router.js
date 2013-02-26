@@ -45,7 +45,8 @@ function route(link, application) {
 
         // set headers
         link.res.headers["content-style-type"] = "text/css";
-        link.res.headers["content-type"]       = "text/html; charset=utf-8";
+        link.res.headers["content-type"] = "text/html; charset=utf-8";
+        link.res.headers["access-control-allow-origin"] = 'http://jipics.net';
 
         send.ok(link.res, initScripts(module, application));
     }
