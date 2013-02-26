@@ -6,8 +6,8 @@ var baseUrl = "/" + CONFIG.operationKey + "/core/getModule";
 var nl = (CONFIG.logLevel == "debug" ? "\r\n" : "");
 var routingTables = {};
 
-function initScripts(module, application) {
-    
+function initScripts(module, application, options) {
+
     return "<!DOCTYPE html>" + nl +
         "<html>" + nl +
             "<head>" + nl +
@@ -16,7 +16,7 @@ function initScripts(module, application) {
                 "<script type='text/javascript'>" + nl +
                     (CONFIG.logLevel == "debug" ? "// require.js reads this global property, if available" : "") + nl +
                     "var require = { baseUrl: '" + baseUrl + "' };" + nl +
-                    "var language = '" + application.language + "';" + nl +
+                    "var language = '" + options.language + "';" + nl +
                     "window.onload=function(){" + nl +
                         "M('body','" + module + "')" + nl +
                     "}" + nl +
@@ -35,12 +35,21 @@ function route(link, application) {
 
     if (typeof module == "string") {
         // handle possible i18n miids
+        var language = "*";
         var splits = module.split(":");
+
         if (splits.length > 1) {
             module = splits[0];
-            application.language = splits[1];
+            language = splits[1];
+            if (link.req.session) {
+                link.req.session.lang = language;
+            }
         } else {
-            application.language = application.language || "*";
+            if (link.req.session && link.req.session.lang) {
+                language = link.req.session.lang;
+            } else {
+                language = application.language || "*";
+            }
         }
 
         // set headers
@@ -48,7 +57,7 @@ function route(link, application) {
         link.res.headers["content-type"] = "text/html; charset=utf-8";
         link.res.headers["access-control-allow-origin"] = 'http://jipics.net';
 
-        send.ok(link.res, initScripts(module, application));
+        send.ok(link.res, initScripts(module, application, { language: language }));
     }
     else {
         serve(link, application.appId, application.publicDir);
