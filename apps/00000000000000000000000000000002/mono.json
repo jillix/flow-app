@@ -151,6 +151,10 @@
                     "roles": [0],
                     "params": []
                 },
+                "update": {
+                    "roles": [0],
+                    "params": []
+                },
                 "delete": {
                     "roles": [0],
                     "params": []
