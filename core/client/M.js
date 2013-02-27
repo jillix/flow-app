@@ -305,7 +305,7 @@ var M = (function() {
                         //      http://code.google.com/p/chromium/issues/detail?can=2&start=0&num=100&q=&colspec=ID%20Pri%20Mstone%20ReleaseBlock%20OS%20Area%20Feature%20Status%20Owner%20Summary&groupby=&sort=&id=162837
                         //      http://stackoverflow.com/questions/12761255/can-xhr-trigger-onreadystatechange-multiple-times-with-readystate-done/13585135#13585135
                         if (link.onreadystatechange) {
-                            delete link.onreadystatechange;
+                            link.onreadystatechange = null;
                             handleComplete();
                         }
                     }
@@ -314,9 +314,8 @@ var M = (function() {
             
             // send data
             link.send(options.data);
-            
+
             return function() {
-                
                 link.A = 1;
                 link.abort();
             };
