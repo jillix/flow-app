@@ -72,10 +72,10 @@ var M = (function() {
     
     // module class
     var Mono = {
-        
+
         // define operation key
         ok: "@",
-        
+
         // listen to events
         /*
             this.on("setSomething", "miid", function () {});
@@ -305,7 +305,7 @@ var M = (function() {
                         //      http://code.google.com/p/chromium/issues/detail?can=2&start=0&num=100&q=&colspec=ID%20Pri%20Mstone%20ReleaseBlock%20OS%20Area%20Feature%20Status%20Owner%20Summary&groupby=&sort=&id=162837
                         //      http://stackoverflow.com/questions/12761255/can-xhr-trigger-onreadystatechange-multiple-times-with-readystate-done/13585135#13585135
                         if (link.onreadystatechange) {
-                            delete link.onreadystatechange;
+                            link.onreadystatechange = null;
                             handleComplete();
                         }
                     }
@@ -314,9 +314,8 @@ var M = (function() {
             
             // send data
             link.send(options.data);
-            
+
             return function() {
-                
                 link.A = 1;
                 link.abort();
             };
@@ -324,7 +323,7 @@ var M = (function() {
     };
 
     // load mono modules
-    return function (target, miid, callback) {
+    var constructor = function (target, miid, callback) {
 
         //target = target instanceof Element ? target : document.querySelector(target);
         target = typeof target === "string" ? document.querySelector(target) : target;
@@ -385,10 +384,10 @@ var M = (function() {
                 if (config.scripts && config.scripts.length) {
                     modulesToLoad = modulesToLoad.concat(config.scripts);
                 }
-                
+
                 // load and init module
-                require(modulesToLoad, function (module) {
-                    
+                require(modulesToLoad, function (moduleSource) {
+
                     // create module container
                     var container = document.createElement("div");
                     
@@ -404,18 +403,16 @@ var M = (function() {
                     target.appendChild(container);
 
                     // create module
-                    modules[miid] = Object.extend({
-                        dom:    container,
-                        miid:   miid,
-                        lang:   language,
-                        path:   config.path
-                        
-                    }, Mono);
-                    
+                    var preparedModule = modules[miid] || {};
+                    preparedModule.dom = container;
+                    preparedModule.miid = miid;
+                    preparedModule.lang = language;
+                    preparedModule.path = config.path;
+                    modules[miid] = Object.extend(preparedModule, Mono);
+
                     // call module constructor
-                    if (typeof module === "function") {
-                        
-                        module.call(modules[miid], config);
+                    if (typeof moduleSource === "function") {
+                        moduleSource.call(modules[miid], config);
                     }
                     
                     callback(null, modules[miid]);
@@ -449,5 +446,12 @@ var M = (function() {
             }
         });
     };
+
+    constructor.prepare = function(miid, object) {
+        modules[miid] = object;
+    };
+
+    return constructor;
+
 })();
 
