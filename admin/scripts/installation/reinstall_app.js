@@ -1,5 +1,5 @@
 // the mono configuration as global object
-CONFIG = require(process.cwd() + "/config");
+CONFIG = require(process.cwd() + "/config.js");
 
 var apps = require(CONFIG.root + "/api/apps");
 
@@ -25,13 +25,14 @@ if (CONFIG.argv.length > 1) {
 }
 
 apps.uninstall(CONFIG.argv[0], function(err, descriptor) {
-
+    
     if (err) {
         console.error(err);
         console.error("Failed to uninstall application" + (descriptor && descriptor.appId ? ": " + descriptor.appId : ""));
         process.exit(2);
         return;
     }
+    
 
     console.log("Succesfully uninstalled application: " + descriptor.appId);
 
@@ -48,4 +49,3 @@ apps.uninstall(CONFIG.argv[0], function(err, descriptor) {
         process.exit();
     });
 });
-
