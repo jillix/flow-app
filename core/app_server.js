@@ -1,7 +1,6 @@
 var http = require("http");
 var fs = require("fs");
 var util = require(CONFIG.root + "/core/util.js");
-
 var connect = require("connect");
 
 // imported functions
@@ -48,7 +47,6 @@ function appServerStart() {
             // TODO add an application session option
             // currently testing this with the TruckShop only
             if (application.session) {
-                var connect = require("connect");
                 var cookieParser = connect.cookieParser();
                 var session = connect.session({ secret: "mono", key: "mono.sid" });
 
