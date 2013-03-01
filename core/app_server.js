@@ -72,13 +72,17 @@ function appServerStart() {
             });
 
             // start http server
+            
             http.createServer(handler).listen(port, host);
         });
     });
 }
 
 function requestHandler(req, res) {
-
+    
+    console.log('REQUEST!');
+    console.log(req.headers);
+    
     if (!req.headers.host) {
         send.badrequest({req: req, res: res}, "No host in request headers.");
         return;

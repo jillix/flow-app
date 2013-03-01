@@ -1,7 +1,6 @@
-var http = require("http");
+var net = require("net");
 var fs = require("fs");
 var util = require(CONFIG.root + "/core/util.js");
-var httpProxy = require('http-proxy');
 
 // imported functions
 var startApp    = require(CONFIG.root + "/core/app_starter.js").startApp;
@@ -13,20 +12,26 @@ var model       = require(CONFIG.root + "/core/model/orient.js");
 var runningApplications = {};
 
 // define default host
-var host = "127.0.0.1";
+var proxyHost = "127.0.0.1";
 
 // get the right host adress, if no external proxy is available
 if (!CONFIG.proxy) {
     
-    host = util.ip();
+    proxyHost = util.ip();
     
-    if (!host) {
+    if (!proxyHost) {
         throw new Error("Missing IP Address");
     }
 }
 
+var tempApps = {
+    'dev.mono.ch': 8001
+}
+
 // check orient connection and start proxy server
 exports.start = function() {
+    
+    console.log('starting mono...');
     
     // establish the database connection
     orient.connect(CONFIG.orient, function(err, db) {
@@ -35,79 +40,182 @@ exports.start = function() {
             throw new Error(err);
         }
         
-        // start http proxy server
-        var server = httpProxy.createServer(proxyHandler);
-        server.proxy.on("proxyError", onProxyError);
-        server.listen(CONFIG.port, host);
+        // start proxy server
+        var server = net.createServer(function(socket) { //'connection' listener
+            
+            var host;
+            var connecting;
+            var dataBuffer = [];
+            
+            // try set up piping on first data event
+            socket.once('data', function setUpAppConnection (data) {
+                
+                dataBuffer.push(data);
+                
+                // get host
+                if (!host) {
+                    
+                    host = data.toString('ascii').match(/host\: *([a-z0-9:\.]*)/i);
+                    // TODO is a domain with port a diffrent host?
+                    host = host ? host[1].split(":")[0] : host;
+                }
+                
+                if (runningApplications[host]) {
+                    console.log('pipe');
+                    
+                    var appSocket = net.connect(runningApplications[host], 'localhost');
+                    appSocket.pipe(socket);
+                    socket.pipe(appSocket);
+                    
+                    for (var i = 0, l = dataBuffer.length; i < l; ++i) {
+                        appSocket.write(dataBuffer[i]);
+                    }
+                    
+                    dataBuffer = [];
+                    return;
+                }
+                
+                /////////// start app \\\\\\\\\\\\
+                
+                if (connecting === 1) {
+                    console.log('buffer data');
+                    return dataBuffer.push(data);
+                }
+                
+                if (!host) {
+                    socket.removeListener('data', setUpAppConnection);
+                    return socket.emit('error', 'No Host found in headers.\n\n' + data.toString());
+                }
+                
+                connecting = 1;
+                
+                if (tempApps[host]) {
+                    //console.log('connect to host ' + host);
+                        
+                    var appSocket = net.connect(10001, 'localhost', function () {
+                        
+                        runningApplications[host] = 10001;
+                        
+                        connecting = 0;
+                        
+                        for (var i = 0, l = dataBuffer.length; i < l; ++i) {
+                            appSocket.write(dataBuffer[i]);
+                        }
+                        
+                        dataBuffer = [];
+                        
+                    });
+                    
+                    appSocket.pipe(socket);
+                    socket.pipe(appSocket);
+                    
+                    return;
+                }
+                
+                // TODO abort this connection
+                var msg = 'Host not found.';
+                socket.end('HTTP/1.1 404 Not found\r\n' +
+                'Date: ' + new Date().toString() + '\r\n' +
+                'Server: Mopro 0.0.1\r\n' +
+                'Content-Length: ' + msg.length + '\r\n' +
+                'Connection: close\r\n' +
+                'Content-Type: text/html; charset=UTF-8\r\n' +
+                '\r\n' + msg);
+            });
+            
+            /*setTimeout(function () {
+            
+                for (var i = 0, l = 100; i < l; ++i) {
+                    socket.emit('data', i + ' ügülz µüetrîms\n');
+                }
+                
+                setTimeout(function () {
+                    socket.end();
+                }, 200)
+                
+            }, 10);*/
+                
+            socket.on('error', function (err) {
+                
+                 err = 'HTTP/1.1 400 Bad Request\r\n' +
+                'Date: ' + new Date().toString() + '\r\n' +
+                'Server: Mopro 0.0.1\r\n' +
+                'Content-Length: ' + err.length + '\r\n' +
+                'Connection: close\r\n' +
+                'Content-Type: text/html; charset=UTF-8\r\n' +
+                '\r\n' + err;
+                
+                socket.end(err);
+            });
+            
+            socket.on('end', function() {
+                console.log('socket disconnected');
+            });
+        });
+        
+        server.listen(CONFIG.port, proxyHost, function() { //'listening' listener
+            console.log('mono started.');
+        });
     });
 }
 
-// handle a proxy request
-function proxyHandler(req, res, proxy) {
+// find the application for this domain (without the routing table)
+                /*return model.getDomainApplication(host, false, function(err, application) {
+                    
+                    if (err) {
+                        return socket.emit('error', err.toString());
+                    }
+                    
+                    var connectToApp = function (err, application) {
+                        
+                        if (err) {
+                            // TODO handle error
+                            return console.log(err);
+                        }
+                        
+                        var appSocket = net.connect(application.port, 'localhost', function () {;
+                        
+                            appSocket.on('error', function (err) {
+                                // TODO handle error
+                                console.log(err);
+                            });
+                            
+                            appSocket.on('end', function () {
+                                // TODO app stoped
+                                delete runningApplications[host];
+                            });
+                            
+                            connecting = 0;
+                                                                                              
+                            console.log('send data buffer: ' + dataBuffer.length);
+                            for (var i = 0, l = dataBuffer.length; i < l; ++i) {
+                                socket.emit('data', dataBuffer[i]);
+                            }
+                            
+                            dataBuffer = [];
+                        });
+                        
+                        runningApplications[host] = appSocket;
+                        //socket.pipe(appSocket);
+                    };
+                    
+                    // if the application managed to publish its portnow try to start this application
+                    if (application.port) {
+                        console.log('app ' + host + ' is running');
+                        connectToApp(null, application);
+                    } else {
+                        console.log('start app ' + host);
+                        startApp(application.appId, host, connectToApp);
+                    }
+                });*/
 
-    var link = {
-        req: req,
-        res: res,
-        resume: util.pause(req)
-    };
-
-    if (!req.headers.host) {
-        send.badrequest(link, "No host in request headers.");
-        return;
-    }
-    
-    // TODO is a domain with port a diffrent host?
-    var host = req.headers.host.split(":")[0];
-
-    // the application is running so we can forward to request
-    if (runningApplications[host]) {
-        return proxyAndResume(link, proxy, runningApplications[host].port);
-    }
-
-    // the application is being started
-    if (runningApplications[host] === 0) {
-        send.serviceunavailable(link, "This application is starting...\nTry again in a few seconds.");
-        return;
-    }
-
-    // mark this application as starting (0)
-    runningApplications[host] = 0;
-
-    // find the application for this domain (without the routing table)
-    model.getDomainApplication(host, false, function(err, application) {
-
-        if (err) {
-            send.internalservererror(link, err);
-            delete runningApplications[host];
-            return;
-        }
-
-        var forwardRequest = function(err, application) {
-
-            if (err) {
-                send.internalservererror(link, err);
-                delete runningApplications[host];
-                return;
-            }
-
-            // cache the app
-            runningApplications[host] = application;
-
-            // forward the requst
-            proxyAndResume(link, proxy, runningApplications[host].port);
-        };
-
-        // if the application managed to publish its portnow try to start this application
-        if (application.port) {
-            forwardRequest(null, application);
-        } else {
-            startApp(application.appId, host, forwardRequest);
-        }
-    });
-}
-
+/*
 // handle proxy errors
 function onProxyError(error, req, res) {
+    
+    console.log('\n==========================================');
+    console.log(error);
+    console.log('==========================================\n');
     
     var link = {
         req: req,
@@ -173,14 +281,4 @@ function onProxyError(error, req, res) {
         });
     });
 }
-
-function proxyAndResume(link, proxy, port) {
-    
-    proxy.proxyRequest(link.req, link.res, {
-        host: "localhost",
-        port: port
-    });
-    
-    link.resume();
-}
-
+*/
