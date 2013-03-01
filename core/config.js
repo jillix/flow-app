@@ -1,3 +1,5 @@
+var path = require('path');
+
 // extend Object prototype with clone function
 Object.defineProperty(Object.prototype, "clone", {
         
@@ -12,7 +14,7 @@ Object.defineProperty(Object.prototype, "clone", {
 });
 
 // use optimist to parse the command line options
-var DEFAULT_CONFIG_PATH = __dirname + "/conf/dev_local.json";
+var DEFAULT_CONFIG_PATH = path.normalize(__dirname + "/../conf/dev_local.json");
 var argv = require("optimist")
     .default("config", DEFAULT_CONFIG_PATH)
     .argv;
@@ -81,7 +83,7 @@ for (var i in argv) {
 }
 
 // configure the root directory
-config.root = __dirname;
+config.root = path.normalize(__dirname + "/../");
 
 // configure defaults
 
