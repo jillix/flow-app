@@ -1,6 +1,5 @@
 {
     "name": "mono",
-    "version": "0.3.0",
     "author": "jillix <contact@jillix.com>",
     "description": "The jillix web application framework",
     "contributors": [ 
@@ -13,14 +12,14 @@
             "email": "gabipetrovay@gmail.com"
         }
     ],
-    "main": "./core/proxy",
+    "main": "server.js",
     "scripts": {
         "install"   : "admin/scripts/install.sh",
         "test"      : "node node_modules/tap/bin/tap.js ./test"
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/adioo/mono.git"
+        "url": "https://github.com/jillix/mono.git"
     },
     "keywords": [
         "web",
@@ -28,27 +27,24 @@
         "framework"
     ],
     "dependencies" : {
-        "cookies"       : "*",
         "connect"       : "*",
-        "pause"         : "*",
-        "bitbucket"     : "*",
+        "cookies"       : "*",
         "forever"       : "*",
         "formidable"    : "*",
         "github"        : "*",
         "http-proxy"    : "*",
-        "optimist"      : "*",
-        "orientdb"      : "0.9.7",
         "mongodb"       : "*",
-        "nodemailer"    : "*",
-        "request"       : "*",
         "node-static"   : "*",
-        "csv"           : "*",
+        "optimist"      : "*",
+        "orientdb"      : "0.9.8",
+        "pause"         : "*",
+        "request"       : "*",
         "syntax-error"  : "*"
     },
     "devDependencies": {
         "tap"           : "*"
     },
     "engine": {
-        "node": ">=0.6"
+        "node": ">=0.8"
     }
 }
