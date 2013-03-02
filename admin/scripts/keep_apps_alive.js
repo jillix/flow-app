@@ -1,5 +1,5 @@
 // the mono configuration as global object
-CONFIG = require((process.env.MONO_ROOT || process.cwd()) + "/config");
+CONFIG = require((process.env.MONO_ROOT || process.cwd()) + "/core/config");
 
 var cp = require("child_process");
 
