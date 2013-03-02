@@ -4,7 +4,6 @@ var util = require(CONFIG.root + "/core/util.js");
 
 // imported functions
 var startApp    = require(CONFIG.root + "/core/app_starter.js").startApp;
-var send        = require(CONFIG.root + "/core/send.js").send;
 var orient      = require(CONFIG.root + "/core/db/orient.js");
 var model       = require(CONFIG.root + "/core/model/orient.js");
 
@@ -24,19 +23,34 @@ if (!CONFIG.proxy) {
     }
 }
 
-function proxyRequest (host, socket, data) {
+function proxyRequest (host, socket, buffer) {
     
-    var appSocket = net.connect(runningApplications[host], 'localhost');
+    var appSocket = net.connect(runningApplications[host].port, 'localhost', function () {
+        appSocket.write(buffer);
+    });
     
     appSocket.on('error', function () {
-        // TODO handle error
+        // port in orient, but app is not running
+        startApp(host, socket, buffer, runningApplications[host], connectToApp);
     });
     
     appSocket.pipe(socket);
     socket.pipe(appSocket);
-    
-    appSocket.write(data);
 }
+
+function connectToApp (host, socket, buffer, err, application) {
+    
+    if (!application || err) {
+        return socket.emit('error', err ? err.toString() : 'No app info');
+    }
+    
+    runningApplications[host] = {
+        port: application.port,
+        appId: application.appId
+    };
+    
+    return proxyRequest(host, socket, buffer);
+};
 
 function send (socket, status, msg) {
     
@@ -68,27 +82,36 @@ exports.start = function() {
         // if problems occur, just buffer incoming data and write it later
         // to the appSocket stream.
         
+        // TODO when multiple sockets connect at (nearly) the same time,
+        // multiple process are spawned.
+        
         // start proxy server
         var server = net.createServer(function(socket) {
             
             // set up piping on first data event
-            socket.once('data', function setUpAppConnection (data) {
+            socket.once('data', function (buffer) {
                 
                 // get host
-                var host = data.toString('ascii').match(/host\: *([a-z0-9:\.]*)/i);
+                var host = buffer.toString('ascii').match(/host\: *([a-z0-9:\.]*)/i);
                 // TODO is a domain with port a diffrent host?
                 host = host ? host[1].split(":")[0] : host;
                 
+                // proxy request
                 if (runningApplications[host]) {
-                    return proxyRequest(host, socket, data);
+                    return proxyRequest(host, socket, buffer);
                 }
                 
-                /////////// start app \\\\\\\\\\\\
+                if (runningApplications[host] === null) {
+                    return send(socket, '200 OK', 'Application is starting...');
+                }
+                
+                runningApplications[host] = null;
                 
                 if (!host) {
                     return socket.emit('error', 'No Host found in headers.\n\n' + data.toString());
                 }
                 
+                // start application process
                 model.getDomainApplication(host, false, function(err, application) {
                     
                     if (!application) {
@@ -99,22 +122,11 @@ exports.start = function() {
                         return socket.emit('error', err.toString());
                     }
                     
-                    var connectToApp = function (err, application) {
-                        
-                        if (err) {
-                            // TODO handle error
-                            return socket.emit('error', err.toString());
-                        }
-                        
-                        runningApplications[host] = application.port;
-                        return proxyRequest(host, socket, data);
-                    };
-                    
                     // if the application managed to publish its portnow try to start this application
                     if (application.port) {
-                        connectToApp(null, application);
+                        connectToApp(host, socket, buffer, null, application);
                     } else {
-                        startApp(application.appId, host, connectToApp);
+                        startApp(host, socket, buffer, application, connectToApp);
                     }
                 });
             });
@@ -129,75 +141,3 @@ exports.start = function() {
         });
     });
 }
-
-// handle proxy errors
-/*function onProxyError(error, req, res) {
-    
-    console.log('\n==========================================');
-    console.log(error);
-    console.log('==========================================\n');
-    
-    var link = {
-        req: req,
-        res: res
-    };
-
-    if (!req.headers.host) {
-        send.badrequest(link, "No host in request headers.");
-        return;
-    }
-
-    // TODO is a domain with port a diffrent host?
-    var host = req.headers.host.split(":")[0];
-    var application = runningApplications[host];
-
-    if (runningApplications[host] === 0) {
-        send.badrequest(link, "App starting...");
-        return;
-    }
-
-    runningApplications[host] = 0;
-
-    // TODO check if the application is still using the port and remove it from the
-    // database in order not to screw future admin statistics
-
-    var logOperationUrl = "/@/core/getLog";
-    var logFilePath = CONFIG.APPLICATION_ROOT + application.appId + "/log.txt";
-    var restartMessage = "In the meanwhile we are hardly working to revive it.";
-
-    // this is only for log requests
-    if (req.url === logOperationUrl) {
-        fs.readFile(logFilePath, function(err, data) {
-
-            if (err) {
-                // let the user know that his application crashed
-                var message = "Sorry! This application crashed and there's not a shred of evidence why this happened. :(";
-                send.internalservererror(link, message);
-                return;
-            }
-
-            send.ok(res, data);
-        });
-        return;
-    }
-
-    fs.exists(logFilePath, function(exists) {
-
-        if (!exists) {
-            send.internalservererror(link, "Sorry! This application crashed and there's not a shred of evidence why this happened. :(\n" + restartMessage);
-        } else {
-            res.headers = res.headers || {};
-            res.headers["content-type"] = "text/html";
-            send.internalservererror(link, "Sorry! This application crashed. Maybe if you check out the <a href='" + logOperationUrl + "'>log</a> you find out why.\n" + restartMessage);
-        }
-
-        // now try to start this application
-        startApp(application.appId, host, function(err, application) {
-            if (application) {
-                runningApplications[host] = application;
-            } else {
-                delete runningApplications[host];
-            }
-        });
-    });
-}*/
