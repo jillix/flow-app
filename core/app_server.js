@@ -80,9 +80,6 @@ function appServerStart() {
 
 function requestHandler(req, res) {
     
-    console.log('REQUEST!');
-    console.log(req.headers);
-    
     if (!req.headers.host) {
         send.badrequest({req: req, res: res}, "No host in request headers.");
         return;
