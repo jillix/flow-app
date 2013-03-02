@@ -32,7 +32,6 @@
         "forever"       : "*",
         "formidable"    : "*",
         "github"        : "*",
-        "http-proxy"    : "*",
         "mongodb"       : "*",
         "node-static"   : "*",
         "optimist"      : "*",
