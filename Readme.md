@@ -14,5 +14,3 @@ Start the mono server with:
 ```
 node server.js
 ```
-
-In your browser open `127.0.0.1:8000` for the admin interface component or `127.0.0.1:8000/stdl` for the standard library component.
