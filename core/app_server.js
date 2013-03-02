@@ -64,16 +64,14 @@ function appServerStart() {
 
             model.addApplicationPort(CONFIG.app, port, function(err) {
 
-                // TODO if err, an error is thrown because req is not defined. Why?
                 if (err) {
-                    send.internalservererror({ req: req, res: res }, err);
-                    return;
+                    console.error(err);
+                    process.exit(5);
                 }
+                
+                // start http server
+                http.createServer(handler).listen(port, host);
             });
-
-            // start http server
-            
-            http.createServer(handler).listen(port, host);
         });
     });
 }

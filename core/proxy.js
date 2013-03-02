@@ -23,15 +23,15 @@ if (!CONFIG.proxy) {
     }
 }
 
-function proxyRequest (host, socket, buffer) {
+function proxyRequest (host, socket, buffer, application) {
     
-    var appSocket = net.connect(runningApplications[host].port, 'localhost', function () {
+    var appSocket = net.connect(application.port, 'localhost', function () {
         appSocket.write(buffer);
     });
     
     appSocket.on('error', function () {
         // port in orient, but app is not running
-        startApp(host, socket, buffer, runningApplications[host], connectToApp);
+        startApp(host, socket, buffer, application, connectToApp);
     });
     
     appSocket.pipe(socket);
@@ -49,7 +49,7 @@ function connectToApp (host, socket, buffer, err, application) {
         appId: application.appId
     };
     
-    return proxyRequest(host, socket, buffer);
+    return proxyRequest(host, socket, buffer, application);
 };
 
 function send (socket, status, msg) {
@@ -98,7 +98,7 @@ exports.start = function() {
                 
                 // proxy request
                 if (runningApplications[host]) {
-                    return proxyRequest(host, socket, buffer);
+                    return proxyRequest(host, socket, buffer, runningApplications[host]);
                 }
                 
                 if (runningApplications[host] === null) {
