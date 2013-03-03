@@ -9,7 +9,7 @@ var send      = require(CONFIG.root + "/core/send.js").send;
 var operator  = require(CONFIG.root + "/core/operator");
 var route     = require(CONFIG.root + "/core/router.js").route;
 var orient    = require(CONFIG.root + "/core/db/orient.js");
-var model     = require(CONFIG.root + "/core/model/orient.js");
+var model     = require(CONFIG.root + "/core/model");
 
 function appServerStart() {
     

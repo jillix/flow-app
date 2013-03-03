@@ -1,6 +1,6 @@
 var send = require(CONFIG.root + "/core/send.js").send,
     session = require(CONFIG.root + "/core/session.js");
-    model = require(CONFIG.root + "/core/model/orient.js");
+    model = require(CONFIG.root + "/core/model");
     crypto = require("crypto"),
     Cookies = require("cookies");
 

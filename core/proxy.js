@@ -3,9 +3,9 @@ var fs = require("fs");
 var util = require(CONFIG.root + "/core/util.js");
 
 // imported functions
-var startApp    = require(CONFIG.root + "/core/app_starter.js").startApp;
-var orient      = require(CONFIG.root + "/core/db/orient.js");
-var model       = require(CONFIG.root + "/core/model/orient.js");
+var startApp    = require(CONFIG.root + "/core/app_starter").startApp;
+var orient      = require(CONFIG.root + "/core/db/orient");
+var model       = require(CONFIG.root + "/core/model");
 
 // application port cache
 var runningApplications = {};

@@ -3,7 +3,7 @@ var fs = require("fs");
 var orient = require(CONFIG.root + "/core/db/orient");
 var modules = require(CONFIG.root + "/api/modules");
 var server = require(CONFIG.root + "/api/server");
-var db = require(CONFIG.root + "/core/model/orient");
+var db = require(CONFIG.root + "/core/model");
 
 
 /**

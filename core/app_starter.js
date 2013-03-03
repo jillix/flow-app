@@ -1,7 +1,7 @@
 var fs = require("fs");
-var util = require(CONFIG.root + "/core/util.js");
+var util = require(CONFIG.root + "/core/util");
 var spawn = require("child_process").spawn;
-var model = require(CONFIG.root + "/core/model/orient.js");
+var model = require(CONFIG.root + "/core/model");
 
 /*
  * This MUST be called only ONCE per application process

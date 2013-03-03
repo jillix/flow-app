@@ -1,6 +1,6 @@
 var send = require(CONFIG.root + "/core/send").send;
 var serve = require(CONFIG.root + "/core/operations/static").serve;
-var getDomainApplication = require(CONFIG.root + "/core/model/orient.js").getDomainApplication;
+var getDomainApplication = require(CONFIG.root + "/core/model").getDomainApplication;
 
 var baseUrl = "/" + CONFIG.operationKey + "/core/getModule";
 var nl = (CONFIG.logLevel == "debug" ? "\r\n" : "");

@@ -1,5 +1,5 @@
 var send = require(CONFIG.root + "/core/send.js").send;
-var model     = require(CONFIG.root + "/core/model/orient.js");
+var model = require(CONFIG.root + "/core/model");
 
 var files = new (require("node-static").Server)(CONFIG.root + "/apps");
 

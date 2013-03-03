@@ -1,5 +1,4 @@
-var db = require(CONFIG.root + "/core/model/orient.js");
-
+var db = require(CONFIG.root + "/core/model");
 
 function gitClone(url, dirName, baseName, callback) {
 

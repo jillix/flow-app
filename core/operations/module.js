@@ -1,7 +1,7 @@
 var send = require(CONFIG.root + "/core/send.js").send;
 var read = require(CONFIG.root + "/core/util.js").read;
 var stat = require("node-static").Server;
-var model = require(CONFIG.root + "/core/model/orient.js");
+var model = require(CONFIG.root + "/core/model");
 var client = new stat(CONFIG.root + "/core/client");
 var modules = new stat(CONFIG.root + "/apps/" + CONFIG.app + "/mono_modules");
 

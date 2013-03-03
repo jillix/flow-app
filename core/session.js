@@ -1,7 +1,5 @@
-var util = require(CONFIG.root + "/core/util" ),
-    queries = require(CONFIG.root + "/db/queries"),
-    model_o = require(CONFIG.root + "/core/model/orient.js"),
-    model_m = require(CONFIG.root + "/core/model/mongo.js");
+var util = require(CONFIG.root + "/core/util" );
+var model = require(CONFIG.root + "/core/model");
 
 var expire_time = 9;
 
@@ -13,11 +11,11 @@ var Session = {
     },
 
     end: function( callback ){
-        queries.endSession( this.sid, callback );
+        model.endSession( this.sid, callback );
     },
 
     endAll: function( ){
-        queries.endAllUserSessions( this.uid, callback );
+        model.endAllUserSessions( this.uid, callback );
     },
 
     newid: function( callback ){
@@ -37,7 +35,7 @@ var Session = {
 //
 //    //var now = Math.round( new Date().getTime() / 86400000 );
 //
-//    queries.endSessions( expire(), function( err ){
+//    model.endSessions( expire(), function( err ){
 //        if( err ) throw new Error( err );
 //    });
 //		
@@ -56,12 +54,12 @@ exports.get = function(link, callback) {
     }
 
     var publicSession = function(domain, callback) {
-        model_o.getDomainPublicUser(domain, callback);
+        model.getDomainPublicUser(domain, callback);
     };
 
     // try to find session
     if (sid) {
-        model_m.getSession(sid, expire(), expire(expire_time), function(err, session) {
+        model.getSession(sid, expire(), expire(expire_time), function(err, session) {
 
             // if some kind of error, no session or expired session, generate a default one
             if (err || !session) {
@@ -97,7 +95,7 @@ exports.start = function(uid, appid, locale, data, callback) {
         session.data = data;
     }
 
-    model_m.startSession(session, function(err) {
+    model.startSession(session, function(err) {
 
 		if (err) { return callback(err); }
 
@@ -135,7 +133,7 @@ function update( sid, data, newId, callback ){
 	//generate new sid
 	if( newId ) q_update.$set.sid = util.uid();
 	
-	queries.updateSession( sid, q_update, function( err ){
+	model.updateSession( sid, q_update, function( err ){
 		
 		if( err || ( newId && !q_update.$set.sid ) ) callback( err || new Error( "generate sid" ), null );
 		else if( newId ) callback( null, q_update.$set.sid );

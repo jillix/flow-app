@@ -1,4 +1,3 @@
-
 exports.getModuleUsedVersions = function(callback) {
 
     var command =
@@ -1381,3 +1380,285 @@ function edge(srid, drid, hash, options, callback) {
     db.createEdge(srid, drid, hash, options, callback);
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////// this part was originally in db/queries.js
+
+var orient	= CONFIG.orient.DB;
+var pongo = new require('pongo')({
+    host: CONFIG.mongoDB.host,
+    port: CONFIG.mongoDB.port,
+    server: {poolSize: 3},
+    db: {w: 1}
+});
+
+// !----------------------------------------------------------------------------------------
+
+exports.assignRoleToOperation = function( roleID, operationID, callback ){
+    orient.addEdge( "5:" + roleID, "5:" + operationID, "CAN_PERFORM", null, callback );
+};
+
+exports.unassignRoleFromOperation = function( roleID, callback ){
+	orient.removeEdge( "5:" + roleID, "CAN_PERFORM", callback );
+};
+
+exports.assignRoleToUIElement = function( comp, view, roleID, UIElementID, data, callback ){
+	
+	if( comp && view ) {
+        
+        if( !data ) data = {};
+        
+        data._comp = comp;
+        data._view = view;
+        
+        orient.addEdge( "5:" + roleID, "5:" + UIElementID, "HAS_ACCESS_TO", data, callback );
+    }
+    else callback( new Error( "Invalid Data provided." ) );
+};
+
+exports.unassignRoleFromUIElement = function( comp, view, roleID, callback ){
+	
+	// !...
+	orient.removeEdge( "5:" + roleID, "HAS_ACCESS_TO", callback );
+};
+
+exports.assignUserToRole = function( userID, roleID, callback ){
+	orient.addEdge( "5:" + userID, "5:" + roleID, "MEMBER_OF", null, callback );
+};
+
+exports.unassignUserFromRole = function( userID, callback ){
+	orient.removeEdge( "5:" + userID, "MEMBER_OF", callback );
+};
+
+// !----------------------------------------------------------------------------------------
+
+exports.getUserByAuthPub = function( authPub, fields, callback ){
+	orient.sql( "select " + fields + " AS pwd from OGraphVertex where klass = 'User' and auth[pub] = '" + authPub + "' limit 1", callback );
+};
+
+exports.getUsersOperation = function( operationID, userID, callback ) {
+	
+	var opid = operationID.replace( /[^0-9]/g, "" );
+	
+	if( opid ) {
+	
+		orient.sql(
+            "select module,file,method,in[@class = 'ECanPerform'].params as params from #9:" + opid + " where in traverse(5,5) (@rid = #7:" + userID + ")",
+            callback
+        );
+	}
+	else callback( new Error( "Invalid Operation ID: " + operationID ) );
+};
+
+exports.getUsersUIElements = function( userID, callback ) {
+	orient.sql(
+        "select _out.name AS name from OGraphEdge where " +
+        "_in traverse(3,3) (klass = 'User' and @rid = #5:" + userID + " )"+
+        "and _out.klass = 'Module' and _label = 'HAS_ACCESS_TO'", callback
+    );
+};
+
+exports.getDomainsPublicUser = function(domain, callback) {
+	orient.sql(
+        "select publicUser from VDomain where name = '" + domain + "'",
+        callback
+    );
+};
+
+// !----------------------------------------------------------------------------------------
+
+exports.getRole = function( roleID, callback ){
+	orient.getVertex( "5:" + roleID, "name,desc", callback );
+};
+
+exports.insertRole = function( name, desc, callback ){
+	orient.addVertex( "OGraphVertex", { name: name, desc: desc, klass: "Role" }, callback );
+};
+
+exports.updateRole = function( roleID, data, callback ){
+	orient.updateVertex( "5:" + roleID, data, callback );
+};
+
+exports.removeRole = function( roleID, callback ){
+	orient.removeVertex( "5:" + roleID, callback );
+};
+
+// !----------------------------------------------------------------------------------------
+
+exports.getUser = function( userID, fields, callback ){
+	orient.getVertex( "5:" + userID, fields, callback );
+};
+
+exports.insertUser = function( data, callback ){
+	
+	if( data ) {
+		
+		data.klass = "User";
+		orient.addVertex( "OGraphVertex", data, callback );
+	}
+	else callback( new Error( "No Data provided." ) );
+};
+
+exports.updateUser = function( userID, data, callback ){
+	orient.updateVertex( "5:" + userID, data, callback );
+};
+
+exports.removeUser = function( userID, callback ){
+	orient.removeVertex( "5:" + userID, callback );
+};
+
+// !----------------------------------------------------------------------------------------
+
+exports.getOperation = function( operationID, callback ){
+	orient.getVertex( "5:" + operationID, "file,method", callback );
+};
+
+exports.insertOperation = function( file, method, callback ){
+	orient.addVertex( "OGraphVertex", { file: file, method: method, klass: "Operation" }, callback );
+};
+
+exports.updateOperation = function( operationID, data, callback ){
+	orient.updateVertex( "5:" + operationID, data, callback );
+};
+
+exports.removeOperation = function( operationID, callback ){
+	orient.removeVertex( "5:" + operationID, callback );
+};
+
+// !----------------------------------------------------------------------------------------
+
+exports.getUIElement = function( UIElementID, callback ){
+	orient.getVertex( "5:" + UIElementID, "", callback );
+};
+
+exports.insertUIElement = function( data, callback ){
+	
+	if( data ) {
+		
+		data.klass = "Module";
+		orient.addVertex( "OGraphVertex", data, callback );
+	}
+	else callback( new Error( "No Data provided." ) );
+};
+
+exports.updateUIElement = function( compID, data, callback ){
+    orient.updateVertex( "5:" + compID, data, callback );
+};
+
+exports.removeUIElement = function( compID, callback ){
+    orient.removeVertex( "5:" + compID, callback );
+};
+
+// !----------------------------------------------------------------------------------------
+
+exports.updateSession = function( sessionID, doc, callback ){
+	
+	pongo.connect(CONFIG.mongoDB.name, "sessions", function( err, db ){
+		
+		if( err ) callback( err );
+		else db.update({ sid: sessionID }, doc, callback );
+	});
+};
+
+exports.endAllUserSessions = function( userID, callback ){
+	
+	pongo.connect(CONFIG.mongoDB.name, "sessions", function( err, db ){
+		
+		if( err ) callback( err );
+		else db.remove({ uid: userID }, callback );
+	});
+};
+
+exports.endSessions = function( now, callback ){
+	
+	pongo.connect(CONFIG.mongoDB.name, "sessions", function( err, db ){
+		
+		if( err ) callback( err );
+		else db.remove({ exp: { $lt: now } }, callback );
+	});
+};
+
+exports.endSession = function( sessionID, callback ){
+	
+	pongo.connect(CONFIG.mongoDB.name, "sessions", function( err, db ){
+		
+		if( err ) callback( err, null );
+		else db.remove({ sid: sessionID }, callback );
+	});
+};
+
+exports.getSession = function(sessionId, now, expire, callback) {
+
+    pongo.connect(CONFIG.mongoDB.name, "sessions", function(err, db) {
+
+        if (err) { return callback(err); }
+
+        db.findAndModify(
+            { sid: sessionId, exp: { $gt: now } },
+            [],
+            { $set: { exp: expire } },
+            { fields: { _id: 0, uid: 1, appid: 1, data: 1, loc: 1 } },
+            callback
+        );
+    });
+};
+
+exports.startSession = function(session, callback) {
+
+	pongo.connect(CONFIG.mongoDB.name, "sessions", function(err, db) {
+
+        if (err) { return callback(err) };
+
+        db.insert(session, { safe: true },  callback);
+	});
+};
+
+// !----------------------------------------------------------------------------------------
+
+exports.checkNonce = function( nonceID, callback ){
+	
+	var self = this;
+	
+	pongo.connect(CONFIG.mongoDB.name, "nonces", function( err, db ){
+		
+		if( err ) callback( err );
+		else db.findOne({ n: nonceID, t: { $gt: parseInt( new Date().getTime() / 1000, 5 ) } }, { _id: 0, n: 1}, function( err, nonce ){
+			
+			if( err ) callback( err );
+			else self.removeNonce( nonceID, function( err ){
+				
+				if( err ) callback( err );
+				else callback( null, nonce ? true : false );
+			});
+		});
+	});
+};
+
+exports.insertNonce = function(){
+	
+	pongo.connect(CONFIG.mongoDB.name, "nonces", function( err, db ){
+		
+		if( err ) callback( err );
+		
+		else {
+			
+			var nonce = {
+				n: uuid( 13 ),
+				t: parseInt( new Date().getTime() / 1000, 10 ) + 10
+			};
+			
+			db.insert( nonce, function( err ){
+				
+				if( err ) callback( err );
+				else callback( null, nonce.n );
+			});
+		}
+	});
+};
+
+exports.removeNonce = function( nonceID, callback ){
+	
+	pongo.connect(CONFIG.mongoDB.name, "nonces", function( err, db ){
+		
+		if( err ) callback( err );
+		else db.remove({ n: nonceID }, callback );
+	});
+};

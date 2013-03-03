@@ -84,7 +84,6 @@ var M = (function() {
         on: function(event, miid, handler) {
             
             if (arguments.length < 3) {
-                
                 handler = arguments[1];
                 miid = this.miid;
             }
@@ -92,12 +91,10 @@ var M = (function() {
             if (typeof handler == 'function') {
                 
                 if (!events[miid]) {
-                    
                     events[miid] = [];
                 }
                 
                 if (!events[miid][event]) {
-                
                     events[miid][event] = [];
                 }
                 
@@ -115,29 +112,21 @@ var M = (function() {
         off: function(event, miid, handler) {
             
             if (arguments.length < 3) {
-                
                 handler = arguments[1];
                 miid = this.miid;
             }
             
-            if (events[miid]) {
+            if (events[miid] && events[miid][event]) {
                 
-                if (events[miid][event]) {
-                    
-                    if (handler) {
+                if (handler) {
+                    for (var i = 0, l = events[miid][event].length; i < l; ++i) {
                         
-                        for (var i = 0, l = events[miid][event].length; i < l; ++i) {
-                            
-                            if (events[miid][event][i] === handler) {
-                                
-                                events[miid][event][i] = null;
-                            }
+                        if (events[miid][event][i] === handler) {
+                            events[miid][event][i] = null;
                         }
                     }
-                    else {
-                        
-                        delete events[miid][event];
-                    }
+                } else {
+                    delete events[miid][event];
                 }
             }
             
@@ -149,7 +138,6 @@ var M = (function() {
             this.emit("setSomething", arg1, arg2, ...);
         */
         emit: function(event) {
-            
             return eventEmitter(this, event, this.miid, arguments, 1);
         },
         
@@ -158,7 +146,6 @@ var M = (function() {
             this.trigger("setSomething", "miid", arg1, arg2, ...);
         */
         trigger: function(event, miid) {
-            
             return eventEmitter(this, event, miid, arguments, 2);
         },
         
@@ -353,11 +340,8 @@ var M = (function() {
                         var href;
                         
                         if (config.css[i].indexOf("http") > -1) {
-                            
                             href = config.css[i];
-                        }
-                        else {
-                            
+                        } else {
                             href = "/" + Mono.ok + "/core/getFile" + (config.css[i][0] == "/" ? "" : "/") + config.css[i]
                         }
                         
@@ -370,7 +354,6 @@ var M = (function() {
                             };
                             
                         for (var name in attributes) {
-                            
                             link.setAttribute(name, attributes[name]);
                         }
                         
@@ -454,4 +437,3 @@ var M = (function() {
     return constructor;
 
 })();
-
