@@ -41,7 +41,7 @@ function proxyRequest (host, socket, buffer, application) {
 function connectToApp (host, socket, buffer, err, application) {
     
     if (!application || err) {
-        return socket.emit('error', err ? err.toString() : 'No app info');
+        return send(socket, '500 Internal Error',  err ? err.toString() : 'No app info');
     }
     
     runningApplications[host] = {
@@ -57,18 +57,16 @@ function send (socket, status, msg) {
     socket.end(
         'HTTP/1.1 ' + status + '\r\n' +
         'Date: ' + new Date().toString() + '\r\n' +
-        'Server: Mono dev\r\n' +
+        'Server: mono dev\r\n' +
         'Content-Length: ' + msg.length + '\r\n' +
         'Connection: close\r\n' +
-        'Content-Type: text/html; charset=UTF-8\r\n' +
+        'Content-Type: text/html; charset=utf-8\r\n' +
         '\r\n' + msg
     );
 }
 
 // check orient connection and start proxy server
 exports.start = function() {
-    
-    console.log('starting mono...');
     
     // establish the database connection
     orient.connect(CONFIG.orient, function(err, db) {
@@ -95,7 +93,7 @@ exports.start = function() {
                 var host = buffer.toString('ascii').match(/host\: *([a-z0-9:\.]*)/i);
                 
                 if (!host) {
-                    return socket.emit('error', 'No Host found in headers.\n\n' + data.toString());
+                    return send(socket, '400 Bad Request', 'No Host found in headers.\n\n' + data.toString());
                 }
                 
                 // TODO is a domain with port a diffrent host?
@@ -120,7 +118,7 @@ exports.start = function() {
                     }
                     
                     if (err) {
-                        return socket.emit('error', err.toString());
+                        return send(socket, '500 Internal Server Error', err.toString());
                     }
                     
                     // if the application managed to publish its portnow try to start this application
@@ -131,14 +129,10 @@ exports.start = function() {
                     }
                 });
             });
-                
-            socket.on('error', function (err) {
-                send(socket, '400 Bad Request', err);
-            });
         });
         
         server.listen(CONFIG.port, proxyHost, function() {
-            console.log('mono started.');
+            console.log('mono is listening..');
         });
     });
 }
