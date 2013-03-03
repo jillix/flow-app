@@ -57,7 +57,7 @@ function send (socket, status, msg) {
     socket.end(
         'HTTP/1.1 ' + status + '\r\n' +
         'Date: ' + new Date().toString() + '\r\n' +
-        'Server: Mopro 0.0.1\r\n' +
+        'Server: Mono dev\r\n' +
         'Content-Length: ' + msg.length + '\r\n' +
         'Connection: close\r\n' +
         'Content-Type: text/html; charset=UTF-8\r\n' +
@@ -93,23 +93,24 @@ exports.start = function() {
                 
                 // get host
                 var host = buffer.toString('ascii').match(/host\: *([a-z0-9:\.]*)/i);
+                
+                if (!host) {
+                    return socket.emit('error', 'No Host found in headers.\n\n' + data.toString());
+                }
+                
                 // TODO is a domain with port a diffrent host?
-                host = host ? host[1].split(":")[0] : host;
+                host = host[1].split(":")[0];
+                
+                if (runningApplications[host] === null) {
+                    return send(socket, '200 OK', 'Application is starting...');
+                }
                 
                 // proxy request
                 if (runningApplications[host]) {
                     return proxyRequest(host, socket, buffer, runningApplications[host]);
                 }
                 
-                if (runningApplications[host] === null) {
-                    return send(socket, '200 OK', 'Application is starting...');
-                }
-                
                 runningApplications[host] = null;
-                
-                if (!host) {
-                    return socket.emit('error', 'No Host found in headers.\n\n' + data.toString());
-                }
                 
                 // start application process
                 model.getDomainApplication(host, false, function(err, application) {
