@@ -5,6 +5,7 @@ var model = require(CONFIG.root + "/core/model");
 var client = new stat(CONFIG.root + "/core/client");
 var modules = new stat(CONFIG.root + "/apps/" + CONFIG.app + "/mono_modules");
 
+var configCache = {};
 
 exports.getConfig = function(link) {
 
@@ -27,7 +28,7 @@ exports.getConfig = function(link) {
         }
 
         var getModuleConfig = function(miid) {
-
+            
             model.getModuleConfig(appid, miid, link.session.uid, function(err, module) {
 
                 // error checks
@@ -39,7 +40,12 @@ exports.getConfig = function(link) {
                     }
                     return;
                 }
-
+                
+                // prepare config cache
+                if (!configCache[link.host]) {
+                    configCache[link.host] = {};
+                }
+                
                 var response = module.config || {};
 
                 response.path = module.source + "/" + module.owner + "/" + module.name + "/" + module.version;
@@ -69,7 +75,10 @@ exports.getConfig = function(link) {
                                 html += "<p>Error: " + err + "</p>"
                             }
                         }
+                        
                         response.html = html;
+                        
+                        configCache[link.host][miid] = response;
                         send.ok(link.res, { type: "config", data: response });
                     };
 
@@ -80,20 +89,23 @@ exports.getConfig = function(link) {
                                 read(pathAll, "utf8", setModuleHtml);
                                 return;
                             }
-
-                            setModuleHtml(err);
                         }
-
-                        response.html = html;
-                        send.ok(link.res, { type: "config", data: response });
+                        
+                        setModuleHtml(err, html);
                     });
                 }
                 else {
+                    configCache[link.host][miid] = response;
                     send.ok(link.res, { type: "config", data: response });
                 }
             });
         };
-
+        
+        // send cached config
+        if (configCache[link.host] && configCache[link.host][miid]) {
+            return send.ok(link.res, {type: "config", data: configCache[link.host][miid]});
+        }
+        
         getModuleConfig(miid);
     });
 };
