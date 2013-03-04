@@ -956,7 +956,7 @@
             }
         },
         "liqshop_order_list": {
-            "module": "bitbucket/jillix/liqshopOrderList/v0.2.1",
+            "module": "bitbucket/jillix/liqshopOrderList/v0.2.2",
             "roles": [1],
             "config": {
                 "html": {
