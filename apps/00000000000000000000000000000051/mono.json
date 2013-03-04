@@ -2,7 +2,8 @@
     "appId": "00000000000000000000000000000051",
     "name": "Liqshop Orders",
     "routes": {
-        "/": "liqshop_layout"
+        "/": "liqshop_order_login",
+	"admin": "liqshop_layout"
     },
     "error": "liqshop_order_login",
     "domains": [
@@ -955,7 +956,7 @@
             }
         },
         "liqshop_order_list": {
-            "module": "bitbucket/jillix/liqshopOrderList/v0.2.1",
+            "module": "bitbucket/jillix/liqshopOrderList/v0.2.2",
             "roles": [1],
             "config": {
                 "html": {
@@ -993,7 +994,7 @@
             }
         },
         "liqshop_order_login": {
-            "module": "bitbucket/jillix/liqshopOrderLogin/v0.2.0",
+            "module": "bitbucket/jillix/liqshopOrderLogin/v0.2.1",
             "roles": [0],
             "config": {
                 "html": {
