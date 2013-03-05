@@ -24,8 +24,7 @@ fi
 APP_PID=`ps aux | grep "node $MONO_ROOT/server.js --app $1" | grep -v grep | awk '{print $2}'`
 if [ ! -z "$APP_PID" ]
 then
-    # echo "Application $1 seems to be running already: $APP_PID" 1>&2
-    echo `lsof -Pan -i tcp -p 17341 | grep 'LISTEN' | grep -oE '\:[0-9]+' | grep -oE '[0-9]+'`
+    echo `lsof -Pan -i tcp -p $APP_PID | grep 'LISTEN' | grep -oE '\:[0-9]+' | grep -oE '[0-9]+'`
     exit 0
 fi
 

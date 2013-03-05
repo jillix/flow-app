@@ -29,7 +29,7 @@ function proxyRequest (host, socket, buffer, application) {
         appSocket.write(buffer);
     });
     
-    appSocket.on('error', function () {
+    appSocket.on('error', function (err) {
         // port in orient, but app is not running
         startApp(host, socket, buffer, application, connectToApp);
     });

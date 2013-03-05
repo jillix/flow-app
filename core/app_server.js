@@ -38,7 +38,7 @@ function appServerStart() {
                 console.error("Could not determine the public user for application: " + application.id);
                 process.exit(4);
             }
-
+            
             var host = "127.0.0.1";
             var port = CONFIG.port;
 
@@ -70,7 +70,9 @@ function appServerStart() {
                 }
                 
                 // start http server
-                http.createServer(handler).listen(port, host);
+                http.createServer(handler).listen(port, host, function () {
+                    process.stdout.write('200 OK');
+                });
             });
         });
     });

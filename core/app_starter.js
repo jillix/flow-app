@@ -3,6 +3,31 @@ var util = require(CONFIG.root + "/core/util");
 var spawn = require("child_process").spawn;
 var model = require(CONFIG.root + "/core/model");
 
+function appStarted(host, socket, buffer, application, callback) {
+    
+    // TODO check if the application is still using the port and remove it from the
+    // database in order not to screw future admin statistics
+    
+    if (application.port) {
+        return callback(host, socket, buffer, null, application);   
+    }
+    
+    // find the application for this domain (without the routing table)
+    model.getDomainApplication(host, false, function(err, application) {
+        
+        if (err) {
+            return callback(host, socket, buffer, err);
+        };
+        
+        // retry as long as the application does not have a port
+        if (!application.port) {
+            return callback(host, socket, buffer, new Error('Port error'));
+        }
+        
+        return callback(host, socket, buffer, null, application);
+    });
+}
+
 /*
  * This MUST be called only ONCE per application process
  */
@@ -24,49 +49,25 @@ function startApplication(host, socket, buffer, application, callback) {
     var log = fs.createWriteStream(appPath + "/log.txt");
     var node = spawn(CONFIG.root + "/admin/scripts/installation/start_app.sh", [ application.appId ], { env: env });
     
-    node.stderr.on('data', function (err) {
+    node.stderr.once('data', function (err) {
         callback(host, socket, buffer, err.toString());
     });
     
     // get pid if app is running
     node.stdout.once('data', function (data) {
         
-        data = parseInt(data.toString('ascii'), 10);
+        data = data.toString('ascii');
         
-        if (data) {
-            // TODO check first if another application uses this port
+        if (data === '200 OK') {
+            return appStarted(host, socket, buffer, application, callback);
+        }
+        
+        if (data = parseInt(data, 10)) {
+            // TODO link the proccess to this proccess, so when this
+            // process terminates, the app proccess also gets killed
             application.port = data;
+            return appStarted(host, socket, buffer, application, callback);
         }
-    });
-    
-    node.on('exit', function () {
-
-// TODO make sure the http server of the application is started
-setTimeout(function () {
-        
-        // TODO check if the application is still using the port and remove it from the
-        // database in order not to screw future admin statistics
-        
-        if (application.port) {
-            return callback(host, socket, buffer, null, application);   
-        }
-        
-        // find the application for this domain (without the routing table)
-        model.getDomainApplication(host, false, function(err, application) {
-            
-            if (err) {
-                return callback(host, socket, buffer, err);
-            };
-            
-            // retry as long as the application does not have a port
-            if (!application.port) {
-                return callback(host, socket, buffer, new Error('Port error'));
-            }
-            
-            callback(host, socket, buffer, null, application);
-        });
-}, 1000);
-
     });
     
     node.stdout.pipe(log);
