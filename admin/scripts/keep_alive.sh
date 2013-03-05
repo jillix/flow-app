@@ -64,7 +64,7 @@ check_screen() {
 # params: screen_name executable log params
 execute_in_screen() {
     check_screen $1
-    COMMAND=`echo -e "node \"$2\" $4 &>> $3\n"`
+    COMMAND=`echo -e "PATH=$PATH:/usr/sbin node \"$2\" $4 &>> $3\n"`
     if [ "$1" == "$ORIENT_SCREEN_NAME" ]
     then
         COMMAND=`echo -e "$2 &>> $3\n"`
