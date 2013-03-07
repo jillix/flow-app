@@ -29,7 +29,6 @@
     "dependencies" : {
         "connect"       : "*",
         "cookies"       : "*",
-        "forever"       : "*",
         "formidable"    : "*",
         "github"        : "*",
         "pongo"         : "*",
