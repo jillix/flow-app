@@ -71,7 +71,7 @@ function appServerStart() {
                 
                 // start http server
                 http.createServer(handler).listen(port, host, function () {
-                    process.stdout.write('200 OK');
+                    process.stdout.write(CONFIG.app);
                 });
             });
         });

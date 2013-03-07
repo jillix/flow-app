@@ -58,7 +58,7 @@ function startApplication(host, socket, buffer, application, callback) {
         
         data = data.toString('ascii');
         
-        if (data === '200 OK') {
+        if (data === application.appId) {
             return appStarted(host, socket, buffer, application, callback);
         }
         

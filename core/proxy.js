@@ -22,7 +22,7 @@ if (!CONFIG.proxy) {
         throw new Error("Missing IP Address");
     }
 }
-var reqNum = 0;
+
 function proxyRequest (host, socket, buffer, application) {
     
     var appSocket = net.connect(application.port, 'localhost', function () {
@@ -30,7 +30,8 @@ function proxyRequest (host, socket, buffer, application) {
     });
     
     appSocket.on('error', function (err) {
-        appSocket.destroy();
+        
+        runningApplications[host] = undefined;
         send(socket, '500 Internal Error',  err.toString());
     });
     
@@ -43,6 +44,7 @@ function proxyRequest (host, socket, buffer, application) {
 function connectToApp (host, socket, buffer, err, application) {
     
     if (!application || err) {
+        runningApplications[host] = undefined;
         return send(socket, '500 Internal Error',  err ? err.toString() : 'No app info');
     }
     
@@ -114,10 +116,12 @@ exports.start = function() {
                 model.getDomainApplication(host, false, function(err, application) {
                     
                     if (!application) {
+                        runningApplications[host] = undefined;
                         return send(socket, '404 Not found', 'Application not found.');
                     }
                     
                     if (err) {
+                        runningApplications[host] = undefined;
                         return send(socket, '500 Internal Server Error', err.toString());
                     }
                     
