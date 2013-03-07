@@ -1,6 +1,5 @@
 var util = require("util");
 
-
 exports.send = (function() {
     
     var ct = { 'content-type': "text/plain" };
@@ -128,7 +127,7 @@ exports.send = (function() {
             }
             else {
                 res.writeHead( 204, res.headers || ct );
-                res.end();
+                res.end('');
             }
         }
         catch (err){
@@ -136,7 +135,7 @@ exports.send = (function() {
             res.end( "Send Data: Parse Error" );
         }
     };
-
+    
     return functions;
 
 })();

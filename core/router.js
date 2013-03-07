@@ -56,13 +56,49 @@ function route(link, application) {
         link.res.headers["content-style-type"] = "text/css";
         link.res.headers["content-type"] = "text/html; charset=utf-8";
         link.res.headers["access-control-allow-origin"] = 'http://jipics.net';
-
+        
         send.ok(link.res, initScripts(module, application, { language: language }));
     }
     else {
         serve(link, application.appId, application.publicDir);
     }
 }
+
+/*
+    borrowed logic from https://github.com/flatiron/director/blob/master/lib/director/router.js
+    thanks!
+*/
+function traverse(path, routes, current) {
+
+    if (path === current && typeof routes["/"] === "string") {
+        return routes["/"];
+    }
+
+    for (var r in routes) {
+
+        if (routes.hasOwnProperty(r)) {
+
+            var exact = current + "/" + r;
+            var match = path.match(new RegExp("^" + exact));
+            
+            if (!match) {
+                continue;
+            }
+
+            if (match[0] && match[0] == path && typeof routes[r] === "string") {
+                return routes[r];
+            }
+            
+            var result = traverse(path, routes[r], exact);
+            
+            if (typeof result == "string") {
+                return result;
+            }
+        }
+    }
+    
+    return false;
+};
 
 exports.route = function(link) {
 
@@ -87,43 +123,6 @@ exports.route = function(link) {
         });
         
     } else {
-        
         route(link, routingTables[link.host]);
     }
-};
-
-/*
-    borrowed logic from https://github.com/flatiron/director/blob/master/lib/director/router.js
-    thanks!
-*/
-function traverse(path, routes, current, result, exact, match) {
-
-    if (path === current && typeof routes["/"] === "string") {
-        return routes["/"];
-    }
-
-    for (var r in routes) {
-
-        if (routes.hasOwnProperty(r)) {
-
-            exact = current + "/" + r;
-            match = path.match(new RegExp("^" + exact));
-            
-            if (!match) {
-                continue;
-            }
-
-            if (match[0] && match[0] == path && typeof routes[r] === "string") {
-                return routes[r];
-            }
-            
-            result = traverse(path, routes[r], exact);
-            
-            if (typeof result == "string") {
-                return result;
-            }
-        }
-    }
-    
-    return false;
 };

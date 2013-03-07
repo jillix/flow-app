@@ -84,9 +84,6 @@ function requestHandler(req, res) {
         send.badrequest({req: req, res: res}, "No host in request headers.");
         return;
     }
-    
-    // resume the request for POST requests
-    var resume = req.method === "POST" ? util.pause(req) : function() {};
 
     var url = parseUrl(req.url, true),
         path = url.pathname.replace(/\/$|^\//g, "").split("/", 42);
@@ -95,16 +92,19 @@ function requestHandler(req, res) {
             res:        res,
             query:      url.query || {},
             pathname:   url.pathname,
+            
             // TODO is a domain with port a diffrent host?
             host:       req.headers.host.split(":")[0],
             lang:       req.headers['accept-language'],
-            resume:     resume
+            
+            // resume the request for POST requests
+            resume:     req.method === "POST" ? util.pause(req) : function() {},
         };
 
     link.res.headers = {};
-
+    
     if (path[0] == CONFIG.operationKey) {
-
+        
         if (path.length < 3) {
             return send.badrequest(link, "incorrect operation url");
         }

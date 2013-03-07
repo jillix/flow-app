@@ -22,7 +22,7 @@ if (!CONFIG.proxy) {
         throw new Error("Missing IP Address");
     }
 }
-
+var reqNum = 0;
 function proxyRequest (host, socket, buffer, application) {
     
     var appSocket = net.connect(application.port, 'localhost', function () {
@@ -30,11 +30,13 @@ function proxyRequest (host, socket, buffer, application) {
     });
     
     appSocket.on('error', function (err) {
-        // port in orient, but app is not running
-        startApp(host, socket, buffer, application, connectToApp);
+        appSocket.destroy();
+        send(socket, '500 Internal Error',  err.toString());
     });
     
+    // down stream
     appSocket.pipe(socket);
+    // up stream
     socket.pipe(appSocket);
 }
 
@@ -80,13 +82,11 @@ exports.start = function() {
         // if problems occur, just buffer incoming data and write it later
         // to the appSocket stream.
         
-        // TODO when multiple sockets connect at (nearly) the same time,
-        // multiple process are spawned.
-        
         // start proxy server
         var server = net.createServer(function(socket) {
             
             // set up piping on first data event
+            //socket.setKeepAlive(true);
             socket.once('data', function (buffer) {
                 
                 // get host
@@ -121,12 +121,7 @@ exports.start = function() {
                         return send(socket, '500 Internal Server Error', err.toString());
                     }
                     
-                    // if the application managed to publish its portnow try to start this application
-                    if (application.port) {
-                        connectToApp(host, socket, buffer, null, application);
-                    } else {
-                        startApp(host, socket, buffer, application, connectToApp);
-                    }
+                    startApp(host, socket, buffer, application, connectToApp);
                 });
             });
         });

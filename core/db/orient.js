@@ -1,6 +1,6 @@
-var orient = require("orientdb"),
-    GraphDb = orient.GraphDb,
-    Server = orient.Server;
+var orient = require("orientdb");
+var GraphDb = orient.GraphDb;
+var Server = orient.Server;
 
 function connect(config, callback) {
 
@@ -44,7 +44,7 @@ function openDb(config, callback) {
 
     var server = new Server(config.server),
         db = new GraphDb(config.db.database_name, server, config.db);
-
+    
     db.open(function(err) {
 
         if (err) { return callback(err); }
@@ -59,4 +59,3 @@ function openDb(config, callback) {
 
 exports.connect = connect;
 exports.disconnect = disconnect;
-
