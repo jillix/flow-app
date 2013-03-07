@@ -1382,7 +1382,7 @@ function edge(srid, drid, hash, options, callback) {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////// this part was originally in db/queries.js
 
-var orient	= CONFIG.orient.DB;
+//var orient	= CONFIG.orient.DB;
 var pongo = new require('pongo')({
     host: CONFIG.mongoDB.host,
     port: CONFIG.mongoDB.port,
@@ -1391,7 +1391,7 @@ var pongo = new require('pongo')({
 });
 
 // !----------------------------------------------------------------------------------------
-
+/*
 exports.assignRoleToOperation = function( roleID, operationID, callback ){
     orient.addEdge( "5:" + roleID, "5:" + operationID, "CAN_PERFORM", null, callback );
 };
@@ -1431,7 +1431,7 @@ exports.unassignUserFromRole = function( userID, callback ){
 // !----------------------------------------------------------------------------------------
 
 exports.getUserByAuthPub = function( authPub, fields, callback ){
-	orient.sql( "select " + fields + " AS pwd from OGraphVertex where klass = 'User' and auth[pub] = '" + authPub + "' limit 1", callback );
+	sql( "select " + fields + " AS pwd from OGraphVertex where klass = 'User' and auth[pub] = '" + authPub + "' limit 1", callback );
 };
 
 exports.getUsersOperation = function( operationID, userID, callback ) {
@@ -1440,7 +1440,7 @@ exports.getUsersOperation = function( operationID, userID, callback ) {
 	
 	if( opid ) {
 	
-		orient.sql(
+		sql(
             "select module,file,method,in[@class = 'ECanPerform'].params as params from #9:" + opid + " where in traverse(5,5) (@rid = #7:" + userID + ")",
             callback
         );
@@ -1449,7 +1449,7 @@ exports.getUsersOperation = function( operationID, userID, callback ) {
 };
 
 exports.getUsersUIElements = function( userID, callback ) {
-	orient.sql(
+	sql(
         "select _out.name AS name from OGraphEdge where " +
         "_in traverse(3,3) (klass = 'User' and @rid = #5:" + userID + " )"+
         "and _out.klass = 'Module' and _label = 'HAS_ACCESS_TO'", callback
@@ -1457,7 +1457,7 @@ exports.getUsersUIElements = function( userID, callback ) {
 };
 
 exports.getDomainsPublicUser = function(domain, callback) {
-	orient.sql(
+	sql(
         "select publicUser from VDomain where name = '" + domain + "'",
         callback
     );
@@ -1466,7 +1466,8 @@ exports.getDomainsPublicUser = function(domain, callback) {
 // !----------------------------------------------------------------------------------------
 
 exports.getRole = function( roleID, callback ){
-	orient.getVertex( "5:" + roleID, "name,desc", callback );
+    sql("select name,desc from #5:" + roleID, callback);
+	//orient.getVertex( "5:" + roleID, "name,desc", callback );
 };
 
 exports.insertRole = function( name, desc, callback ){
@@ -1482,10 +1483,6 @@ exports.removeRole = function( roleID, callback ){
 };
 
 // !----------------------------------------------------------------------------------------
-
-exports.getUser = function( userID, fields, callback ){
-	orient.getVertex( "5:" + userID, fields, callback );
-};
 
 exports.insertUser = function( data, callback ){
 	
@@ -1508,7 +1505,8 @@ exports.removeUser = function( userID, callback ){
 // !----------------------------------------------------------------------------------------
 
 exports.getOperation = function( operationID, callback ){
-	orient.getVertex( "5:" + operationID, "file,method", callback );
+    sql("select file,method from #5:" + operationID, callback);
+	//orient.getVertex( "5:" + operationID, "file,method", callback );
 };
 
 exports.insertOperation = function( file, method, callback ){
@@ -1526,7 +1524,8 @@ exports.removeOperation = function( operationID, callback ){
 // !----------------------------------------------------------------------------------------
 
 exports.getUIElement = function( UIElementID, callback ){
-	orient.getVertex( "5:" + UIElementID, "", callback );
+    sql("select from #5:" + UIElementID, callback);
+	//orient.getVertex( "5:" + UIElementID, "", callback );
 };
 
 exports.insertUIElement = function( data, callback ){
@@ -1546,7 +1545,7 @@ exports.updateUIElement = function( compID, data, callback ){
 exports.removeUIElement = function( compID, callback ){
     orient.removeVertex( "5:" + compID, callback );
 };
-
+*/
 // !----------------------------------------------------------------------------------------
 
 exports.updateSession = function( sessionID, doc, callback ){
