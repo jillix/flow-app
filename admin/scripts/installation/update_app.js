@@ -3,20 +3,30 @@ CONFIG = require(process.cwd() + "/config.js");
 
 var apps = require(CONFIG.root + "/api/apps");
 var spawn = require("child_process").spawn;
+var orient = require(CONFIG.root + "/core/db/orient");
 
 var fs = require("fs");
 
 if (!CONFIG.argv || !CONFIG.argv.length) {
-    console.error("Please provide a descriptor file as argument.");
+    console.error("Please provide an application id as argument.");
     process.exit(1);
-    return;
 }
-
 
 var appPath = CONFIG.argv[0];
 var appConfig = require(appPath + "/mono.json");
 
 // TODO: Find a relation between .git url and .zip url. This works for Github only.
+if (!appConfig.repository) {   
+    console.error("This application doesn't contain the repository field.");
+    process.exit(2);
+}
+else {
+    if(!appConfig.repository.url) {
+        console.error("This application doesn't contain the repository.url field.");
+        process.exit(3);
+    }
+}
+
 var appUrl = appConfig.repository.url.replace(".git", "/archive/master.zip");
 
 var downloadDirectory = appPath + "/temp";
@@ -32,8 +42,8 @@ mkDir.stdout.pipe(process.stdout);
 
 mkDir.on("exit", function(code) {
     if (code) {
-        console.error("Failed to make temp directory. Error code: " + code);
-        process.exit(code);
+        console.error("Failed to make temp directory.");
+        process.exit(4);
     }
     else {
         console.log("Succesfully created temp directory: " + downloadDirectory);
@@ -48,8 +58,8 @@ mkDir.on("exit", function(code) {
         downloader.on("exit", function(code) {
             // There was a problem
             if (code) {
-                console.error("Update failed with code: " + code);
-                process.exit(code);
+                console.error("Download app failed with code: " + code);
+                process.exit(5);
             } 
             // No problem
             else {
@@ -67,67 +77,60 @@ mkDir.on("exit", function(code) {
                     console.log(data.toString().trim());
                     output += data.toString();
                 });
+                
                 depl_app.stderr.on("data", function(data) {
                     console.error(data.toString().trim());
                     output += data.toString();
                 });
-
-                depl_app.on("exit", function(code){
                 
-                    if (code == 0) {
-                        // TODO improve this appId reading (probably get it through other means)
-                        // (add all output to a -v option and only print ID at the end)
-                        var splits = output.trim().split("\n");
-                        var lastLine = splits[splits.length - 1];
-                        var tokens = lastLine.trim().split(" ");
-                        var appId = tokens[tokens.length - 1];
+                // Deployement is finished
+                depl_app.on("exit", function(code){
+                    var deployedMessage = "Succesfully deployed application";
+                    var appId = output.substring(output.indexOf(deployedMessage) + deployedMessage.length).trim();
 
-                        apps.getApplication(appId, function(err, app) {
-
-                            if (err) {
-                                send.internalservererror(link, "The application was not found in the databse. Application deployment failed somehow. :(");
-                                return;
-                            }
-
-                            apps.getApplicationDomains(appId, function(err, domains) {
-
-                                if (err) {
-                                    send.internalservererror(link, err);
-                                    return;
-                                }
-
-                                var domain = null;
-
-                                for (var i in domains) {
-                                    if (domains[i].indexOf("mono.ch") !== -1) {
-                                        continue;
-                                    }
-                                    domain = domains[i];
-                                    break;
-                                }
-
-                                var result = {
-                                    name: app.name,
-                                    size: 0,
-                                    type: "text/html",
-                                    delete_type: "DELETE",
-                                    delete_url: "http://dev.mono.ch:8000/@/dev_deployer/remove/00000000000000000000000000000002",
-                                    url: domain ? "http://" + domain + "/" : "#"
-                                };
-
-                                send.ok(link.res, [result]);
-                            });
-                        });
+                    console.log("NEW APP ID: " + appId);
+                
+                    if (code) {
+                        console.error("Application updating failed with error code: " + code + " at deployement.");
+                        process.exit(7);
                     }
                     else {
-                        send.internalservererror(link, ":{ :( :[");
+                        orient.connect(CONFIG.orient, function(err) {
+                            if (err) {
+                                console.error(err);
+                                console.error("Failed to connect to OrientDB");
+                                process.exit(8);
+                            }
+
+                            // Verify if the app id exists in database
+                            apps.getApplication(appId, function(err) {
+                                if (err) {
+                                    console.error("The ID doesn't exist in database. Update failed.");
+                                    process.exit(9);
+                                }
+                                else {
+                                    process.exit();
+                                }
+                            });
+
+                            // and now close the orient connection
+                            orient.disconnect(CONFIG.orient);
+                        });                        
                     }
-                    
+
+                    // Delete zip file directory
                     var deleteZipFile = spawn("rm", ["-rf", downloadDirectory]);
                     deleteZipFile.stderr.pipe(process.stderr);
                     deleteZipFile.stdout.pipe(process.stdout);
                     
-                    process.exit();
+                    deleteZipFile.on("exit", function(code) {
+                        if (code) {
+                            console.log("Failed to delete zip file.");
+                        }
+                        else {
+                            console.log("The temp directory was successfully deleted.");
+                        }
+                    });
                 });
             }
         });
