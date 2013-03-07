@@ -143,6 +143,10 @@
                     "roles": [0],
                     "params": []
                 },
+                "redeployMonoDev": {
+                    "roles": [0],
+                    "params": []
+                },
                 "start": {
                     "roles": [0],
                     "params": []

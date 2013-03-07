@@ -4,8 +4,22 @@
     </div>   
     
     <!-- alert -->
-    <div id="errorAlert" class="alert alert-error">
-    </div>    
+    <div id="alerts">
+        <div id="errorAlert" class="alert alert-error">
+            <span class="message"></span>
+            <a class="close" data-dismiss="alert">×</a>
+        </div>
+        
+        <div id="warningAlert" class="alert alert-info">
+            <span class="message"></span>
+            <a class="close" data-dismiss="alert">×</a>
+        </div>
+        
+        <div id="successAlert" class="alert alert-success">
+            <span class="message"></span>
+            <a class="close" data-dismiss="alert">×</a>
+        </div>
+    </div>
     
     <!-- Modal -->
     <div class="modal hide fade" id="modal">
@@ -22,6 +36,7 @@
       </div>
     </div>
 
+    <!-- Apps Table -->
     <table id="appsTable" class='table table-bordered'>
         <thead>
             <tr>
@@ -43,8 +58,10 @@
                     </div>
                     <img src="/spinner.gif" class="spinner"/>
                 </td>
-            </tr>
-            
+            </tr>      
         </tbody>
     </table>
+    
+    <!-- Redeploy MonoDev button -->
+    <button id="redeployMonoDev" data-operation="redeployMonoDev" class="btn btn-danger btn-large" data-loading-text="Redeploying...">Redeploy MonoDev</button>
 </div>
