@@ -433,10 +433,6 @@ function start_apps {
 
     # do not allow the cron jobs to start applications since they will send false negative emails
     HOME=/home/$USERNAME sudo -u $USERNAME sh -c "cd /home/$USERNAME; ~/legacy/scripts/shell/starter.sh"
-    HOME=/home/$USERNAME sudo -u $USERNAME sh -c "cd /home/$USERNAME; ~/mono/admin/scripts/keep_alive.sh"
-    # wait a little and call again because it takes a while to start orient
-    sleep 5
-    HOME=/home/$USERNAME sudo -u $USERNAME sh -c "cd /home/$USERNAME; ~/mono/admin/scripts/keep_alive.sh"
 }
 
 function final_steps {
