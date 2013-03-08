@@ -2,7 +2,7 @@ var fs = require("fs");
 var cp = require("child_process");
 
 var server = require(CONFIG.root + "/api/server");
-var db = require(CONFIG.root + "/core/model");
+var db = require(CONFIG.root + "/lib/model");
 
 
 /*

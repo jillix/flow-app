@@ -1,7 +1,7 @@
 // the mono configuration as global object
-CONFIG = require(process.cwd() + "/core/config");
+CONFIG = require(process.cwd() + "/lib/config");
 
-var orient = require(CONFIG.root + "/core/db/orient");
+var orient = require(CONFIG.root + "/lib/db/orient");
 var server = require(CONFIG.root + "/api/server");
 var mods = require(CONFIG.root + "/api/modules");
 

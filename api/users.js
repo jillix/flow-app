@@ -1,4 +1,4 @@
-var db = require(CONFIG.root + "/core/model");
+var db = require(CONFIG.root + "/lib/model");
 
 function gitClone(url, dirName, baseName, callback) {
 

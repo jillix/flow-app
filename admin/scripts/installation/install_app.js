@@ -1,5 +1,5 @@
 // the mono configuration as global object
-CONFIG = require(process.cwd() + "/core/config");
+CONFIG = require(process.cwd() + "/lib/config");
 
 var apps = require(CONFIG.root + "/api/apps");
 
