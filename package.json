@@ -32,11 +32,11 @@
         "forever"       : "*",
         "formidable"    : "*",
         "github"        : "*",
-        "pongo"         : "*",
         "node-static"   : "*",
         "optimist"      : "*",
         "orientdb"      : "0.9.8",
         "pause"         : "*",
+        "pongo"         : "*",
         "request"       : "*",
         "syntax-error"  : "*"
     },
