@@ -1,19 +1,19 @@
-// the mono configuration as global object
-CONFIG = require(process.cwd() + "/lib/config");
+// load mono api
+require(process.cwd() + '/api');
 
 var cp = require('child_process');
 var fs = require('fs');
 
-var appsApi = require(CONFIG.root + "/api/apps");
+var appsApi = M.app;
 
-var apps = fs.readdirSync(CONFIG.APPLICATION_ROOT);
+var apps = fs.readdirSync(M.config.APPLICATION_ROOT);
 
 var descriptorFiles = [];
 
 for (var i in apps) {
 
     var appId = apps[i];
-    var monoJson = CONFIG.APPLICATION_ROOT + appId + "/mono.json";
+    var monoJson = M.config.APPLICATION_ROOT + appId + "/mono.json";
 
     if (appId.length == 32 && fs.existsSync(monoJson)) {
         descriptorFiles.push(monoJson);

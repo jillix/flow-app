@@ -1,16 +1,15 @@
-// the mono configuration as global object
-CONFIG = require(process.cwd() + "/lib/config");
+// load mono api
+require(process.cwd() + '/api');
 
-var orient = require(CONFIG.root + "/lib/db/orient");
-var server = require(CONFIG.root + "/api/server");
-var mods = require(CONFIG.root + "/api/modules");
+var orient = M.orient;
+var mods = M.module;
 
-if (!CONFIG.argv || !CONFIG.argv.length) {
+if (!M.config.argv || !M.config.argv.length) {
     console.error("Please provide a web path format (e.g. 'github/adioo/bind/v0.2.0') as argument.");
     process.exit(1);
 }
 
-var webPath = CONFIG.argv[0].toString();
+var webPath = M.config.argv[0].toString();
 var splits = webPath.split("/");
 if (splits.length != 4) {
     console.error("Invalid module version web path. This must be look like: source/owner/name/version");
@@ -35,7 +34,7 @@ if (!owner || !name || !version) {
 var module = new mods.Module(source, owner, name, version);
 
 // connect to the orient server first
-orient.connect(CONFIG.orient, function(err) {
+orient.connect(M.config.orient, function(err) {
 
     if (err) {
         console.error(err);
@@ -54,7 +53,7 @@ orient.connect(CONFIG.orient, function(err) {
         console.log("Succesfully uninstalled module: " + module.getVersionPath());
 
         // and now close the orient connection
-        orient.disconnect(CONFIG.orient);
+        orient.disconnect(M.config.orient);
     });
 });
 

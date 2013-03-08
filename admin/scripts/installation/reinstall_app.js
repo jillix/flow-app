@@ -1,30 +1,30 @@
-// the mono configuration as global object
-CONFIG = require(process.cwd() + "/config.js");
+// load mono api
+require(process.cwd() + '/api');
 
-var apps = require(CONFIG.root + "/api/apps");
+var apps = M.app;
 
 var fs = require("fs");
 
-if (!CONFIG.argv || !CONFIG.argv.length) {
+if (!M.config.argv || !M.config.argv.length) {
     console.error("Please provide a descriptor file as argument.");
     process.exit(1);
     return;
 }
 
 // TODO allow multiple application uninstalls
-if (CONFIG.argv.length > 1) {
+if (M.config.argv.length > 1) {
     var apps = "";
-    for (var i in CONFIG.argv) {
-        apps += CONFIG.argv[i] + ", ";
+    for (var i in M.config.argv) {
+        apps += M.config.argv[i] + ", ";
     }
     apps = apps.slice(0, -2);
 
-    console.error("Currently I can only uninstall one application. You provided " + CONFIG.argv.length + ": " + apps);
+    console.error("Currently I can only uninstall one application. You provided " + M.config.argv.length + ": " + apps);
     process.exit(2);
     return;
 }
 
-apps.uninstall(CONFIG.argv[0], function(err, descriptor) {
+apps.uninstall(M.config.argv[0], function(err, descriptor) {
     
     if (err) {
         console.error(err);
@@ -36,7 +36,7 @@ apps.uninstall(CONFIG.argv[0], function(err, descriptor) {
 
     console.log("Succesfully uninstalled application: " + descriptor.appId);
 
-    apps.install(CONFIG.argv[0], function(err, descriptor) {
+    apps.install(M.config.argv[0], function(err, descriptor) {
 
         if (err) {
             console.error(err);

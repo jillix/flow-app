@@ -1,21 +1,21 @@
-// the mono configuration as global object
-CONFIG = require(process.cwd() + "/lib/config");
+// load mono api
+require(process.cwd() + '/api');
 
-var orient = require(CONFIG.root + "/lib/db/orient");
-var server = require(CONFIG.root + "/api/server");
-var mods = require(CONFIG.root + "/api/modules");
+var orient = M.orient;
+var dir = M.dir;
+var mods = M.module;
 
 var fs = require("fs");
 
-if (!CONFIG.argv || !CONFIG.argv.length) {
+if (!M.config.argv || !M.config.argv.length) {
     console.error("Please provide a module directory path or web path format (e.g. 'github/adioo/bind/v0.2.0') as argument.");
     process.exit(1);
 }
 
 // this means install a local module
-if (CONFIG.argv.length == 2) {
-    var path = CONFIG.argv[0].toString();
-    var version = CONFIG.argv[1].toString();
+if (M.config.argv.length == 2) {
+    var path = M.config.argv[0].toString();
+    var version = M.config.argv[1].toString();
 
     if (!path) {
         console.error("Invalid module directory path: " + path);
@@ -35,7 +35,7 @@ if (CONFIG.argv.length == 2) {
         process.exit(4);
     }
 
-    server.readDescriptor(descriptorPath, function(err, descriptor) {
+    dir.readDescriptor(descriptorPath, function(err, descriptor) {
 
         if (err) {
             console.error("Invalid or inaccessible module descriptor: " + descriptorPath)
@@ -53,7 +53,7 @@ if (CONFIG.argv.length == 2) {
 
 // otherwise it must be a web version path (on GitHub, BitBucket, etc.)
 else {
-    var webPath = CONFIG.argv[0].toString();
+    var webPath = M.config.argv[0].toString();
     var splits = webPath.split("/");
     if (splits.length != 4) {
         console.error("Invalid module version web path. This must be look like: source/owner/name/version");
@@ -84,7 +84,7 @@ else {
 function install(module) {
 
     // connect to the orient server first
-    orient.connect(CONFIG.orient, function(err) {
+    orient.connect(M.config.orient, function(err) {
 
         if (err) {
             console.error(err);
@@ -106,7 +106,7 @@ function install(module) {
             console.log("Succesfully installed module: " + module.getVersionPath());
 
             // and now close the orient connection
-            orient.disconnect(CONFIG.orient);
+            orient.disconnect(M.config.orient);
         });
     });
 
