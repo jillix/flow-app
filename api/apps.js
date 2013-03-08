@@ -729,23 +729,30 @@ function getApplications(callback) {
 var cp = require("child_process");
 
 function isApplicationRunning(appId, callback) {
-
-    var apid = cp.spawn(CONFIG.root + "/admin/scripts/app_pid.sh", [appId]);
-
+    
+    var apid = cp.spawn('pgrep', ['-f', appId]);
+    
+    var pid = '';
+    apid.stdout.on('data', function () {
+        pid += data.toString('ascii');
+    });
+    
     var error = "";
     apid.stderr.on("data", function (data) {
         error += data.toString();
     });
 
     apid.on("exit", function(code) {
-        switch (code) {
-            case 0:
-                return callback(null, true);
-            case 1:
-                return callback(null, false);
-            default:
-                return callback(error);
+        
+        if (error) {
+            return callback(error);
         }
+        
+        if (parseInt(pid, 10)) {
+            return callback(null, true);
+        }
+        
+        callback(null, false);
     });
 }
 
