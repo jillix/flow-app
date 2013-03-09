@@ -68,6 +68,15 @@ function install {
     fi
 }
 
+# this package installs the pgrep programm
+function install_procps {
+    # linux
+    apt-get install procps
+    
+    # mac os x
+    #sudo port install proctools
+}
+
 function install_nginx {
 
     INFO=`dpkg -s nginx 2>/dev/null`
@@ -254,9 +263,12 @@ function setup_user {
 }
 
 function install_software {
-
+    
     # needed to add the apt-add-repository command
     install python-software-properties apt-add-repository
+    
+    # install pgrep
+    install_procps
 
     # install git if not present
     install git
