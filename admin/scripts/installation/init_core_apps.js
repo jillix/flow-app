@@ -4,8 +4,6 @@ require(process.cwd() + '/api');
 var cp = require('child_process');
 var fs = require('fs');
 
-var appsApi = M.app;
-
 var apps = fs.readdirSync(M.config.APPLICATION_ROOT);
 
 var descriptorFiles = [];
@@ -27,7 +25,7 @@ function installApp(i) {
         console.log("-------------------");
         console.log("Installing application: " + descriptorFiles[i]);
 
-        appsApi.install(descriptorFiles[i], function(err, descriptor) {
+        M.app.install(descriptorFiles[i], function(err, descriptor) {
 
             if (err) {
                 console.error(err);
@@ -44,4 +42,3 @@ function installApp(i) {
 
 // start the installation of all apps
 installApp(0);
-

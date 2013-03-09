@@ -1,8 +1,6 @@
 // load mono api
 require(process.cwd() + '/api');
 
-var apps = M.app;
-
 var fs = require("fs");
 
 if (!M.config.argv || !M.config.argv.length) {
@@ -24,7 +22,7 @@ if (M.config.argv.length > 1) {
     return;
 }
 
-apps.uninstall(M.config.argv[0], function(err, descriptor) {
+M.app.uninstall(M.config.argv[0], function(err, descriptor) {
 
     if (err) {
         console.error(err);
@@ -36,4 +34,3 @@ apps.uninstall(M.config.argv[0], function(err, descriptor) {
     console.log("Succesfully uninstalled application: " + descriptor.appId);
     process.exit();
 });
-

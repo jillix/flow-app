@@ -1,10 +1,6 @@
 // load mono api
 require(process.cwd() + '/api');
 
-var orient = M.orient;
-var dir = M.dir;
-var mods = M.module;
-
 var fs = require("fs");
 
 if (!M.config.argv || !M.config.argv.length) {
@@ -35,7 +31,7 @@ if (M.config.argv.length == 2) {
         process.exit(4);
     }
 
-    dir.readDescriptor(descriptorPath, function(err, descriptor) {
+    M.dir.readDescriptor(descriptorPath, function(err, descriptor) {
 
         if (err) {
             console.error("Invalid or inaccessible module descriptor: " + descriptorPath)
@@ -43,7 +39,7 @@ if (M.config.argv.length == 2) {
         }
 
         // build the module object for the API
-        var module = new mods.Module(descriptor.source, descriptor.owner, descriptor.name, version);
+        var module = new M.module.Module(descriptor.source, descriptor.owner, descriptor.name, version);
         module.local = path;
 
         // now install
@@ -75,7 +71,7 @@ else {
     }
 
     // build the module object for the API
-    var module = new mods.Module(source, owner, name, version);
+    var module = new M.module.Module(source, owner, name, version);
 
     // now install
     install(module);
@@ -84,7 +80,7 @@ else {
 function install(module) {
 
     // connect to the orient server first
-    orient.connect(M.config.orient, function(err) {
+    M.orient.connect(M.config.orient, function(err) {
 
         if (err) {
             console.error(err);
@@ -93,7 +89,7 @@ function install(module) {
         }
 
         // choose different linstallation type for local modules
-        var installType = module.local ? mods.installLocalModule : mods.installModule;
+        var installType = module.local ? M.module.installLocalModule : M.module.installModule;
 
         installType(module, function(err) {
 
@@ -106,9 +102,8 @@ function install(module) {
             console.log("Succesfully installed module: " + module.getVersionPath());
 
             // and now close the orient connection
-            orient.disconnect(M.config.orient);
+            M.orient.disconnect(M.config.orient);
         });
     });
 
 }
-
