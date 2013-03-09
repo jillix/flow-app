@@ -14,8 +14,10 @@
     ],
     "main": "server.js",
     "scripts": {
-        "install"   : "admin/scripts/install.sh",
-        "test"      : "node node_modules/tap/bin/tap.js ./test"
+        "preinstall"    : "admin/scripts/preinstall.sh",
+        "install"       : "node admin/scripts/install.js",
+        "postinstall"   : "admin/scripts/postinstall.sh",
+        "test"          : "node node_modules/tap/bin/tap.js ./test"
     },
     "repository": {
         "type": "git",

@@ -19,14 +19,3 @@ if [ $? -gt 0 ]
 then
     exit 1
 fi
-
-# configure mono
-node "$MONO_ROOT/admin/scripts/installation/init_core_apps.js"
-
-# close now OrientDB server
-if [ -n "$ORIENTDB_PROCESS_KILL" ]
-then
-    echo "Stopping OrientDB server..."
-    kill `lsof -iTCP:$ORIENTDB_PORT -sTCP:LISTEN -t`
-fi
-

@@ -1,7 +1,6 @@
 // load mono api
 require(process.cwd() + '/api');
 
-var cp = require('child_process');
 var fs = require('fs');
 
 var apps = fs.readdirSync(M.config.APPLICATION_ROOT);
