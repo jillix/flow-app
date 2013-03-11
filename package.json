@@ -12,7 +12,7 @@
             "email": "gabipetrovay@gmail.com"
         }
     ],
-    "main": "server.js",
+    "main": "start.js",
     "scripts": {
         "preinstall"    : "admin/scripts/preinstall.sh",
         "install"       : "node admin/scripts/install.js",
