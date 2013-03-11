@@ -87,7 +87,7 @@
                    "type": "a",
                    "path": "html/layout_deployer"
                },
-               "css": ["http://blueimp.github.com/cdn/css/bootstrap.min.css", "http://blueimp.github.com/cdn/css/bootstrap-responsive.min.css"],
+               "css": ["http://blueimp.github.com/cdn/css/bootstrap.min.css", "http://blueimp.github.com/cdn/css/bootstrap-responsive.min.css", "css/deployer.css"],
                "modules": {
                    "deployer": "dev_deployer"
                }

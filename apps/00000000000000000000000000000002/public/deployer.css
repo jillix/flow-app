@@ -68,3 +68,7 @@ section {
     text-align: center;
     margin: auto;
 }
+
+.alert {
+    display: none;
+}

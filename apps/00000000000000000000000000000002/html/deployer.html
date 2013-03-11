@@ -2,9 +2,27 @@
     <div class="page-header">
         <h1>Upload App Descriptor</h1>
     </div>
-    
-    <!-- Textbox for download from Github -->
+
+    <!-- Deploy from Github -->
     <h3>Deploy from Github</h3>
+    
+    <!-- Alerts zone -->
+    <div id="alerts">
+        <div id="errorAlert" class="alert alert-error">
+            <span class="message"></span>
+            <a class="close" data-dismiss="alert">×</a>
+        </div>
+        
+        <div id="warningAlert" class="alert alert-info">
+            <span class="message"></span>
+            <a class="close" data-dismiss="alert">×</a>
+        </div>
+        
+        <div id="successAlert" class="alert alert-success">
+            <span class="message"></span>
+            <a class="close" data-dismiss="alert">×</a>
+        </div>
+    </div>
     
     <div class="input-append" id="deploy-from-github">
         <input id="repository-path" type="text" placeholder="Github url for app repository." />
