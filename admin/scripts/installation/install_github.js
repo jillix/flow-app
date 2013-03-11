@@ -15,7 +15,7 @@ if (!CONFIG.argv || !CONFIG.argv.length) {
 var repositoryPath = CONFIG.argv[0];
 var appZipUrl = repositoryPath.replace(".git", "/archive/master.zip");
 
-var downloadDirectory = CONFIG.MONO_ROOT + "/temp";
+var downloadDirectory = CONFIG.root + "/temp";
 var zipPath = downloadDirectory + "/app.zip";
 
 // Make the temp directory
@@ -79,7 +79,7 @@ mkDir.on("exit", function(code) {
                     }
 
                     // Delete zip file directory
-                    var deleteZipFile = spawn("rm", ["-rf", downloadDirectory]);
+                    var deleteZipFile = spawn("rm", [zipPath]);
                     deleteZipFile.stderr.pipe(process.stderr);
                     deleteZipFile.stdout.pipe(process.stdout);
                     
@@ -88,7 +88,7 @@ mkDir.on("exit", function(code) {
                             console.log("Failed to delete zip file.");
                         }
                         else {
-                            console.log("The temp directory was successfully deleted.");
+                            console.log("The zip file from temp directory was successfully deleted.");
                         }
                     });
                 });

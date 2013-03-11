@@ -840,6 +840,7 @@ exports.installDependencies = installDependencies;
 exports.installUsers = installUsers;
 exports.installRoles = installRoles;
 
+exports.installFromGithub = installFromGithub;
 exports.updateApplication = updateApplication; 
 
 exports.getApplication = getApplication;

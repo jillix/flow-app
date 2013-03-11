@@ -112,7 +112,7 @@
            }
        }, 
        "dev_deployer": {
-            "module": "github/gabipetrovay/dev_deployer/v0.0.2",
+            "module": "github/gabipetrovay/dev_deployer/dev",
             "roles": [0],
             "config": {
                 "html": {
@@ -129,7 +129,7 @@
                 "deployFromGithub": {
                     "roles": [0],
                     "params": []
-                },
+                }
             }
         },
         "dev_applications": {
