@@ -1,11 +1,12 @@
 var fs = require("fs");
 
+var spawn = require("child_process").spawn;
+
 var orient = require(CONFIG.root + "/core/db/orient");
 var modules = require(CONFIG.root + "/api/modules");
 var server = require(CONFIG.root + "/api/server");
 var db = require(CONFIG.root + "/core/model/orient");
-
-
+  
 /**
  *
  */
@@ -290,6 +291,89 @@ function uninstallFromObject(descriptor, callback) {
                 });
             });
         });
+    });
+}
+
+function installFromGithub(repositoryPath, callback) {
+    // Start the deploy from Github operation
+    if (CONFIG.log.applicationInstallation || CONFIG.logLevel === "verbose") {
+        console.log("Starting deploy from Github operation...");
+    }
+
+    var deployer = spawn("node", [CONFIG.root + "/admin/scripts/installation/install_github.js", repositoryPath]);
+
+    deployer.stderr.pipe(process.stderr);
+    deployer.stdout.pipe(process.stdout);
+
+    // Finished the operation
+    deployer.on('exit', function(code) {
+        if (code) {
+            var errors = [
+                "",
+                "Please provide a repository path as argument.",
+                "Failed to make temp directory.",
+                "Download of zip failed.",
+                "Unknown reason. Maybe if you check @/core/getLog you will see the error.",
+            ];
+            
+            var err = "Deploy failed for this application. Error: " + errors[code] + " Error code: " + code; 
+            
+            console.error(err);
+            callback(err);
+        } else {
+            if (CONFIG.log.applicationInstallation || CONFIG.logLevel === "verbose") {
+                console.log("Application successfully deployed from Github.");
+                console.log("------------");
+            }
+            
+            var result = "Application successfully deployed from Github.";
+            
+            callback(null, result);
+        }
+    });
+}
+
+function updateApplication(appId, callback) {
+    // Start the Update operation
+    if (CONFIG.log.applicationInstallation || CONFIG.logLevel === "verbose") {
+        console.log("Starting UPDATE operation...");
+    }
+
+    var updater = spawn("node", [CONFIG.root + "/admin/scripts/installation/update_app.js", CONFIG.APPLICATION_ROOT + "/" + appId]);
+
+    updater.stderr.pipe(process.stderr);
+    updater.stdout.pipe(process.stdout);
+
+    // Finished the operation
+    updater.on('exit', function(code) {
+        if (code) {
+            var errors = [
+                "",
+                "Please provide an application id as argument.",
+                "This application doesn't contain the repository field.",
+                "This application doesn't contain the repository.url field.",
+                "Failed to make temp directory.",
+                "Download of zip failed.",
+                "The application was not found in the databse. Application deployment failed somehow. :(",
+                "Unknown reason. Maybe if you check @/core/getLog you will see the error.",
+                "Failed to connect to OrientDB",
+                "The ID doesn't exist in database. Update failed."
+            ];
+            
+            var err = "Update failed for application: " + appId + ". Error: " + errors[code] + " Error code: " + code; 
+            
+            console.error(err);
+            callback(err);
+        } else {
+            if (CONFIG.log.applicationInstallation || CONFIG.logLevel === "verbose") {
+                console.log("Application " + appId + " successfully updated.");
+                console.log("------------");
+            }
+            
+            var result = "Application " + appId + " successfully updated.";
+            
+            callback(null, result);
+        }
     });
 }
 
@@ -756,8 +840,9 @@ exports.installDependencies = installDependencies;
 exports.installUsers = installUsers;
 exports.installRoles = installRoles;
 
+exports.updateApplication = updateApplication; 
+
 exports.getApplication = getApplication;
 exports.getApplications = getApplications;
 exports.getApplicationDomains = getApplicationDomains;
 exports.isApplicationRunning = isApplicationRunning;
-

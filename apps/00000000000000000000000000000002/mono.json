@@ -125,7 +125,11 @@
                 "upload": {
                     "roles": [0],
                     "params": [{ "uploadDir": "uploads" }]
-                }
+                },
+                "deployFromGithub": {
+                    "roles": [0],
+                    "params": []
+                },
             }
         },
         "dev_applications": {

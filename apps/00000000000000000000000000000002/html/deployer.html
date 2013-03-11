@@ -2,8 +2,17 @@
     <div class="page-header">
         <h1>Upload App Descriptor</h1>
     </div>
-    <br>
+    
+    <!-- Textbox for download from Github -->
+    <h3>Deploy from Github</h3>
+    
+    <div class="input-append" id="deploy-from-github">
+        <input id="repository-path" type="text" placeholder="Github url for app repository." />
+        <button class="btn btn-primary btn-start"><i class="icon-download icon-white"></i> Deploy</button>
+    </div>
+    
     <!-- The file upload form used as target for the file upload widget -->
+    <h3>Upload from computer</h3>
     <form id="fileupload" action="/@/dev_deployer/upload" method="POST" enctype="multipart/form-data">
         <!-- The fileupload-buttonbar contains buttons to add/delete files and start/cancel the upload -->
         <div class="row fileupload-buttonbar">
