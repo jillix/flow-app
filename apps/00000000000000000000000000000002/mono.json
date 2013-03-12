@@ -8,7 +8,7 @@
     },
     "domains": [
         "dev.jillix.net",
-        "dev.mono.ch:8000"
+        "dev.mono.ch"
     ],
     "scripts": [
     ],
