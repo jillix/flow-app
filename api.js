@@ -2,9 +2,9 @@
 /////////////////////////////////////////////////////////////////////////////////////////// NEW MONO API
 
 M.db.orient.connect
-M.db.orient...
+M.db.orient + orient node driver methods
 M.db.mongo.connect
-M.db.mongo...
+M.db.mongo + mongodb driver methods
 
 M.app.deploy
 M.app.install
@@ -117,7 +117,7 @@ M.util.merge
 */
 M = {config: require('./lib/config')};
 M.orient = require('./lib/api/db/orient');
-M.app = require('./lib/_api/apps');
+M.app = require('./lib/api/app');
 M.module = require('./lib/_api/modules');
 M.repo = require('./lib/_api/repos');
 M.dir = require('./lib/_api/directory');
