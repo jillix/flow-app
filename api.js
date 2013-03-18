@@ -118,13 +118,15 @@ M.util.merge
 M = {config: require('./lib/config')};
 M.orient = require('./lib/api/db/orient');
 M.app = require('./lib/api/app');
-M.module = require('./lib/_api/modules');
-M.repo = require('./lib/_api/repos');
+M.operation = require('./lib/api/operation');
+M.module = require('./lib/api/module');
+M.user = require('./lib/api/user');
+M.util = require('./lib/api/util');
+
+/*M.repo = require('./lib/_api/repos');
 M.dir = require('./lib/_api/directory');
-M.user = require('./lib/_api/users');
 M.model = require('./lib/_api/model');
 M.session = require('./lib/_api/sessions');
-M.installation = require('./lib/_api/installation');
-M.util = require('./lib/_api/utils');
+M.installation = require('./lib/_api/installation');*/
 
 module.exports = M;
