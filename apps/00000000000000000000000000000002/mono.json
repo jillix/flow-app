@@ -10,25 +10,14 @@
         "dev.jillix.net",
         "dev.mono.ch"
     ],
-    "scripts": [
-    ],
+    "scripts": [],
+    "favicon": "public/favion.ico",
     "publicDir": "public",
-    "publicUser": 0,
-    "users": [
-        {
-            "id": 0,
-            "username": "",
-            "password": "",
-            "data": {
-                "fullname": "MonoDev Public User"
-            },
-            "roles": [0]
-        }
-    ],
     "roles": [
         {
             "id": 0,
-            "name": "MonoDev Public Role"
+            "name": "MonoDev Public Role",
+            "public": true
         }
     ],
     "miids": {

@@ -120,7 +120,6 @@ M.orient = require('./lib/api/db/orient');
 M.app = require('./lib/api/app');
 M.operation = require('./lib/api/operation');
 M.module = require('./lib/api/module');
-M.user = require('./lib/api/user');
 M.session = require('./lib/api/session');
 M.util = require('./lib/api/util');
 
