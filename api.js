@@ -117,6 +117,7 @@ M.util.merge
 */
 M = {config: require('./lib/config')};
 M.orient = require('./lib/api/db/orient');
+M.mongo = require('./lib/api/db/mongo');
 M.app = require('./lib/api/app');
 M.operation = require('./lib/api/operation');
 M.module = require('./lib/api/module');
