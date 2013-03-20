@@ -30,7 +30,7 @@
     ],
     "dependencies" : {
         "connect"       : "*",
-        "cookies"       : "*",
+        "cookie"        : "*",
         "forever"       : "*",
         "formidable"    : "*",
         "github"        : "*",
