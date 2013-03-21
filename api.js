@@ -1,38 +1,4 @@
-/*
-/////////////////////////////////////////////////////////////////////////////////////////// NEW MONO API
-
-M.db.orient.connect
-M.db.orient + orient node driver methods
-M.db.mongo.connect
-M.db.mongo + mongodb driver methods
-
-M.app.deploy
-M.app.install
-M.app.uninstall
-M.app.update
-M.app.info
-M.app.start
-M.app.stop
-
-M.module.install
-M.module.uninstall
-M.module.update
-M.module.info
-
-M.user.add
-M.user.remove
-M.user.update
-M.user.login
-M.user.logout
-M.user.info
-
-M.session.start
-M.session.end
-M.session.endAll
-M.session.update
-M.session.get
-
-/////////////////////////////////////////////////////////////////////////////////////////// OLD MONO API
+/*///////////////////////////// OLD MONO API
 
 M.session.startSession
 M.session.endSessions
@@ -115,6 +81,7 @@ M.util.read
 M.util.ip
 M.util.merge
 */
+
 M = {config: require('./lib/config')};
 M.orient = require('./lib/api/db/orient');
 M.mongo = require('./lib/api/db/mongo');
