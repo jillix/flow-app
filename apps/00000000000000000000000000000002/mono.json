@@ -13,6 +13,13 @@
     "scripts": [],
     "favicon": "public/favion.ico",
     "publicDir": "public",
+    "errors": {
+        "*": {
+            "html": 'html/error/404.html',
+            "css": 'css/error.css',
+            "scripts": ['error.js']
+        }
+    }
     "roles": [
         {
             "id": 0,
@@ -26,10 +33,7 @@
             "roles": [0],
             
             "config": {
-                "html": {
-                    "type": "a",
-                    "path": "html/layout"
-                },
+                "html": "html/layout",
                 "css": ["http://blueimp.github.com/cdn/css/bootstrap.min.css"],
                 "title": "Mono Dev",
                 "modules": {
@@ -60,10 +64,7 @@
            "module": "github/adioo/layout/v0.0.4",
            "roles": [0],
            "config": {
-               "html": {
-                   "type": "a",
-                   "path": "html/home"
-               },
+               "html": "html/home",
                "css": ["http://blueimp.github.com/cdn/css/bootstrap.min.css", "http://blueimp.github.com/cdn/css/bootstrap-responsive.min.css", "css/home.css"]
            }
        },
@@ -72,10 +73,7 @@
            "module": "github/adioo/layout/v0.0.4",
            "roles": [0],
            "config": {
-               "html": {
-                   "type": "a",
-                   "path": "html/layout_deployer"
-               },
+               "html": "html/layout_deployer",
                "css": ["http://blueimp.github.com/cdn/css/bootstrap.min.css", "http://blueimp.github.com/cdn/css/bootstrap-responsive.min.css"],
                "modules": {
                    "deployer": "dev_deployer"
@@ -86,17 +84,12 @@
            "module": "github/adioo/layout/v0.0.4",
            "roles": [0],
            "config": {
-               "html": {
-                   "type": "a",
-                   "path": "html/layout_applications"
-               },
+               "html": "html/layout_applications",
                "css": ["http://blueimp.github.com/cdn/css/bootstrap.min.css", "http://blueimp.github.com/cdn/css/bootstrap-responsive.min.css"],
                "modules": {
                    "applications": "dev_applications"
                },
-               "scripts": [
-                   "/jquery.js"
-               ],
+               "scripts": ['ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js'],
                "css": ["http://blueimp.github.com/cdn/css/bootstrap.min.css", "http://blueimp.github.com/cdn/css/bootstrap-responsive.min.css"]
            }
        }, 
@@ -104,10 +97,7 @@
             "module": "github/gabipetrovay/dev_deployer/v0.0.2",
             "roles": [0],
             "config": {
-                "html": {
-                    "type": "a",
-                    "path": "html/deployer"
-                },
+                "html": "html/deployer",
                 "css": ["http://blueimp.github.com/Bootstrap-Image-Gallery/css/bootstrap-image-gallery.min.css", "uploader/css/jquery.fileupload-ui.css"]
             },
             "operations": {
@@ -121,10 +111,7 @@
             "module": "github/IonicaBizau/dev_applications/dev",
             "roles": [0],
             "config": {
-                "html": {
-                    "type": "a",
-                    "path": "html/applications"
-                },
+                "html": "html/applications",
                 "css": ["http://blueimp.github.com/Bootstrap-Image-Gallery/css/bootstrap-image-gallery.min.css", "uploader/css/jquery.fileupload-ui.css", "css/applications.css"]
             },
             "operations": {
