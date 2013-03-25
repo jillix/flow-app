@@ -3,6 +3,8 @@ var util = require(CONFIG.root + "/core/util" ),
     model_o = require(CONFIG.root + "/core/model/orient.js"),
     model_m = require(CONFIG.root + "/core/model/mongo.js");
 
+var Cookies = require("cookies");
+
 var expire_time = 9;
 
 // session class
@@ -52,7 +54,8 @@ exports.get = function(link, callback) {
     var sid = null;
 
     if (link.req.headers["cookie"]) {
-        sid = link.req.headers["cookie"].split("=")[1];
+        var cookies = new Cookies(link.req, link.res);
+        sid = cookies.get("sid");
     }
 
     var publicSession = function(domain, callback) {

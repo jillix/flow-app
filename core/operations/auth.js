@@ -48,6 +48,7 @@ exports.login = function(link) {
 
             cookies = new Cookies(link.req, link.res);
             cookies.set("sid", session.sid, { path: "/" });
+            cookies.set("lang", language, { path: "/" });
             send.ok(link.res, session.sid);
         });
     });
@@ -61,6 +62,7 @@ exports.logout = function(link) {
         link.session.end(function() {
             cookies = new Cookies(link.req, link.res);
             cookies.set("sid");
+            cookies.set("lang");
             send.ok(link.res, session.sid);
         });
 

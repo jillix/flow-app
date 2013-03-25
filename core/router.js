@@ -2,6 +2,8 @@ var send = require(CONFIG.root + "/core/send").send;
 var serve = require(CONFIG.root + "/core/operations/static").serve;
 var getDomainApplication = require(CONFIG.root + "/core/model/orient.js").getDomainApplication;
 
+var Cookies = require("cookies");
+
 var baseUrl = "/" + CONFIG.operationKey + "/core/getModule";
 var nl = (CONFIG.logLevel == "debug" ? "\r\n" : "");
 var routingTables = {};
@@ -50,6 +52,11 @@ function route(link, application) {
             } else {
                 language = application.language || "*";
             }
+        }
+
+        if (language === "null") {
+            var cookies = new Cookies(link.req, link.res);
+            language = cookies.get("lang") || "de";
         }
 
         // set headers
