@@ -7,7 +7,7 @@ TMP_DIR=tmp
 mkdir -p "$TMP_DIR"
 
 ORIENTDB_ROOT=bin/orientdb
-if [ `which curl` == "" ]
+if [[ `which curl` == "" ]]
 then
     echo "Could not find curl. Please install it and try again." 2>&1
     exit 10
