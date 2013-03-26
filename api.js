@@ -107,7 +107,6 @@ M.config.app.errors = {
 /*M.repo = require('./lib/_api/repos');
 M.dir = require('./lib/_api/directory');
 M.model = require('./lib/_api/model');
-M.session = require('./lib/_api/sessions');
 M.installation = require('./lib/_api/installation');*/
 
 module.exports = M;
