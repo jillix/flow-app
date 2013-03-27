@@ -5,9 +5,14 @@
     "operationKey"  : "@",
     "coreKey"       : "core",
     "adminEmail"    : "admin@jillix.com",
-    "monoServer"    : "server.js",
     "logLevel"      : "error",
     "portRange"     : [10001, 19999],
+    
+    "session": {
+        "id": "_s",
+        "locale": "_l",
+        "path": "/"
+    },
     
     "orient": {
         "server": {
