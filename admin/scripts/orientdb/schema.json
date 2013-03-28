@@ -266,17 +266,35 @@
                     "not-null": true
                 },
                 {
-                    "name": "publicUser",
+                    "name": "errors",
+                    "type": "EMBEDDEDMAP",
+                    "mandatory": false,
+                    "not-null": false
+                },
+                {
+                    "name": "scripts",
+                    "type": "EMBEDDEDLIST",
+                    "mandatory": false,
+                    "not-null": false
+                },
+                {
+                    "name": "publicRole",
                     "type": "LINK",
                     "mandatory": true,
-                    "not-null": true,
-                    "linked-class": "VUser"
+                    "not-null": false,
+                    "linked-class": "VRole"
                 },
                 {
                     "name": "publicDir",
                     "type": "STRING",
                     "mandatory": false,
                     "not-null": false
+                },
+                {
+                    "name": "locale",
+                    "type": "STRING",
+                    "mandatory": true,
+                    "not-null": true
                 }
             ]
         },

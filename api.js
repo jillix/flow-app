@@ -1,3 +1,38 @@
+
+M = { config: require('./lib/config') };
+
+M.error = require('./lib/api/error');
+M.orient = require('./lib/api/db/orient');
+M.mongo = require('./lib/api/db/mongo');
+M.util = require('./lib/api/util');
+M.fs = require('./lib/api/fs');
+M.repos = require('./lib/api/repos');
+
+M.app = require('./lib/api/app');
+M.module = require('./lib/api/module');
+
+M.operation = require('./lib/api/operation');
+M.session = require('./lib/api/session');
+
+// test data for error configs
+/*if (M.config.app) {
+M.config.app.errors = {
+    "*": {
+        "html": 'html/error/404.html',
+        "css": ['css/error.css'],
+        "scripts": ['error.js']
+    }
+};
+}*/
+
+
+/*M.repo = require('./lib/_api/repos');
+M.dir = require('./lib/_api/directory');
+M.model = require('./lib/_api/model');
+M.installation = require('./lib/_api/installation');*/
+
+module.exports = M;
+
 /*///////////////////////////// OLD MONO API
 
 M.session.startSession
@@ -82,32 +117,3 @@ M.util.ip
 M.util.merge
 */
 
-M = {config: require('./lib/config')};
-M.error = require('./lib/api/error');
-M.orient = require('./lib/api/db/orient');
-M.mongo = require('./lib/api/db/mongo');
-M.util = require('./lib/api/util');
-
-M.app = require('./lib/api/app');
-M.operation = require('./lib/api/operation');
-M.module = require('./lib/api/module');
-M.session = require('./lib/api/session');
-
-// test data for error configs
-/*if (M.config.app) {
-M.config.app.errors = {
-    "*": {
-        "html": 'html/error/404.html',
-        "css": ['css/error.css'],
-        "scripts": ['error.js']
-    }
-};
-}*/
-
-
-/*M.repo = require('./lib/_api/repos');
-M.dir = require('./lib/_api/directory');
-M.model = require('./lib/_api/model');
-M.installation = require('./lib/_api/installation');*/
-
-module.exports = M;
