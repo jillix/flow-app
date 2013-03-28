@@ -13,18 +13,18 @@
     "scripts": [],
     "favicon": "public/favion.ico",
     "publicDir": "public",
+    "publicRole": "0",
     "errors": {
         "*": {
-            "html": 'html/error/404.html',
-            "css": 'css/error.css',
-            "scripts": ['error.js']
+            "html": "html/error/404.html",
+            "css": "css/error.css",
+            "scripts": ["error.js"]
         }
-    }
+    },
     "roles": [
         {
             "id": 0,
-            "name": "MonoDev Public Role",
-            "public": true
+            "name": "MonoDev Public Role"
         }
     ],
     "miids": {
@@ -89,7 +89,7 @@
                "modules": {
                    "applications": "dev_applications"
                },
-               "scripts": ['ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js'],
+               "scripts": ["ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"],
                "css": ["http://blueimp.github.com/cdn/css/bootstrap.min.css", "http://blueimp.github.com/cdn/css/bootstrap-responsive.min.css"]
            }
        }, 
