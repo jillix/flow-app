@@ -45,10 +45,7 @@
             "module": "github/adioo/bind-tab/v0.0.2",
             "roles": [0],
             "config": {
-                "html": {
-                    "type": "a",
-                    "path": "html/tabs.html"
-                },
+                "html": "html/tabs.html",
                 "container": "#container",
                 "tabs": "li",
                 "options": {
