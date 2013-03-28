@@ -33,7 +33,7 @@
             "roles": [0],
             
             "config": {
-                "html": "html/layout",
+                "html": "html/layout.html",
                 "css": ["http://blueimp.github.com/cdn/css/bootstrap.min.css"],
                 "title": "Mono Dev",
                 "modules": {
@@ -47,7 +47,7 @@
             "config": {
                 "html": {
                     "type": "a",
-                    "path": "html/tabs"
+                    "path": "html/tabs.html"
                 },
                 "container": "#container",
                 "tabs": "li",
@@ -64,7 +64,7 @@
            "module": "github/adioo/layout/v0.0.4",
            "roles": [0],
            "config": {
-               "html": "html/home",
+               "html": "html/home.html",
                "css": ["http://blueimp.github.com/cdn/css/bootstrap.min.css", "http://blueimp.github.com/cdn/css/bootstrap-responsive.min.css", "css/home.css"]
            }
        },
@@ -73,7 +73,7 @@
            "module": "github/adioo/layout/v0.0.4",
            "roles": [0],
            "config": {
-               "html": "html/layout_deployer",
+               "html": "html/layout_deployer.html",
                "css": ["http://blueimp.github.com/cdn/css/bootstrap.min.css", "http://blueimp.github.com/cdn/css/bootstrap-responsive.min.css"],
                "modules": {
                    "deployer": "dev_deployer"
@@ -84,7 +84,7 @@
            "module": "github/adioo/layout/v0.0.4",
            "roles": [0],
            "config": {
-               "html": "html/layout_applications",
+               "html": "html/layout_applications.html",
                "css": ["http://blueimp.github.com/cdn/css/bootstrap.min.css", "http://blueimp.github.com/cdn/css/bootstrap-responsive.min.css"],
                "modules": {
                    "applications": "dev_applications"
@@ -97,7 +97,7 @@
             "module": "github/gabipetrovay/dev_deployer/v0.0.2",
             "roles": [0],
             "config": {
-                "html": "html/deployer",
+                "html": "html/deployer.html",
                 "css": ["http://blueimp.github.com/Bootstrap-Image-Gallery/css/bootstrap-image-gallery.min.css", "uploader/css/jquery.fileupload-ui.css"]
             },
             "operations": {
@@ -111,7 +111,7 @@
             "module": "github/IonicaBizau/dev_applications/dev",
             "roles": [0],
             "config": {
-                "html": "html/applications",
+                "html": "html/applications.html",
                 "css": ["http://blueimp.github.com/Bootstrap-Image-Gallery/css/bootstrap-image-gallery.min.css", "uploader/css/jquery.fileupload-ui.css", "css/applications.css"]
             },
             "operations": {
