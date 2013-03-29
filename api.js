@@ -14,18 +14,6 @@ M.module = require('./lib/api/module');
 M.operation = require('./lib/api/operation');
 M.session = require('./lib/api/session');
 
-// test data for error configs
-/*if (M.config.app) {
-M.config.app.errors = {
-    "*": {
-        "html": 'html/error/404.html',
-        "css": ['css/error.css'],
-        "scripts": ['error.js']
-    }
-};
-}*/
-
-
 /*M.repo = require('./lib/_api/repos');
 M.dir = require('./lib/_api/directory');
 M.model = require('./lib/_api/model');
