@@ -3,11 +3,15 @@ require(process.cwd() + '/api');
 
 function exit(err) {
 
+    if (err) {
+        console.error(err);
+    }
+
     // the install opens an orient connection so we have to close it when done
+    // TODO if the DB was not opened this call will throw an error
     M.orient.close();
 
     if (err) {
-        console.error(err);
         process.exit(1);
     }
 }
