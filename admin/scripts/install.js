@@ -12,21 +12,25 @@ function exit(err) {
     }
 }
 
-var MONO_DEV_APP_ID = '00000000000000000000000000000002';
-var MONO_DEV_DESCRIPTOR_PATH = M.config.APPLICATION_ROOT + MONO_DEV_APP_ID + '/mono.json';
+var MONO_DEV_GIT_URL = 'git@github.com:jillix/MonoDev.git';
 
-M.app.install(MONO_DEV_DESCRIPTOR_PATH, function(err) {
+M.app.fetch(MONO_DEV_GIT_URL, function(err, descriptor) {
 
     if (err) { return exit(err); }
 
-    console.log('Successfully installed MonoDev (' + MONO_DEV_APP_ID + ')');
+    M.app.install(descriptor, function(err) {
 
-    //M.app.uninstall(MONO_DEV_DESCRIPTOR_PATH, function(err) {
+        if (err) { return exit(err); }
 
-    //    if (!err) {
-    //        console.log('Successfully uninstalled MonoDev (' + MONO_DEV_APP_ID + ')');
-    //    }
+        console.log('Successfully installed MonoDev from: ' + MONO_DEV_GIT_URL);
 
-        exit(err);
-    //});
+        //M.app.uninstall(MONO_DEV_DESCRIPTOR_PATH, function(err) {
+
+        //    if (!err) {
+        //        console.log('Successfully uninstalled MonoDev (' + MONO_DEV_APP_ID + ')');
+        //    }
+
+            exit(err);
+        //});
+    });
 });

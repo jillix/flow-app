@@ -6,18 +6,15 @@ M.orient = require('./lib/api/db/orient');
 M.mongo = require('./lib/api/db/mongo');
 M.util = require('./lib/api/util');
 M.fs = require('./lib/api/fs');
-M.repos = require('./lib/api/repos');
+M.repo = require('./lib/api/repo');
 
 M.app = require('./lib/api/app');
 M.module = require('./lib/api/module');
 
 M.operation = require('./lib/api/operation');
 M.session = require('./lib/api/session');
-
-/*M.repo = require('./lib/_api/repos');
-M.dir = require('./lib/_api/directory');
-M.model = require('./lib/_api/model');
-M.installation = require('./lib/_api/installation');*/
+M.datasource = require('./lib/api/datasource');
+M.database = require('./lib/api/database');
 
 module.exports = M;
 
