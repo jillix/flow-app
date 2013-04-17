@@ -34,5 +34,3 @@ MAILTO=admin@jillix.com
 #
 # This is a temporary sollution to keep nodes running if something bad happens.
 */5 * * * * ~/legacy/scripts/shell/starter.sh
-*/2 * * * * ~/mono/admin/scripts/keep_alive.sh
-

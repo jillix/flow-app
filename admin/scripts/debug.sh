@@ -5,7 +5,7 @@ then
     LAUNCH=$1
 fi
 
-ps ax | grep "node server.js" | grep -v grep | awk '{print $1}' | xargs kill
+ps ax | grep "node lib/proxy/server.js" | grep -v grep | awk '{print $1}' | xargs kill
 ps ax | grep "node-inspector" | grep -v grep | awk '{print $1}' | xargs kill
 
 node server.js &

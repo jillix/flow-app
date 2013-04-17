@@ -29,7 +29,8 @@
     {"name": "ecanperform", "id": 20, "type": "PHYSICAL"},
     {"name": "ehasaccessto", "id": 21, "type": "PHYSICAL"},
     {"name": "vmoduleversion", "id": 22, "type": "PHYSICAL"},
-    {"name": "edependson", "id": 23, "type": "PHYSICAL"}
+    {"name": "edependson", "id": 23, "type": "PHYSICAL"},
+    {"name": "vdatasource", "id": 24, "type": "PHYSICAL"}
 ], 
 "schema":{
     "version": 33, 
@@ -266,17 +267,35 @@
                     "not-null": true
                 },
                 {
-                    "name": "publicUser",
+                    "name": "errors",
+                    "type": "EMBEDDEDMAP",
+                    "mandatory": false,
+                    "not-null": false
+                },
+                {
+                    "name": "scripts",
+                    "type": "EMBEDDEDLIST",
+                    "mandatory": false,
+                    "not-null": false
+                },
+                {
+                    "name": "publicRole",
                     "type": "LINK",
                     "mandatory": true,
-                    "not-null": true,
-                    "linked-class": "VUser"
+                    "not-null": false,
+                    "linked-class": "VRole"
                 },
                 {
                     "name": "publicDir",
                     "type": "STRING",
                     "mandatory": false,
                     "not-null": false
+                },
+                {
+                    "name": "locale",
+                    "type": "STRING",
+                    "mandatory": true,
+                    "not-null": true
                 }
             ]
         },
@@ -294,6 +313,46 @@
                 },
                 {
                     "name": "application",
+                    "type": "LINK",
+                    "mandatory": true,
+                    "not-null": true,
+                    "linked-class": "VApplication"
+                }
+            ]
+        },
+        {
+            "name": "VDatasource",
+            "default-cluster-id": 24,
+            "cluster-ids": [24],
+            "super-class": "OGraphVertex",
+            "properties": [
+                {
+                    "name": "name",
+                    "type": "STRING",
+                    "mandatory": true,
+                    "not-null": true
+                },
+                {
+                    "name": "type",
+                    "type": "STRING",
+                    "mandatory": true,
+                    "not-null": true
+                },
+                {
+                    "name": "db",
+                    "type": "STRING",
+                    "mandatory": true,
+                    "not-null": true
+                },
+                {
+                    "name": "data",
+                    "type": "EMBEDDEDMAP",
+                    "mandatory": false,
+                    "mandatory": true,
+                    "not-null": true
+                },
+                {
+                    "name": "app",
                     "type": "LINK",
                     "mandatory": true,
                     "not-null": true,
