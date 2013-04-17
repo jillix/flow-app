@@ -7,6 +7,12 @@ TMP_DIR=tmp
 mkdir -p "$TMP_DIR"
 
 ORIENTDB_ROOT=bin/orientdb
+if [[ `which curl` == "" ]]
+then
+    echo "Could not find curl. Please install it and try again." 2>&1
+    exit 10
+fi
+
 ORIENTDB_VERSION=`curl --silent https://oss.sonatype.org/content/repositories/releases/com/orientechnologies/orientdb/maven-metadata.xml | grep "release" | cut -d ">" -f 2 | cut -d "<" -f 1`
 # uncomment this to block the installation to a fixed OrientDB version
 #ORIENTDB_VERSION=1.1.0
