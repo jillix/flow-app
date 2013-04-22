@@ -24,17 +24,11 @@ M.app.fetch(MONO_DEV_GIT_URL, function(err, descriptor) {
 
     M.app.install(descriptor, function(err) {
 
-        if (err) { return exit(err); }
+        if (!err) {
+            console.log('Successfully installed ' + descriptor.appid + ' (' + descriptor.name + ') from: ' + MONO_DEV_GIT_URL);
+        }
 
-        console.log('Successfully installed MonoDev from: ' + MONO_DEV_GIT_URL);
-
-        //M.app.uninstall(MONO_DEV_DESCRIPTOR_PATH, function(err) {
-
-        //    if (!err) {
-        //        console.log('Successfully uninstalled MonoDev (' + MONO_DEV_APP_ID + ')');
-        //    }
-
-            exit(err);
-        //});
+        exit(err);
     });
 });
+
