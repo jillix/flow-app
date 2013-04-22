@@ -8,6 +8,8 @@
     "logLevel"      : "debug",
     "portRange"     : [10001, 19999],
     
+    "compressFiles": false,
+    
     "session": {
         "id": "_s",
         "locale": "_l",
