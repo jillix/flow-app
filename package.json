@@ -39,7 +39,8 @@
         "orientdb"      : "0.9.8",
         "pongo"         : "*",
         "request"       : "*",
-        "syntax-error"  : "*"
+        "syntax-error"  : "*",
+        "uglify-js"     : "*"
     },
     "devDependencies": {
         "tap"           : "*"
