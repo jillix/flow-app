@@ -235,9 +235,9 @@
                     "linked-class": "VModule"
                 },
                 {
-                    "name": "publicDir",
-                    "type": "STRING",
-                    "mandatory": false,
+                    "name": "scripts",
+                    "type": "EMBEDDEDLIST",
+                    "mandatory": true,
                     "not-null": true
                 }
             ]

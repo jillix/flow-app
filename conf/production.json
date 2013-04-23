@@ -8,6 +8,8 @@
     "logLevel"      : "error",
     "portRange"     : [10001, 19999],
     
+    "compressFiles": true,
+    
     "session": {
         "id": "_s",
         "locale": "_l",
