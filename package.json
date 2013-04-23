@@ -16,7 +16,7 @@
     "scripts": {
         "preinstall"    : "admin/scripts/preinstall.sh",
         "install"       : "node admin/scripts/monodev_install.js",
-        "postinstall"   : "admin/scripts/postinstall.sh",
+        "postinstall"   : "node admin/scripts/postinstall.js",
         "test"          : "node node_modules/tap/bin/tap.js ./test"
     },
     "repository": {
