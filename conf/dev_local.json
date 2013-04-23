@@ -9,6 +9,13 @@
     "portRange"     : [10001, 19999],
     
     "compressFiles": false,
+    "compressFileTypes": {
+        "css": 1,
+        "js": 1,
+        "html": 1,
+        "htm": 1,
+        "txt": 1
+    },
     
     "session": {
         "id": "_s",
