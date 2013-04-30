@@ -16,6 +16,8 @@ M.session = require('./lib/api/session');
 M.datasource = require('./lib/api/datasource');
 M.database = require('./lib/api/database');
 
+M.runtime = require('./lib/api/runtime');
+
 module.exports = M;
 
 /*///////////////////////////// OLD MONO API
