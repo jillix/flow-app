@@ -60,15 +60,15 @@ ce "Failed to create application temporary directory" 4
 unzip "$APP_FILE_ARG" -d "$TMP_APP_DIR" > /dev/null
 ce "Could not unarchive the application archive." 5
 
-NEW_APP_DESCRIPTOR="$TMP_APP_DIR/mono.json"
-# is the mono.json file is not in the archive root, assume we have a single directory
+NEW_APP_DESCRIPTOR="$TMP_APP_DIR/application.json"
+# is the application.json file is not in the archive root, assume we have a single directory
 if [ ! -f "$NEW_APP_DESCRIPTOR" ]
 then
     pushd "$TMP_APP_DIR" > /dev/null
     # get the first item in the directory
     FILES=(*)
     DIR=${FILES[@]:0:1}
-    if [ ! -f "$DIR/mono.json" ]
+    if [ ! -f "$DIR/application.json" ]
     then
         echo "Could not find the application descriptor. This must be either in the archive root or in the single directory in this archive." 1>&2
         popd > /dev/null
@@ -76,14 +76,14 @@ then
         exit 6
     fi
     popd > /dev/null
-    NEW_APP_DESCRIPTOR="$TMP_APP_DIR/$DIR/mono.json"
+    NEW_APP_DESCRIPTOR="$TMP_APP_DIR/$DIR/application.json"
 fi
 
 # read descriptos file
 APP_ID=`node -e "console.log(require('$NEW_APP_DESCRIPTOR').appId)" 2> /dev/null`
 ce "Could not determine the application ID." 7
 
-APP_DESCRIPTOR="$MONO_ROOT/apps/$APP_ID/mono.json"
+APP_DESCRIPTOR="$MONO_ROOT/apps/$APP_ID/application.json"
 
 # clean up if already installed
 if [ -e "$MONO_ROOT/apps/$APP_ID" ]

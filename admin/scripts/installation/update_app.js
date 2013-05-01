@@ -13,7 +13,7 @@ if (!CONFIG.argv || !CONFIG.argv.length) {
 }
 
 var appPath = CONFIG.argv[0];
-var appConfig = require(appPath + "/mono.json");
+var appConfig = require(appPath + "/application.json");
 
 // TODO: Find a relation between .git url and .zip url. This works for Github only.
 if (!appConfig.repository) {   

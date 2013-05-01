@@ -48,14 +48,14 @@ then
     exit 3
 fi
 
-if [ ! -f "$APP_DIR/mono.json" ]
+if [ ! -f "$APP_DIR/application.json" ]
 then
-    echo "I cannot find the mono.json app descriptor in the current directory. You must call this script from an an application directory" 1>&2
+    echo "I cannot find the application.json app descriptor in the current directory. You must call this script from an an application directory" 1>&2
     exit 4
 fi
 
 # read descriptos file
-APP_ID=`node -e "console.log(require('$APP_DIR/mono.json').appId)" 2> /dev/null`
+APP_ID=`node -e "console.log(require('$APP_DIR/application.json').appId)" 2> /dev/null`
 ce "Could not determine the application ID." 5
 
 # TODO add a -f (force) argument that will allow removal of existing deployed applications
@@ -65,7 +65,7 @@ if [ -d "$MONO_ROOT/apps/$APP_ID" ]
 then
     echo "*** Uninstalling already deployed app: $APP_ID"
     pushd "$MONO_ROOT" > /dev/null
-    node "$MONO_ROOT/admin/scripts/installation/uninstall_app.js" "$MONO_ROOT/apps/$APP_ID/mono.json"
+    node "$MONO_ROOT/admin/scripts/installation/uninstall_app.js" "$MONO_ROOT/apps/$APP_ID/application.json"
     popd > /dev/null
 
     # remove the old app content
@@ -81,6 +81,6 @@ cp -R "$APP_DIR"/* "$MONO_ROOT/apps/$APP_ID"
 # install the new app
 echo "*** Installing app: $APP_ID"
 pushd "$MONO_ROOT" > /dev/null
-node "$MONO_ROOT/admin/scripts/installation/install_app.js" "$MONO_ROOT/apps/$APP_ID/mono.json"
+node "$MONO_ROOT/admin/scripts/installation/install_app.js" "$MONO_ROOT/apps/$APP_ID/application.json"
 popd > /dev/null
 
