@@ -6,7 +6,7 @@ ORIENTDB_PORT=2424
 # remove module cache
 rm -Rf "$MONO_ROOT"/modules/*
 # remove installed application
-rm -Rf "$MONO_ROOT"/apps/0*
+rm -Rf "$MONO_ROOT"/apps/*
 
 # if orient is not started yet, this will start it, so we have to shut it down at the end
 ORIENTDB_PROCESS_PID=`lsof -iTCP:$ORIENTDB_PORT -sTCP:LISTEN -t`
