@@ -29,12 +29,14 @@
         "framework"
     ],
     "dependencies" : {
+        "asyncjs"       : ">=0.0.5",
         "connect"       : "*",
         "cookie"        : "*",
         "forever"       : "*",
         "formidable"    : "*",
         "github"        : "*",
         "node-static"   : "*",
+        "oauth"         : ">=0.9.0",
         "optimist"      : "*",
         "orientdb"      : "0.9.8",
         "pongo"         : "*",
