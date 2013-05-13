@@ -22,3 +22,5 @@ then
     exit 1
 fi
 
+# drop Mongo database (monodev)
+mongo monodev --eval "db.dropDatabase()"
