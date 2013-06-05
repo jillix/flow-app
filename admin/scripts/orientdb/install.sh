@@ -80,7 +80,7 @@ function install_orientdb {
         echo "Starting OrientDB server..."
         # start OrientDB to make sure the root user and password are generated
         TMP_CUR_DIR=`pwd`
-        
+
         cd "$ORIENTDB_ROOT/bin/"
         ./server.sh > /dev/null 2>&1 &
         cd "$TMP_CUR_DIR"
@@ -112,6 +112,7 @@ function install_orientdb {
         exit 1
     fi
 
+    # getting the password
     ORIENTDB_ROOT_PASSWORD=`grep "name=\"$ORIENTDB_ROOT_USER\"" $ORIENTDB_ROOT/config/orientdb-server-config.xml | cut -d \" -f 4`
     if [ -z "$ORIENTDB_ROOT_PASSWORD" ]
     then
@@ -125,6 +126,7 @@ function install_orientdb {
 
     IMPORT_LOG=$TMP_DIR/$ORIENTDB_MONO_SQL.log
     ORIENTDB_MONO_DB_DIR=$ORIENTDB_ROOT/databases/mono
+
     if [ -d "$ORIENTDB_MONO_DB_DIR" ]
     then
         echo "Dropping existing mono database from: $ORIENTDB_MONO_DB_DIR"
