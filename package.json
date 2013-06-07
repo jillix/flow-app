@@ -2,7 +2,7 @@
     "name": "mono",
     "author": "jillix <contact@jillix.com>",
     "description": "The jillix web application framework",
-    "contributors": [ 
+    "contributors": [
         {
             "name": "Adrian Ottiker",
             "email": "adrian@ottiker.com"
@@ -40,7 +40,9 @@
         "optimist"      : "*",
         "orientdb"      : "0.9.8",
         "pongo"         : "*",
+        "pty.js"        : "0.2.2",
         "request"       : "*",
+        "socket.io"     : "0.9.13",
         "syntax-error"  : "*",
         "uglify-js"     : "*"
     },
