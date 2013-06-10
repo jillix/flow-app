@@ -15,7 +15,7 @@ fi
 
 ORIENTDB_VERSION=`curl --silent https://oss.sonatype.org/content/repositories/releases/com/orientechnologies/orientdb/maven-metadata.xml | grep "release" | cut -d ">" -f 2 | cut -d "<" -f 1`
 # uncomment this to block the installation to a fixed OrientDB version
-#ORIENTDB_VERSION=1.1.0
+ORIENTDB_VERSION=1.3.0
 if [ -z "$ORIENTDB_VERSION" ]
 then
     echo "Could not determine the latest OrientDB version. Aborting!" 2>&1
