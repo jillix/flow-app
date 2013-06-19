@@ -25,7 +25,7 @@ M.app.fetch(MONO_DEV_GIT_URL, function(err, descriptor) {
     M.app.install(descriptor, function(err) {
 
         if (!err) {
-            console.log('Successfully installed ' + descriptor.appid + ' (' + descriptor.name + ') from: ' + MONO_DEV_GIT_URL);
+            console.log('Successfully installed ' + descriptor.appId + ' (' + descriptor.name + ') from: ' + MONO_DEV_GIT_URL);
         }
 
         exit(err);
