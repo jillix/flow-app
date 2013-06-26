@@ -39,6 +39,7 @@
         "forever"       : "*",
         "formidable"    : "*",
         "github"        : "*",
+	"modm"		: "*",
         "node-static"   : "*",
         "nodemailer"    : "*",
         "oauth"         : ">=0.9.0",
