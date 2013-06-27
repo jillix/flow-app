@@ -1,6 +1,5 @@
 npm-debug.log
 .DS_Store
-.orientdb_history
 *.swp
 *.vim
 bin/
