@@ -221,12 +221,6 @@ function setup_user {
         # kill any remaining running nodes (if any)
         kill_pattern "node"
 
-        # kill orient if running
-        kill_pattern "orient"
-
-        # waiting a little for orient to die
-        sleep 5
-
         # now delete the user
         userdel -r $USERNAME
         if [ $? != 0 ]

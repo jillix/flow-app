@@ -3,7 +3,6 @@ CONFIG = require(process.cwd() + "/config.js");
 
 var apps = require(CONFIG.root + "/api/apps");
 var spawn = require("child_process").spawn;
-var orient = require(CONFIG.root + "/core/db/orient");
 
 var fs = require("fs");
 

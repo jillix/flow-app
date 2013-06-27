@@ -15,30 +15,6 @@
         "locale": "_l",
         "path": "/"
     },
-    
-    "orient": {
-        "server": {
-            "host"          : "localhost",
-            "port"          : 2424,
-            "user_name"     : "root",
-            "user_password" : "83CACE21A23DB46F93BFD58A3CE48C8D29926C6EF424D7DA9BD725AE070CCDC0"
-        },
-        "db": {
-            "database_name" : "mono",
-            "user_name"     : "admin",
-            "user_password" : "admin"
-        },
-        "exec": "./bin/orientdb/bin/server.sh",
-        "startTime": 3000
-    },
-
-    "orientDB": {
-        "host"          : "localhost",
-        "port"          : 2480,
-        "name"          : "mono",
-        "username"      : "admin",
-        "password"      : "admin"
-    },
 
     "mongoDB": {
         "name"  : "mono",
