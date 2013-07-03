@@ -16,7 +16,8 @@ module.exports = function (callback) {
         if (M.config.app) {
             M.config.app = M.mongo.ObjectID(M.config.app);
         }
-
+        
+        M.cache = require('./lib/api/cache');
         M.error = require('./lib/api/error');
         M.util = require('./lib/api/util');
         M.fs = require('./lib/api/fs');
