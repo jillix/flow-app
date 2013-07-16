@@ -34,6 +34,7 @@
     ],
     "dependencies" : {
         "asyncjs"       : ">=0.0.5",
+        "cheerio"       : "*",
         "connect"       : "*",
         "cookie"        : "*",
         "forever"       : "*",
