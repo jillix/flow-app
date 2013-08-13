@@ -8,7 +8,7 @@
     "logLevel"      : "debug",
     "portRange"     : [10001, 19999],
     
-    "compressFiles": false,
+    "compressFiles": true,
     "compressFileTypes": {
         "css": 1,
         "js": 1,
