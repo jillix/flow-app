@@ -1,5 +1,6 @@
-
-M = { config: require('./lib/config') };
+// inherit from nodejs EventEmitter
+M = new (require('events').EventEmitter)();
+M.config = require('./lib/config');
 
 M.error = require('./lib/api/error');
 M.orient = require('./lib/api/db/orient');
