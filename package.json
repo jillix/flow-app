@@ -19,7 +19,7 @@
     "main": "start.js",
     "scripts": {
         "preinstall"    : "admin/scripts/preinstall.sh",
-        "install"       : "node admin/scripts/monodev_install.js",
+        "install"       : "node admin/scripts/apps/remove_fetch_install_apps.js -v MonoDev",
         "postinstall"   : "node admin/scripts/postinstall.js",
         "test"          : "node node_modules/tap/bin/tap.js ./test"
     },
