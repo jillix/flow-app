@@ -29,6 +29,9 @@ function installAppsSequential(index) {
     M.app.remove(setup.apps[index].id, function (err, data) {
 
         // do not stop on error because the app caould have been missing
+        if (setup.argv.v) {
+            console.error(">>> WARNING: ", err);
+        }
 
         if (setup.argv.v) {
             console.log('>>> Fething this application (' + APP_DESC + ')');
@@ -37,6 +40,7 @@ function installAppsSequential(index) {
 
             if (err) {
                 console.error('>>> Failed to fetch this application (' + APP_DESC + ')');
+                console.error(err);
                 installAppsSequential(++index);
                 return;
             }
@@ -48,6 +52,7 @@ function installAppsSequential(index) {
 
                 if (err) {
                     console.error('>>> Failed to install this application (' + APP_DESC + ')');
+                    console.error(err);
                     installAppsSequential(++index);
                     return;
                 }

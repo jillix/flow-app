@@ -30,6 +30,7 @@ function redeployAppsSequential(index) {
 
         if (err) {
             console.error('>>> Failed to redeploy this application (' + APP_DESC + ')');
+            console.error(err);
             redeployAppsSequential(++index);
             return;
         }
