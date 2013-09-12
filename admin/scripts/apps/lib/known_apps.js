@@ -13,6 +13,10 @@ var KNOWN_APPS = {
         alias: ['dms'],
         repo: 'git@bitbucket.org:jillix/dms.git'
     },
+    'crm6hf78HGT965HgtB96KJyg9dfGHtgV': {
+        alias: ['crm'],
+        repo: 'git@bitbucket.org:jillix/crm.git'
+    },
     'not-known-yet': {
         alias: ['crm'],
         repo: 'git@bitbucket.org:jillix/crm.git'
