@@ -20,4 +20,9 @@ sudo apt-get install nodejs
 sudo apt-get update
 
 #add mono user
-useradd -m mono
+useradd -m -s /bin/bash mono
+sudo mkdir /home/mono/.ssh/
+sudo cp .ssh/authorized_keys /home/mono/.ssh/
+sudo chown -R mono /home/mono/.ssh/
+sudo chmod 700 /home/mono/.ssh/
+sudo chmod 600 /home/mono/.ssh/authorized_keys
