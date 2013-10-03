@@ -17,6 +17,10 @@ sudo add-apt-repository ppa:chris-lea/node.js
 sudo apt-get update
 sudo apt-get install nodejs
 
+#java7
+sudo apt-get update
+sudo apt-get install openjdk-7-jre
+
 sudo apt-get update
 
 #add mono user
