@@ -23,6 +23,9 @@ sudo apt-get install openjdk-7-jre
 
 sudo apt-get update
 
+#redirect port 80 to 8000
+sudo iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 80 -j REDIRECT --to-port 8000
+
 #add mono user
 useradd -m -s /bin/bash mono
 sudo mkdir /home/mono/.ssh/
