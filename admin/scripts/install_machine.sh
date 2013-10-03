@@ -1,3 +1,7 @@
+#git
+sudo apt-get update
+sudo apt-get install git
+
 #mongodb
 sudo apt-get update
 sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10
@@ -12,3 +16,5 @@ sudo apt-get install python-software-properties python g++ make
 sudo add-apt-repository ppa:chris-lea/node.js
 sudo apt-get update
 sudo apt-get install nodejs
+
+sudo apt-get update
