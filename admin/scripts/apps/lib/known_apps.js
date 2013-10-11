@@ -17,9 +17,9 @@ var KNOWN_APPS = {
         alias: ['crm'],
         repo: 'git@bitbucket.org:jillix/crm.git'
     },
-    'not-known-yet': {
-        alias: ['crm'],
-        repo: 'git@bitbucket.org:jillix/crm.git'
+    'cv46hf78HGI965HgtB96KJyg9dfGHtgV': {
+        alias: ['cv'],
+        repo: 'git@bitbucket.org:jillix/campaignverification.git'
     },
     // old apps
     '00000000000000000000000000000109': {
