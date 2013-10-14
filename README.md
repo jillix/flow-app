@@ -1,5 +1,15 @@
 jillix Web Framework
 
+## Fresh Server Installation
+
+These steps must be followed when installing Mono on a new EC2 server or when you want to cleanup the `mono` user and reinstall the server.
+
+1. Launch a EC2 instance
+2. Login with the `ubuntu` user
+3. `touch install_machine.sh`
+4. `chmode +x install_machine.sh`
+5. Copy the contents of [this file](https://github.com/jillix/mono/blob/master/admin/scripts/install_machine.sh) into the script created above.
+
 ## Installation
 
 ```
