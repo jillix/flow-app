@@ -328,6 +328,12 @@ function initialize_mono {
     echo "1. Enable backups (follow the instructions in the email containing 's3cmd' configuration instructions):"
     echo "        s3cmd --configure"
     echo "####################################"
+    echo "2. Change the default mono configuration to listen to the external IP. Change 'host' in 'conf/dev_local.json'"
+    echo "####################################"
+    echo "3. Start a new screen and start mongo"
+    echo "        screen -S mono"
+    echo "        node lib/proxy/server.js --logTerm"
+    echo "####################################"
     echo "####################################"
 }
 
@@ -343,7 +349,9 @@ function final_steps {
 
     if [ "$NEEDS_RECONNECT" ]
     then
+        echo "!!!!"
         echo "!!!! NOTE: you have to logout and login again in order for your git commiter name and email (GIT_*) to be propagated"
+        echo "!!!!"
         sudo service ssh reload
     fi
 }
