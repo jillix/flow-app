@@ -277,7 +277,7 @@ function get_credentials {
 
 function check_latest_script {
 
-    MONO_MIGRATION_SCRIPT=admin/scripts/migration/migrate_machine.sh
+    MONO_MIGRATION_SCRIPT=admin/scripts/install_machine.sh
     MIGRATION_SCRIPT=$1/$MONO_MIGRATION_SCRIPT
 
     if [ ! -f $MIGRATION_SCRIPT ]
