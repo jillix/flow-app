@@ -278,7 +278,7 @@ function get_credentials {
 function check_latest_script {
 
     INSTALL_SCRIPT=admin/scripts/install_machine.sh
-    REPO_INSTALL_SCRIPT=$1/$REPO_INSTALL_SCRIPT
+    REPO_INSTALL_SCRIPT=$1/$INSTALL_SCRIPT
 
     if [ ! -f $REPO_INSTALL_SCRIPT ]
     then
