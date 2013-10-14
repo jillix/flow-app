@@ -77,6 +77,17 @@ function setup_user {
 
     # give mono user ownership over .ssh directory
     chown -R "$USERNAME:$USERNAME" "/home/$USERNAME/.ssh"
+
+    # add these to the known hosts for both users
+    add_known_host github.com
+    add_known_host bitbucket.org
+    add_known_host localhost
+    add_known_host 127.0.0.1
+}
+
+function add_known_host {
+    HOME="/home/$SUDO_USER" sudo -u "$SUDO_USER" sh -c "echo exit | ssh -T -o StrictHostKeyChecking=no \"$1\""
+    HOME="/home/$USERNAME" sudo -u "$USERNAME" sh -c "echo exit | ssh -T -o StrictHostKeyChecking=no \"$1\""
 }
 
 function kill_pattern {
