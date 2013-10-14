@@ -1,5 +1,21 @@
 #!/bin/bash
 
+# To run this script you must set the following variables:
+#   JAVA_HOME=`/usr/libexec/java_home -v 1.7`
+#   EC2_URL=https://eu-west-1.ec2.amazonaws.com
+# - generate and download a certificate on the security page of AWS Console
+#   EC2_CERT=~/.pem
+#   EC2_PRIVATE_KEY=~/.ssh/cert-pk-PSPXKUDHWXGHMQWMFURSWGYJTGTBO4WZ.pem
+# - path to the ec2-api-tools directory
+#   EC2_HOME=/Users/gabriel/Work/ec2-api-tools
+# - add the EC2 bin directory to the path
+#   PATH=${PATH}:$EC2_HOME/bin
+
+# Running this script will have the following side effects:
+# - the associatd IP addresses will be released. Associate the IP back from the AWS Console.
+# - the iptables configuration will bw lost (port 80 redirect). Run again:
+#   sudo iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 80 -j REDIRECT --to-port 8000
+
 
 if [ "$1" = "" ]
 then
@@ -8,7 +24,7 @@ then
 fi
 
 instanceid=$1
-size=20
+size=30
 
 if [ "$2" != "" ]
 then
