@@ -206,17 +206,17 @@ function checkout_mono {
     ssh -T -o StrictHostKeyChecking=no git@github.com
 
     MONO_TMP=/tmp/mono_checkout
-    rm -Rf $MONO_TMP
+    rm -Rf "$MONO_TMP"
 
     # cloning mono in a temp directory
-    git clone git@github.com:jillix/mono.git $MONO_TMP
+    git clone git@github.com:jillix/mono.git "$MONO_TMP"
 
-    # did the migration script change?
-    check_latest_script $MONO_TMP
+    # did the script change?
+    check_latest_script "$MONO_TMP"
 
     # now give this to the mono user
-    chown -R "$USERNAME:$USERNAME" $MONO_TMP
-    mv $MONO_TMP "/home/$USERNAME/mono"
+    chown -R "$USERNAME:$USERNAME" "$MONO_TMP"
+    mv "$MONO_TMP" "/home/$USERNAME/mono"
 }
 
 function get_credentials {
@@ -277,22 +277,22 @@ function get_credentials {
 
 function check_latest_script {
 
-    MONO_MIGRATION_SCRIPT=admin/scripts/install_machine.sh
-    MIGRATION_SCRIPT=$1/$MONO_MIGRATION_SCRIPT
+    INSTALL_SCRIPT=admin/scripts/install_machine.sh
+    REPO_INSTALL_SCRIPT=$1/$REPO_INSTALL_SCRIPT
 
-    if [ ! -f $MIGRATION_SCRIPT ]
+    if [ ! -f $REPO_INSTALL_SCRIPT ]
     then
-        echo "The migration script file is missing from the mono repo. Looking for: $MONO_MIGRATION_SCRIPT" 1>&2
+        echo "The installation script file is missing from the mono repo. Looking for: $INSTALL_SCRIPT" 1>&2
         echo "Aborting!" 1>&2
         exit 5
     fi
 
-    diff $0 "$MIGRATION_SCRIPT" > /dev/null
+    diff "$0" "$REPO_INSTALL_SCRIPT" > /dev/null
     if [ $? != 0 ]
     then
         echo "This script has changed. Updating with the latest from the repository. Please run this script again." 1>&2
         echo "Aborting!" 1>&2
-        cp "$MIGRATION_SCRIPT" $0
+        cp "$REPO_INSTALL_SCRIPT" "$0"
         exit 6
     fi
 }
