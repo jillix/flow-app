@@ -4,11 +4,14 @@ jillix Web Framework
 
 These steps must be followed when installing Mono on a new EC2 server or when you want to cleanup the `mono` user and reinstall the server.
 
-**NOTE** This will remove the `mono` user account and all his files!!!
+**NOTE**
+
+* This will remove the `mono` user account and all his files!!!
+* MongoDb databases are not affected.
 
 1. Launch a EC2 instance
 2. Login with the `ubuntu` user
-3. run this bash snippet:
+3. Run this bash snippet:
 
 ```
 echo "Enter Github user name: " ; read GH_USERNAME ; curl -u $GH_USERNAME -H "Accept: application/vnd.github.raw" -o ~/install_machine.sh -s "https://api.github.com/repos/jillix/mono/contents/admin/scripts/install_machine.sh" ; chmod +x ~/install_machine.sh ; sudo -E ~/install_machine.sh
