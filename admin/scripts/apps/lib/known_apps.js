@@ -21,6 +21,10 @@ var KNOWN_APPS = {
         alias: ['cv'],
         repo: 'git@bitbucket.org:jillix/campaignverification.git'
     },
+    'webSockets790R6EAUMZ08UXRHDAZUTW': {
+        alias: ['ws'],
+        repo: 'git@bitbucket.org:IonicaBizau/websockets.git'
+    },
     // old apps
     '00000000000000000000000000000109': {
         alias: ['ladivina', 'ld'],
