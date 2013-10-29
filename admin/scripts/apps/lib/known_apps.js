@@ -23,7 +23,7 @@ var KNOWN_APPS = {
     },
     'webSockets790R6EAUMZ08UXRHDAZUTW': {
         alias: ['ws'],
-        repo: 'git@bitbucket.org:IonicaBizau/websockets.git'
+        repo: 'git@github.com:IonicaBizau/WebSockets.git'
     },
     // old apps
     '00000000000000000000000000000109': {
