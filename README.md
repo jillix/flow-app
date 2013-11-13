@@ -1,6 +1,6 @@
 jillix Web Framework
 
-## Fresh Server Installation
+## Server Installation
 
 These steps must be followed when installing Mono on a new EC2 server or when you want to cleanup the `mono` user and reinstall the server.
 
@@ -17,19 +17,25 @@ These steps must be followed when installing Mono on a new EC2 server or when yo
 echo "Enter Github user name: " ; read GH_USERNAME ; curl -u $GH_USERNAME -H "Accept: application/vnd.github.raw" -o ~/install_machine.sh -s "https://api.github.com/repos/jillix/mono/contents/admin/scripts/install_machine.sh" ; chmod +x ~/install_machine.sh ; sudo -E ~/install_machine.sh
 ```
 
-## Installation
+## Local Installation
+
+After you have `node`, `java` on your Unix-based system, run:
 
 ```
+git clone git@github.com:jillix/mono.git
+cd mono
 npm install
 ```
+
 This also installs the OrientDB server in the `bin` directory and the mono database form the `admin/scripts/orientdb` directory.
 
 Start the mono server:
+
 ```
 node lib/proxy/server.js
 ```
 
-Start mono as deamon with forever: (the log is written to tmp/log.txt)
+Start mono as daemon with forever: (the log is written to tmp/log.txt)
 ```
 node start
 ```
