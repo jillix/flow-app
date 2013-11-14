@@ -25,6 +25,10 @@ var KNOWN_APPS = {
         alias: ['ws'],
         repo: 'git@github.com:IonicaBizau/WebSockets.git'
     },
+    'sampleGaragePlus.H63GX4RHWA5RK9V': {
+        alias: ['sgp'],
+        repo: 'git@bitbucket.com:jillix/samplegarageplus.git'
+    },
     // old apps
     '00000000000000000000000000000109': {
         alias: ['ladivina', 'ld'],
