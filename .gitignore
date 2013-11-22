@@ -6,3 +6,7 @@ bin/
 node_modules/
 tmp/
 *~
+
+*_shortcut.js
+*_shortcut.sh
+.lock_*
