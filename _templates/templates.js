@@ -8,7 +8,7 @@ var ids = {
         miids: '52923eb6ea5c6526b8870cde'
     },
     roles: {
-        proxy: '52923d79ea5c6526b8870cdd'
+        server: '52923d79ea5c6526b8870cdd'
     }
 };
 
@@ -36,6 +36,22 @@ var templates = {
             routes: {
                 type: 'object',
                 required: true
+            },
+            process: {
+                host: {
+                    type: 'string',
+                    required: true
+                },
+                // port for http
+                http: {
+                    type: 'number',
+                    required: true
+                },
+                // port for websockets
+                ws: {
+                    type: 'number',
+                    required: true
+                }
             }
         }
     },
@@ -93,10 +109,10 @@ var templates = {
 };
 
 var roles = {
-    proxy: {
-        _id: ids.roles.proxy,
+    server: {
+        _id: ids.roles.server,
         _tp: [/*Add template id*/],
-        name: 'mono_proxy'
+        name: 'mono_server'
     },
     admin: {
         _id: ids.roles.proxy,
