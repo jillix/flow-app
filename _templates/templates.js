@@ -8,7 +8,8 @@ var ids = {
         miids: '52923eb6ea5c6526b8870cde'
     },
     roles: {
-        server: '52923d79ea5c6526b8870cdd'
+        server: '52923d79ea5c6526b8870cdd',
+        admin: '52937f9a60e2eaea0c168196'
     }
 };
 
@@ -23,7 +24,11 @@ var templates = {
         options: {
             label: 'Applications'
         },
-        roles: {},
+        roles: {
+            // mono server 'r'
+            // mono admin 'crud'
+        },
+        itemAccess: true,
         schema: {
             name: {
                 type: 'string',
@@ -37,7 +42,16 @@ var templates = {
                 type: 'object',
                 required: true
             },
-            process: {
+            locale: {
+                type: 'string',
+                required: true
+            },
+            roles: {
+                // example: {roleId: 'crud'}
+                type: 'object',
+                required: true
+            },
+            server: {
                 host: {
                     type: 'string',
                     required: true
@@ -52,6 +66,25 @@ var templates = {
                     type: 'number',
                     required: true
                 }
+            },
+            public: {
+                role: {
+                    type: 'objectid',
+                    required: true
+                },
+                dir: {
+                    type: 'string',
+                    required: true
+                }
+                // this should be handled by modules
+                /*,
+                favicon: {
+                    type: 'string'
+                },
+                title: {
+                    type: 'string'
+                }
+                */
             }
         }
     },
@@ -64,11 +97,111 @@ var templates = {
         options: {
             label: 'Modules'
         },
-        roles: {},
+        roles: {
+            // mono server 'r'
+            // mono admin 'crud'
+        },
+        itemAccess: true, // ????? it could be a problem, that to many roles have access to a module
         schema: {
             name: {
                 type: 'string',
                 required: true
+            },
+            owner: {
+                type: 'string',
+                required: true
+            },
+            source: {
+                type: 'string',
+                required: true
+            },
+            roles: {
+                // example: {roleId: 'crud'}
+                type: 'object',
+                required: true
+            },
+            versions: [{
+                dependencies: {
+                    type: 'array',
+                    required: true,
+                },
+                operations: {
+                    type: 'object'
+                },
+                version: {
+                    type: 'string',
+                    required: true
+                }
+            }]
+        }
+    },
+    miids: {
+        _id: ids.templates.miids,
+        _tp: [/*Add template id*/],
+        db: dbName,
+        collection: 'm_miids',
+        name: 'm_miids',
+        options: {
+            label: 'Module instances'
+        },
+        roles: {
+            // mono server 'r'
+            // mono admin 'crud'
+        },
+        itemAccess: true,
+        schema: {
+            miid: {
+                type: 'string',
+                required: true
+            },
+            module: {
+                type: 'objectid',
+                required: true
+            },
+            version: {
+                type: 'string',
+                required: true
+            },
+            roles: {
+                // example: {roleId: 'crud'}
+                type: 'object',
+                required: true
+            },
+            config: {
+                client: {
+                    html: {
+                        // example: 'path/to/file.html'
+                        type: 'string'
+                    },
+                    css: {
+                        // example: ['path/to/file.css']
+                        type: 'array'
+                    },
+                    scripts: {
+                        // example: ['path/to/file.js']
+                        type: 'array'
+                    },
+                    waitFor: {
+                        // example: ['miid_1', 'miid_n']
+                        type: 'array'
+                    },
+                    modules: {
+                        // example: {'#cssSelector': 'miid'}
+                        type: 'object'
+                    },
+                    custom: {
+                        type: 'object'
+                    }
+                },
+                operations: [{
+                    method: {
+                        type: 'string',
+                        required: true
+                    },
+                    config: {
+                        type: 'object'
+                    }
+                }]
             }
         }
     },
@@ -81,26 +214,11 @@ var templates = {
         options: {
             label: 'Roles'
         },
-        roles: {},
+        roles: {
+            // mono admin 'crud'
+        },
         schema: {
             name: {
-                type: 'string',
-                required: true
-            }
-        }
-    },
-    miids: {
-        _id: ids.templates.miids,
-        _tp: [/*Add template id*/],
-        db: dbName,
-        collection: 'm_miids',
-        name: 'm_miids',
-        options: {
-            label: 'Module instances'
-        },
-        roles: {},
-        schema: {
-            miid: {
                 type: 'string',
                 required: true
             }
@@ -115,13 +233,8 @@ var roles = {
         name: 'mono_server'
     },
     admin: {
-        _id: ids.roles.proxy,
+        _id: ids.roles.admin,
         _tp: [/*Add template id*/],
         name: 'mono_admin'
-    },
-    user: {
-        _id: ids.roles.proxy,
-        _tp: [/*Add template id*/],
-        name: 'mono_user'
     }
 };
