@@ -10,20 +10,33 @@ var server = {
         Locations:
             - lib/application/api.js:43
     */
-    getAppById: function (appMongoObjectId, callback) {},
+    getAppById: function (appMongoObjectId, callback) {
+        var query = {
+            _id: appMongoObjectId
+        };
+    },
     
     /*
         Access: read
         Locations:
             - lib/proxy/spawner.js:103
     */
-    getAppFromHost: function (host, returnFields, callback) {},
+    getAppFromHost: function (host, returnFields, callback) {
+        var query = {
+            'server.host': host
+        };
+        
+        var fields = {
+            // return fields, fixed or variable?
+        };
+    },
     
     /*
         Access: read
         Locations:
             - lib/proxy/spawner.js:142
     */
+    // the same as getAppById method, line 13 ?
     getAppPid: function (appMongoObjectId, callback) {},
     
     ////////////////////////////////////////////////////////////////////////////
@@ -35,7 +48,14 @@ var server = {
         Locations:
             - lib/application/operations/module.js:27
     */
-    getModuleConfig: function (miid, sessionRoleId, callback) {},
+    getMiidConfig: function (miid, sessionRoleId, callback) {
+        var query = {
+            miid: miid
+        };
+        
+        // check access
+        query.roles[sessionRoleId] = {$regex: 'r'};
+    },
     
     /*
         Access: read | role > module
@@ -57,7 +77,10 @@ var mono = {
         install: function () {},
         uninstall: function () {},
         deploy: function () {},
+        
     },
-    module: {},
+    module: {
+        fetchModules: function () {}
+    },
     git: {}
 };
