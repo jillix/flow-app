@@ -69,15 +69,30 @@ var server = {
         Locations:
             - lib/application/operator.js:26
     */
-    getOperationWithPermission: function (miid, method, sesssionRoleId, callback) {}
+    getOperationWithPermission: function (miid, method, sesssionRoleId, callback) {},
+    
+    
+    /*
+        Locations:
+            - lib/proxy/api.js:26
+    */
+    checkConfig: function () {}
+};
+
+var utils = {
+    hepl: function () {}
 };
 
 var mono = {
     application: {
-        install: function () {},
-        uninstall: function () {},
-        deploy: function () {},
+        install: function (appIds) {},
+        uninstall: function (appIds) {},
         
+        // to dev or production
+        deploy: function (type) {},
+        
+        // check application (mongo object)
+        check: function (application) {}
     },
     module: {
         fetchModules: function () {}

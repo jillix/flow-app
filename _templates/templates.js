@@ -226,6 +226,14 @@ var templates = {
     }
 };
 
+var applications = {};
+
+var modules = {
+    crud: {},
+    crudFilter: {},
+    crudForm: {}
+};
+
 var roles = {
     server: {
         _id: ids.roles.server,
