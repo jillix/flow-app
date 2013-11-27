@@ -1,5 +1,6 @@
 {
     "name": "mono",
+    "version": "v0.1.0",
     "author": "jillix <contact@jillix.com>",
     "description": "The jillix web application framework",
     "contributors": [
@@ -16,7 +17,6 @@
             "email": "bizauionica@gmail.com"
         }
     ],
-    "main": "start.js",
     "scripts": {
         "preinstall"    : "admin/scripts/preinstall.sh",
         "install"       : "node admin/scripts/apps/remove_fetch_install_apps.js -v MonoDev",

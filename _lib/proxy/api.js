@@ -9,6 +9,7 @@ Object.defineProperty(Object.prototype, "clone", {
 
 var argv = require('optimist');
 var api_utils = require('../api/utils');
+var api_cache = require('../api/cache');
 
 // TOOD read mono version from package.json
 var version = 'v0.1.0';
@@ -21,72 +22,72 @@ function getConfig () {
             "short": 'v',
             "description": 'print mono\'s version'
         },
-        "deamon"        : {
+        "dev": {
             "value": false,
             "short": 'd',
-            "description": 'start mono proxy with forever as a deamon'
+            "description": 'start mono proxy directly'
         },
-        "host" : {
+        "host": {
             "short": 'h',
             "description": 'define a host (useful with a proxy)'
         },
-        "log"           : {
+        "log": {
             "value": __dirname + '/tmp/log.txt',
             "short": 'l',
             "description": 'specify a path for the log file'
         },
-        "logTerm"       : {
+        "logTerm": {
             "value": false,
             "short": 't',
             "description": 'print output of the applications in the terminal'
         },
-        "http"          : {
+        "http": {
             "value": 8000,
             "description": 'http port'
         },
-        "httpAppStart"     : {
+        "httpAppStart": {
             "value": 10000,
             "description": 'application http port range start'
         },
-        "httpAppEnd"     : {
+        "httpAppEnd": {
             "value": 14999,
             "description": 'application http port range end'
         },
-        "ws"            : {
+        "ws": {
             "value": 8080,
             "description": 'websockets port'
         },
-        "wsAppStart"       : {
+        "wsAppStart": {
             "value": 15000,
             "description": 'application websockets port range start'
         },
-        "wsAppEnd"       : {
+        "wsAppEnd": {
             "value": 19999,
             "description": 'application websockets port range end'
         },
-        "attempts"      : {
+        "attempts": {
             "value": 3,
             "description": 'number of attempts to restart a script'
         },
-        "silent"        : {
+        "silent": {
             "value": true,
             "description": 'run the child script silencing stdout and stderr'
         },
-        "minUptime"     : {
+        "minUptime": {
             "value": 2000,
             "description": 'minimum uptime (millis) for a script to not be considered "spinning"'
         },
-        "spinSleepTime" : {
+        "spinSleepTime": {
             "value": 1000,
             "description": 'time to wait (millis) between launches of a spinning script'
         },
-        "help" : {
+        "help": {
             "description": 'you\'re staring at it'
         }
     };
+    var config = {};
     
     // create default config
-    var config = {};
     for (var defOption in options) {
         if (options[defOption].value) {
             config[defOption] = options[defOption].value;
@@ -107,6 +108,15 @@ function getConfig () {
         // show version
         if (option === 'v' || option === 'version') {
             return version;
+        }
+        
+        // find long name
+        if (typeof options[option] === 'undefined') {
+            for (var long in options) {
+                if (options[long].short === option) {
+                    option = long;
+                }
+            }
         }
         
         // show help
@@ -139,10 +149,13 @@ function getConfig () {
             return 'Missing host';
         }
     }
+    
+    return config;
 }
 
 module.exports = {
     config: getConfig(),
+    apps: api_cache(),
     proxy: {
         pipe: function (hostHeader, socket, buffer, ws) {
         
@@ -176,12 +189,11 @@ module.exports = {
                 '\r\n' + msg
             );
         },
-        killEmAll: function (err) {
-            
-            for (var host in M.cache.apps.cache) {
+        killEmAll: function (err, cache) {
+            for (var host in cache.cache) {
                 
-                if (M.cache.apps.cache[host] && M.cache.apps.cache[host].pid) {
-                    process.kill(M.cache.apps.cache[host].pid);
+                if (cache.cache[host] && cache.cache[host].pid) {
+                    process.kill(cache.cache[host].pid);
                 }
             }
             

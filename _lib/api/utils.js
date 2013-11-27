@@ -45,6 +45,7 @@ function help (usage, info, options, more, spaces) {
 }
 
 //get ip adress
+var os = require("os");
 function ip (version, internal) {
     
     var netIf = os.networkInterfaces();
