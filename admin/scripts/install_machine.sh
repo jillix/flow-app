@@ -78,6 +78,9 @@ function setup_user {
     # give mono user ownership over .ssh directory
     chown -R "$USERNAME:$USERNAME" "/home/$USERNAME/.ssh"
 
+    # write the path to the mono server in the user's .profile file
+    echo -e '\n# mono server executable path (added by the Mono install_machine.sh script)\nPATH="$PATH:/home/$USERNAME/mono/bin"\n' >> /home/$USERNAME/.profile
+
     # add these to the known hosts for both users
     add_known_host github.com
     add_known_host bitbucket.org
