@@ -86,6 +86,13 @@ function getConfig () {
         }
     };
     var config = {};
+    var helpText = api_utils.help(
+        'node start [options]',
+        'The mono proxy server ' + version,
+        options,
+        'Documentation can be found at https://github.com/jillix/mono/',
+        17
+    );
     
     // create default config
     for (var defOption in options) {
@@ -97,17 +104,23 @@ function getConfig () {
     // set default cli options
     argv = argv.default(config).argv;
     
+    if (argv._[0] === 'stop') {
+        return 'stop';
+    } else if (argv._[0]) {
+        return helpText;
+    }
+    
+    // show version
+    if (argv.v || argv.version) {
+        return version;
+    }
+    
     // merge cli options
     for (var option in argv) {
         
         // ignore keys
         if (option === '_' || option === '$0') {
             continue;
-        }
-        
-        // show version
-        if (option === 'v' || option === 'version') {
-            return version;
         }
         
         // find long name
@@ -121,13 +134,7 @@ function getConfig () {
         
         // show help
         if (option === 'help' || typeof options[option] === 'undefined') {
-            return api_utils.help(
-                'node start [options]',
-                'The mono proxy server ' + version,
-                options,
-                'Documentation can be found at https://github.com/jillix/mono/',
-                17
-            );
+            return helpText;
         }
         
         // TODO check option value

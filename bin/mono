@@ -1,0 +1,40 @@
+#!/usr/bin/env node
+
+var forever = require('forever');
+var config = require('../_lib/proxy/api').config;
+
+// stop all forever
+if (config === 'stop') {
+    
+    forever.list('array', function (err, processes) {
+        if (!processes) {
+            return console.log('No process to stop');
+        }
+        
+        // TODO test stopAll
+        forever.stopAll().on('stopAll', function (err) {
+            console.log(err || 'Processes stoped');
+        });
+    });
+    
+    return;
+}
+
+// stop on config errors
+if (typeof config === 'string') {
+    return console.log(config);
+}
+
+// start the server directly
+if (config.dev) {
+    return require('../lib/proxy/server.js');
+}
+
+// start proxy as a deamon
+forever.startDaemon('./lib/proxy/server.js', {
+    "max"           : config.attempts,
+    "minUptime"     : config.minUptime,
+    "spinSleepTime" : config.spinSleepTime,
+    "silent"        : config.silent,
+    "logFile"       : config.log
+});
