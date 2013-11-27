@@ -98,5 +98,5 @@ var mono = {
         fetchModules: function () {}
     },
     git: {},
-    utils: {};
+    utils: {}
 };
