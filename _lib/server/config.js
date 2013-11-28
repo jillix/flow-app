@@ -1,11 +1,47 @@
 var os = require('os');
 var fs = require('fs');
+var path = require('path');
 var argv = require('optimist');
 
-var MONO_ROOT = __dirname + '/../../';
+/*
+// pahts
+var MONO_ROOT = __dirname;
+var paths = {};
+paths.MONO_ROOT = MONO_ROOT;
+paths.CONFIG_ROOT = MONO_ROOT + 'conf/';
+paths.LIB_ROOT = paths.MONO_ROOT + 'lib/';
+paths.API_ROOT = paths.MONO_ROOT + 'lib/api/';
+paths.MODULE_ROOT = paths.MONO_ROOT + 'modules/';
+paths.MODULE_DESCRIPTOR_NAME = 'mono.json';
+paths.APPLICATION_ROOT = paths.MONO_ROOT + 'apps/';
+paths.APPLICATION_DESCRIPTOR_NAME = 'application.json';
+paths.APPLICATION_MODULE_DIR_NAME = 'mono_modules';
+*/
+
+// check log level
+// One of: none, error, warning, info, debug, verbose
+/*if (!config.logLevel) {
+    config.logLevel = "error";
+} else {
+    switch (config.logLevel) {
+        case "none":
+        case "error":
+        case "warning":
+        case "info":
+        case "debug":
+        case "verbose":
+            break;
+        default:
+            throw new Error(config.logLevel + " is not a supported log level.");
+    }
+}*/
+
+var MONO_ROOT = path.normalize(__dirname + '/../../');
 var paths = {
     MONO_ROOT: MONO_ROOT,
-    PROXY_SERVER: MONO_ROOT + 'lib/proxy/server.js'
+    PROXY_SERVER: MONO_ROOT + '_lib/server/proxy.js'
+    // API (server)
+    // PUBLIC_API
 };
 
 var mono = JSON.parse(fs.readFileSync(MONO_ROOT + 'package.json'));
@@ -244,6 +280,12 @@ function getConfig () {
     
     // paths
     config.paths = paths;
+    
+    // TODO uncoment before pushing to repo
+    // pin dev mode to localhost
+    //if (config.dev) {
+        config.host = '127.0.0.1';
+    //}
     
     // get the right host address, if no host is set
     if (!config.host) {

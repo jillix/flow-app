@@ -28,6 +28,12 @@ var templates = {
             // mono server 'r'
             // mono admin 'crud'
         },
+        /*
+            server,
+            admin,
+            owner,
+            collaborators
+        */
         itemAccess: true,
         schema: {
             name: {
@@ -103,7 +109,7 @@ var templates = {
         },
         itemAccess: true, // ????? it could be a problem, that to many roles have access to a module
         schema: {
-            name: {
+            source: {
                 type: 'string',
                 required: true
             },
@@ -111,7 +117,11 @@ var templates = {
                 type: 'string',
                 required: true
             },
-            source: {
+            name: {
+                type: 'string',
+                required: true
+            },
+            version: {
                 type: 'string',
                 required: true
             },
@@ -120,19 +130,13 @@ var templates = {
                 type: 'object',
                 required: true
             },
-            versions: [{
-                dependencies: {
-                    type: 'array',
-                    required: true,
-                },
-                operations: {
-                    type: 'object'
-                },
-                version: {
-                    type: 'string',
-                    required: true
-                }
-            }]
+            dependencies: {
+                type: 'array',
+                required: true,
+            },
+            operations: {
+                type: 'object'
+            }
         }
     },
     miids: {
@@ -154,12 +158,12 @@ var templates = {
                 type: 'string',
                 required: true
             },
-            module: {
+            application: {
                 type: 'objectid',
                 required: true
             },
-            version: {
-                type: 'string',
+            module: {
+                type: 'objectid',
                 required: true
             },
             roles: {
@@ -185,11 +189,11 @@ var templates = {
                         // example: ['miid_1', 'miid_n']
                         type: 'array'
                     },
-                    modules: {
+                    loadModules: {
                         // example: {'#cssSelector': 'miid'}
                         type: 'object'
                     },
-                    custom: {
+                    data: {
                         type: 'object'
                     }
                 },
@@ -198,7 +202,7 @@ var templates = {
                         type: 'string',
                         required: true
                     },
-                    config: {
+                    data: {
                         type: 'object'
                     }
                 }]
