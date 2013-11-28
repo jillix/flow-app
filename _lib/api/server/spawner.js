@@ -49,6 +49,7 @@ function getPort (pid, callback) {
     });
 }
 
+// TODO get free port for websockets
 function getFreePort (callback) {
     var self = this;
     
@@ -63,7 +64,7 @@ function getFreePort (callback) {
     });
 
     var output = '';
-    var freePort = self.config.portRange[0];
+    var freePort = self.config.httpAppStart;
 
     // listen to all the output (not only once)
     child.stdout.on('data', function (data) {
@@ -90,7 +91,7 @@ function getFreePort (callback) {
         }
 
         // loop from start port to end port and find a hole in the usedPorts object
-        for (var i = self.config.portRange[0], l = self.config.portRange[1]; i < l; ++i) {
+        for (var i = self.config.httpAppStart, l = self.config.httpAppEnd; i < l; ++i) {
             if (!usedPorts[i]) {
                 freePort = i;
                 break;

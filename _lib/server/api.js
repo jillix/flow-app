@@ -26,6 +26,8 @@ var fs = require('fs');
 var EventEmitter = require('events').EventEmitter;
 var argv = require('optimist');
 var Pongo = require('pongo');
+
+// TODO create paths in config.paths for requiering modules
 var cache = require('../api/public/cache');
 
 // create api object

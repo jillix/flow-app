@@ -281,11 +281,10 @@ function getConfig () {
     // paths
     config.paths = paths;
     
-    // TODO uncoment before pushing to repo
     // pin dev mode to localhost
-    //if (config.dev) {
+    if (config.dev) {
         config.host = '127.0.0.1';
-    //}
+    }
     
     // get the right host address, if no host is set
     if (!config.host) {
