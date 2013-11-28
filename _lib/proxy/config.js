@@ -1,13 +1,14 @@
-var os = require("os");
+var os = require('os');
+var fs = require('fs');
 var argv = require('optimist');
 
-// TOOD read mono version from package.json
-var version = 'v0.1.0';
 var MONO_ROOT = __dirname + '/../../';
 var paths = {
     MONO_ROOT: MONO_ROOT,
     PROXY_SERVER: MONO_ROOT + 'lib/proxy/server.js'
 };
+
+var mono = JSON.parse(fs.readFileSync(MONO_ROOT + 'package.json'));
 var options = {
     "version": {
         "short": 'v',
@@ -185,7 +186,7 @@ function getConfig () {
     var config = {};
     var helpText = help(
         'mono [actions] [options]',
-        'The mono proxy server ' + version,
+        'The mono proxy server ' + mono.version,
         actions, options,
         'Documentation can be found at https://github.com/jillix/mono/',
         18
@@ -210,7 +211,7 @@ function getConfig () {
     
     // show version
     if (argv.v || argv.version) {
-        return version;
+        return mono.version;
     }
     
     // merge cli options
@@ -221,11 +222,13 @@ function getConfig () {
             continue;
         }
         
-        // find long name
+        // try find long name
         if (typeof options[option] === 'undefined') {
             for (var long in options) {
                 if (options[long].short === option) {
+                    argv[long] = argv[option];
                     option = long;
+                    break;
                 }
             }
         }
@@ -251,6 +254,9 @@ function getConfig () {
             return 'Missing host';
         }
     }
+    
+    // save package infos in config
+    config.mono = mono;
     
     return config;
 }
