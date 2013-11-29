@@ -1,3 +1,4 @@
+var fs = require('fs');
 var spawn = require('child_process').spawn;
 
 function getPort (pid, callback) {
@@ -49,7 +50,7 @@ function getPort (pid, callback) {
     });
 }
 
-// TODO get free port for websockets
+// TODO get free port for websockets, or use http for websockets
 function getFreePort (callback) {
     var self = this;
     
@@ -174,23 +175,15 @@ function startApp (host, callback) {
         }
         
         // multiple-domain applications must be started only once
-        var apps = self.cache.apps.getAll();
+        var apps = self.cache.getAll();
         for (var _host in apps)  {
             if (apps[_host] && apps[_host]._id === application._id) {
                 return callback(null, apps[_host]);
             }
         }
         
-        var appPath = self.config.APPLICATION_ROOT + application._id;
-        
-        // the application directory must be present otherwise the piped
-        // streams below will crash the mono proxy server
-        if (!fs.existsSync(appPath)) {
-            return callback(self.error(self.error.APP_DIR_NOT_FOUND, appPath));
-        }
-        
         // get pid of running application
-        self.app.getPid(application._id, function (err, pid) {
+        self.getPid(application._id, function (err, pid) {
 
             if (err) {
                 return callback(err);
@@ -217,22 +210,22 @@ function startApp (host, callback) {
             
             // get a free port
             self.getFreePort(function (freePort) {
-
+                
                 if (!freePort) {
                     return callback(self.error(self.error.APP_NO_FREE_PORT, application._id));
                 }
-
-                var app = spawn('node', [
-                    self.config.paths.APPLICATION_SERVER,
-                    '--app', application._id.toString(),
-                    '--port', freePort,
-                    '--host', application.host
-                ]);
                 
-                // write to application log
-                var log = fs.createWriteStream(appPath + '/log.txt');
-                app.stdout.pipe(log);
-                app.stderr.pipe(log);
+                // TODO spawn process with uid/gid
+                // http://nodejs.org/api/child_process.html#child_process_child_process_spawn_command_args_options
+                var app = spawn('node', [self.config.paths.APPLICATION_SERVER], {
+                    //uid: '',
+                    //gid: '',
+                    env: {
+                        app: application._id.toString(),
+                        port: freePort,
+                        host: application.host
+                    }
+                });
                 
                 // get pid if app is running
                 app.stdout.once('data', function (data) {
@@ -258,13 +251,14 @@ function startApp (host, callback) {
                 
                 // handle app termination
                 app.on('exit', function (code) {
-                    self.cache.apps.rm(host);
+                    self.cache.rm(host);
                 });
             });
         });
     });
 }
 
+exports.getPid = getPid;
 exports.getPort = getPort;
 exports.getFreePort = getFreePort;
 exports.startApp = startApp;

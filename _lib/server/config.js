@@ -11,6 +11,10 @@ paths.API_PUBLIC = paths.API_ROOT + 'public/';
 paths.API_SERVER = paths.API_ROOT + 'server/';
 paths.PROXY_SERVER = paths.LIB_ROOT + 'server/proxy.js';
 paths.APPLICATION_SERVER = paths.LIB_ROOT + 'application/server.js';
+paths.APPLICATION_ROOT = paths.MONO_ROOT + 'apps/';
+
+// extend js functionality
+require(paths.API_PUBLIC + 'extend');
 
 // read mono package
 var mono = JSON.parse(fs.readFileSync(paths.MONO_ROOT + 'package.json'));
@@ -69,8 +73,12 @@ var options = {
         "description": 'number of attempts to restart a script'
     },
     "silent": {
-        "value": true,
+        "value": false,
         "description": 'run the child script silencing stdout and stderr'
+    },
+    "verbose": {
+        "value": true,
+        "description": 'run forver with verbose'
     },
     "minUptime": {
         "value": 2000,

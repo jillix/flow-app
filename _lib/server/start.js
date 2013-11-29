@@ -37,6 +37,7 @@ function start () {
             "minUptime"     : config.minUptime,
             "spinSleepTime" : config.spinSleepTime,
             "silent"        : config.silent,
+            "verbose"       : config.verbose,
             "logFile"       : config.log
         });
         

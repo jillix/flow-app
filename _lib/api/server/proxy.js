@@ -1,10 +1,10 @@
 var net = require('net');
 
-function pipe (app, socket, buffer, ws) {
+function pipe (app, socket, buffer) {
     var self = this;
     
     // the host of an application is the ip address where the application runs
-    var appSocket = net.connect(ws ? app.wsPort : app.port, app.host);
+    var appSocket = net.connect(app.port, app.host);
     appSocket.setKeepAlive(true);
     appSocket.on('error', function (err) {
         
@@ -28,6 +28,7 @@ function send (socket, status, msg, ws) {
         // TODO handle websockets send
     }
     
+    socket.resume();
     socket.end(
         'HTTP/1.1 ' + status + '\r\n' +
         'Date: ' + new Date().toString() + '\r\n' +

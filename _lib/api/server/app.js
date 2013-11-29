@@ -19,7 +19,7 @@ function getFromHost (host, callback) {
         fields = null;
     }
     
-    self.collection.findOne({domains:host},{fields: {host: 1}}, function (err, data) {
+    self.db.applications.findOne({domains:host},{fields: {host: 1}}, function (err, data) {
         
         if (err) {
             return callback(err);

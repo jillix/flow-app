@@ -1,27 +1,3 @@
-// extend Object prototype with clone function
-Object.defineProperty(Object.prototype, "clone", {
-    value: function(){
-        function ClonedObject(){}
-        ClonedObject.prototype = this;
-        return new ClonedObject();
-    }
-});
-
-// object with a merge function
-Object.defineProperty(Object.prototype, "merge", {
-    value: function(object, overwrite){
-        for (var property in object) {
-            if (object.hasOwnProperty(property)) {
-                if (!overwrite && typeof this[property] !== 'undefined') {
-                    continue;
-                }
-                
-                this[property] = object[property];
-            }
-        }
-    }
-});
-
 var fs = require('fs');
 var EventEmitter = require('events').EventEmitter;
 var argv = require('optimist');
@@ -33,11 +9,11 @@ API.config = require('./config');
 
 // server api
 API.server = {};
-API.server.merge(require(API.config.paths.API_SERVER + 'proxy'));
-API.server.merge(require(API.config.paths.API_SERVER + 'spawner'));
-API.server.merge(require(API.config.paths.API_SERVER + 'app'));
-API.server.error = require(API.config.paths.API_PUBLIC + 'error');
-API.server.cache = require(API.config.paths.API_PUBLIC + 'cache')();
+API.merge(require(API.config.paths.API_SERVER + 'proxy'));
+API.merge(require(API.config.paths.API_SERVER + 'spawner'));
+API.merge(require(API.config.paths.API_SERVER + 'app'));
+API.error = require(API.config.paths.API_PUBLIC + 'error');
+API.cache = require(API.config.paths.API_PUBLIC + 'cache')();
 
 // connect to db
 new Pongo({
@@ -58,7 +34,10 @@ new Pongo({
         }
         
         // save collection in app api
-        API.server.collection = collection;
+        API.db = {
+            applications: collection
+        };
+        
         API.emit('ready', API);
     });
 });
