@@ -1,15 +1,14 @@
 var net = require('net');
 
-function pipe (hostHeader, socket, buffer, ws) {
+function pipe (app, socket, buffer, ws) {
     var self = this;
     
     // the host of an application is the ip address where the application runs
-    var app = self.cache.get(hostHeader);
     var appSocket = net.connect(ws ? app.wsPort : app.port, app.host);
     appSocket.setKeepAlive(true);
     appSocket.on('error', function (err) {
         
-        self.cache.rm(hostHeader);
+        self.cache.rm(app.host);
         send(socket, 500, self.error.APP_SOCKET_RELOAD_MESSAGE);
     });
     

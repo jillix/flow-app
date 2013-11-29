@@ -27,26 +27,22 @@ var EventEmitter = require('events').EventEmitter;
 var argv = require('optimist');
 var Pongo = require('pongo');
 
-// TODO create paths in config.paths for requiering modules
-var cache = require('../api/public/cache');
-
 // create api object
 var API = new EventEmitter();
 API.config = require('./config');
 
 // server api
 API.server = {};
-API.server.merge(require('../api/server/proxy'));
-API.server.merge(require('../api/server/spawner'));
-API.server.merge(require('../api/server/app'));
-API.server.error = require('../api/public/error');
-API.server.cache = cache();
+API.server.merge(require(API.config.paths.API_SERVER + 'proxy'));
+API.server.merge(require(API.config.paths.API_SERVER + 'spawner'));
+API.server.merge(require(API.config.paths.API_SERVER + 'app'));
+API.server.error = require(API.config.paths.API_PUBLIC + 'error');
+API.server.cache = require(API.config.paths.API_PUBLIC + 'cache')();
 
-// TODO make db parameters configurable
 // connect to db
 new Pongo({
-    //host: M.config.mongoDB.host,
-    //port: M.config.mongoDB.port,
+    host: API.config.dbHost,
+    port: API.config.dbPort,
     server: {poolSize: 10},
     db: {w: 0}
 }).connect('mono', function (err, db) {

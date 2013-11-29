@@ -157,7 +157,7 @@ function getPid (id, callback) {
         }
 
         // we are now sure we are answering with the only valid pid
-        var pid = parseInt(splits[0]);
+        var pid = parseInt(splits[0], 10);
         callback(null, pid);
     });
 }
@@ -222,24 +222,32 @@ function startApp (host, callback) {
                     return callback(self.error(self.error.APP_NO_FREE_PORT, application._id));
                 }
 
-                var log = fs.createWriteStream(appPath + '/log.txt');
                 var app = spawn('node', [
-                    self.config.MONO_ROOT + '/lib/application/server.js',
+                    self.config.paths.APPLICATION_SERVER,
                     '--app', application._id.toString(),
                     '--port', freePort,
                     '--host', application.host
                 ]);
                 
+                // write to application log
+                var log = fs.createWriteStream(appPath + '/log.txt');
+                app.stdout.pipe(log);
+                app.stderr.pipe(log);
+                
                 // get pid if app is running
                 app.stdout.once('data', function (data) {
+                    
+                    // kill process if the sended data is not the app id
                     if (data.toString('ascii') !== application._id.toString()) {
-                        // TODO kill the process in this case
+                        app.kill();
                         return callback(self.error(self.error.APP_SPAWN_INVALID_RESPONSE, application._id, data.toString('ascii')));
                     }
                     
+                    // update application cache item
                     application.port = freePort;
                     application.pid = app.pid;
                     
+                    // handle logTerm option
                     if (self.config.logTerm) {
                         app.stdout.pipe(process.stdout);
                         app.stderr.pipe(process.stderr);
@@ -247,23 +255,13 @@ function startApp (host, callback) {
                     
                     return callback(null, application);
                 });
-
-                app.stderr.on('data', function (data) {
-                    console.error(data.toString().trim());
-                });
                 
-                app.stdout.pipe(log);
-                app.stderr.pipe(log);
-                
+                // handle app termination
                 app.on('exit', function (code) {
-                    if (code) {
-                        console.error('Application ' + application._id + ' finished with code: ' + code);
-                    }
                     self.cache.apps.rm(host);
                 });
             });
         });
-        
     });
 }
 

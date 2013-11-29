@@ -1,5 +1,5 @@
 // load mono api
-var net = require("net");
+var net = require('net');
 var M = require('./api');
 
 // handle socket
@@ -12,62 +12,68 @@ function server (socket, ws) {
         socket.pause();
         
         // Info: read more from buffer, if there are a lot of 414 errors
-        var bfrstr = buffer.toString('ascii', 0, 1000);
+        var host = buffer.toString('ascii', 0, 1000);
         
         // is the URL to long?
-        if (bfrstr.indexOf('\n') > 2048) {
-            return M.server.send(socket, 414, 'Request-URL Too Long.\r\n' + buffer.toString('ascii'));
+        if (host.indexOf('\n') > 2048) {
+            return M.server.send(socket, 414, 'Request-URL Too Long.');
         }
         
         // TODO test for "Upgrade: websocket"
         //console.log(bfrstr.match(/upgrade:[ ]{1}websocket/i));
         
         // get host
-        var host = bfrstr.match(/host\: *([a-z0-9\-_\.]+)(:[0-9]{2,5})?/i);
+        host = host.match(/host\: *([a-z0-9\-_\.]+)(:[0-9]{2,5})?/i);
         if (!host) {
-            return M.server.send(socket, 400, 'No Host found in headers.\r\n' + buffer.toString('ascii'));
+            return M.server.send(socket, 400, 'No Host found in headers.');
         }
+        host = host[0];
         
-        host = host[1];
-        
-        if (M.server.cache.get(host) === null) {
+        // get application from cache
+        app = M.server.cache.get(host);
+        if (app === null) {
             return M.server.send(socket, 503, 'Application is starting...');
         }
         
         // proxy request
-        if (M.server.cache.get(host)) {
-            return M.server.pipe(host, socket, buffer, ws);
+        if (app) {
+            return M.server.pipe(app, socket, buffer, ws);
         }
         
+        // mark application as "starting"
         M.server.cache.save(host, null);
         
+        // start app
         M.server.startApp(host, function (err, application) {
             
-            // TODO handle undefined err variable
-            if (err || !application) {
+            // handle error
+            if (err) {
+                
+                // remove app from cache
                 M.server.cache.rm(host);
                 
-                var statusCode;
-
-                switch (err.code) {
-
-                    case M.error.APP_NOT_FOUND:
-                        statusCode = 404;
-                        break;
-
-                    default:
-                        statusCode = 500;
+                // set appropriate status code
+                var statusCode = 500;
+                if (err.code === M.server.error.APP_NOT_FOUND) {
+                    statusCode = 404;
                 }
 
+                // send error
                 return M.server.send(socket, statusCode, err.message);
             }
             
+            // save app in cache
             M.server.cache.save(host, application);
-            M.server.pipe(host, socket, buffer, ws);
+            
+            // pipe socket to application
+            M.server.pipe(application, socket, buffer, ws);
         });
     });
     
-    socket.on('error', function () {});
+    // handle socket errors
+    socket.on('error', function (err) {
+        M.server.send(socket, 500, err.message);
+    });
 }
 
 // wrap api function to preserve scope
@@ -94,7 +100,7 @@ M.on('ready', function () {
     
     // TODO test ws over the port 80 with http (making a second server obsolete)
     // start ws proxy server
-    net.createServer(function (socket) {
-        server(socket, true);
-    }).listen(M.config.ws, M.config.host);
+    //net.createServer(function (socket) {
+    //    server(socket, true);
+    //}).listen(M.config.ws, M.config.host);
 });

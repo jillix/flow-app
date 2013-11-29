@@ -10,10 +10,6 @@ function getFromHost (host, callback) {
         return callback(new Error('Host must be a string'));
     }
     
-    // TODO is this important?
-    // prevent sql injection attacks
-    //host = host.replace(/[^0-9a-z\-_\.]/gi, '');
-
     if (!host || host.length < 4) {
         return callback(new Error('Host length must be greater than 3.'));
     }
