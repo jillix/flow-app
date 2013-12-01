@@ -1,18 +1,9 @@
-//var appPath = self.config.paths.APPLICATION_ROOT + application._id;
-// the application directory must be present otherwise the piped
-// streams below will crash the mono proxy server
-//if (!fs.existsSync(appPath)) {
-//    return callback(self.error(self.error.APP_DIR_NOT_FOUND, application._id));
-//}
-// write to application log
-//var log = fs.createWriteStream(appPath + '/log.txt');
-//app.stdout.pipe(log);
-//app.stderr.pipe(log);
-
-// TODO get configuration and api
-
 var http = require("http");
 var WebSocketServer = require('ws').Server;
+
+// TODO add api to the link object instead using a global variable
+
+var api = require('./api');
 
 function requestHandler (req, res) {
     
@@ -62,7 +53,8 @@ var server = http.createServer(requestHandler);
 var wss = new WebSocketServer({server: server});
 wss.on('connection', function(ws) {
     
-    // TODO count connections
+    // TODO here we could count connections
+    // TODO how to broadcast messages?
     
     ws.on('message', function (data) {
         messageHandler(ws, data);
