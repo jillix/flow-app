@@ -22,11 +22,7 @@ function pipe (app, socket, buffer) {
     socket.resume();
 }
 
-function send (socket, status, msg, ws) {
-    
-    if (ws) {
-        // TODO handle websockets send
-    }
+function send (socket, status, msg) {
     
     socket.resume();
     socket.end(

@@ -50,7 +50,6 @@ function getPort (pid, callback) {
     });
 }
 
-// TODO get free port for websockets, or use http for websockets
 function getFreePort (callback) {
     var self = this;
     
@@ -65,7 +64,7 @@ function getFreePort (callback) {
     });
 
     var output = '';
-    var freePort = self.config.httpAppStart;
+    var freePort = self.config.appPortStart;
 
     // listen to all the output (not only once)
     child.stdout.on('data', function (data) {
@@ -92,7 +91,7 @@ function getFreePort (callback) {
         }
 
         // loop from start port to end port and find a hole in the usedPorts object
-        for (var i = self.config.httpAppStart, l = self.config.httpAppEnd; i < l; ++i) {
+        for (var i = self.config.appPortStart, l = self.config.appPortEnd; i < l; ++i) {
             if (!usedPorts[i]) {
                 freePort = i;
                 break;
@@ -216,10 +215,10 @@ function startApp (host, callback) {
                 }
                 
                 // TODO spawn process with uid/gid
-                // http://nodejs.org/api/child_process.html#child_process_child_process_spawn_command_args_options
+                // nodejs.org/api/child_process.html#child_process_child_process_spawn_command_args_options
                 var app = spawn('node', [self.config.paths.APPLICATION_SERVER], {
-                    //uid: '',
-                    //gid: '',
+                    //uid: 'application.uid',
+                    //gid: 'application.gid',
                     env: {
                         app: application._id.toString(),
                         port: freePort,

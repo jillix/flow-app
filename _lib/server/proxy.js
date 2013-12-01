@@ -19,12 +19,6 @@ function server (socket) {
             return M.send(socket, 414, 'Request-URL Too Long.');
         }
         
-        // TODO test for "Upgrade: websocket"
-        //var ws = false;
-        //if ((ws = host.match(/upgrade\:[ ]{1}websocket/i))) {
-        //    ws = true;
-        //}
-        
         // get host
         if (!(host = host.match(/host\: *([a-z0-9\-_\.]+)(:[0-9]{2,5})?/i))) {
             return M.send(socket, 400, 'No Host found in headers.');
@@ -93,14 +87,7 @@ M.on('error', function (err) {
     throw new Error(err);
 });
 
+// start proxy server
 M.on('ready', function () {
-    
-    // start http proxy server
-    net.createServer(server).listen(M.config.http, M.config.host);
-    
-    // TODO test ws over the port 80 with http (making a second server obsolete)
-    // start ws proxy server
-    //net.createServer(function (socket) {
-    //    server(socket, true);
-    //}).listen(M.config.ws, M.config.host);
+    net.createServer(server).listen(M.config.port, M.config.host);
 });

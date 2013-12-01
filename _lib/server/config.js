@@ -44,29 +44,17 @@ var options = {
         "short": 't',
         "description": 'print output of the applications in the terminal'
     },
-    "http": {
+    "port": {
         "value": 8000,
-        "description": 'http port'
+        "description": 'port for http and websockets communication'
     },
-    "httpAppStart": {
-        "value": 10000,
-        "description": 'application http port range start'
+    "appPortStart": {
+        "value": 10001,
+        "description": 'application port range start'
     },
-    "httpAppEnd": {
-        "value": 14999,
-        "description": 'application http port range end'
-    },
-    "ws": {
-        "value": 8080,
-        "description": 'websockets port'
-    },
-    "wsAppStart": {
-        "value": 15000,
-        "description": 'application websockets port range start'
-    },
-    "wsAppEnd": {
+    "appPortEnd": {
         "value": 19999,
-        "description": 'application websockets port range end'
+        "description": 'application port range end'
     },
     "attempts": {
         "value": 3,
