@@ -226,6 +226,12 @@ function startApp (host, callback) {
                     }
                 });
                 
+                // handle logTerm option
+                if (self.config.logTerm) {
+                    app.stdout.pipe(process.stdout);
+                    app.stderr.pipe(process.stderr);
+                }
+                
                 // get pid if app is running
                 app.stdout.once('data', function (data) {
                     
@@ -238,12 +244,6 @@ function startApp (host, callback) {
                     // update application cache item
                     application.port = freePort;
                     application.pid = app.pid;
-                    
-                    // handle logTerm option
-                    if (self.config.logTerm) {
-                        app.stdout.pipe(process.stdout);
-                        app.stderr.pipe(process.stderr);
-                    }
                     
                     return callback(null, application);
                 });
