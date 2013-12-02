@@ -1,4 +1,4 @@
-var forever = require('forever');
+var forever = require('forever-mac');
 var config = require('./config');
 
 function start () {
@@ -30,7 +30,7 @@ function start () {
         if (config.dev) {
             return require(config.paths.PROXY_SERVER);
         }
-        
+
         // start proxy as a deamon
         forever.startDaemon(config.paths.PROXY_SERVER, {
             "max"           : config.attempts,
