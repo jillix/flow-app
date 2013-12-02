@@ -6,13 +6,13 @@ function start () {
         
         // stop all forever
         if (config === 'stop') {
-            
-                if (!processes) {
-                    return console.log('no process to stop');
-                }
-                
-                forever.stopAll();
-                console.log('process stoped');
+
+            if (!processes) {
+                return console.log('no process to stop');
+            }
+
+            forever.stopAll();
+            console.log('process stoped');
                 
             return;
         }
