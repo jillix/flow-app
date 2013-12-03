@@ -1,36 +1,37 @@
 var gzip = require('zlib').gzip;
 
 function sendClient (link, miid) {
+    var self = this;
     
     // set headers
     link.res.headers["content-type"] = "text/html; charset=utf-8";
     link.res.headers["access-control-allow-origin"] = 'http://jipics.net';
     link.res.headers['content-encoding'] = 'gzip';
     
-    if (M.cache.client.cache[miid]) {
-        link.res.headers['content-length'] = M.cache.client.cache[miid].length;
-        return link.send(200, M.cache.client.cache[miid]);
+    var cached = self.cache.get(miid);
+    if (cached) {
+        link.res.headers['content-length'] = cached.length;
+        return link.send(200, cached);
     }
     
     gzip(
         "<!DOCTYPE html><html><head>\n" +
-            (M.config.app.title ? "<title>" + M.config.app.title + "</title>\n" : "") +
             "<link rel='icon' href='/favicon.ico'/>\n" +
             "<meta http-equiv='content-type' content='text/html; charset=utf-8'/>\n" +
             "<meta http-equiv='X-UA-Compatible' content='IE=edge'>\n" +
             "<!--[if lt IE 10]>\n" +
-                "<script src='/" + M.config.operationKey + "/getClient/IE9.js'></script>\n" +
-                "<script src='/" + M.config.operationKey + "/getClient/ifYouSeeThisScriptUpdateYourBrowserNow.js'></script>\n" +
-                "<script src='/" + M.config.operationKey + "/getClient/html5shiv.js'></script>\n" +
+                "<script src='/" + self.config.coreKey + "/getClient/IE9.js'></script>\n" +
+                "<script src='/" + self.config.coreKey + "/getClient/ifYouSeeThisScriptUpdateYourBrowserNow.js'></script>\n" +
+                "<script src='/" + self.config.coreKey + "/getClient/html5shiv.js'></script>\n" +
             "<![endif]-->\n" +
             "<script type='text/javascript'>\n" +
                 "window.onload=function(){M('body','" + miid + "')}\n" +
             "</script>\n" +
-            "<script src='/" + M.config.operationKey + "/getClient/M.js'></script>\n" +
+            "<script src='/" + self.config.coreKey + "/getClient/M.js'></script>\n" +
         "</head><body></body></html>",
         function (err, data) {
             
-            M.cache.client.save(miid, data);
+            self.cache.save(miid, data);
             
             link.res.headers['content-length'] = data.length;
             link.send(200, data);
@@ -75,25 +76,29 @@ function traverse(path, routes, current) {
 }
 
 function route (link) {
+    var self = this;
     
-    var module = traverse(link.pathname.replace(/\/$/, ""), M.config.routes, "");
+    var module = traverse(link.pathname.replace(/\/$/, ""), self.config.routes, "");
 
     if (typeof module == "string") {
         
         module = module.split(":");
         
-        if (module[1] && link.session._loc !== module[1]) {
+        // TODO save locale in session
+        /*if (module[1] && link.session._loc !== module[1]) {
             return link.session.set({_loc: module[1]}, function (err) {
+                
                 // TODO handle error
-                link.res.headers['set-cookie'] = M.config.session.locale + '=' + module[1] + '; path=/';
-                sendClient(link, module[0]); 
+                link.res.headers['set-cookie'] = self.config.session.locale + '=' + module[1] + '; path=/';
+                sendClient.call(self, link, module[0]); 
             });
-        }
+        }*/
         
-        sendClient(link, module[0]);
+        sendClient.call(self, link, module[0]);
     
     } else {
-        serve(link);
+        
+        (link);
     }
 }
 

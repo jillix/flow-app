@@ -34,8 +34,7 @@
         "modm"          : "*",
         "node-static"   : "*",
         "optimist"      : "*",
-        "pongo"         : "*",
-        "socket.io"     : "0.9.13"
+        "pongo"         : "*"
     },
     "devDependencies": {
     },

@@ -37,7 +37,7 @@ function convertToBuffer (data, headers) {
 }
 
 exports.send = function (code, data) {
-    
+    var self = this;
     var headers = this.res.headers || defaultHeader;
     
     headers['server'] = 'Mono Web Server';
@@ -46,10 +46,10 @@ exports.send = function (code, data) {
     
     if (data === false) {
         code = 500;
-        data = M.error(M.error.APP_SEND_JSON_STRINGIFY);
+        data = self.error(self.error.APP_SEND_JSON_STRINGIFY);
     }
     
-    if (code >= 400 && M.config.logLevel === 'debug') {
+    if (code >= 400 && self.config.logLevel === 'debug') {
         console.log("DEBUG: " + data);
     }
     
@@ -77,12 +77,13 @@ exports.send = function (code, data) {
     this.res.writeHead(code, headers);
     this.res.end(data);
     
-    if (M.config.log.requestTimes || M.config.logLevel === 'verbose') {
+    if (self.config.logLevel === 'verbose') {
         console.log('Request time: ' + (new Date().getTime() - this.time) + 'ms' + ' | ' + this.pathname);
     }
 };
 
 exports.stream = function (link) {
+    var self = this;
     
     var first = true;
     var isJSON = false;
@@ -141,7 +142,7 @@ exports.stream = function (link) {
 
             link.res.end();
             
-            if (M.config.log.requestTimes || M.config.logLevel === 'verbose') {
+            if (self.config.logLevel === 'verbose') {
                 console.log('Request time: ' + (new Date().getTime() - link.time) + 'ms' + ' | ' + link.pathname);
             }
         }

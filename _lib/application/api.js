@@ -8,8 +8,11 @@ API.config = require('./config');
 
 //API.blend(require(API.config.paths.API_APPLICATION + 'send'));
 API.blend(require(API.config.paths.API_APPLICATION + 'router'));
-//API.blend(require(API.config.paths.API_APPLICATION + 'module'));
+API.blend(require(API.config.paths.API_APPLICATION + 'module'));
 //API.blend(require(API.config.paths.API_APPLICATION + 'static'));
+//API.cache = require(API.config.paths.API_PUBLIC + 'static')('');
+API.cache = require(API.config.paths.API_PUBLIC + 'cache')();
+API.error = require(API.config.paths.API_PUBLIC + 'error');
 
 // connect to db
 new Pongo({

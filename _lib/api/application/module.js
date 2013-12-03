@@ -109,8 +109,9 @@ exports.getModule = function(link) {
 };
 
 exports.getClient = function(link){
-
-    if (M.config.compressFiles) {
+    var self = this;
+    
+    if (self.config.compressFiles) {
         link.res.setHeader('content-encoding', 'gzip');
         link.res.setHeader('vary', 'accept-encoding');
         link.req.url = link.path[0].split('.')[0] + '.min.gz';
@@ -121,4 +122,3 @@ exports.getClient = function(link){
     
     client.serve(link.req, link.res);
 };
-

@@ -1,44 +1,50 @@
 var http = require('http');
 var WebSocketServer = require('ws').Server;
 var parse = require('url').parse;
+var send = require('./send');
 
 // TODO add api to the link object instead using a global variable
 var M = require('./api');
 
 function requestHandler (req, res) {
     
-    // TODO send http requests to router, except getModule core requests
-    
-    // handle post requests
-    if (req.method === 'post') {
-        // TODO handle data upload with operations
-    }
-    
-    // TODO handle core requests
+    req.pause();
+        
     var url = parse(req.url, true);
     var path = url.pathname.replace(/\/$|^\//g, "").split("/", 42);
     var link = {
         req:        req,
         res:        res,
-        //send:       send.send,
+        send:       send.send,
         path:       path,
-        query:      url.query || {},
+        //query:      url.query || {},
         pathname:   url.pathname
     };
     
-    M.route(link);
+    // invoke streaming api
+    link.stream = send.stream(link);
+
+    // set a empty response header object
+    link.res.headers = {};
     
-    res.end(
-        "<!DOCTYPE html><html><head>\n" +
-            "<title>Mono Websockets</title>" +
-            "<meta http-equiv='content-type' content='text/html; charset=utf-8'/>\n" +
-            "<script type='text/javascript'>\n" +
-                "var webSocket = new WebSocket('ws://' + window.location.host + '/');" +
-                "webSocket.onclose = function () {console.log('ws closed')};" +
-                "webSocket.onerror = function () {console.log('ws error')};" +
-            "</script>\n" +
-        "</head><body></body></html>"
-    );
+    
+    // handle post requests
+    if (req.method === 'post') {
+        // TODO handle data upload with operations
+        return;
+    }
+    
+    // TODO handle core requests
+    if (link.path[0] === M.config.coreKey) {
+        return M.getClient(link);
+    }
+    
+    // call router
+    
+    // TODO get the session
+    //M.session.get(link, forwardRequest);
+    
+    M.route(link);
 }
 
 function messageHandler (ws, data) {

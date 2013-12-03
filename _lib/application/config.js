@@ -16,11 +16,10 @@ function getConfig() {
     var config = {
         
         // TODO review this config options
-        "coreMiid"      : "core",
-        "operationKey"  : "@",
+        "coreKey"       : "@",
         "logLevel"      : "debug",
-        "compressFiles" : false,
-        "compressFileTypes": {
+        "compress" : false,
+        "compressTypes": {
             "css": 1,
             "js": 1,
             "html": 1,
