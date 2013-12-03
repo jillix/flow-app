@@ -29,7 +29,8 @@
         "framework"
     ],
     "dependencies" : {
-        "forever-mac"       : "*",
+        "ws"            : "*",
+        "forever-mac"   : "*",
         "modm"          : "*",
         "node-static"   : "*",
         "optimist"      : "*",

@@ -1,15 +1,32 @@
-var http = require("http");
+var http = require('http');
 var WebSocketServer = require('ws').Server;
+var parse = require('url').parse;
 
 // TODO add api to the link object instead using a global variable
-
-var api = require('./api');
+var M = require('./api');
 
 function requestHandler (req, res) {
     
-    console.log('http request');
-    
     // TODO send http requests to router, except getModule core requests
+    
+    // handle post requests
+    if (req.method === 'post') {
+        // TODO handle data upload with operations
+    }
+    
+    // TODO handle core requests
+    var url = parse(req.url, true);
+    var path = url.pathname.replace(/\/$|^\//g, "").split("/", 42);
+    var link = {
+        req:        req,
+        res:        res,
+        //send:       send.send,
+        path:       path,
+        query:      url.query || {},
+        pathname:   url.pathname
+    };
+    
+    M.route(link);
     
     res.end(
         "<!DOCTYPE html><html><head>\n" +
@@ -29,7 +46,7 @@ function messageHandler (ws, data) {
     // TODO compression? not yet standartized in the websockets draft
     // TODO define a protocoll
     /*
-        Request: ['miid', 'operation', {}]
+        Request: ['miid', 'operation'[, {}, msgId]]
         Response: [status, data]
     */
     // TODO how to get the session? only once on connect? check the ws object (ws.upgradeReq.headers)

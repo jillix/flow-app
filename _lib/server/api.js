@@ -9,9 +9,9 @@ API.config = require('./config');
 
 // server api
 API.server = {};
-API.merge(require(API.config.paths.API_SERVER + 'proxy'));
-API.merge(require(API.config.paths.API_SERVER + 'spawner'));
-API.merge(require(API.config.paths.API_SERVER + 'app'));
+API.blend(require(API.config.paths.API_SERVER + 'proxy'));
+API.blend(require(API.config.paths.API_SERVER + 'spawner'));
+API.blend(require(API.config.paths.API_SERVER + 'app'));
 API.error = require(API.config.paths.API_PUBLIC + 'error');
 API.cache = require(API.config.paths.API_PUBLIC + 'cache')();
 

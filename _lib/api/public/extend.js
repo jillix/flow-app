@@ -7,8 +7,8 @@ Object.defineProperty(Object.prototype, "clone", {
     }
 });
 
-// object with a merge function
-Object.defineProperty(Object.prototype, "merge", {
+// blend objects together
+Object.defineProperty(Object.prototype, "blend", {
     value: function(object, overwrite){
         for (var property in object) {
             if (object.hasOwnProperty(property)) {

@@ -6,15 +6,17 @@ var Pongo = require('pongo');
 var API = new EventEmitter();
 API.config = require('./config');
 
-// server api
-API.server = {};
+//API.blend(require(API.config.paths.API_APPLICATION + 'send'));
+API.blend(require(API.config.paths.API_APPLICATION + 'router'));
+//API.blend(require(API.config.paths.API_APPLICATION + 'module'));
+//API.blend(require(API.config.paths.API_APPLICATION + 'static'));
 
 // connect to db
 new Pongo({
     host: API.config.dbHost,
     port: API.config.dbPort,
-    // open 3 sockets to the db server per appliation process
-    server: {poolSize: 3},
+    // open n sockets to the db server per appliation process
+    server: {poolSize: 2},
     db: {w: 0}
 }).connect('mono', function (err, db) {
     
@@ -23,6 +25,7 @@ new Pongo({
     }
     
     // get mongodb collections
+    // TODO it's dangerous to give an application access to the full collection
     // API.db.collectionName = db.collection('collectionName');
 });
 

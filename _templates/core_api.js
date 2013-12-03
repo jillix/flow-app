@@ -31,14 +31,6 @@ var server = {
         };
     },
     
-    /*
-        Access: read
-        Locations:
-            - lib/proxy/spawner.js:142
-    */
-    // the same as getAppById method, line 13 ?
-    getAppPid: function (appMongoObjectId, callback) {},
-    
     ////////////////////////////////////////////////////////////////////////////
     // ITEM ACCESS CALLS
     ////////////////////////////////////////////////////////////////////////////

@@ -12,7 +12,7 @@ Object.extend = function(object, inherit) {
     var Module = function(properties) {
     
         if (typeof properties === 'object') {
-        
+    
             for (var property in properties) {
                 
                 if (properties.hasOwnProperty(property)) {
@@ -38,7 +38,7 @@ var M = (function() {
     
     // open a websocket
     // TODO try to connect if connection closed (try to solve it with events instead of an interval)
-    var webSocket = new WebSocket('ws://' + (window.location.host).split(':')[0] + ':8080/');
+    var webSocket = new WebSocket('ws://' + window.location.host + '/');
     
     // module cache
     var modules = {};

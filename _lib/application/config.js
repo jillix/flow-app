@@ -9,8 +9,7 @@ paths.API_APPLICATION = paths.API_ROOT + 'application/';
 paths.APPLICATION_ROOT = paths.MONO_ROOT + 'apps/' + process.env.app + '/';
 
 // extend js functionality
-// TODO why is this causing an error?
-//require(paths.API_PUBLIC + 'extend');
+require(paths.API_PUBLIC + 'extend');
 
 function getConfig() {
     // create config
@@ -32,6 +31,9 @@ function getConfig() {
             "id": "_s",
             "locale": "_l",
             "path": "/"
+        },
+        "routes": {
+            "/": "layout"
         },
         
         // TODO get this values from process.env
