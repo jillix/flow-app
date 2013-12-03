@@ -1,4 +1,4 @@
-var forever = require('forever');
+var forever = require('forever-mac');
 var config = require('./config');
 
 function start () {
@@ -6,13 +6,13 @@ function start () {
         
         // stop all forever
         if (config === 'stop') {
-            
-                if (!processes) {
-                    return console.log('no process to stop');
-                }
-                
-                forever.stopAll();
-                console.log('process stoped');
+
+            if (!processes) {
+                return console.log('no process to stop');
+            }
+
+            forever.stopAll();
+            console.log('process stoped');
                 
             return;
         }
@@ -30,7 +30,7 @@ function start () {
         if (config.dev) {
             return require(config.paths.PROXY_SERVER);
         }
-        
+
         // start proxy as a deamon
         forever.startDaemon(config.paths.PROXY_SERVER, {
             "max"           : config.attempts,

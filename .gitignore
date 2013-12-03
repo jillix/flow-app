@@ -3,7 +3,6 @@ npm-debug.log
 *.swp
 *.vim
 node_modules/
-tmp/
 *~
 
 *_shortcut.js

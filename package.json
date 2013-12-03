@@ -18,10 +18,6 @@
         }
     ],
     "scripts": {
-        "preinstall"    : "admin/scripts/preinstall.sh",
-        "install"       : "node admin/scripts/apps/remove_fetch_install_apps.js -v MonoDev",
-        "postinstall"   : "node admin/scripts/postinstall.js",
-        "test"          : "node node_modules/tap/bin/tap.js ./test"
     },
     "repository": {
         "type": "git",
@@ -33,25 +29,14 @@
         "framework"
     ],
     "dependencies" : {
-        "asyncjs"       : ">=0.0.5",
-        "cookie"        : "*",
-        "forever"       : "*",
-        "formidable"    : "*",
-        "github"        : "*",
+        "forever-mac"       : "*",
         "modm"          : "*",
         "node-static"   : "*",
-        "nodemailer"    : "*",
-        "oauth"         : ">=0.9.0",
         "optimist"      : "*",
         "pongo"         : "*",
-        "pty.js"        : "0.2.2",
-        "request"       : "*",
-        "socket.io"     : "0.9.13",
-        "syntax-error"  : "*",
-        "uglify-js"     : "*"
+        "socket.io"     : "0.9.13"
     },
     "devDependencies": {
-        "tap"           : "*"
     },
     "engine": {
         "node": ">=0.10"
