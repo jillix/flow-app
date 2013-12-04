@@ -24,10 +24,8 @@ function sendClient (link, miid) {
                 "<script src='/" + self.config.coreKey + "/" + self.config.coreMiid + "/client/ifYouSeeThisScriptUpdateYourBrowserNow.js'></script>\n" +
                 "<script src='/" + self.config.coreKey + "/" + self.config.coreMiid + "/client/html5shiv.js'></script>\n" +
             "<![endif]-->\n" +
-            "<script type='text/javascript'>\n" +
-                "window.onload=function(){M('body','" + miid + "')}\n" +
-            "</script>\n" +
             "<script src='/" + self.config.coreKey + "/" + self.config.coreMiid + "/client/M.js'></script>\n" +
+            "<script type='text/javascript'>M('body','" + miid + "')</script>\n" +
         "</head><body></body></html>",
         function (err, data) {
             
@@ -84,7 +82,7 @@ function route (link) {
         
         module = module.split(":");
         
-        // TODO save locale in session
+        // save locale in session
         if (module[1] && link.session._loc !== module[1]) {
             return link.session.set({_loc: module[1]}, function (err) {
                 

@@ -3,8 +3,55 @@ var stat = require("node-static").Server;
 //var defaultModuleOperation = '/' + M.config.operationKey + '/core/getModuleFile';
 
 // TODO get config from db
-function getConfig (miid, role, callback) {
-    callback(null, {});
+function getConfigDb (M, miid, roleId, callback) {
+
+    var queryMiid = {
+        application: M.config.id,
+        miid: miid,
+        roles: parseInt(roleId, 10)
+    };
+
+    M.db.miids.findOne(queryMiid, {fields: {_id:0, config:1, module:1, version: 1}}, function (err, miid) {
+        
+        if (err) {
+            return callback(M.error(M.error.DB_MONGO_QUERY_ERROR, command, JSON.stringify(err)));
+        }
+        
+        if (!miid) {
+            return callback(M.error(M.error.API_MIID_NOT_FOUND, queryMiid.miid));
+        }
+
+        var queryMod = {
+            _id: miid.module,
+            'versions.version': miid.version
+        };
+
+        M.db.miids.findOne(queryMod, {fields: {_id: 0, name: 1, owner: 1, source: 1, 'versions.$.deps': 1}}, function (err, module) {
+
+            if (err) {
+                return callback(M.error(M.error.DB_MONGO_QUERY_ERROR, command, JSON.stringify(err)));
+            }
+
+            if (!module) {
+                return callback(M.error(M.error.API_MOD_NOT_FOUND, queryMiid.miid));
+            }
+            
+            if (!module.source || !module.owner || !module.name || !miid.version) {
+               return callback(M.error(M.error.DB_MONGO_INVALID_RECORD, 'module', JSON.stringifyi(module))); 
+            }
+            
+            // append the miid scripts (defined by the application) to the end of the array
+            // this way they will be loaded first
+            if (miid.config && miid.config.scripts && module.versions[0].deps) {
+                miid.config.scripts = module.versions[0].deps.concat(miid.config.scripts);
+            }
+
+            // add modle path to config
+            miid.config.path = module.source + '/' + module.owner + '/' + module.name + '/' + miid.version,
+
+            callback(null, miid.config);
+        });
+    });
 }
 
 exports.getConfig = function(M, link) {
@@ -27,13 +74,12 @@ exports.getConfig = function(M, link) {
     }
     
     // not in cache? find it in the database
-    getConfig(miid, link.session._rid, function(err, config) {
+    getConfigDb(M, miid, link.session._rid, function(err, config) {
 
         if (err) {
             if (err.code === 'API_MOD_NOT_FOUND') {
                 link.send(403, err.message);
             } else {
-                console.error(err.stack || err);
                 link.send(500, 'Internal server error');
             }
             return;

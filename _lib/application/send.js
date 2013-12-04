@@ -44,17 +44,26 @@ exports.sendWs = function (code, data) {
         return self.ws.send(data);
     }
     
+    var message = [
+        self.operation.miid,
+        self.operation.method,
+        null,
+        data
+    ];
+    
+    if (self.msgId) {
+        message[4] = self.msgId;
+    }
+    
     // parse json
     try {
-        data = JSON.stringify(data);
+        message = JSON.stringify(message);
     } catch (err) {
-        code = 400;
-        // TODO make a ws error message handler
-        data = '{"msg": "' + err.message + '"}';
+        message = err.message;
     }
     
     // send data
-    self.ws.send('[' + code + ',' + data + ']');
+    self.ws.send(message);
 };
 
 exports.sendHttp = function (code, data) {

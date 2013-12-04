@@ -56,7 +56,7 @@ function messageHandler (ws, link, data) {
     // TODO define a protocoll
     /*
         Request: ['miid', 'operation'[, {}, msgId]]
-        Response: [status, data]
+        Response: [miid, operation, err, data]
     */
     
     // parse data
@@ -64,10 +64,11 @@ function messageHandler (ws, link, data) {
         data = JSON.parse(data.toString());
     } catch (err) {
         // TODO handle error
-         ws.send('{"msg":"' + err.message + '"}');
+         return ws.send('400 Bad request');
     }
     
     link.data = data[2] || {};
+    link.msgId = data[3] || null;
     link.path = [M.config.coreKey, data[0], data[1]];
     
     forwardRequest(link);
@@ -86,7 +87,11 @@ M.on('ready', function () {
         link.send = send.sendWs;
         
         // http fake link (for compatibility reasons)
-        link.req = {headers: ws.upgradeReq.headers};
+        link.req = {
+            headers: ws.upgradeReq.headers,
+            pause: function () {},
+            resume: function () {}
+        };
         link.res = {headers: {}};
         link.query = {};
         link.pathname = '';
