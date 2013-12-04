@@ -29,6 +29,8 @@ Object.extend = function(object, inherit) {
     return object;
 };
 
+var webSocket = new WebSocket('ws://' + window.location.host + '/');
+
 var M = (function() {
     
     // check and initialize websockets
@@ -38,7 +40,6 @@ var M = (function() {
     
     // open a websocket
     // TODO try to connect if connection closed (try to solve it with events instead of an interval)
-    var webSocket = new WebSocket('ws://' + window.location.host + '/');
     
     // module cache
     var modules = {};
@@ -255,7 +256,7 @@ var M = (function() {
                 } else {
                     // set script status to: module script not loaded
                     moduleScripts[moduleSources[i]] = 2;
-                    node.src = '/@/core/getModule/' + moduleSources[i];
+                    node.src = '/@/M/getModule/' + moduleSources[i];
                 }
                 
                 onload(node, modLoaded(moduleSources[i]));
@@ -602,7 +603,7 @@ var M = (function() {
             return callback(null, modules[miid]);
         }
         
-        Mono.link('getConfig', {miid: 'core', path: miid}, function (err, config) {
+        Mono.link('getConfig', {miid: 'M', path: miid}, function (err, config) {
             
             if (typeof config !== 'object') {
                 callback(new Error('Invalid module config.'));
@@ -636,7 +637,7 @@ var M = (function() {
             
             // load html
             if (config.html) {
-
+                // TODO laod html snippets over ws
                 Mono.link(config.html, function (err, html) {
                     
                     // create module container

@@ -8,7 +8,7 @@ function sendClient (link, miid) {
     link.res.headers["access-control-allow-origin"] = 'http://jipics.net';
     link.res.headers['content-encoding'] = 'gzip';
     
-    var cached = self.cache.get(miid);
+    var cached = self.cache.client.get(miid);
     if (cached) {
         link.res.headers['content-length'] = cached.length;
         return link.send(200, cached);
@@ -20,18 +20,18 @@ function sendClient (link, miid) {
             "<meta http-equiv='content-type' content='text/html; charset=utf-8'/>\n" +
             "<meta http-equiv='X-UA-Compatible' content='IE=edge'>\n" +
             "<!--[if lt IE 10]>\n" +
-                "<script src='/" + self.config.coreKey + "/getClient/IE9.js'></script>\n" +
-                "<script src='/" + self.config.coreKey + "/getClient/ifYouSeeThisScriptUpdateYourBrowserNow.js'></script>\n" +
-                "<script src='/" + self.config.coreKey + "/getClient/html5shiv.js'></script>\n" +
+                "<script src='/" + self.config.coreKey + "/" + self.config.coreMiid + "/client/IE9.js'></script>\n" +
+                "<script src='/" + self.config.coreKey + "/" + self.config.coreMiid + "/client/ifYouSeeThisScriptUpdateYourBrowserNow.js'></script>\n" +
+                "<script src='/" + self.config.coreKey + "/" + self.config.coreMiid + "/client/html5shiv.js'></script>\n" +
             "<![endif]-->\n" +
             "<script type='text/javascript'>\n" +
                 "window.onload=function(){M('body','" + miid + "')}\n" +
             "</script>\n" +
-            "<script src='/" + self.config.coreKey + "/getClient/M.js'></script>\n" +
+            "<script src='/" + self.config.coreKey + "/" + self.config.coreMiid + "/client/M.js'></script>\n" +
         "</head><body></body></html>",
         function (err, data) {
             
-            self.cache.save(miid, data);
+            self.cache.client.save(miid, data);
             
             link.res.headers['content-length'] = data.length;
             link.send(200, data);
@@ -85,14 +85,14 @@ function route (link) {
         module = module.split(":");
         
         // TODO save locale in session
-        /*if (module[1] && link.session._loc !== module[1]) {
+        if (module[1] && link.session._loc !== module[1]) {
             return link.session.set({_loc: module[1]}, function (err) {
                 
                 // TODO handle error
                 link.res.headers['set-cookie'] = self.config.session.locale + '=' + module[1] + '; path=/';
                 sendClient.call(self, link, module[0]); 
             });
-        }*/
+        }
         
         sendClient.call(self, link, module[0]);
     

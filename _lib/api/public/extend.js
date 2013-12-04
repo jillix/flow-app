@@ -19,5 +19,7 @@ Object.defineProperty(Object.prototype, "blend", {
                 this[property] = object[property];
             }
         }
+        
+        return this;
     }
 });

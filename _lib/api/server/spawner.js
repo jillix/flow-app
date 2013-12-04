@@ -222,7 +222,9 @@ function startApp (host, callback) {
                     env: {
                         app: application._id.toString(),
                         port: freePort,
-                        host: application.host
+                        host: application.host,
+                        dbHost: '127.0.0.1',
+                        dbPort: 27017
                     }
                 });
                 

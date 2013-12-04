@@ -2,22 +2,42 @@ var http = require('http');
 var WebSocketServer = require('ws').Server;
 var parse = require('url').parse;
 var send = require('./send');
-
-// TODO add api to the link object instead using a global variable
 var M = require('./api');
+
+function forwardRequest (link) {
+        
+    if (link.path[0] == M.config.coreKey) {
+        
+        if (link.path.length < 3) {
+            return link.send(400, "Invalid operation url");
+        }
+        
+        link.operation = {
+            miid: link.path[1],
+            method: link.path[2]
+        };
+        
+        link.path = link.path.slice(3);
+        
+        M.operator.operation(link);
+        
+    } else {
+        M.route(link);
+    }
+}
 
 function requestHandler (req, res) {
     
     req.pause();
-        
+    
     var url = parse(req.url, true);
     var path = url.pathname.replace(/\/$|^\//g, "").split("/", 42);
     var link = {
         req:        req,
         res:        res,
-        send:       send.send,
-        path:       path,
-        //query:      url.query || {},
+        send:       send.sendHttp,
+        path:       path || [],
+        query:      url.query || {},
         pathname:   url.pathname
     };
     
@@ -27,64 +47,62 @@ function requestHandler (req, res) {
     // set a empty response header object
     link.res.headers = {};
     
-    
-    // handle post requests
-    if (req.method === 'post') {
-        // TODO handle data upload with operations
-        return;
-    }
-    
-    // TODO handle core requests
-    if (link.path[0] === M.config.coreKey) {
-        return M.getClient(link);
-    }
-    
-    // call router
-    
-    // TODO get the session
-    //M.session.get(link, forwardRequest);
-    
-    M.route(link);
+    // get the session
+    M.session.get(link, forwardRequest);
 }
 
-function messageHandler (ws, data) {
+function messageHandler (ws, link, data) {
     
-    // TODO compression? not yet standartized in the websockets draft
     // TODO define a protocoll
     /*
         Request: ['miid', 'operation'[, {}, msgId]]
         Response: [status, data]
     */
-    // TODO how to get the session? only once on connect? check the ws object (ws.upgradeReq.headers)
-    // TODO messages are operation calls
-    // TODO html snippet requests -> core request
     
     // parse data
     try {
-        data = JSON.parse(data);
+        data = JSON.parse(data.toString());
     } catch (err) {
-        data = err.toString();
+        // TODO handle error
+         ws.send('{"msg":"' + err.message + '"}');
     }
     
-    ws.send('server response: ' + data);
+    link.data = data[2] || {};
+    link.path = [M.config.coreKey, data[0], data[1]];
+    
+    forwardRequest(link);
 }
 
 // start http server
 var server = http.createServer(requestHandler);
-
 // start ws server
 var wss = new WebSocketServer({server: server});
-wss.on('connection', function(ws) {
-    
-    // TODO here we could count connections
-    // TODO how to broadcast messages?
-    
-    ws.on('message', function (data) {
-        messageHandler(ws, data);
-    });
-});
 
-// start listen and write app id to stdout
-server.listen(process.env.port, process.env.host, function () {
-    process.stdout.write(process.env.app);
+M.on('ready', function () {
+    wss.on('connection', function(ws) {
+        
+        // ws link
+        var link = {ws: ws};
+        link.send = send.sendWs;
+        
+        // http fake link (for compatibility reasons)
+        link.req = {headers: ws.upgradeReq.headers};
+        link.res = {headers: {}};
+        link.query = {};
+        link.pathname = '';
+        link.stream = function () {};
+        
+        // get the session
+        M.session.get(link, function (link) {
+            // listen to messages
+            ws.on('message', function (data) {
+                messageHandler(ws, link, data);
+            });
+        });
+    });
+    
+    // start listen and write app id to stdout
+    server.listen(process.env.port, process.env.host, function () {
+        process.stdout.write(process.env.app);
+    });
 });

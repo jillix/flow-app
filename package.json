@@ -34,7 +34,8 @@
         "modm"          : "*",
         "node-static"   : "*",
         "optimist"      : "*",
-        "pongo"         : "*"
+        "pongo"         : "*",
+        "cookie"        : "*"
     },
     "devDependencies": {
     },
