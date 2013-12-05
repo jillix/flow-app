@@ -256,7 +256,7 @@ function startApp (host, callback) {
                 
                 // handle app termination
                 app.on('exit', function (code) {
-                    self.cache.rm(host);
+                    callback(503, application.id);
                 });
             });
         });

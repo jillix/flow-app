@@ -48,6 +48,11 @@ function server (socket) {
                 // remove app from cache
                 M.cache.rm(host);
                 
+                // end socket connection
+                if (err === 503) {
+                    return M.send(socket, 503, '503 Application ' + application + ' unavailable');
+                }
+                
                 // set appropriate status code
                 var statusCode = 500;
                 if (err.code === M.error.APP_NOT_FOUND) {
