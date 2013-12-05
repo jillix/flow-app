@@ -32,6 +32,7 @@
         "ws"            : "*",
         "forever-mac"   : "*",
         "modm"          : "*",
+        "mongodb"       : "*",
         "node-static"   : "*",
         "optimist"      : "*",
         "pongo"         : "*"

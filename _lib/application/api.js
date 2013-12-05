@@ -14,22 +14,15 @@ API.blend(require(API.config.paths.API_APPLICATION + 'module'));
 API.cache = require(API.config.paths.API_PUBLIC + 'cache')();
 API.error = require(API.config.paths.API_PUBLIC + 'error');
 
-// connect to db
-new Pongo({
-    host: API.config.dbHost,
-    port: API.config.dbPort,
-    // open n sockets to the db server per appliation process
-    server: {poolSize: 2},
-    db: {w: 0}
-}).connect('mono', function (err, db) {
-    
+require(API.config.paths.API_PUBLIC + 'dbs')(API.config, function(err, dbs) {
+
     if (err) {
         return API.emit('error', err);
     }
-    
-    // get mongodb collections
-    // TODO it's dangerous to give an application access to the full collection
-    // API.db.collectionName = db.collection('collectionName');
+
+    API.db = dbs;
+
+    API.emit('ready');
 });
 
 module.exports = API;
