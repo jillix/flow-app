@@ -176,13 +176,13 @@ function startApp (host, callback) {
         // multiple-domain applications must be started only once
         var apps = self.cache.getAll();
         for (var _host in apps)  {
-            if (apps[_host] && apps[_host]._id === application._id) {
+            if (apps[_host] && apps[_host].id === application.id) {
                 return callback(null, apps[_host]);
             }
         }
         
         // get pid of running application
-        self.getPid(application._id, function (err, pid) {
+        self.getPid(application.id, function (err, pid) {
 
             if (err) {
                 return callback(err);
@@ -195,7 +195,7 @@ function startApp (host, callback) {
 
                     if (err) {
                         if (err.code === 'APP_PORT_NOT_FOUND') {
-                            err = self.error(self.error.API_SRV_APP_PORT_NOT_FOUND, application._id);
+                            err = self.error(self.error.API_SRV_APP_PORT_NOT_FOUND, application.id);
                         }
                         return callback(err);
                     }
@@ -211,7 +211,18 @@ function startApp (host, callback) {
             self.getFreePort(function (freePort) {
                 
                 if (!freePort) {
-                    return callback(self.error(self.error.APP_NO_FREE_PORT, application._id));
+                    return callback(self.error(self.error.APP_NO_FREE_PORT, application.id));
+                }
+                
+                // save config for app process 
+                application.port = freePort;
+                application.dbHost = '127.0.0.1';
+                application.dbPort = 27017;
+                
+                try {
+                    var env = JSON.stringify(application);
+                } catch (err) {
+                    return callback(self.error(self.error.APP_PROCESS_ENV_JSON, application.id));
                 }
                 
                 // TODO spawn process with uid/gid
@@ -219,14 +230,11 @@ function startApp (host, callback) {
                 var app = spawn('node', [self.config.paths.APPLICATION_SERVER], {
                     //uid: 'application.uid',
                     //gid: 'application.gid',
-                    env: {
-                        app: application._id.toString(),
-                        port: freePort,
-                        host: application.host,
-                        dbHost: '127.0.0.1',
-                        dbPort: 27017
-                    }
+                    env: {config: env}
                 });
+                
+                // save process id in app cache
+                application.pid = app.pid;
                 
                 // handle logTerm option
                 if (self.config.logTerm) {
@@ -238,14 +246,10 @@ function startApp (host, callback) {
                 app.stdout.once('data', function (data) {
                     
                     // kill process if the sended data is not the app id
-                    if (data.toString('ascii') !== application._id.toString()) {
+                    if (data.toString('ascii') !== application.id) {
                         app.kill();
-                        return callback(self.error(self.error.APP_SPAWN_INVALID_RESPONSE, application._id, data.toString('ascii')));
+                        return callback(self.error(self.error.APP_SPAWN_INVALID_RESPONSE, application.id, data.toString('ascii')));
                     }
-                    
-                    // update application cache item
-                    application.port = freePort;
-                    application.pid = app.pid;
                     
                     return callback(null, application);
                 });
