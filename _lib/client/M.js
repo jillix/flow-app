@@ -370,7 +370,7 @@ var M = (function() {
         
         // remove listeners
         /*
-            this.ofgithub/jillix/bind-layout/v0.2.1f('setSomething', 'miid', function () {});
+            this.off('setSomething', 'miid', function () {});
             this.off('setSomething', function () {});
         */
         off: function(event, miid, handler) {
@@ -442,7 +442,7 @@ var M = (function() {
         // make requests to backend
         /*
             this.link('operationName', function() {});
-            this.ligithub/jillix/bind-layout/v0.2.1nk('operationName', OPTIONS, function () {});
+            this.link('operationName', OPTIONS, function () {});
             
             OPTIONS: {
                 
