@@ -1,3 +1,10 @@
+// miid cache
+var miids = {};
+
+function loadModule (miidConfig, callback) {
+    
+}
+
 function getWithPermission (miid, method, roleId, callback) {
     var self = this;
     
@@ -18,7 +25,7 @@ function getWithPermission (miid, method, roleId, callback) {
         version: 1
     };
     
-    self.db.miids.findOne(query, {fields: fields}, function (err, operation) {
+    self.db.app.collection('miids').findOne(query, {fields: fields}, function (err, operation) {
         
         if (err) {
             return callback(self.error(self.error.DB_MONGO_QUERY_ERROR, 'getWithPermission', err.toString()));
@@ -50,7 +57,9 @@ exports.operation = function(link) {
     
     // XHR is never cached by default, except in IE, but for this we use this
     link.res.headers["cache-control"] = "no-cache";
-    console.log(link.operation);
+    
+    //console.log(link.operation);
+    
     // handle core operations
     if (link.operation.miid === self.config.coreMiid) {
         checkAndCallFunction.call(self, link, self.module[link.operation.method]);
@@ -71,6 +80,12 @@ exports.operation = function(link) {
             
             return link.send(500, 'Internal server error');
         }
+        
+        // TODO load module here (require and init)
+        if (!miids[link.operation.miid]) {
+            
+        }
+        
         
         if (operation.version === self.config.MODULE_DEV_TAG) {
             operation.version += '_' + self.config.app;

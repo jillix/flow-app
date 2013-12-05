@@ -1,17 +1,18 @@
-var stat = require("node-static").Server;
+// TODO mono miid class
+var Mono = {
+    emit: function () {},
+    on: function () {}
+};
 
-//var defaultModuleOperation = '/' + M.config.operationKey + '/core/getModuleFile';
-
-// TODO get config from db
+// get config from db
 function getConfigDb (M, miid, roleId, callback) {
 
     var queryMiid = {
-        application: M.config.id,
         miid: miid,
         roles: parseInt(roleId, 10)
     };
-
-    M.db.miids.findOne(queryMiid, {fields: {_id:0, config:1, module:1, version: 1}}, function (err, miid) {
+    
+    M.db.app.collection('m_miids').findOne(queryMiid, {fields: {_id:0, module:1, client:1, server: 1, operations: 1}}, function (err, miid) {
         
         if (err) {
             return callback(M.error(M.error.DB_MONGO_QUERY_ERROR, command, JSON.stringify(err)));
@@ -22,11 +23,10 @@ function getConfigDb (M, miid, roleId, callback) {
         }
 
         var queryMod = {
-            _id: miid.module,
-            'versions.version': miid.version
+            _id: miid.module
         };
 
-        M.db.miids.findOne(queryMod, {fields: {_id: 0, name: 1, owner: 1, source: 1, 'versions.$.deps': 1}}, function (err, module) {
+        M.db.app.collection('miids').findOne(queryMod, {fields: {_id: 0, name: 1, owner: 1, source: 1, deps: 1}}, function (err, module) {
 
             if (err) {
                 return callback(M.error(M.error.DB_MONGO_QUERY_ERROR, command, JSON.stringify(err)));
@@ -54,12 +54,19 @@ function getConfigDb (M, miid, roleId, callback) {
     });
 }
 
-exports.getConfig = function(M, link) {
+exports.load = function(M, link) {
     
     // get the module instance id
     var httpStatusCode = 200;
-
-    if (!link.data) {
+    
+    // TODO return config from miid cache
+    
+    // handle i18n html
+    if (typeof config.html === 'object') {
+        config.html = config.html[link.session._loc] ? config.html[link.session._loc] : 'no html found';
+    }
+    
+    /*if (!link.data) {
         return link.send(400, "No miid defined");
     }
 
@@ -74,7 +81,7 @@ exports.getConfig = function(M, link) {
     
     // not in cache? find it in the database
     getConfigDb(M, link.data, link.session._rid, function(err, config) {
-        console.log(err);
+        
         if (err) {
             if (err.code === 'API_MIID_NOT_FOUND') {
                 link.send(403, err.message);
@@ -96,15 +103,17 @@ exports.getConfig = function(M, link) {
             }
         }
         
+        // TODO require and init module
+        
         // handle i18n html
         if (typeof config.html === 'object') {
             config.html = config.html[link.session._loc] ? config.html[link.session._loc] : 'no html found';
         }
         
         // TODO what if a module don't have any html at all?
-        /*if (!config.html) {
+        if (!config.html) {
             config.html = defaultModuleOperation;
-        }*/
+        }
         
         // cache config only when the repsone is ok
         if (httpStatusCode === 200) {
@@ -113,7 +122,7 @@ exports.getConfig = function(M, link) {
 
         // send config
         link.send(httpStatusCode, config);
-    });
+    });*/
 };
 
 // browser modules

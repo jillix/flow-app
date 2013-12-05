@@ -370,7 +370,7 @@ var M = (function() {
         
         // remove listeners
         /*
-            this.off('setSomething', 'miid', function () {});
+            this.ofgithub/jillix/bind-layout/v0.2.1f('setSomething', 'miid', function () {});
             this.off('setSomething', function () {});
         */
         off: function(event, miid, handler) {
@@ -442,7 +442,7 @@ var M = (function() {
         // make requests to backend
         /*
             this.link('operationName', function() {});
-            this.link('operationName', OPTIONS, function () {});
+            this.ligithub/jillix/bind-layout/v0.2.1nk('operationName', OPTIONS, function () {});
             
             OPTIONS: {
                 
@@ -633,7 +633,7 @@ var M = (function() {
             return callback(null, modules[miid]);
         }
         
-        Mono.ws('getConfig', miid, function (err, config) {
+        Mono.ws('load', miid, function (err, config) {
             
             if (typeof config !== 'object') {
                 callback(new Error('Invalid module config.'));
