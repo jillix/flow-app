@@ -2,9 +2,8 @@ var http = require('http');
 var WebSocketServer = require('ws').Server;
 var parse = require('url').parse;
 var EventEmitter = require('events').EventEmitter;
-var send = require('./send');
-var API = require('./api');
-var M = API.server;
+var M = require('./api').server;
+var user_api = require('./api').user;
 
 function forwardRequest (link) {
         
@@ -35,16 +34,17 @@ function requestHandler (req, res) {
     var url = parse(req.url, true);
     var path = url.pathname.replace(/\/$|^\//g, "").split("/", 42);
     var link = {
+        API:        user_api,
         req:        req,
         res:        res,
-        send:       send.sendHttp,
+        send:       M.send.sendHttp,
         path:       path || [],
         query:      url.query || {},
         pathname:   url.pathname
     };
     
     // invoke streaming api
-    link.stream = send.stream(link);
+    link.stream = M.send.stream(link);
 
     // set a empty response header object
     link.res.headers = {};
@@ -89,9 +89,9 @@ M.on('ready', function () {
         
         // ws link
         var link = new EventEmitter();
-        link.API = API.user;
+        link.API = user_api;
         link.ws = ws;
-        link.send = send.sendWs;
+        link.send = M.send.sendWs;
         
         // http fake link (for compatibility reasons)
         link.req = {
@@ -114,7 +114,7 @@ M.on('ready', function () {
     });
     
     // start listen and write app id to stdout
-    server.listen(process.env.port, process.env.host, function () {
+    server.listen(M.config.port, M.config.host, function () {
         process.stdout.write(M.config.id);
     });
 });

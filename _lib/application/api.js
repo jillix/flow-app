@@ -2,42 +2,46 @@ var fs = require('fs');
 var EventEmitter = require('events').EventEmitter;
 var Pongo = require('pongo');
 var Static = require('node-static');
+var config = require('./config');
+var Cache = require(config.paths.API_PUBLIC + 'cache');
 
-// create api object
-var API = new EventEmitter();
-API.config = require('./config');
-
-var Cache = require(API.config.paths.API_PUBLIC + 'cache');
-
-//API.blend(require(API.config.paths.API_APPLICATION + 'send'));
-API.blend(require(API.config.paths.API_APPLICATION + 'router'));
-API.module = API.clone().blend(require(API.config.paths.API_APPLICATION + 'module'));
-API.operator = API.clone().blend(require(API.config.paths.API_APPLICATION + 'operator'));
-API.session = API.clone().blend(require(API.config.paths.API_APPLICATION + 'session'));
-API.cache = {
+// create server object
+var Server = new EventEmitter();
+Server.config = config;
+Server.blend(require(config.paths.API_APPLICATION + 'router'));
+Server.module = Server.clone().blend(require(config.paths.API_APPLICATION + 'module'));
+Server.operator = Server.clone().blend(require(config.paths.API_APPLICATION + 'operator'));
+Server.session = Server.clone().blend(require(config.paths.API_APPLICATION + 'session'));
+Server.send = Server.clone().blend(require(config.paths.API_APPLICATION + 'send'));
+Server.cache = {
     client: Cache(),
     miids: Cache()
 };
-API.error = require(API.config.paths.API_PUBLIC + 'error');
-API.file = {
-    client: new Static.Server(API.config.paths.CLIENT_ROOT, {cache: 604800}),
-    module: new Static.Server(API.config.paths.MODULE_ROOT, {cache: 604800}),
-    app: new Static.Server(API.config.paths.APPLICATION_ROOT, {cache: 604800})
+Server.error = require(config.paths.API_PUBLIC + 'error');
+Server.file = {
+    client: new Static.Server(config.paths.CLIENT_ROOT, {cache: 604800}),
+    module: new Static.Server(config.paths.MODULE_ROOT, {cache: 604800}),
+    app: new Static.Server(config.paths.APPLICATION_ROOT, {cache: 604800})
 };
 
-require(API.config.paths.API_APPLICATION + 'dbs')(API.config, function(err, dbs) {
+// create user api
+var User = {};
+User.config = config;
+
+require(config.paths.API_APPLICATION + 'dbs')(Server.config, function(err, dbs) {
 
     // terminate process on error
     if (err) {
         throw new Error(err);
     }
-
-    API.db = dbs;
-    API.emit('ready');
+    
+    User.db = dbs;
+    Server.db = dbs;
+    Server.emit('ready', Server);
 });
 
-exports.server = API;
-exports.user = {};
+exports.server = Server;
+exports.user = User;
 
 //var appPath = self.config.paths.APPLICATION_ROOT + application._id;
 // the application directory must be present otherwise the piped

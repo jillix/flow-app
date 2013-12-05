@@ -41,26 +41,19 @@ var Session = {
         
         var self = this;
 
-        self.api.db.connect(self.api.config.mongoDB.name, function (err, db) {
+        self.api.db.app.collection(colName).update({_sid: self._sid}, {$set: data}, function (err) {
             
             if (err) {
                 return callback(err);
             }
             
-            db.collection(colName).update({_sid: self._sid}, {$set: data}, function (err) {
-                
-                if (err) {
-                    return callback(err);
+            for (var key in data) {
+                if (data.hasOwnProperty(key)) {
+                    self[key] = data[key];
                 }
-                
-                for (var key in data) {
-                    if (data.hasOwnProperty(key)) {
-                        self[key] = data[key];
-                    }
-                }
+            }
 
-                callback(null);
-            });
+            callback(null);
         });
     },
     
@@ -73,41 +66,27 @@ var Session = {
             endAll = null;
         }
         
-        self.api.db.connect(self.api.config.mongoDB.name, function (err, db) {
-            
-            if (err) {
-                return callback(err);
-            }
-
-            db.collection(colName).remove(
-                endAll ? { _uid: self._uid, _rid: self._rid } : { _sid: self._sid },
-                callback
-            );
-        });
+        self.api.db.app.collection(colName).remove(
+            endAll ? { _uid: self._uid, _rid: self._rid } : { _sid: self._sid },
+            callback
+        );
     },
     
     renew: function (callback) {
         
         var self = this;
+            
+        var newSid = self.api.util.uid(23);
         
-        self.api.db.connect(self.api.config.mongoDB.name, function (err, db) {
+        self.api.db.app.collection(colName).update({_sid: self._sid}, {$set: {_sid: newSid}}, function (err) {
             
             if (err) {
                 return callback(err);
             }
             
-            var newSid = self.api.util.uid(23);
+            self._sid = newSid;
             
-            db.collection(colName).update({_sid: self._sid}, {$set: {_sid: newSid}}, function (err) {
-                
-                if (err) {
-                    return callback(err);
-                }
-                
-                self._sid = newSid;
-                
-                callback();
-            });
+            callback();
         });
     }
 };
@@ -117,7 +96,7 @@ var Session = {
 function getSession (sessionId, now, expire, callback) {
     var self = this;
     
-    self.db.collection(colName).findAndModify(
+    self.db.app.collection(colName).findAndModify(
         {_sid: sessionId, _exp: {$gt: now}},
         [],
         {$set: {_exp: expire}},
@@ -128,15 +107,7 @@ function getSession (sessionId, now, expire, callback) {
 
 function startSession (session, callback) {
     var self = this;
-    
-	self.db.connect(self.config.mongoDB.name, function(err, db) {
-
-        if (err) {
-            return callback(err);
-        }
-
-        db.collection(colName).insert(session, { w: 1 },  callback);
-	});
+    self.db.app.collection(colName).insert(session, { w: 1 },  callback);
 }
 
 function expire(hoursPlus) {

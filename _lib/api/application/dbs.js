@@ -86,7 +86,6 @@ function buildDbCache (user, password, clients, openClients, callback) {
     // now try to authenticate to all the required databases
     for (var name in dbs) {
         (function(name) {
-
             dbs[name].authenticate(user, password, function(err, data) {
 
                 // one single failure is enough to cancel everything
