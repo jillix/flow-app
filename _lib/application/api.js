@@ -27,15 +27,17 @@ API.file = {
 
 require(API.config.paths.API_APPLICATION + 'dbs')(API.config, function(err, dbs) {
 
+    // terminate process on error
     if (err) {
-        return API.emit('error', err);
+        throw new Error(err);
     }
 
     API.db = dbs;
     API.emit('ready');
 });
 
-exports.API = API;
+exports.server = API;
+exports.user = {};
 
 //var appPath = self.config.paths.APPLICATION_ROOT + application._id;
 // the application directory must be present otherwise the piped

@@ -11,7 +11,10 @@ module.exports = function(config, callback) {
     var dbConfig = config.databases || {};
     var count = Object.keys(dbConfig).length;
     if (!count) {
-        return callback(null, dbs);
+        // wait one tick, so that the server can add a listener to the api
+        return process.nextTick(function () {
+            callback(new Error('No db config found.'));
+        });
     }
 
     // get the db user credentials from config
@@ -23,7 +26,10 @@ module.exports = function(config, callback) {
     for (var name in dbConfig) {
         var valid = dbConfig[name].match(CONNECTION_STRING_RE);
         if (!valid) {
-            return callback('Invalid connection string for database "' + name + '": ' + dbConfig.name);
+            // wait one tick, so that the server can add a listener to the api
+            return process.nextTick(function () {
+                callback('Invalid connection string for database "' + name + '": ' + dbConfig.name);
+            });
         }
 
         var clientLink = valid[1] + ':' + valid[2];
@@ -62,7 +68,7 @@ module.exports = function(config, callback) {
             });
         })(link);
     }
-}
+};
 
 function buildDbCache (user, password, clients, openClients, callback) {
 
