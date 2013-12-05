@@ -1,6 +1,3 @@
-var fs = require("fs");
-//var formidable = require("formidable");
-
 function getWithPermission (miid, method, roleId, callback) {
     var self = this;
     
@@ -53,7 +50,7 @@ exports.operation = function(link) {
     
     // XHR is never cached by default, except in IE, but for this we use this
     link.res.headers["cache-control"] = "no-cache";
-    
+    console.log(link.operation);
     // handle core operations
     if (link.operation.miid === self.config.coreMiid) {
         checkAndCallFunction.call(self, link, self.module[link.operation.method]);

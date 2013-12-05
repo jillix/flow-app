@@ -57,15 +57,14 @@ function getConfigDb (M, miid, roleId, callback) {
 exports.getConfig = function(M, link) {
     
     // get the module instance id
-    var miid = link.path[0] ? link.path[0].replace(/[^0-9a-z_\-\.]/gi, "") : null;
     var httpStatusCode = 200;
 
-    if (!miid) {
+    if (!link.data) {
         return link.send(400, "No miid defined");
     }
 
     // take into consideration the miid, the role, and the language 
-    var cacheKey = miid + '.' + link.session._rid + '.' + link.session._loc;
+    var cacheKey = link.data + '.' + link.session._rid + '.' + link.session._loc;
     var cachedMiid = M.cache.miids.get(cacheKey);
 
     // send cached config
@@ -74,10 +73,10 @@ exports.getConfig = function(M, link) {
     }
     
     // not in cache? find it in the database
-    getConfigDb(M, miid, link.session._rid, function(err, config) {
-
+    getConfigDb(M, link.data, link.session._rid, function(err, config) {
+        console.log(err);
         if (err) {
-            if (err.code === 'API_MOD_NOT_FOUND') {
+            if (err.code === 'API_MIID_NOT_FOUND') {
                 link.send(403, err.message);
             } else {
                 link.send(500, 'Internal server error');

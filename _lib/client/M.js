@@ -32,8 +32,8 @@ Object.extend = function(object, inherit) {
 var M = (function() {
     
     // check and initialize websockets
-    if (typeof WebSockets === 'undfined') {
-        return alert('WebSockets not supported!');
+    if (typeof WebSocket === 'undefined') {
+        return alert('Update your f***ing browser!');
     }
     
     // open a websocket
@@ -41,7 +41,7 @@ var M = (function() {
     var webSocket = new WebSocket('ws://' + window.location.host + '/');
     
     // module cache
-    var modules = {M:{}};
+    var modules = {};
     var moduleLoadCache = {};
     
     // require module cache
@@ -71,7 +71,7 @@ var M = (function() {
     var customs = {};
     
     // load scripts
-    function initModule (target, miid, config, dataContext) {
+    function initModule (target, miid, config) {
         
         // add custom handlers to module
         modules[miid].custom = config.custom || {};
@@ -84,7 +84,7 @@ var M = (function() {
         // load dependend modules
         if (config.modules) {
             for (var selector in config.modules) {
-                M(selector, config.modules[selector], dataContext);
+                M(selector, config.modules[selector]);
             }
             
             // TODO remove when bind-layout doesn't load modules anymore
@@ -98,12 +98,12 @@ var M = (function() {
                 for (var i = 0, l = config.waitFor.length; i < l; ++i) {
                     modules[miid].on('ready', config.waitFor[i], function () {
                         if (++loaded === l) {
-                            moduleLoadCache[miid].init.call(modules[miid], config, dataContext);
+                            moduleLoadCache[miid].init.call(modules[miid], config);
                         }
                     }, true);
                 }
             } else {
-                moduleLoadCache[miid].init.call(modules[miid], config, dataContext);
+                moduleLoadCache[miid].init.call(modules[miid], config);
             }
         }
     }
@@ -446,14 +446,11 @@ var M = (function() {
             
             OPTIONS: {
                 
-                miid: 'miid',
                 path: 'path/to/some/thing',
-                data: {POST DATA},
-                upload: function () {},
-                download: function () {}
+                data: {POST DATA}
             }
         */
-        link: function(method, options, callback) {
+        link: function(path, data, callback) {
             
             if (typeof method !== 'string') {
                 return;
@@ -473,7 +470,7 @@ var M = (function() {
             if (method[0] === '/') {
                 url = method;
             } else {
-                url = '/@/' + (options.miid || this.miid) + '/' + method + '/' + (options.path || '') + (options.query || '');
+                url = '/@/' + (options.miid || this.miid || 'M') + '/' + method + '/' + (options.path || '') + (options.query || '');
             }
             
             // open the connection
@@ -591,7 +588,7 @@ var M = (function() {
         console.log(response);
         if (miid && operation) {
             
-            if (response[4] && wsCallbacks[miid][response[4]]) {
+            if (response[4] && wsCallbacks[miid] && wsCallbacks[miid][response[4]]) {
                 wsCallbacks[miid][response[4]].call(modules[miid] || Mono, null, data);
             }
             
@@ -602,7 +599,7 @@ var M = (function() {
     };
     
     // TODO register operations as websocket events
-    Mono.on('server', function (operation, data, miid) {
+    Mono.on('msg', function (operation, data, miid) {
         try {
             webSocket.send(JSON.stringify([miid || this.miid, operation, data]));
         } catch (err) {
@@ -611,18 +608,14 @@ var M = (function() {
     });
     
     // load mono modules
-    var constructor = function (target, miid, dataContext, callback) {
+    var constructor = function (target, miid, callback) {
         
+        // wait for websocket
         if (webSocket.readyState !== webSocket.OPEN) {
             webSocket.onopen = function () {
-                constructor.call(this, target, miid, dataContext, callback);
+                constructor.call(this, target, miid, callback);
             };
             return;
-        }
-        
-        if (typeof dataContext === 'function') {
-            callback = dataContext;
-            dataContext = undefined;
         }
         
         target = typeof target === 'string' ? document.querySelector(target) : target;
@@ -641,7 +634,6 @@ var M = (function() {
         }
         
         Mono.ws('getConfig', miid, function (err, config) {
-            console.log('trucken');
             
             if (typeof config !== 'object') {
                 callback(new Error('Invalid module config.'));
@@ -687,7 +679,7 @@ var M = (function() {
                     modules[miid].dom = container;
                     
                     if (++moduleLoadCache[miid].state === 2) {
-                        initModule(moduleLoadCache[miid].target, miid, moduleLoadCache[miid].config, dataContext);
+                        initModule(moduleLoadCache[miid].target, miid, moduleLoadCache[miid].config);
                     }
                 });
                 
@@ -710,7 +702,7 @@ var M = (function() {
                         modules[miid] = Object.extend(modules[miid], Mono);
                         
                         if (++moduleLoadCache[miid].state === 2) {
-                            initModule(moduleLoadCache[miid].target, miid, moduleLoadCache[miid].config, dataContext);
+                            initModule(moduleLoadCache[miid].target, miid, moduleLoadCache[miid].config);
                         }
                     }
                     
@@ -723,77 +715,6 @@ var M = (function() {
         });
     };
 
-    // clone existing modules
-    // TODO are there other solutions?
-    /*constructor.clone = function (target, miid, name, config, callback) {
-        
-        var cloneMiid = miid + name;
-
-        // get target
-        target = typeof target === 'string' ? document.querySelector(target) : target;
-
-        // check target, miid and if cloned miid already exists
-        if (!target || !modules[miid] || modules[cloneMiid] || !moduleLoadCache[miid]) {
-            return;
-        }
-        
-        // make sure callback is a function
-        callback = typeof callback === 'function' ? callback :  function () {};
-
-        // create module instance
-        modules[cloneMiid] = Object.extend({
-            miid: cloneMiid,
-            path: modules[miid].path
-        }, Mono);
-
-        // add module in loaded state to the load cache
-        moduleLoadCache[cloneMiid] = {
-            config: config,
-            init: moduleLoadCache[miid].init,
-            state: 1,
-            target: target
-        };
-
-        // load html
-        if (config.html) {
-
-            if (typeof config.html === 'object') {
-                config.html = config.html[M.getLocale()];
-            }
-
-            Mono.link(config.html, function (err, html) {
-
-                // create module container
-                var container = document.createElement('div');
-                container.setAttribute('id', cloneMiid);
-                container.innerHTML = html || '';
-
-                // append the dom container to the module
-                modules[cloneMiid].dom = container;
-
-                // set module as loaded
-                ++moduleLoadCache[cloneMiid].state;
-                
-                // fire callback
-                callback(modules[cloneMiid]);
-                
-                // init module
-                initModule(target, cloneMiid, config);
-            });
-
-        } else {
-            
-            // set module as loaded
-            ++moduleLoadCache[cloneMiid].state;
-            
-            // fire callback
-            callback(modules[cloneMiid]);
-            
-            // init module
-            initModule(target, cloneMiid, config); 
-        }
-    };*/
-    
     // register and return custom methods
     constructor.custom = function (methods) {
         
@@ -832,6 +753,5 @@ var M = (function() {
         moduleScripts[name] = module;
     };
     
-    //webSocket.onopen = 
     return constructor;
 })();

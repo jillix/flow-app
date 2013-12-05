@@ -47,7 +47,7 @@ exports.sendWs = function (code, data) {
     var message = [
         self.operation.miid,
         self.operation.method,
-        null,
+        code,
         data
     ];
     
@@ -178,4 +178,3 @@ exports.stream = function (link) {
         }
     };
 };
-

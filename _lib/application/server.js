@@ -1,8 +1,10 @@
 var http = require('http');
 var WebSocketServer = require('ws').Server;
 var parse = require('url').parse;
+var EventEmitter = require('events').EventEmitter;
 var send = require('./send');
-var M = require('./api');
+var API = require('./api');
+var M = API.server;
 
 function forwardRequest (link) {
         
@@ -67,7 +69,7 @@ function messageHandler (ws, link, data) {
          return ws.send('400 Bad request');
     }
     
-    link.data = data[2] || {};
+    link.data = data[2];
     link.msgId = data[3] || null;
     link.path = [M.config.coreKey, data[0], data[1]];
     
@@ -82,8 +84,13 @@ var wss = new WebSocketServer({server: server});
 M.on('ready', function () {
     wss.on('connection', function(ws) {
         
+        // TODO make link an instance of event emitter and the "this" of an operation
+        // TODO the link should contain the api for the module programmer
+        
         // ws link
-        var link = {ws: ws};
+        var link = new EventEmitter();
+        link.API = API.user;
+        link.ws = ws;
         link.send = send.sendWs;
         
         // http fake link (for compatibility reasons)
@@ -108,6 +115,6 @@ M.on('ready', function () {
     
     // start listen and write app id to stdout
     server.listen(process.env.port, process.env.host, function () {
-        process.stdout.write(process.env.app);
+        process.stdout.write(M.config.id);
     });
 });
