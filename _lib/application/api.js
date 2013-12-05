@@ -25,19 +25,17 @@ API.file = {
     app: new Static.Server(API.config.paths.APPLICATION_ROOT, {cache: 604800})
 };
 
-require(API.config.paths.API_PUBLIC + 'dbs')(API.config, function(err, dbs) {
+require(API.config.paths.API_APPLICATION + 'dbs')(API.config, function(err, dbs) {
 
     if (err) {
         return API.emit('error', err);
     }
 
     API.db = dbs;
-
-    :x
-    :x
+    API.emit('ready');
 });
 
-module.exports = API;
+exports.API = API;
 
 //var appPath = self.config.paths.APPLICATION_ROOT + application._id;
 // the application directory must be present otherwise the piped
