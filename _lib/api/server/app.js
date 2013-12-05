@@ -19,17 +19,18 @@ function getFromHost (host, callback) {
         fields = null;
     }
     
-    self.db.applications.findOne({domains:host},{fields: {host: 1, uid: 1, gid: 1}}, function (err, data) {
+    self.db.applications.findOne({domains: host}, {fields: {process: 1}}, function (err, data) {
         
         if (err) {
             return callback(err);
         }
-
-        if (!data) {
+        
+        if (!data || !data.process) {
             return callback(self.error(self.error.API_APP_NOT_FOUND, host));
         }
-
-        callback(null, data);
+        
+        data.process.id = data._id.toString();
+        callback(null, data.process);
     });
 }
 
