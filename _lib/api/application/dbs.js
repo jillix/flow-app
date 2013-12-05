@@ -2,7 +2,7 @@ var mongo = require('mongodb');
 var Server = mongo.Server;
 var MongoClient = mongo.MongoClient;
 
-var CON_STR_RE = new RegExp('^mongodb://([a-zA-Z0-9\\._-]+):(\\d{4,5})/([a-zA-Z0-9\\._-]+)$');
+var CONNECTION_STRING_RE = new RegExp('^mongodb://([a-zA-Z0-9\\._-]+):(\\d{4,5})/([a-zA-Z0-9\\._-]+)$');
 
 
 module.exports = function(config, callback) {
@@ -14,12 +14,18 @@ module.exports = function(config, callback) {
         return callback(null, dbs);
     }
 
+    // get the db user credentials from config
+    var pwd = config.apiKey;
+    var user = config.user;
+
+    // gather all the clients that we have to connect with
     var clients = {};
     for (var name in dbConfig) {
-        var valid = dbConfig[name].match(CON_STR_RE);
+        var valid = dbConfig[name].match(CONNECTION_STRING_RE);
         if (!valid) {
             return callback('Invalid connection string for database "' + name + '": ' + dbConfig.name);
         }
+
         var clientLink = valid[1] + ':' + valid[2];
         clients[clientLink] = clients[clientLink] || [];
         clients[clientLink].push({
@@ -42,7 +48,7 @@ module.exports = function(config, callback) {
             mongoclient.open(function(err, mongoclient) {
 
                 // if we cannot open a client, we give up
-                if (err) {
+                if (err && clientsToOpen > 0) {
                     clientsToOpen = 0;
                     return callback(err);
                 }
@@ -51,23 +57,44 @@ module.exports = function(config, callback) {
 
                 if (!--clientsToOpen) {
                     // we are ready, let us build the db cache
-                    return callback(null, buildDbCache(clients, openClients));
+                    buildDbCache(user, pwd, clients, openClients, callback);
                 }
             });
         })(link);
     }
 }
 
-function buildDbCache (clients, openClients) {
+function buildDbCache (user, password, clients, openClients, callback) {
 
     var dbs = {};
 
+    // gather all the databases that we have to return
     for (var link in clients) {
         for (var i = 0; i < clients[link].length; ++i) {
             dbs[clients[link][i].name] = openClients[link].db(clients[link][i].db);
         }
     }
 
-    return dbs;
+    var count = Object.keys(dbs).length;
+
+    // now try to authenticate to all the required databases
+    for (var name in dbs) {
+        (function(name) {
+
+            dbs[name].authenticate(user, password, function(err, data) {
+
+                // one single failure is enough to cancel everything
+                if (err && count > 0) {
+                    count = 0;
+                    return callback(err);
+                }
+
+                // everything was OK, we can return the database cache
+                if (!--count) {
+                    callback(null, dbs);
+                }
+            });
+        })(name);
+    }
 }
 
