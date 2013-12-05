@@ -1,11 +1,60 @@
 var stat = require("node-static").Server;
 
-var client = new stat(M.config.LIB_ROOT + "client", {cache: 604800});
-// at this moment the M.config.app contains only the application id
-var modules = new stat(M.config.APPLICATION_ROOT + M.config.app.id.toString() + "/mono_modules", {cache: 604800});
-var defaultModuleOperation = '/' + M.config.operationKey + '/core/getModuleFile';
+//var defaultModuleOperation = '/' + M.config.operationKey + '/core/getModuleFile';
 
-exports.getConfig = function(link) {
+// TODO get config from db
+function getConfigDb (M, miid, roleId, callback) {
+
+    var queryMiid = {
+        application: M.config.id,
+        miid: miid,
+        roles: parseInt(roleId, 10)
+    };
+
+    M.db.miids.findOne(queryMiid, {fields: {_id:0, config:1, module:1, version: 1}}, function (err, miid) {
+        
+        if (err) {
+            return callback(M.error(M.error.DB_MONGO_QUERY_ERROR, command, JSON.stringify(err)));
+        }
+        
+        if (!miid) {
+            return callback(M.error(M.error.API_MIID_NOT_FOUND, queryMiid.miid));
+        }
+
+        var queryMod = {
+            _id: miid.module,
+            'versions.version': miid.version
+        };
+
+        M.db.miids.findOne(queryMod, {fields: {_id: 0, name: 1, owner: 1, source: 1, 'versions.$.deps': 1}}, function (err, module) {
+
+            if (err) {
+                return callback(M.error(M.error.DB_MONGO_QUERY_ERROR, command, JSON.stringify(err)));
+            }
+
+            if (!module) {
+                return callback(M.error(M.error.API_MOD_NOT_FOUND, queryMiid.miid));
+            }
+            
+            if (!module.source || !module.owner || !module.name || !miid.version) {
+               return callback(M.error(M.error.DB_MONGO_INVALID_RECORD, 'module', JSON.stringifyi(module))); 
+            }
+            
+            // append the miid scripts (defined by the application) to the end of the array
+            // this way they will be loaded first
+            if (miid.config && miid.config.scripts && module.versions[0].deps) {
+                miid.config.scripts = module.versions[0].deps.concat(miid.config.scripts);
+            }
+
+            // add modle path to config
+            miid.config.path = module.source + '/' + module.owner + '/' + module.name + '/' + miid.version,
+
+            callback(null, miid.config);
+        });
+    });
+}
+
+exports.getConfig = function(M, link) {
     
     // get the module instance id
     var miid = link.path[0] ? link.path[0].replace(/[^0-9a-z_\-\.]/gi, "") : null;
@@ -17,20 +66,20 @@ exports.getConfig = function(link) {
 
     // take into consideration the miid, the role, and the language 
     var cacheKey = miid + '.' + link.session._rid + '.' + link.session._loc;
+    var cachedMiid = M.cache.miids.get(cacheKey);
 
     // send cached config
-    if (M.cache.miids.cache[cacheKey]) {
-        return link.send(httpStatusCode, M.cache.miids.get(cacheKey));
+    if (cachedMiid) {
+        return link.send(httpStatusCode, cachedMiid);
     }
     
     // not in cache? find it in the database
-    M.module.getConfig(miid, link.session._rid, function(err, config) {
+    getConfigDb(M, miid, link.session._rid, function(err, config) {
 
         if (err) {
             if (err.code === 'API_MOD_NOT_FOUND') {
                 link.send(403, err.message);
             } else {
-                console.error(err.stack || err);
                 link.send(500, 'Internal server error');
             }
             return;
@@ -39,18 +88,18 @@ exports.getConfig = function(link) {
         // get config or load error config
         if (!config) {
             httpStatusCode = err ? 500 : 404;
-            if (!M.config.app.errors) {
+            if (!M.config.error) {
                 config = 'No error module defined.';
             } else {
-                config = M.config.app.errors[httpStatusCode] ||
-                    M.config.app.errors['*'] ||
-                    'No error module defined.';
+                config = M.config.error[httpStatusCode] ||
+                    M.config.error['*'] ||
+                    'No error message found.';
             }
         }
         
         // handle i18n html
         if (typeof config.html === 'object') {
-            config.html = config.html[link.session._loc] ? config.html[link.session._loc] : defaultModuleOperation;
+            config.html = config.html[link.session._loc] ? config.html[link.session._loc] : 'no html found';
         }
         
         // TODO what if a module don't have any html at all?
@@ -69,7 +118,7 @@ exports.getConfig = function(link) {
 };
 
 // browser modules
-exports.getModule = function(link) {
+exports.module = function(M, link) {
 
     // check if request format is correct
     if (!link.path || link.path.length < 4) {
@@ -84,6 +133,7 @@ exports.getModule = function(link) {
     var module = link.path.slice(0, 4).join('/');
     var path = link.path.slice(4).join("/");
     
+    // TODO solve this problem in a different way
     if (version === M.config.MODULE_DEV_TAG) {
         version += '_' + M.config.app.id;
     }
@@ -104,14 +154,13 @@ exports.getModule = function(link) {
             link.res.setHeader('vary', 'accept-encoding');
         }
         
-        modules.serve(link.req, link.res);
+        self.file.module.serve(link.req, link.res);
     });
 };
 
-exports.getClient = function(link){
-    var self = this;
+exports.client = function(M, link){
     
-    if (self.config.compressFiles) {
+    if (M.config.compressFiles) {
         link.res.setHeader('content-encoding', 'gzip');
         link.res.setHeader('vary', 'accept-encoding');
         link.req.url = link.path[0].split('.')[0] + '.min.gz';
@@ -120,5 +169,27 @@ exports.getClient = function(link){
         link.req.url = link.path[0];
     }
     
-    client.serve(link.req, link.res);
+    M.file.client.serve(link.req, link.res);
+};
+
+exports.getFile = function (M, link) {
+    
+    if (M.config.compressFiles && M.config.compressFileTypes[link.pathname.split('.').pop()]) {
+        
+        link.res.setHeader('content-encoding', 'gzip');
+        link.res.setHeader('vary', 'accept-encoding');
+    }
+    
+    // reqrite url
+    link.req.url = (M.config.publicDir ? M.config.publicDir + "/" : "") + link.path.join("/").replace(/[^a-z0-9\/\.\-_]|\.\.\//gi, "");
+    files.serve(link.req, link.res);
+};
+
+exports.getLog = function (M, link) {
+    files.serveFile("log.txt", 200, {}, link.req, link.res);
+};
+
+// TODO get default module html && css
+exports.getModuleFile = function (M, link) {
+    link.send(501, 'Not "yet" implemented.');
 };

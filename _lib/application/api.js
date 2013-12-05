@@ -1,18 +1,29 @@
 var fs = require('fs');
 var EventEmitter = require('events').EventEmitter;
 var Pongo = require('pongo');
+var Static = require('node-static');
 
 // create api object
 var API = new EventEmitter();
 API.config = require('./config');
 
+var Cache = require(API.config.paths.API_PUBLIC + 'cache');
+
 //API.blend(require(API.config.paths.API_APPLICATION + 'send'));
 API.blend(require(API.config.paths.API_APPLICATION + 'router'));
-API.blend(require(API.config.paths.API_APPLICATION + 'module'));
-//API.blend(require(API.config.paths.API_APPLICATION + 'static'));
-//API.cache = require(API.config.paths.API_PUBLIC + 'static')('');
-API.cache = require(API.config.paths.API_PUBLIC + 'cache')();
+API.module = API.clone().blend(require(API.config.paths.API_APPLICATION + 'module'));
+API.operator = API.clone().blend(require(API.config.paths.API_APPLICATION + 'operator'));
+API.session = API.clone().blend(require(API.config.paths.API_APPLICATION + 'session'));
+API.cache = {
+    client: Cache(),
+    miids: Cache()
+};
 API.error = require(API.config.paths.API_PUBLIC + 'error');
+API.file = {
+    client: new Static.Server(API.config.paths.CLIENT_ROOT, {cache: 604800}),
+    module: new Static.Server(API.config.paths.MODULE_ROOT, {cache: 604800}),
+    app: new Static.Server(API.config.paths.APPLICATION_ROOT, {cache: 604800})
+};
 
 require(API.config.paths.API_PUBLIC + 'dbs')(API.config, function(err, dbs) {
 
@@ -22,7 +33,8 @@ require(API.config.paths.API_PUBLIC + 'dbs')(API.config, function(err, dbs) {
 
     API.db = dbs;
 
-    API.emit('ready');
+    :x
+    :x
 });
 
 module.exports = API;

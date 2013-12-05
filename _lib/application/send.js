@@ -36,11 +36,41 @@ function convertToBuffer (data, headers) {
     return new Buffer(data);
 }
 
-exports.send = function (code, data) {
+exports.sendWs = function (code, data) {
+    var self = this;
+    
+    // send binary data directly
+    if (data instanceof Buffer) {
+        return self.ws.send(data);
+    }
+    
+    var message = [
+        self.operation.miid,
+        self.operation.method,
+        null,
+        data
+    ];
+    
+    if (self.msgId) {
+        message[4] = self.msgId;
+    }
+    
+    // parse json
+    try {
+        message = JSON.stringify(message);
+    } catch (err) {
+        message = err.message;
+    }
+    
+    // send data
+    self.ws.send(message);
+};
+
+exports.sendHttp = function (code, data) {
     var self = this;
     var headers = this.res.headers || defaultHeader;
     
-    headers['server'] = 'Mono Web Server';
+    headers.server = 'Mono Web Server';
     
     data = convertToBuffer(data, headers);
     
@@ -49,9 +79,9 @@ exports.send = function (code, data) {
         data = self.error(self.error.APP_SEND_JSON_STRINGIFY);
     }
     
-    if (code >= 400 && self.config.logLevel === 'debug') {
+    /*if (code >= 400 && self.config.logLevel === 'debug') {
         console.log("DEBUG: " + data);
-    }
+    }*/
     
     if (data.length >= compressLimit && !headers['content-encoding'] && headers['content-type']) {
         
@@ -59,7 +89,7 @@ exports.send = function (code, data) {
             case 'text':
             case 'application':
                 
-                var self = this;
+                self = this;
                 
                 return gzip(data, function (err, data) {
                     
@@ -77,9 +107,9 @@ exports.send = function (code, data) {
     this.res.writeHead(code, headers);
     this.res.end(data);
     
-    if (self.config.logLevel === 'verbose') {
+    /*if (self.config.logLevel === 'verbose') {
         console.log('Request time: ' + (new Date().getTime() - this.time) + 'ms' + ' | ' + this.pathname);
-    }
+    }*/
 };
 
 exports.stream = function (link) {
