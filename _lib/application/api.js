@@ -14,6 +14,8 @@ Server.route = require(config.paths.API_APPLICATION + 'router');
 Server.miids = {};
 // add core module to miid cache
 Server.miids.M = require(config.paths.API_APPLICATION + 'module');
+// set core module public rights
+Server.miids.M.roles = {'*': 1};
 
 Server.session = Server.clone().blend(require(config.paths.API_APPLICATION + 'session'));
 Server.send = Server.clone().blend(require(config.paths.API_APPLICATION + 'send'));

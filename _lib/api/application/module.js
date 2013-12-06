@@ -1,10 +1,5 @@
 var ObjectId = require('mongodb').ObjectID;
 
-// set public access (move this to api initializer)
-exports.m_roles = {
-    '*': 1
-};
-
 // TODO mono miid class
 var Mono = {
     emit: function () {},
