@@ -115,9 +115,8 @@ var server = http.createServer(requestHandler);
 // start ws server
 var wss = new WebSocketServer({server: server});
 wss.on('connection', function(ws) {
-        
-    // TODO make link an instance of event emitter and the "this" of an operation
-    // TODO the link should contain the api for the module programmer
+    
+    // TODO how to broadcast messages?
     
     // ws link
     var link = new EventEmitter();
