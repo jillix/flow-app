@@ -8,11 +8,16 @@ var Cache = require(config.paths.API_PUBLIC + 'cache');
 // create server object
 var Server = new EventEmitter();
 Server.config = config;
-Server.blend(require(config.paths.API_APPLICATION + 'router'));
-Server.module = Server.clone().blend(require(config.paths.API_APPLICATION + 'module'));
-Server.operator = Server.clone().blend(require(config.paths.API_APPLICATION + 'operator'));
+Server.route = require(config.paths.API_APPLICATION + 'router');
+
+// create miid cache
+Server.miids = {};
+// add core module to miid cache
+Server.miids.M = require(config.paths.API_APPLICATION + 'module');
+
 Server.session = Server.clone().blend(require(config.paths.API_APPLICATION + 'session'));
 Server.send = Server.clone().blend(require(config.paths.API_APPLICATION + 'send'));
+
 Server.cache = {
     client: Cache(),
     miids: Cache()
@@ -21,7 +26,8 @@ Server.error = require(config.paths.API_PUBLIC + 'error');
 Server.file = {
     client: new Static.Server(config.paths.CLIENT_ROOT, {cache: 604800}),
     module: new Static.Server(config.paths.MODULE_ROOT, {cache: 604800}),
-    app: new Static.Server(config.paths.APPLICATION_ROOT, {cache: 604800})
+    app: new Static.Server(config.paths.APPLICATION_ROOT, {cache: 604800}),
+    public: new Static.Server(config.paths.PUBLIC_ROOT, {cache: 604800})
 };
 
 // create user api

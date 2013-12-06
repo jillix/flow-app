@@ -95,9 +95,8 @@ function route (link) {
         sendClient.call(self, link, module[0]);
     
     } else {
-        
-        (link);
+        self.file.public.serve(link.req, link.res);
     }
 }
 
-exports.route = route;
+module.exports = route;

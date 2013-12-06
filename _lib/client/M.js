@@ -258,7 +258,7 @@ var M = (function() {
                 } else {
                     // set script status to: module script not loaded
                     moduleScripts[moduleSources[i]] = 2;
-                    node.src = '/@/M/getModule/' + moduleSources[i];
+                    node.src = '/@/M/module/' + miid + '/' + moduleSources[i];
                 }
                 
                 onload(node, modLoaded(moduleSources[i]));
@@ -638,7 +638,7 @@ var M = (function() {
             if (typeof config !== 'object') {
                 callback(new Error('Invalid module config.'));
             }
-            
+            console.log(config);
             modules[miid] = modules[miid] || {};
             
             // load css
@@ -667,8 +667,9 @@ var M = (function() {
             
             // load html
             if (config.html) {
+                
                 // TODO laod html snippets over ws
-                Mono.link(config.html, function (err, html) {
+                Mono.ws(config.html, function (err, html) {
                     
                     // create module container
                     var container = document.createElement('div');

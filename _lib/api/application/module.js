@@ -1,174 +1,156 @@
+var ObjectId = require('mongodb').ObjectID;
+
+// set public access (move this to api initializer)
+exports.m_roles = {
+    '*': 1
+};
+
 // TODO mono miid class
 var Mono = {
     emit: function () {},
     on: function () {}
 };
 
-// get config from db
-function getConfigDb (M, miid, roleId, callback) {
+function getCachedMiid (link, miid, roleId) {
+    // send client config from cache
+    if (
+        link.API.miids[miid] &&
+        (
+            // check access
+            link.API.miids[miid].m_roles['*'] ||
+            link.API.miids[miid].m_roles[roleId]
+        ) &&
+        link.API.miids[miid].m_client
+    ) {
+        return link.API.miids[miid];
+    }
+    
+    return null;
+}
 
-    var queryMiid = {
+// TODO return only fields which are needed
+// TODO complete client config result with module client dependencies
+function loadModule (miid, roleId, callback) {
+    var self = this;
+    var query = {
         miid: miid,
-        roles: parseInt(roleId, 10)
+        roles: ObjectId(roleId)
     };
     
-    M.db.app.collection('m_miids').findOne(queryMiid, {fields: {_id:0, module:1, client:1, server: 1, operations: 1}}, function (err, miid) {
+    // get miid config from db
+    self.db.app.collection('m_miids').findOne(query, function (err, dbMiid) {
         
-        if (err) {
-            return callback(M.error(M.error.DB_MONGO_QUERY_ERROR, command, JSON.stringify(err)));
+        if (err || !dbMiid) {
+            // TODO handle error self.error
+            // link.API.error(link.API.error.ERROR_MESSAGE, command, JSON.stringify(err))
+            return callback(err || 'not found');
         }
         
-        if (!miid) {
-            return callback(M.error(M.error.API_MIID_NOT_FOUND, queryMiid.miid));
-        }
-
-        var queryMod = {
-            _id: miid.module
-        };
-
-        M.db.app.collection('miids').findOne(queryMod, {fields: {_id: 0, name: 1, owner: 1, source: 1, deps: 1}}, function (err, module) {
-
-            if (err) {
-                return callback(M.error(M.error.DB_MONGO_QUERY_ERROR, command, JSON.stringify(err)));
-            }
-
-            if (!module) {
-                return callback(M.error(M.error.API_MOD_NOT_FOUND, queryMiid.miid));
+        // get module version from db
+        self.db.app.collection('m_modules').findOne({_id: dbMiid.module}, function (err, module) {
+            
+            if (err || !module) {
+                return callback(err || 'not found');
             }
             
-            if (!module.source || !module.owner || !module.name || !miid.version) {
-               return callback(M.error(M.error.DB_MONGO_INVALID_RECORD, 'module', JSON.stringifyi(module))); 
+            // require mono module
+            var moduleName = module.source + '/' + module.owner + '/' + module.name + '/' + module.version + '/';
+            var monoModule;
+            
+            try {
+                monoModule = require(self.config.paths.MODULE_ROOT + moduleName + module.index);
+            } catch (err) {
+                return callback(err || 'Module init error');
             }
             
-            // append the miid scripts (defined by the application) to the end of the array
-            // this way they will be loaded first
-            if (miid.config && miid.config.scripts && module.versions[0].deps) {
-                miid.config.scripts = module.versions[0].deps.concat(miid.config.scripts);
+            // create new Mono observer instance
+            var Module = Mono.clone();
+            Module.m_name = moduleName;
+            Module.m_miid = miid;
+            Module.m_client = dbMiid.client;
+            
+            // add roles to cache
+            Module.m_roles = {};
+            for (var i = 0, l = dbMiid.roles.length; i < l; ++i) {
+                Module.m_roles[dbMiid.roles[i]] = 1;
             }
-
-            // add modle path to config
-            miid.config.path = module.source + '/' + module.owner + '/' + module.name + '/' + miid.version,
-
-            callback(null, miid.config);
+            
+            // init mono module and save in cache
+            // TODO update this cache when a miid config changes
+            self.miids[miid] = monoModule.call(Module, dbMiid.server);
+            
+            callback(null,  Module.m_client || {});
         });
     });
 }
 
-exports.load = function(M, link) {
+exports.load = function(link) {
+    var self = this;
+    var miid = link.data;
+    var method = link.operation.method;
     
-    // get the module instance id
-    var httpStatusCode = 200;
-    
-    // TODO return config from miid cache
-    
-    // handle i18n html
-    if (typeof config.html === 'object') {
-        config.html = config.html[link.session._loc] ? config.html[link.session._loc] : 'no html found';
-    }
-    
-    /*if (!link.data) {
-        return link.send(400, "No miid defined");
-    }
-
-    // take into consideration the miid, the role, and the language 
-    var cacheKey = link.data + '.' + link.session._rid + '.' + link.session._loc;
-    var cachedMiid = M.cache.miids.get(cacheKey);
-
-    // send cached config
+    // send client config from cache
+    var cachedMiid = getCachedMiid(link, miid, link.session._rid);
     if (cachedMiid) {
-        return link.send(httpStatusCode, cachedMiid);
+        return link.send(200, cachedMiid.m_client);
     }
     
-    // not in cache? find it in the database
-    getConfigDb(M, link.data, link.session._rid, function(err, config) {
+    // load and init module
+    loadModule.call(link.API, miid, link.session._rid, function (err, config) {
         
         if (err) {
-            if (err.code === 'API_MIID_NOT_FOUND') {
-                link.send(403, err.message);
-            } else {
-                link.send(500, 'Internal server error');
-            }
-            return;
+            return link.send(404, err || 'not found');
         }
-        
-        // get config or load error config
-        if (!config) {
-            httpStatusCode = err ? 500 : 404;
-            if (!M.config.error) {
-                config = 'No error module defined.';
-            } else {
-                config = M.config.error[httpStatusCode] ||
-                    M.config.error['*'] ||
-                    'No error message found.';
-            }
-        }
-        
-        // TODO require and init module
         
         // handle i18n html
         if (typeof config.html === 'object') {
             config.html = config.html[link.session._loc] ? config.html[link.session._loc] : 'no html found';
         }
         
-        // TODO what if a module don't have any html at all?
-        if (!config.html) {
-            config.html = defaultModuleOperation;
-        }
-        
-        // cache config only when the repsone is ok
-        if (httpStatusCode === 200) {
-            M.cache.miids.save(cacheKey, config);
-        }
-
-        // send config
-        link.send(httpStatusCode, config);
-    });*/
+        // return client config
+        link.send(200, config);
+    });
 };
 
 // browser modules
-exports.module = function(M, link) {
-
+exports.module = function(link) {
+    
+    var miid = link.path[0];
+    var file = link.path[1];
+    
     // check if request format is correct
-    if (!link.path || link.path.length < 4) {
+    if (!miid || !file) {
         return link.send(400, "Incorrect module request URL format");
     }
-
+    
     // the module name must be almost alphanumeric
     if (link.pathname.replace(/[^a-z0-9\/\.\-_@]|\.\.\//gi, "") !== link.pathname) {
         return link.send(400, "Incorrect data in module request URL");
     }
-
-    var module = link.path.slice(0, 4).join('/');
-    var path = link.path.slice(4).join("/");
     
-    // TODO solve this problem in a different way
-    if (version === M.config.MODULE_DEV_TAG) {
-        version += '_' + M.config.app.id;
-    }
-
-    // find the module in the database
-    M.module.getFile(module, link.session._rid, function(err, found) {
-
-        // error checks
-        if (err || !found) {
-            return link.send(404, err || ("Could not find module: " + modulde));
-        }
-
-        // now serve the module file
-        link.req.url = module + '/' + path; 
+    // get miid from cache
+    var cachedMiid = getCachedMiid(link, miid, link.session._rid);
+    if (cachedMiid) {
         
-        if (M.config.compressFiles) {
+        // handle compression
+        if (link.API.config.compressFiles) {
             link.res.setHeader('content-encoding', 'gzip');
             link.res.setHeader('vary', 'accept-encoding');
         }
         
-        self.file.module.serve(link.req, link.res);
-    });
+        // overwrite url
+        link.req.url = cachedMiid.m_name + file;
+        
+        // server file
+        return link.API.file.module.serve(link.req, link.res);
+    }
+    
+    link.send(404, 'Miid not found');
 };
 
-exports.client = function(M, link){
+exports.client = function(link){
     
-    if (M.config.compressFiles) {
+    if (link.API.config.compressFiles) {
         link.res.setHeader('content-encoding', 'gzip');
         link.res.setHeader('vary', 'accept-encoding');
         link.req.url = link.path[0].split('.')[0] + '.min.gz';
@@ -177,27 +159,19 @@ exports.client = function(M, link){
         link.req.url = link.path[0];
     }
     
-    M.file.client.serve(link.req, link.res);
+    link.API.file.client.serve(link.req, link.res);
 };
 
-exports.getFile = function (M, link) {
+// TODO for what is this method used??
+exports.getFile = function (link) {
     
-    if (M.config.compressFiles && M.config.compressFileTypes[link.pathname.split('.').pop()]) {
+    if (link.API.config.compressFiles && link.API.config.compressFileTypes[link.pathname.split('.').pop()]) {
         
         link.res.setHeader('content-encoding', 'gzip');
         link.res.setHeader('vary', 'accept-encoding');
     }
     
     // reqrite url
-    link.req.url = (M.config.publicDir ? M.config.publicDir + "/" : "") + link.path.join("/").replace(/[^a-z0-9\/\.\-_]|\.\.\//gi, "");
+    link.req.url = (link.API.config.publicDir ? link.API.config.publicDir + "/" : "") + link.path.join("/").replace(/[^a-z0-9\/\.\-_]|\.\.\//gi, "");
     files.serve(link.req, link.res);
-};
-
-exports.getLog = function (M, link) {
-    files.serveFile("log.txt", 200, {}, link.req, link.res);
-};
-
-// TODO get default module html && css
-exports.getModuleFile = function (M, link) {
-    link.send(501, 'Not "yet" implemented.');
 };
