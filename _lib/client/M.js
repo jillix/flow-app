@@ -146,8 +146,8 @@ var M = (function() {
         };
     }
     
-    // evaluate loaded scripts
-    function evaluateScriptsInOrder (miid, moduleSources, callback) {
+    // create CommonJS modules in order of the dependencies
+    function createCommonJsModulesInOrder (miid, moduleSources, callback) {
         
         // eveluate scripts in order (desc)
         for (var i = (moduleSources.length - 1), l = 0; i >= l; --i) {
@@ -195,6 +195,7 @@ var M = (function() {
             }
         }
         
+        // return first module of dependency list
         callback(miid, moduleDeps[miid][moduleSources[0]] ? moduleDeps[miid][moduleSources[0]].exports : null);
     }
     
@@ -202,18 +203,17 @@ var M = (function() {
     function checkIfScriptIsEvaluated (miid, moduleScripts, moduleSources, callback) {
         
         for (var i = 0, l = moduleSources.length; i < l; ++i) {
-
             if (moduleScripts[moduleSources[i]] === 2) {
                 // TODO pass the current i value and continue from there instead starting from 0 when trying again
                 return setTimeout( function () { checkIfScriptIsEvaluated(miid, moduleScripts, moduleSources, callback); }, 30);
             }
         }
         
-        evaluateScriptsInOrder(miid, moduleSources, callback);
+        createCommonJsModulesInOrder(miid, moduleSources, callback);
     }
     
     // load scripts (script tag)
-    function loadJS (miid, moduleSources, callback) {
+    function loadJS (miid, moduleName, moduleSources, callback) {
 
         var length = moduleSources.length;
 
@@ -226,28 +226,27 @@ var M = (function() {
         
         moduleDeps[miid] = moduleDeps[miid] || {};
         
-        for (var i = moduleSources.length - 1, dontLoad; i >= 0; --i) {
+        for (var i = moduleSources.length - 1, dontLoad, source; i >= 0; --i) {
+            
+            source = moduleName + moduleSources[i];
             
             // ingore loading for unfied code 
-            if (moduleSources[i][0] === '#') {
+            if (source[0] === '#') {
                 // remove the control sign
-                moduleSources[i] = moduleSources[i].substr(1);
+                source = source.substr(1);
                 dontLoad = true;
             } else {
                 dontLoad = false;
             }
             
-            Mono.once(moduleSources[i], (function (miid, moduleSources) {
-                
-                return function (moduleScripts, callback, length) {
-                    if (length === 0) {
-                        checkIfScriptIsEvaluated(miid, moduleScripts, moduleSources, callback);
-                    }
-                };
+            // when script is loaded check if it's evaluated
+            Mono.once(source, function (moduleScripts, callback, length) {
+                if (length === 0) {
+                    checkIfScriptIsEvaluated(miid, moduleScripts, moduleSources, callback);
+                }
+            });
             
-            })(miid, moduleSources));
-            
-            if (!dontLoad && !moduleScripts[moduleSources[i]]) {
+            if (!dontLoad && !moduleScripts[source]) {
                 
                 var node = document.createElement('script');
                 
@@ -255,13 +254,14 @@ var M = (function() {
                     // set script status to: external script
                     moduleScripts[moduleSources[i]] = 1;
                     node.src = moduleSources[i];
+                    onload(node, modLoaded(moduleSources[i]));
                 } else {
                     // set script status to: module script not loaded
-                    moduleScripts[moduleSources[i]] = 2;
+                    moduleScripts[source] = 2;
                     node.src = '/@/M/module/' + miid + '/' + moduleSources[i];
+                    moduleSources[i] = source;
+                    onload(node, modLoaded(source));
                 }
-                
-                onload(node, modLoaded(moduleSources[i]));
                 
                 head.appendChild(node);
             
@@ -269,8 +269,8 @@ var M = (function() {
                 
                 --length;
                 
-                if (typeof moduleScripts[moduleSources[i]] === fn || moduleScripts[moduleSources[i]] === 3) {
-                    Mono.emit(moduleSources[i], moduleScripts, callback, length);
+                if (typeof moduleScripts[source] === fn || moduleScripts[source] === 3) {
+                    Mono.emit(source, moduleScripts, callback, length);
                 }
             }
         }
@@ -689,16 +689,15 @@ var M = (function() {
             
             // load scripts and init module
             if (config.scripts && config.scripts.length > 0) {
-                
-                loadJS(miid, config.scripts, function (miid, moduleConstructor) {
+               
+                loadJS(miid, config.name, config.scripts, function (miid, moduleConstructor) {
                     
                     // create module
-                    if (moduleLoadCache[miid].config.path) {
-
+                    if (moduleLoadCache[miid].config.name) {
                         moduleLoadCache[miid].init = moduleLoadCache[miid].init || moduleConstructor;
 
                         modules[miid].miid = miid;
-                        modules[miid].path = moduleLoadCache[miid].config.path;
+                        modules[miid].name = moduleLoadCache[miid].config.name;
                         modules[miid] = Object.extend(modules[miid], Mono);
                         
                         if (++moduleLoadCache[miid].state === 2) {

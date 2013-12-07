@@ -65,6 +65,9 @@ function loadModule (miid, roleId, callback) {
             Module.m_miid = miid;
             Module.m_client = dbMiid.client;
             
+            // save module name in client config
+            Module.m_client.name = Module.m_name;
+            
             // add roles to cache
             Module.m_roles = {};
             for (var i = 0, l = dbMiid.roles.length; i < l; ++i) {
