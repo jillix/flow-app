@@ -350,6 +350,7 @@ var M = (function() {
                     modules[miid].dom.parentNode.removeChild(modules[miid].dom);
                 }
                 
+                // remove events
                 if (events[miid]) {
                     delete events[miid];
                 }
@@ -440,51 +441,38 @@ var M = (function() {
         },
         
         // make requests to backend
-        /*
-            this.link('operationName', function() {});
-            this.link('operationName', OPTIONS, function () {});
+        link: function(url, data, callback) {
             
-            OPTIONS: {
-                
-                path: 'path/to/some/thing',
-                data: {POST DATA}
-            }
-        */
-        link: function(path, data, callback) {
-            
-            if (typeof method !== 'string') {
+            if (typeof url !== 'string') {
                 return;
             }
             
-            if (typeof options === fn) {
-                callback = options;
-                options = {};
+            if (typeof data === fn) {
+                callback = data;
+                data = {};
             }
-            
-            options = options || {};
             
             // create new link
             var link = new XMLHttpRequest();
-            var url;
             
-            if (method[0] === '/') {
-                url = method;
+            if (path[0] === '/') {
+                url = url;
             } else {
-                url = '/@/' + (options.miid || this.miid || 'M') + '/' + method + '/' + (options.path || '') + (options.query || '');
+                url = '/@/' + (this.miid || 'M') + '/' + url;
             }
             
             // open the connection
-            link.open(options.data ? 'post' : 'get', url, !options.sync);
+            link.open(data ? 'post' : 'get', url, true);
             
             // handle data
-            if (options.data && !(typeof FormData !== 'undefined' && options.data instanceof FormData)) {
+            if (data && !(typeof FormData !== 'undefined' && data instanceof FormData)) {
         
                 try {
                     // set content-type header to application/json
                     link.setRequestHeader('content-type', 'application/json');
         
                     // stringify object to JSON
-                    options.data = JSON.stringify(options.data);
+                    data = JSON.stringify(data);
         
                 } catch(err) {
         
@@ -598,7 +586,7 @@ var M = (function() {
     };
     
     // TODO register operations as websocket events
-    Mono.on('msg', function (operation, data, miid) {
+    Mono.on('message', function (operation, data, miid) {
         try {
             webSocket.send(JSON.stringify([miid || this.miid, operation, data]));
         } catch (err) {
@@ -637,7 +625,7 @@ var M = (function() {
             if (typeof config !== 'object') {
                 callback(new Error('Invalid module config.'));
             }
-            console.log(config);
+            
             modules[miid] = modules[miid] || {};
             
             // load css

@@ -8,6 +8,8 @@ var Cache = require(config.paths.API_PUBLIC + 'cache');
 // create server object
 var Server = new EventEmitter();
 Server.config = config;
+
+// router
 Server.route = require(config.paths.SERVER_ROOT + 'router');
 
 // create miid cache

@@ -1,11 +1,9 @@
 var fs = require('fs');
+var EventEmitter = require('events').EventEmitter;
 var ObjectId = require('mongodb').ObjectID;
 
 // TODO mono miid class
-var Mono = {
-    emit: function () {},
-    on: function () {}
-};
+var Mono = new EventEmitter();
 
 function getCachedMiid (link, miid, roleId) {
     // send client config from cache
@@ -25,7 +23,6 @@ function getCachedMiid (link, miid, roleId) {
 }
 
 // TODO return only fields which are needed
-// TODO complete client config result with module client dependencies
 function loadModule (miid, roleId, callback) {
     var self = this;
     var query = {
@@ -60,7 +57,10 @@ function loadModule (miid, roleId, callback) {
             }
             
             // create new Mono observer instance
+            // TODO register operation as events
+            // TODO broadcast option self.emit('operationA');
             var Module = Mono.clone();
+            Module.m_wss = self.ws;
             Module.m_name = moduleName;
             Module.m_miid = miid;
             Module.m_client = dbMiid.client;

@@ -9,6 +9,7 @@ var parse = require('url').parse;
 var EventEmitter = require('events').EventEmitter;
 var M = require('./api').server;
 var user_api = require('./api').user;
+var fn = function () {};
 
 function send (link, code, data) {
     link.req.resume();
@@ -111,28 +112,29 @@ function messageHandler (ws, link, data) {
 }
 
 // start http server
-var server = http.createServer(requestHandler);
+M.http = http.createServer(requestHandler);
 // start ws server
-var wss = new WebSocketServer({server: server});
-wss.on('connection', function(ws) {
+M.ws = new WebSocketServer({server: M.http});
+M.ws.on('connection', function(ws) {
     
     // TODO how to broadcast messages?
     
     // ws link
     var link = new EventEmitter();
+    
     link.ws = ws;
     link.send = M.send.sendWs;
     
     // http fake link (for compatibility reasons)
     link.req = {
         headers: ws.upgradeReq.headers,
-        pause: function () {},
-        resume: function () {}
+        pause: fn,
+        resume: fn
     };
     link.res = {headers: {}};
     link.query = {};
     link.pathname = '';
-    link.stream = function () {};
+    link.stream = fn;
     
     // get the session
     M.session.get(link, function (link) {
@@ -145,7 +147,7 @@ wss.on('connection', function(ws) {
 
 // start listen and write app id to stdout
 M.on('ready', function () {
-    server.listen(M.config.port, M.config.host, function () {
+    M.http.listen(M.config.port, M.config.host, function () {
         process.stdout.write(M.config.id);
     });
 });
