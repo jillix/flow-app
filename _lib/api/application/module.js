@@ -74,6 +74,11 @@ function loadModule (miid, roleId, callback) {
                 Module.m_roles[dbMiid.roles[i]] = 1;
             }
             
+            // merge scripts
+            if (module.dependencies) {
+                Module.m_client.scripts = module.dependencies.concat(Module.m_client.scripts || []);
+            }
+            
             // init mono module and save in cache
             // TODO update this cache when a miid config changes
             self.miids[miid] = monoModule.call(Module, dbMiid.server);
