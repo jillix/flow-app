@@ -1,3 +1,4 @@
+var fs = require('fs');
 var ObjectId = require('mongodb').ObjectID;
 
 // TODO mono miid class
@@ -157,16 +158,16 @@ exports.client = function(link){
     link.API.file.client.serve(link.req, link.res);
 };
 
-// TODO for what is this method used??
-exports.getFile = function (link) {
+// read miid html file
+exports.html = function (link) {
     
-    if (link.API.config.compressFiles && link.API.config.compressFileTypes[link.pathname.split('.').pop()]) {
+    var file = link.API.config.paths.PUBLIC_ROOT + link.data.replace(/[^a-z0-9\/\.\-_]|\.\.\//gi, "");
+    fs.readFile(file, {encoding: 'utf8'}, function (err, data) {
         
-        link.res.setHeader('content-encoding', 'gzip');
-        link.res.setHeader('vary', 'accept-encoding');
-    }
-    
-    // reqrite url
-    link.req.url = (link.API.config.publicDir ? link.API.config.publicDir + "/" : "") + link.path.join("/").replace(/[^a-z0-9\/\.\-_]|\.\.\//gi, "");
-    files.serve(link.req, link.res);
+        if (err) {
+            return link.send(404, 'File not found');
+        }
+        
+        link.send(200, data);
+    });
 };

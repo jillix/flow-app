@@ -585,7 +585,6 @@ var M = (function() {
         var responseErr = response[2];
         var data = response[3];
         
-        console.log(response);
         if (miid && operation) {
             
             if (response[4] && wsCallbacks[miid] && wsCallbacks[miid][response[4]]) {
@@ -668,8 +667,8 @@ var M = (function() {
             // load html
             if (config.html) {
                 
-                // TODO laod html snippets over ws
-                Mono.ws(config.html, function (err, html) {
+                // load html snippets over ws
+                Mono.ws('html', config.html, function (err, html) {
                     
                     // create module container
                     var container = document.createElement('div');
