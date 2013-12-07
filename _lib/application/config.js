@@ -11,6 +11,7 @@ paths.API_PUBLIC = paths.API_ROOT + 'public/';
 paths.API_APPLICATION = paths.API_ROOT + 'application/';
 paths.CLIENT_ROOT = paths.LIB_ROOT + 'client/';
 paths.APPLICATION_ROOT = paths.MONO_ROOT + 'apps/' + config.id + '/';
+paths.SERVER_ROOT = paths.LIB_ROOT + 'application/';
 paths.MODULE_ROOT = paths.APPLICATION_ROOT + 'mono_modules/';
 paths.PUBLIC_ROOT = paths.APPLICATION_ROOT + config.publicDir + '/';
 

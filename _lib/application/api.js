@@ -8,17 +8,17 @@ var Cache = require(config.paths.API_PUBLIC + 'cache');
 // create server object
 var Server = new EventEmitter();
 Server.config = config;
-Server.route = require(config.paths.API_APPLICATION + 'router');
+Server.route = require(config.paths.SERVER_ROOT + 'router');
 
 // create miid cache
 Server.miids = {};
 // add core module to miid cache
-Server.miids.M = require(config.paths.API_APPLICATION + 'module');
+Server.miids.M = require(config.paths.SERVER_ROOT + 'module');
 // set core module public rights
 Server.miids.M.roles = {'*': 1};
 
-Server.session = Server.clone().blend(require(config.paths.API_APPLICATION + 'session'));
-Server.send = Server.clone().blend(require(config.paths.API_APPLICATION + 'send'));
+Server.session = Server.clone().blend(require(config.paths.SERVER_ROOT + 'session'));
+Server.send = Server.clone().blend(require(config.paths.SERVER_ROOT + 'send'));
 
 Server.cache = {
     client: Cache(),
