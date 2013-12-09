@@ -220,18 +220,20 @@ function startApp (host, callback) {
                 application.dbPort = 27017;
                 
                 try {
-                    var env = JSON.stringify(application);
+                    var spawnOptions = {
+                        //uid: 'application.uid',
+                        //gid: 'application.gid',
+                        env: process.env
+                    };
+                    spawnOptions.env.config = JSON.stringify(application);
+                    
                 } catch (err) {
                     return callback(self.error(self.error.APP_PROCESS_ENV_JSON, application.id));
                 }
                 
                 // TODO spawn process with uid/gid
                 // nodejs.org/api/child_process.html#child_process_child_process_spawn_command_args_options
-                var app = spawn('node', [self.config.paths.APPLICATION_SERVER], {
-                    //uid: 'application.uid',
-                    //gid: 'application.gid',
-                    env: {config: env}
-                });
+                var app = spawn('node', [self.config.paths.APPLICATION_SERVER], spawnOptions);
                 
                 // save process id in app cache
                 application.pid = app.pid;
