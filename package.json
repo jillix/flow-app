@@ -30,7 +30,7 @@
     ],
     "dependencies" : {
         "ws"            : "*",
-        "forever-mac"   : "*",
+        "forever"       : "*",
         "modm"          : "*",
         "mongodb"       : "*",
         "node-static"   : "*",
