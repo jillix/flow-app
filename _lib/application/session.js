@@ -158,7 +158,7 @@ function get (link, callback) {
         // get session and overwrite default session
         if (cooky[self.config.session.id]) {
 
-            return getSession(cooky[self.config.session.id], expire(), expire(expire_time), function(err, session) {
+            return getSession.call(self, cooky[self.config.session.id], expire(), expire(expire_time), function(err, session) {
 
                 if (!err && session) {
                     link.session = sessionConstructor(session);
@@ -166,7 +166,7 @@ function get (link, callback) {
                     // TODO maybe redirect user to a login page if session is not valid anymore
                     getPublicSession.call(self, link, cooky[self.config.session.locale]);
                 }
-                forwardRequest
+                
                 callback(link);
             });
         }
