@@ -93,7 +93,7 @@ function messageHandler (ws, link, data) {
     // TODO define a protocoll
     /*
         Request: ['miid', 'operation'[, {}, msgId]]
-        Response: [miid, operation, err, data]
+        Response: [miid, operation, err[, data, msgId]]
     */
     
     // parse data
