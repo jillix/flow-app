@@ -540,7 +540,7 @@ var M = (function() {
             }
             
             if (callback) {
-                var msgId = uid(4);
+                var msgId = uid(5);
                 
                 wsCallbacks[miid] = wsCallbacks[miid] || {};
                 wsCallbacks[miid][msgId] = callback;
@@ -548,12 +548,21 @@ var M = (function() {
                 message[3] = msgId;
             }
             
-            webSocket.send(JSON.stringify(message));
+            try {
+                message = JSON.stringify(message);
+            } catch (err) {
+                if (callback) {
+                    callback(err);
+                }
+            }
+            
+            webSocket.send(message);
         }
     };
     
     // handle websocket messages events
     webSocket.onmessage = function (event) {
+        // response example: ['miid', 'operation, 'err', {/*data*/}, 'cbKey']
         var response;
         var err;
         
@@ -575,10 +584,13 @@ var M = (function() {
         
         if (miid && operation) {
             
+            // handle callback
             if (response[4] && wsCallbacks[miid] && wsCallbacks[miid][response[4]]) {
                 wsCallbacks[miid][response[4]].call(modules[miid] || Mono, null, data);
+                delete wsCallbacks[miid][response[4]];
             }
             
+            // emit event
             if (modules[miid]) {
                 modules[miid].emit(operation, null, data);
             }
