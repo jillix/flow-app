@@ -25,13 +25,13 @@ function operator (link) {
         return send(link, 404, 'Miid not found.');
     }
     
-    // check for miid in cache
-    if (!M.miids[miid][method])  {
-        return send(link, 404, 'Method not found.');
+    // check if a listener is registred on the miid
+    if (M.miids[miid].listeners(method).length === 0)  {
+        return send(link, 404, 'Event not found.');
     }
     
     // call method whit moduleInstance as this
-    M.miids[miid][method](link);
+    M.miids[miid].emit(method, link);
     link.req.resume();
 }
 
@@ -93,7 +93,7 @@ function messageHandler (ws, link, data) {
     // TODO define a protocoll
     /*
         Request: ['miid', 'operation'[, {}, msgId]]
-        Response: [miid, operation, err, data]
+        Response: [miid, operation, err[, data, msgId]]
     */
     
     // parse data
@@ -116,8 +116,6 @@ M.http = http.createServer(requestHandler);
 // start ws server
 M.ws = new WebSocketServer({server: M.http});
 M.ws.on('connection', function(ws) {
-    
-    // TODO how to broadcast messages?
     
     // ws link
     var link = new EventEmitter();

@@ -3,9 +3,9 @@ var EventEmitter = require('events').EventEmitter;
 var ObjectId = require('mongodb').ObjectID;
 
 // TODO mono miid class
-var Mono = new EventEmitter();
 
 function getCachedMiid (link, miid, roleId) {
+    
     // send client config from cache
     if (
         link.API.miids[miid] &&
@@ -20,6 +20,51 @@ function getCachedMiid (link, miid, roleId) {
     }
     
     return null;
+}
+
+function send (data, socket) {
+    var self = this;
+    
+    if (socket) {
+        return socket.send(data);
+    }
+    
+    // broadcast
+    for (var i = 0, l = self.m_wss.clients.length; i < l; ++i) {
+        self.m_wss.clients[i].send(data);
+    }
+}
+
+// TODO http must also be supported
+function sendHandler (event) {
+    return function (data, callback, socket) {
+        var self = this;
+        
+        // send binary data directly
+        if (data instanceof Buffer) {
+            return send.call(self, data, socket);
+        }
+        
+        var message = [
+            self.m_miid,
+            event,
+            0,
+            data
+        ];
+        
+        if (self.msgId) {
+            message[4] = self.msgId;
+        }
+        
+        // parse json
+        try {
+            message = JSON.stringify(message);
+        } catch (err) {
+            message = err.message;
+        }
+        
+         send.call(self, message, socket);
+    };
 }
 
 // TODO return only fields which are needed
@@ -57,9 +102,8 @@ function loadModule (miid, roleId, callback) {
             }
             
             // create new Mono observer instance
-            // TODO register operation as events
             // TODO broadcast option self.emit('operationA');
-            var Module = Mono.clone();
+            var Module = new EventEmitter();
             Module.m_wss = self.ws;
             Module.m_name = moduleName;
             Module.m_miid = miid;
@@ -79,16 +123,33 @@ function loadModule (miid, roleId, callback) {
                 Module.m_client.scripts = module.dependencies.concat(Module.m_client.scripts || []);
             }
             
+            // handle network events
+            if (dbMiid.events) {
+                
+                // add client events config to client config
+                if (dbMiid.events.client) {
+                    Module.m_client.events = dbMiid.events.client;
+                }
+                
+                // listen to server events
+                if (dbMiid.events.server) {
+                    for (var i = 0, l = dbMiid.events.server.length; i < l; ++i) {
+                        Module.on(dbMiid.events.server[i], sendHandler(dbMiid.events.server[i]));
+                    }
+                }
+            }
+            
             // init mono module and save in cache
             // TODO update this cache when a miid config changes
-            self.miids[miid] = monoModule.call(Module, dbMiid.server);
+            self.miids[miid] = Module;
+            monoModule.call(Module, dbMiid.server.data);
             
             callback(null,  Module.m_client || {});
         });
     });
 }
 
-exports.load = function(link) {
+function load (link) {
     var self = this;
     var miid = link.data;
     var method = link.operation.method;
@@ -114,10 +175,10 @@ exports.load = function(link) {
         // return client config
         link.send(200, config);
     });
-};
+}
 
 // browser modules
-exports.module = function(link) {
+function file (link) {
     
     var miid = link.path[0];
     var file = link.path[1];
@@ -150,9 +211,9 @@ exports.module = function(link) {
     }
     
     link.send(404, 'Miid not found');
-};
+}
 
-exports.client = function(link){
+function client (link){
     
     if (link.API.config.compressFiles) {
         link.res.setHeader('content-encoding', 'gzip');
@@ -164,10 +225,10 @@ exports.client = function(link){
     }
     
     link.API.file.client.serve(link.req, link.res);
-};
+}
 
 // read miid html file
-exports.html = function (link) {
+function html (link) {
     
     var file = link.API.config.paths.PUBLIC_ROOT + link.data.replace(/[^a-z0-9\/\.\-_]|\.\.\//gi, "");
     fs.readFile(file, {encoding: 'utf8'}, function (err, data) {
@@ -178,4 +239,16 @@ exports.html = function (link) {
         
         link.send(200, data);
     });
-};
+}
+
+function init (config) {
+    var self = this;
+    
+    // core event interface
+    self.on('load', load);
+    self.on('module', file);
+    self.on('client', client);
+    self.on('html', html);
+}
+
+module.exports = init;

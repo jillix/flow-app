@@ -528,32 +528,12 @@ var M = (function() {
                 link.A = 1;
                 link.abort();
             };
-        },
-        
-        ws: function (operation, data, callback) {
-            var self = this;
-            var miid = this.miid || 'M';
-            var message = [miid, operation];
-            
-            if (data) {
-                message[2] = data;
-            }
-            
-            if (callback) {
-                var msgId = uid(4);
-                
-                wsCallbacks[miid] = wsCallbacks[miid] || {};
-                wsCallbacks[miid][msgId] = callback;
-                
-                message[3] = msgId;
-            }
-            
-            webSocket.send(JSON.stringify(message));
         }
     };
     
     // handle websocket messages events
     webSocket.onmessage = function (event) {
+        // response example: ['miid', 'operation, 'err', {/*data*/}, 'cbKey']
         var response;
         var err;
         
@@ -575,24 +555,49 @@ var M = (function() {
         
         if (miid && operation) {
             
+            // handle callback
             if (response[4] && wsCallbacks[miid] && wsCallbacks[miid][response[4]]) {
                 wsCallbacks[miid][response[4]].call(modules[miid] || Mono, null, data);
+                delete wsCallbacks[miid][response[4]];
             }
             
+            // emit event
             if (modules[miid]) {
                 modules[miid].emit(operation, null, data);
             }
         }
     };
     
-    // TODO register operations as websocket events
-    Mono.on('message', function (operation, data, miid) {
-        try {
-            webSocket.send(JSON.stringify([miid || this.miid, operation, data]));
-        } catch (err) {
-            this.emit('error', err);
-        }
-    });
+    function send (event) {
+        return function (data, callback) {
+            var self = this;
+            var miid = this.miid || 'M';
+            var message = [miid, event];
+            
+            if (data) {
+                message[2] = data;
+            }
+            
+            if (callback) {
+                var msgId = uid(5);
+                
+                wsCallbacks[miid] = wsCallbacks[miid] || {};
+                wsCallbacks[miid][msgId] = callback;
+                
+                message[3] = msgId;
+            }
+            
+            try {
+                message = JSON.stringify(message);
+            } catch (err) {
+                if (callback) {
+                    callback(err);
+                }
+            }
+            
+            webSocket.send(message);
+        };
+    }
     
     // load mono modules
     var constructor = function (target, miid, callback) {
@@ -620,7 +625,8 @@ var M = (function() {
             return callback(null, modules[miid]);
         }
         
-        Mono.ws('load', miid, function (err, config) {
+        // get miid config
+        send('load')(miid, function (err, config) {
             
             if (typeof config !== 'object') {
                 callback(new Error('Invalid module config.'));
@@ -656,7 +662,7 @@ var M = (function() {
             if (config.html) {
                 
                 // load html snippets over ws
-                Mono.ws('html', config.html, function (err, html) {
+                send('html')(config.html, function (err, html) {
                     
                     // create module container
                     var container = document.createElement('div');
@@ -687,6 +693,13 @@ var M = (function() {
                         modules[miid].miid = miid;
                         modules[miid].name = moduleLoadCache[miid].config.name;
                         modules[miid] = Object.extend(modules[miid], Mono);
+                        
+                        // listen to send events
+                        if (config.events) {
+                            for (var i = 0, l = config.events.length; i < l; ++i) {
+                                modules[miid].on(config.events[i], send(config.events[i]));
+                            }
+                        }
                         
                         if (++moduleLoadCache[miid].state === 2) {
                             initModule(moduleLoadCache[miid].target, miid, moduleLoadCache[miid].config);

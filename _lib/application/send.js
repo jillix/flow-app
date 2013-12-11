@@ -62,6 +62,9 @@ exports.sendWs = function (code, data) {
         message = err.message;
     }
     
+    // TODO broadcast messages
+    // ws.clients => array with connections
+    
     // send data
     self.ws.send(message);
 };

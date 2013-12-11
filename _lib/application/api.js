@@ -14,10 +14,13 @@ Server.route = require(config.paths.SERVER_ROOT + 'router');
 
 // create miid cache
 Server.miids = {};
+var coreModule = new EventEmitter();
+require(config.paths.SERVER_ROOT + 'module').call(coreModule);
+
 // add core module to miid cache
-Server.miids.M = require(config.paths.SERVER_ROOT + 'module');
+Server.miids.M = coreModule;
 // set core module public rights
-Server.miids.M.roles = {'*': 1};
+Server.miids.M.m_roles = {'*': 1};
 
 Server.session = Server.clone().blend(require(config.paths.SERVER_ROOT + 'session'));
 Server.send = Server.clone().blend(require(config.paths.SERVER_ROOT + 'send'));
@@ -53,6 +56,7 @@ require(config.paths.API_APPLICATION + 'dbs')(Server.config, function(err, dbs) 
 exports.server = Server;
 exports.user = User;
 
+// APPLICATION LOG
 //var appPath = self.config.paths.APPLICATION_ROOT + application._id;
 // the application directory must be present otherwise the piped
 // streams below will crash the mono proxy server
