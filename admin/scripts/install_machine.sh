@@ -233,6 +233,10 @@ function checkout_mono {
     mv "$MONO_TMP" "/home/$USERNAME/mono"
 }
 
+function setup_dirs {
+    mkdir -p /apps
+}
+
 function get_credentials {
 
     if [ -f "$CREDFILE" ]
@@ -370,6 +374,9 @@ install_software
 
 # checkout mono code
 checkout_mono
+
+# setup the file system directories
+setup_dirs
 
 # get user repo credentials (needed for npm install)
 get_credentials
