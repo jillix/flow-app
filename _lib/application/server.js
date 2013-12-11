@@ -3,15 +3,17 @@
 TODO check the pending not 200 requests (seen with node-static, but check also http operation requests) 
 
 */
+require('./api');
+var M = process.mono;
 var http = require('http');
 var WebSocketServer = require('ws').Server;
 var parse = require('url').parse;
-var EventEmitter = require('events').EventEmitter;
-var M = require('./api').server;
-var user_api = require('./api').user;
+var route = require(M.config.paths.SERVER_ROOT + 'router');
+var session = require(M.config.paths.SERVER_ROOT + 'session');
+var send = require(M.config.paths.SERVER_ROOT + 'send');
 var fn = function () {};
 
-function send (link, code, data) {
+function resumeAndSend (link, code, data) {
     link.req.resume();
     link.send(code, data);
 }
@@ -22,12 +24,12 @@ function operator (link) {
     
     // check for miid in cache
     if (!M.miids[miid])  {
-        return send(link, 404, 'Miid not found.');
+        return resumeAndSend(link, 404, 'Miid not found.');
     }
     
     // check if a listener is registred on the miid
     if (M.miids[miid].listeners(method).length === 0)  {
-        return send(link, 404, 'Event not found.');
+        return resumeAndSend(link, 404, 'Event not found.');
     }
     
     // call method whit moduleInstance as this
@@ -40,16 +42,13 @@ function forwardRequest (link) {
     if (link.path[0] == M.config.coreKey) {
         
         if (link.path.length < 3) {
-            return send(link, 404, 'Invalid operation url.');
+            return resumeAndSend(link, 404, 'Invalid operation url.');
         }
         
         // if no operation was found in the request URL
         if (!link.path[1] || !link.path[1]) {
-            return send(link, 404, 'Missing module instance ID or operation name.');
+            return resumeAndSend(link, 404, 'Missing module instance ID or operation name.');
         }
-        
-        // attach api
-        link.API = link.path[1] === M.config.coreMiid ? M : user_api;
         
         link.operation = {
             miid: link.path[1],
@@ -61,7 +60,7 @@ function forwardRequest (link) {
         operator(link);
         
     } else {
-        M.route(link);
+        route(link);
         link.req.resume();
     }
 }
@@ -70,22 +69,22 @@ function requestHandler (req, res) {
     
     var url = parse(req.url, true);
     var path = url.pathname.replace(/\/$|^\//g, "").split("/", 42);
-    var link = new EventEmitter();
+    var link = {};
     link.req = req;
     link.res = res;
-    link.send = M.send.sendHttp;
+    link.send = send.sendHttp;
     link.path = path || [];
     link.query = url.query || {};
     link.pathname = url.pathname;
     
     // invoke streaming api
-    link.stream = M.send.stream(link);
+    link.stream = send.stream(link);
 
     // set a empty response header object
     link.res.headers = {};
     
     // get the session
-    M.session.get(link, forwardRequest);
+    session.get(link, forwardRequest);
 }
 
 function messageHandler (ws, link, data) {
@@ -118,10 +117,10 @@ M.ws = new WebSocketServer({server: M.http});
 M.ws.on('connection', function(ws) {
     
     // ws link
-    var link = new EventEmitter();
+    var link = {};
     
     link.ws = ws;
-    link.send = M.send.sendWs;
+    link.send = send.sendWs;
     
     // http fake link (for compatibility reasons)
     link.req = {
@@ -135,7 +134,7 @@ M.ws.on('connection', function(ws) {
     link.stream = fn;
     
     // get the session
-    M.session.get(link, function (link) {
+    session.get(link, function (link) {
         // listen to messages
         ws.on('message', function (data) {
             messageHandler(ws, link, data);

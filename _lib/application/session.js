@@ -1,6 +1,7 @@
 var cookie = require('cookie');
 var colName = 'sessions';
 var expire_time = 168; // one week 7*24
+var M = process.mono;
 
 var publicSession = {
     
@@ -41,7 +42,7 @@ var Session = {
         
         var self = this;
 
-        self.api.db.app.collection(colName).update({_sid: self._sid}, {$set: data}, function (err) {
+        M.db.app.collection(colName).update({_sid: self._sid}, {$set: data}, function (err) {
             
             if (err) {
                 return callback(err);
@@ -66,7 +67,7 @@ var Session = {
             endAll = null;
         }
         
-        self.api.db.app.collection(colName).remove(
+        M.db.app.collection(colName).remove(
             endAll ? { _uid: self._uid, _rid: self._rid } : { _sid: self._sid },
             callback
         );
@@ -76,9 +77,9 @@ var Session = {
         
         var self = this;
             
-        var newSid = self.api.util.uid(23);
+        var newSid = M.util.uid(23);
         
-        self.api.db.app.collection(colName).update({_sid: self._sid}, {$set: {_sid: newSid}}, function (err) {
+        M.db.app.collection(colName).update({_sid: self._sid}, {$set: {_sid: newSid}}, function (err) {
             
             if (err) {
                 return callback(err);
@@ -96,7 +97,7 @@ var Session = {
 function getSession (sessionId, now, expire, callback) {
     var self = this;
     
-    self.db.app.collection(colName).findAndModify(
+    M.db.app.collection(colName).findAndModify(
         {_sid: sessionId, _exp: {$gt: now}},
         [],
         {$set: {_exp: expire}},
@@ -107,7 +108,7 @@ function getSession (sessionId, now, expire, callback) {
 
 function startSession (session, callback) {
     var self = this;
-    self.db.app.collection(colName).insert(session, { w: 1 },  callback);
+    M.db.app.collection(colName).insert(session, { w: 1 },  callback);
 }
 
 function expire(hoursPlus) {
@@ -131,13 +132,13 @@ function getPublicSession (link, localeFromCookie) {
     var self = this;
     
     link.session = publicSession.clone();
-    link.session._rid = self.config.session.publicRole;
+    link.session._rid = M.config.session.publicRole;
     
     if (localeFromCookie) {
         link.session._loc = localeFromCookie;
     } else {
-        link.session._loc = self.config.locale || "*";
-        link.res.headers['set-cookie'] = self.config.session.locale + '=' + link.session._loc + '; path=/';
+        link.session._loc = M.config.locale || "*";
+        link.res.headers['set-cookie'] = M.config.session.locale + '=' + link.session._loc + '; path=/';
     }
 }
 
@@ -156,15 +157,15 @@ function get (link, callback) {
         cooky = cookie.parse(link.req.headers.cookie);
 
         // get session and overwrite default session
-        if (cooky[self.config.session.id]) {
+        if (cooky[M.config.session.id]) {
 
-            return getSession.call(self, cooky[self.config.session.id], expire(), expire(expire_time), function(err, session) {
+            return getSession.call(self, cooky[M.config.session.id], expire(), expire(expire_time), function(err, session) {
 
                 if (!err && session) {
                     link.session = sessionConstructor(session);
                 } else {
                     // TODO maybe redirect user to a login page if session is not valid anymore
-                    getPublicSession.call(self, link, cooky[self.config.session.locale]);
+                    getPublicSession.call(self, link, cooky[M.config.session.locale]);
                 }
                 
                 callback(link);
@@ -172,7 +173,7 @@ function get (link, callback) {
         }
     }
     
-    getPublicSession.call(self, link, cooky[self.config.session.locale]);
+    getPublicSession.call(self, link, cooky[M.config.session.locale]);
     
     callback(link);
 }
@@ -186,7 +187,7 @@ function end (link, callback) {
     }
 
     // expire the client cookie
-    link.res.headers['set-cookie'] = self.config.session.id + '=' + link.session._sid + '; path=/; expires=' + new Date().toGMTString();
+    link.res.headers['set-cookie'] = M.config.session.id + '=' + link.session._sid + '; path=/; expires=' + new Date().toGMTString();
 
     // remove from the database
     link.session.end(callback);
@@ -195,11 +196,11 @@ function end (link, callback) {
 function renew (link, rid, uid, locale, data, callback) {
     var self = this;
     
-    self.session.end(link, function(err) {
+    M.session.end(link, function(err) {
 
         if (err) { return callback(err); }
 
-        self.session.start(link, rid, uid, locale, data, callback);
+        M.session.start(link, rid, uid, locale, data, callback);
     });
 }
 
@@ -221,7 +222,7 @@ function start (link, rid, uid, locale, data, callback) {
     session._rid = rid;
     session._uid = uid;
     session._loc = locale;
-    session._sid = self.util.uid(23);
+    session._sid = M.util.uid(23);
     session._exp = expire(expire_time);
 
     startSession(session, function (err) {
@@ -240,8 +241,8 @@ function start (link, rid, uid, locale, data, callback) {
         }
 
         link.res.headers['set-cookie'] = [
-            self.config.session.id + '=' + session._sid + '; path=/',
-            self.config.session.locale + '=' + locale + '; path=/'
+            M.config.session.id + '=' + session._sid + '; path=/',
+            M.config.session.locale + '=' + locale + '; path=/'
         ];
 
         link.session = sessionConstructor(session);

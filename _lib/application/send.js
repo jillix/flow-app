@@ -1,4 +1,5 @@
 var gzip = require('zlib').gzip;
+var M = process.mono;
 var compressLimit = 680;
 var defaultHeader = {'content-type': 'text/plain'};
 
@@ -79,7 +80,7 @@ exports.sendHttp = function (code, data) {
     
     if (data === false) {
         code = 500;
-        data = self.error(self.error.APP_SEND_JSON_STRINGIFY);
+        data = M.error(M.error.APP_SEND_JSON_STRINGIFY);
     }
     
     /*if (code >= 400 && self.config.logLevel === 'debug') {
@@ -175,7 +176,7 @@ exports.stream = function (link) {
 
             link.res.end();
             
-            if (self.config.logLevel === 'verbose') {
+            if (M.config.logLevel === 'verbose') {
                 console.log('Request time: ' + (new Date().getTime() - link.time) + 'ms' + ' | ' + link.pathname);
             }
         }
