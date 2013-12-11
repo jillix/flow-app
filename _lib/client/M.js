@@ -533,7 +533,7 @@ var M = (function() {
     
     // handle websocket messages events
     webSocket.onmessage = function (event) {
-        // response example: ['miid', 'operation, 'err', {/*data*/}, 'cbKey']
+        // response example: ['miid', 'event', 'err', {/*data*/}, 'cbKey']
         var response;
         var err;
         
@@ -549,11 +549,11 @@ var M = (function() {
         }
         
         var miid = response[0];
-        var operation = response[1];
+        var event = response[1];
         var responseErr = response[2];
         var data = response[3];
         
-        if (miid && operation) {
+        if (miid && event) {
             
             // handle callback
             if (response[4] && wsCallbacks[miid] && wsCallbacks[miid][response[4]]) {
@@ -563,7 +563,7 @@ var M = (function() {
             
             // emit event
             if (modules[miid]) {
-                modules[miid].emit(operation, null, data);
+                modules[miid].emit(event, null, data);
             }
         }
     };
@@ -599,7 +599,6 @@ var M = (function() {
         };
     }
     
-    // load mono modules
     var constructor = function (target, miid, callback) {
         
         // wait for websocket

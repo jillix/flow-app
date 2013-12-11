@@ -13,27 +13,32 @@ var session = require(M.config.paths.SERVER_ROOT + 'session');
 var send = require(M.config.paths.SERVER_ROOT + 'send');
 var fn = function () {};
 
+M.broadcast = send.broadcast;
+
+// Link class
+function Link (send) {
+    this.send = send;
+}
+
 function resumeAndSend (link, code, data) {
     link.req.resume();
     link.send(code, data);
 }
 
 function operator (link) {
-    var miid = link.operation.miid;
-    var method = link.operation.method;
     
     // check for miid in cache
-    if (!M.miids[miid])  {
+    if (!M.miids[link.miid])  {
         return resumeAndSend(link, 404, 'Miid not found.');
     }
     
     // check if a listener is registred on the miid
-    if (M.miids[miid].listeners(method).length === 0)  {
+    if (M.miids[link.miid].listeners(link.event).length === 0)  {
         return resumeAndSend(link, 404, 'Event not found.');
     }
     
-    // call method whit moduleInstance as this
-    M.miids[miid].emit(method, link);
+    // call method with moduleInstance as this
+    M.miids[link.miid].emit(link.event, link);
     link.req.resume();
 }
 
@@ -50,10 +55,8 @@ function forwardRequest (link) {
             return resumeAndSend(link, 404, 'Missing module instance ID or operation name.');
         }
         
-        link.operation = {
-            miid: link.path[1],
-            method: link.path[2]
-        };
+        link.miid = link.path[1];
+        link.event = link.path[2];
         
         link.path = link.path.slice(3);
         
@@ -69,10 +72,9 @@ function requestHandler (req, res) {
     
     var url = parse(req.url, true);
     var path = url.pathname.replace(/\/$|^\//g, "").split("/", 42);
-    var link = {};
+    var link = new Link(send.sendHttp);
     link.req = req;
     link.res = res;
-    link.send = send.sendHttp;
     link.path = path || [];
     link.query = url.query || {};
     link.pathname = url.pathname;
@@ -112,15 +114,14 @@ function messageHandler (ws, link, data) {
 
 // start http server
 M.http = http.createServer(requestHandler);
+
 // start ws server
 M.ws = new WebSocketServer({server: M.http});
 M.ws.on('connection', function(ws) {
     
     // ws link
-    var link = {};
-    
+    var link = new Link(send.sendWs);
     link.ws = ws;
-    link.send = send.sendWs;
     
     // http fake link (for compatibility reasons)
     link.req = {
