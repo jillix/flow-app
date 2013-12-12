@@ -1,69 +1,44 @@
 var fs = require('fs');
 var EventEmitter = require('events').EventEmitter;
 var ObjectId = require('mongodb').ObjectID;
-
-// TODO mono miid class
+var M = process.mono;
 
 function getCachedMiid (link, miid, roleId) {
     
     // send client config from cache
     if (
-        link.API.miids[miid] &&
+        M.miids[miid] &&
         (
             // check access
-            link.API.miids[miid].m_roles['*'] ||
-            link.API.miids[miid].m_roles[roleId]
+            M.miids[miid].m_roles['*'] ||
+            M.miids[miid].m_roles[roleId]
         ) &&
-        link.API.miids[miid].m_client
+        M.miids[miid].m_client
     ) {
-        return link.API.miids[miid];
+        return M.miids[miid];
     }
     
     return null;
 }
 
-function send (data, socket) {
-    var self = this;
-    
-    if (socket) {
-        return socket.send(data);
-    }
-    
-    // broadcast
-    for (var i = 0, l = self.m_wss.clients.length; i < l; ++i) {
-        self.m_wss.clients[i].send(data);
-    }
-}
-
 // TODO http must also be supported
 function sendHandler (event) {
-    return function (data, callback, socket) {
+    return function (link, err, data, callback) {
         var self = this;
         
-        // send binary data directly
-        if (data instanceof Buffer) {
-            return send.call(self, data, socket);
+        // handle broadcast events
+        if (!link || link.constructor.name !== 'Link') {
+            data = link;
+            M.broadcast(self.m_miid, event, err, data);
+            
+        // http request
+        } else if (link.ws) {
+            link.send(err, data);
+        // ws request
+        } else {
+            // TODO status codes
+            link.send(200, data);
         }
-        
-        var message = [
-            self.m_miid,
-            event,
-            0,
-            data
-        ];
-        
-        if (self.msgId) {
-            message[4] = self.msgId;
-        }
-        
-        // parse json
-        try {
-            message = JSON.stringify(message);
-        } catch (err) {
-            message = err.message;
-        }
-        
-         send.call(self, message, socket);
     };
 }
 
@@ -76,16 +51,16 @@ function loadModule (miid, roleId, callback) {
     };
     
     // get miid config from db
-    self.db.app.collection('m_miids').findOne(query, function (err, dbMiid) {
+    M.db.app.collection('m_miids').findOne(query, function (err, dbMiid) {
         
         if (err || !dbMiid) {
             // TODO handle error self.error
-            // link.API.error(link.API.error.ERROR_MESSAGE, command, JSON.stringify(err))
+            // M.error(M.error.ERROR_MESSAGE, command, JSON.stringify(err))
             return callback(err || 'not found');
         }
         
         // get module version from db
-        self.db.app.collection('m_modules').findOne({_id: dbMiid.module}, function (err, module) {
+        M.db.app.collection('m_modules').findOne({_id: dbMiid.module}, function (err, module) {
             
             if (err || !module) {
                 return callback(err || 'not found');
@@ -96,7 +71,7 @@ function loadModule (miid, roleId, callback) {
             var monoModule;
             
             try {
-                monoModule = require(self.config.paths.MODULE_ROOT + moduleName + module.index);
+                monoModule = require(M.config.paths.MODULE_ROOT + moduleName + module.index);
             } catch (err) {
                 return callback(err || 'Module init error');
             }
@@ -104,7 +79,6 @@ function loadModule (miid, roleId, callback) {
             // create new Mono observer instance
             // TODO broadcast option self.emit('operationA');
             var Module = new EventEmitter();
-            Module.m_wss = self.ws;
             Module.m_name = moduleName;
             Module.m_miid = miid;
             Module.m_client = dbMiid.client;
@@ -141,7 +115,7 @@ function loadModule (miid, roleId, callback) {
             
             // init mono module and save in cache
             // TODO update this cache when a miid config changes
-            self.miids[miid] = Module;
+            M.miids[miid] = Module;
             monoModule.call(Module, dbMiid.server.data);
             
             callback(null,  Module.m_client || {});
@@ -152,7 +126,7 @@ function loadModule (miid, roleId, callback) {
 function load (link) {
     var self = this;
     var miid = link.data;
-    var method = link.operation.method;
+    var method = link.method;
     
     // send client config from cache
     var cachedMiid = getCachedMiid(link, miid, link.session._rid);
@@ -173,7 +147,7 @@ function load (link) {
         }
         
         // return client config
-        link.send(200, config);
+        link.send(null, config);
     });
 }
 
@@ -181,10 +155,10 @@ function load (link) {
 function file (link) {
     
     var miid = link.path[0];
-    var file = link.path[1];
+    var path = link.path[1];
     
     // check if request format is correct
-    if (!miid || !file) {
+    if (!miid || !path) {
         return link.send(400, "Incorrect module request URL format");
     }
     
@@ -198,16 +172,16 @@ function file (link) {
     if (cachedMiid) {
         
         // handle compression
-        if (link.API.config.compressFiles) {
+        if (M.config.compressFiles) {
             link.res.setHeader('content-encoding', 'gzip');
             link.res.setHeader('vary', 'accept-encoding');
         }
         
         // overwrite url
-        link.req.url = cachedMiid.m_name + file;
+        link.req.url = cachedMiid.m_name + path;
         
         // server file
-        return link.API.file.module.serve(link.req, link.res);
+        return M.file.module.serve(link.req, link.res);
     }
     
     link.send(404, 'Miid not found');
@@ -215,7 +189,7 @@ function file (link) {
 
 function client (link){
     
-    if (link.API.config.compressFiles) {
+    if (M.config.compressFiles) {
         link.res.setHeader('content-encoding', 'gzip');
         link.res.setHeader('vary', 'accept-encoding');
         link.req.url = link.path[0].split('.')[0] + '.min.gz';
@@ -224,31 +198,35 @@ function client (link){
         link.req.url = link.path[0];
     }
     
-    link.API.file.client.serve(link.req, link.res);
+    M.file.client.serve(link.req, link.res);
 }
 
 // read miid html file
 function html (link) {
+    var self = this;
     
-    var file = link.API.config.paths.PUBLIC_ROOT + link.data.replace(/[^a-z0-9\/\.\-_]|\.\.\//gi, "");
+    var file = M.config.paths.PUBLIC_ROOT + link.data.replace(/[^a-z0-9\/\.\-_]|\.\.\//gi, "");
     fs.readFile(file, {encoding: 'utf8'}, function (err, data) {
         
         if (err) {
-            return link.send(404, 'File not found');
+            return link.send('File not found');
         }
         
-        link.send(200, data);
+        link.send(null, data);
     });
 }
 
 function init (config) {
     var self = this;
     
-    // core event interface
+    // setup fromclient events interface
     self.on('load', load);
     self.on('module', file);
     self.on('client', client);
     self.on('html', html);
+    
+    // setup toclient event interface
+    self.on('config',  sendHandler('config'));
 }
 
 module.exports = init;

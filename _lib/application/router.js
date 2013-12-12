@@ -1,4 +1,5 @@
 var gzip = require('zlib').gzip;
+var M = process.mono;
 
 function sendClient (link, miid) {
     var self = this;
@@ -8,7 +9,7 @@ function sendClient (link, miid) {
     link.res.headers["access-control-allow-origin"] = 'http://jipics.net';
     link.res.headers['content-encoding'] = 'gzip';
     
-    var cached = self.cache.client.get(miid);
+    var cached = M.cache.client.get(miid);
     if (cached) {
         link.res.headers['content-length'] = cached.length;
         return link.send(200, cached);
@@ -20,16 +21,16 @@ function sendClient (link, miid) {
             "<meta http-equiv='content-type' content='text/html; charset=utf-8'/>\n" +
             "<meta http-equiv='X-UA-Compatible' content='IE=edge'>\n" +
             "<!--[if lt IE 10]>\n" +
-                "<script src='/" + self.config.coreKey + "/" + self.config.coreMiid + "/client/IE9.js'></script>\n" +
-                "<script src='/" + self.config.coreKey + "/" + self.config.coreMiid + "/client/ifYouSeeThisScriptUpdateYourBrowserNow.js'></script>\n" +
-                "<script src='/" + self.config.coreKey + "/" + self.config.coreMiid + "/client/html5shiv.js'></script>\n" +
+                "<script src='/" + M.config.coreKey + "/" + M.config.coreMiid + "/client/IE9.js'></script>\n" +
+                "<script src='/" + M.config.coreKey + "/" + M.config.coreMiid + "/client/ifYouSeeThisScriptUpdateYourBrowserNow.js'></script>\n" +
+                "<script src='/" + M.config.coreKey + "/" + M.config.coreMiid + "/client/html5shiv.js'></script>\n" +
             "<![endif]-->\n" +
-            "<script src='/" + self.config.coreKey + "/" + self.config.coreMiid + "/client/M.js'></script>\n" +
+            "<script src='/" + M.config.coreKey + "/" + M.config.coreMiid + "/client/M.js'></script>\n" +
             "<script type='text/javascript'>M('body','" + miid + "')</script>\n" +
         "</head><body></body></html>",
         function (err, data) {
             
-            self.cache.client.save(miid, data);
+            M.cache.client.save(miid, data);
             
             link.res.headers['content-length'] = data.length;
             link.send(200, data);
@@ -76,7 +77,7 @@ function traverse(path, routes, current) {
 function route (link) {
     var self = this;
     
-    var module = traverse(link.pathname.replace(/\/$/, ""), self.config.routes, "");
+    var module = traverse(link.pathname.replace(/\/$/, ""), M.config.routes, "");
 
     if (typeof module == "string") {
         
@@ -95,7 +96,7 @@ function route (link) {
         sendClient.call(self, link, module[0]);
     
     } else {
-        self.file.public.serve(link.req, link.res);
+        M.file.public.serve(link.req, link.res);
     }
 }
 

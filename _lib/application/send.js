@@ -1,6 +1,12 @@
 var gzip = require('zlib').gzip;
+var M = process.mono;
 var compressLimit = 680;
 var defaultHeader = {'content-type': 'text/plain'};
+
+exports.broadcast = broadcast;
+exports.sendWs = sendWs;
+exports.sendHttp = sendHttp;
+exports.stream = stream;
 
 function convertToBuffer (data, headers) {
 
@@ -36,40 +42,55 @@ function convertToBuffer (data, headers) {
     return new Buffer(data);
 }
 
-exports.sendWs = function (code, data) {
+function createMessage (miid, event, err, data, msgId) {
+    
+    var message;
+    
+    // create json message
+    if (!(data instanceof Buffer)) {
+        
+        message = [
+            miid,
+            event,
+            err || 0,
+            data
+        ];
+        
+        if (msgId) {
+            message[4] = msgId;
+        }
+        
+        // parse json
+        try {
+            message = JSON.stringify(message);
+        } catch (err) {
+            message = err.message;
+        }
+    }
+    
+    return message || data;
+}
+
+function broadcast (miid, event, err, data) {
+    
+    data = createMessage(miid, event, err, data);
+    
+    // broadcast
+    for (var i = 0, l = M.ws.clients.length; i < l; ++i) {
+        M.ws.clients[i].send(data);
+    }
+}
+
+function sendWs (err, data) {
     var self = this;
     
-    // send binary data directly
-    if (data instanceof Buffer) {
-        return self.ws.send(data);
-    }
-    
-    var message = [
-        self.operation.miid,
-        self.operation.method,
-        code,
-        data
-    ];
-    
-    if (self.msgId) {
-        message[4] = self.msgId;
-    }
-    
-    // parse json
-    try {
-        message = JSON.stringify(message);
-    } catch (err) {
-        message = err.message;
-    }
-    
-    // TODO broadcast messages
-    // ws.clients => array with connections
+    data = createMessage(self.miid, self.event, err, data, self.msgId);
     
     // send data
-    self.ws.send(message);
-};
+    return self.ws.send(data);
+}
 
-exports.sendHttp = function (code, data) {
+function sendHttp (code, data) {
     var self = this;
     var headers = this.res.headers || defaultHeader;
     
@@ -79,7 +100,7 @@ exports.sendHttp = function (code, data) {
     
     if (data === false) {
         code = 500;
-        data = self.error(self.error.APP_SEND_JSON_STRINGIFY);
+        data = M.error(M.error.APP_SEND_JSON_STRINGIFY);
     }
     
     /*if (code >= 400 && self.config.logLevel === 'debug') {
@@ -115,7 +136,7 @@ exports.sendHttp = function (code, data) {
     }*/
 };
 
-exports.stream = function (link) {
+function stream (link) {
     var self = this;
     
     var first = true;
@@ -175,7 +196,7 @@ exports.stream = function (link) {
 
             link.res.end();
             
-            if (self.config.logLevel === 'verbose') {
+            if (M.config.logLevel === 'verbose') {
                 console.log('Request time: ' + (new Date().getTime() - link.time) + 'ms' + ' | ' + link.pathname);
             }
         }
