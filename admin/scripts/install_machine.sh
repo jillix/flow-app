@@ -233,8 +233,16 @@ function checkout_mono {
     mv "$MONO_TMP" "/home/$USERNAME/mono"
 }
 
-function setup_dirs {
+function setup_monodev {
+    # the root for all applications
     mkdir -p /apps
+
+    # the root for application templates
+    mkdir -p /apps/templates
+
+    git clone git@github.com:jillix/MonoDev.git "/apps/templates/MonoDev"
+
+    # TODO
 }
 
 function get_credentials {
@@ -376,7 +384,7 @@ install_software
 checkout_mono
 
 # setup the file system directories
-setup_dirs
+setup_monodev
 
 # get user repo credentials (needed for npm install)
 get_credentials
