@@ -128,33 +128,26 @@ function sessionConstructor (session) {
     return clonedSession;
 }
 
-function getPublicSession (link, localeFromCookie) {
-    var self = this;
+function getPublicSession () {
     
-    link.session = publicSession.clone();
-    link.session._rid = M.config.session.publicRole;
+    var session = publicSession.clone();
+    session._rid = M.config.session.publicRole;
+    session._loc = M.config.locale || "*";
     
-    if (localeFromCookie) {
-        link.session._loc = localeFromCookie;
-    } else {
-        link.session._loc = M.config.locale || "*";
-        link.res.headers['set-cookie'] = M.config.session.locale + '=' + link.session._loc + '; path=/';
-    }
+    return session;
 }
 
 //------------------------------------------------------------------------------------------
 
-// TODO check in query params for an sid
-// TODO check if locale is in url query params
-function get (link, callback) {
+function get (headers, callback) {
     var self = this;
     
     var cooky = {};
     
-    if (link.req.headers.cookie) {
+    if (headers.cookie) {
     
         // parse cookie
-        cooky = cookie.parse(link.req.headers.cookie);
+        cooky = cookie.parse(headers.cookie);
 
         // get session and overwrite default session
         if (cooky[M.config.session.id]) {
@@ -162,20 +155,22 @@ function get (link, callback) {
             return getSession.call(self, cooky[M.config.session.id], expire(), expire(expire_time), function(err, session) {
 
                 if (!err && session) {
-                    link.session = sessionConstructor(session);
+                    session = sessionConstructor(session);
                 } else {
                     // TODO maybe redirect user to a login page if session is not valid anymore
-                    getPublicSession.call(self, link, cooky[M.config.session.locale]);
+                    session = getPublicSession();
                 }
                 
-                callback(link);
+                headers['set-cookie'] = M.config.session.locale + '=' + session._loc + '; path=/';
+                callback(session);
             });
         }
     }
     
-    getPublicSession.call(self, link, cooky[M.config.session.locale]);
+    var session = getPublicSession();
     
-    callback(link);
+    headers['set-cookie'] = M.config.session.locale + '=' + session._loc + '; path=/';
+    callback(session, headers);
 }
 
 function end (link, callback) {

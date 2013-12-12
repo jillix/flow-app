@@ -533,7 +533,9 @@ var M = (function() {
     
     // handle websocket messages events
     webSocket.onmessage = function (event) {
-        // response example: ['miid', 'event', 'err', {/*data*/}, 'cbKey']
+        
+        // ["miid:event:msgid","err","data"]
+        
         var response;
         var err;
         
@@ -570,9 +572,12 @@ var M = (function() {
     
     function send (event) {
         return function (data, callback) {
+            
+            // ["miid:event:msgid","err","data"]
+            
             var self = this;
             var miid = this.miid || 'M';
-            var message = [miid, event];
+            var message = [miid + ':' + event, null];
             
             if (data) {
                 message[2] = data;
@@ -584,7 +589,7 @@ var M = (function() {
                 wsCallbacks[miid] = wsCallbacks[miid] || {};
                 wsCallbacks[miid][msgId] = callback;
                 
-                message[3] = msgId;
+                message[0] += ':' + msgId;
             }
             
             try {

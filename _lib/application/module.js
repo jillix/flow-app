@@ -3,7 +3,7 @@ var EventEmitter = require('events').EventEmitter;
 var ObjectId = require('mongodb').ObjectID;
 var M = process.mono;
 
-function getCachedMiid (link, miid, roleId) {
+function getCachedMiid (miid, roleId) {
     
     // send client config from cache
     if (
@@ -23,7 +23,7 @@ function getCachedMiid (link, miid, roleId) {
 
 // TODO http must also be supported
 function sendHandler (event) {
-    return function (link, err, data, callback) {
+    return function (err, data, callback) {
         var self = this;
         
         // handle broadcast events
@@ -123,31 +123,29 @@ function loadModule (miid, roleId, callback) {
     });
 }
 
-function load (link) {
+function load (err, miid) {
     var self = this;
-    var miid = link.data;
-    var method = link.method;
     
     // send client config from cache
-    var cachedMiid = getCachedMiid(link, miid, link.session._rid);
+    var cachedMiid = getCachedMiid(miid, self.session._rid);
     if (cachedMiid) {
-        return link.send(200, cachedMiid.m_client);
+        return self.link.send(cachedMiid.m_client);
     }
     
     // load and init module
-    loadModule.call(link.API, miid, link.session._rid, function (err, config) {
+    loadModule(miid, self.session._rid, function (err, config) {
         
         if (err) {
-            return link.send(404, err || 'not found');
+            return self.link.send(404, err || 'not found');
         }
         
         // handle i18n html
         if (typeof config.html === 'object') {
-            config.html = config.html[link.session._loc] ? config.html[link.session._loc] : 'no html found';
+            config.html = config.html[self.session._loc] ? config.html[self.session._loc] : 'no html found';
         }
         
         // return client config
-        link.send(null, config);
+        self.link.send(config);
     });
 }
 
@@ -168,7 +166,7 @@ function file (link) {
     }
     
     // get miid from cache
-    var cachedMiid = getCachedMiid(link, miid, link.session._rid);
+    var cachedMiid = getCachedMiid(miid, link.session._rid);
     if (cachedMiid) {
         
         // handle compression
@@ -227,6 +225,11 @@ function init (config) {
     
     // setup toclient event interface
     self.on('config',  sendHandler('config'));
+    
+    // TODO return operations
+    return {
+        operationA: function () {}
+    };
 }
 
 module.exports = init;

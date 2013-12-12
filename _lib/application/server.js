@@ -11,105 +11,61 @@ var parse = require('url').parse;
 var route = require(M.config.paths.SERVER_ROOT + 'router');
 var session = require(M.config.paths.SERVER_ROOT + 'session');
 var send = require(M.config.paths.SERVER_ROOT + 'send');
-var fn = function () {};
 
 M.broadcast = send.broadcast;
 
-// Link class
-function Link (send) {
-    this.send = send;
-}
-
-function resumeAndSend (link, code, data) {
-    link.req.resume();
-    link.send(code, data);
-}
-
-function operator (link) {
-    
-    // check for miid in cache
-    if (!M.miids[link.miid])  {
-        return resumeAndSend(link, 404, 'Miid not found.');
-    }
-    
-    // check if a listener is registred on the miid
-    if (M.miids[link.miid].listeners(link.event).length === 0)  {
-        return resumeAndSend(link, 404, 'Event not found.');
-    }
-    
-    // call method with moduleInstance as this
-    M.miids[link.miid].emit(link.event, link);
-    link.req.resume();
-}
-
-function forwardRequest (link) {
-    
-    if (link.path[0] == M.config.coreKey) {
-        
-        if (link.path.length < 3) {
-            return resumeAndSend(link, 404, 'Invalid operation url.');
-        }
-        
-        // if no operation was found in the request URL
-        if (!link.path[1] || !link.path[1]) {
-            return resumeAndSend(link, 404, 'Missing module instance ID or operation name.');
-        }
-        
-        link.miid = link.path[1];
-        link.event = link.path[2];
-        
-        link.path = link.path.slice(3);
-        
-        operator(link);
-        
-    } else {
-        route(link);
-        link.req.resume();
-    }
-}
-
+// handle http request
 function requestHandler (req, res) {
     
     var url = parse(req.url, true);
     var path = url.pathname.replace(/\/$|^\//g, "").split("/", 42);
-    var link = new Link(send.sendHttp);
-    link.req = req;
-    link.res = res;
-    link.path = path || [];
-    link.query = url.query || {};
-    link.pathname = url.pathname;
     
-    // invoke streaming api
-    link.stream = send.stream(link);
-
-    // set a empty response header object
-    link.res.headers = {};
+    if (path[0] == M.config.coreKey) {
     
-    // get the session
-    session.get(link, forwardRequest);
-}
-
-function messageHandler (ws, link, data) {
-    
-    // TODO define a protocoll
-    /*
-        Request: ['miid', 'operation'[, {}, msgId]]
-        Response: [miid, operation, err[, data, msgId]]
-    */
-    
-    // parse data
-    try {
-        data = JSON.parse(data.toString());
-    } catch (err) {
-        // TODO handle error
-         return ws.send('400 Bad request');
+        if (path.length < 3) {
+            // TODO send error
+            //return send(link, 404, 'Invalid operation url.');
+        }
+        
+        // if no operation was found in the request URL
+        if (!path[1] || !path[2]) {
+            // TODO send error
+            //return send(link, 404, 'Missing module instance ID or operation name.');
+        }
+        
+        // check if miid an operation exists
+        if (M.miids[path[1]] && M.miids[path[1]][path[2]]) {
+            var operation = M.miids[path[1]].clone();
+            operation.link = {
+                req: req,
+                res: res,
+                path: path.slice(3),
+                query: url.query,
+                pathname: url.pathname
+            };
+            
+            // set a empty response header object
+            link.res.headers = {};
+            
+            session.get(req.headers, function (session) {
+                
+                operation.link.session = session;
+                
+                // TODO call operation
+                //M.miids[path[1]][path[2]].call(operation)
+                //req.resume();
+            });
+            
+        } else {
+            // TODO not found
+            //return resumeAndSend(link, 404, 'Miid or operation not found.');
+        }
+        
+    } else {
+        // TODO route
+        route(link);
+        req.resume();
     }
-    
-    link.data = data[2];
-    link.msgId = data[3] || null;
-    link.path = [M.config.coreKey, data[0], data[1]];
-    
-    forwardRequest(link);
 }
 
 // start http server
@@ -119,26 +75,49 @@ M.http = http.createServer(requestHandler);
 M.ws = new WebSocketServer({server: M.http});
 M.ws.on('connection', function(ws) {
     
-    // ws link
-    var link = new Link(send.sendWs);
-    link.ws = ws;
-    
-    // http fake link (for compatibility reasons)
-    link.req = {
-        headers: ws.upgradeReq.headers,
-        pause: fn,
-        resume: fn
-    };
-    link.res = {headers: {}};
-    link.query = {};
-    link.pathname = '';
-    link.stream = fn;
-    
     // get the session
-    session.get(link, function (link) {
+    session.get(ws.upgradeReq.headers, function (session) {
+        
         // listen to messages
         ws.on('message', function (data) {
-            messageHandler(ws, link, data);
+            
+            // parse data
+            try {
+                data = JSON.parse(data.toString());
+                
+                // TODO check message integrity
+                if (!data[0]) {
+                    throw new Error('Bad message');
+                }
+            } catch (err) {
+                // TODO handle error
+                return ws.send('400 ' + err.message);
+            }
+            
+            // mono ws protocoll: ["miid:event:msgid","err","data"]
+            data[0] = data[0].split(':');
+            
+            // check if miid and event exists
+            if (M.miids[data[0][0]] && M.miids[link.miid].listeners(data[0][1]).length === 0) {
+            
+                var message = M.miids[data[0][0]].clone();
+                message.link = {
+                    ws: ws,
+                    event: data[0][1],
+                    session: session
+                };
+            
+                if (data[0][2]) {
+                    message.link.id = data[0][2];
+                }
+                
+                // emit event
+                message.emit(message.link.event, data[1], data[2]);
+                
+            } else {
+                // TODO send not found
+                ws.send('404 Miid or event not found');
+            }
         });
     });
 });
