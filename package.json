@@ -35,7 +35,6 @@
         "mongodb"       : "*",
         "node-static"   : "*",
         "optimist"      : "*",
-        "pongo"         : "*",
         "cookie"        : "*"
     },
     "devDependencies": {
