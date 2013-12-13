@@ -1,5 +1,5 @@
-var forever = require('forever');
 var config = require('./config');
+var forever = require('forever');
 
 function start () {
     forever.list('array', function (err, processes) {
