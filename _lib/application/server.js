@@ -10,9 +10,21 @@ var WebSocketServer = require('ws').Server;
 var parse = require('url').parse;
 var route = require(M.config.paths.SERVER_ROOT + 'router');
 var session = require(M.config.paths.SERVER_ROOT + 'session');
-var send = require(M.config.paths.SERVER_ROOT + 'send');
+// var send = require(M.config.paths.SERVER_ROOT + 'send');
 
-M.broadcast = send.broadcast;
+function send (req, res, code, data) {
+    req.resume();
+    res.statusCode = code;
+    res.end(new Buffer(data));
+}
+
+// check if miid and event exists
+function miidEventExists (miid, event) {
+    if (M.miids[miid] && M.miids[miid].listeners(event).length > 0) {
+        return true;
+    }
+    return false;
+}
 
 // handle http request
 function requestHandler (req, res) {
@@ -24,17 +36,17 @@ function requestHandler (req, res) {
     
         if (path.length < 3) {
             // TODO send error
-            //return send(link, 404, 'Invalid operation url.');
+            return send(req, res, 400, 'Invalid operation url.');
         }
         
         // if no operation was found in the request URL
         if (!path[1] || !path[2]) {
             // TODO send error
-            //return send(link, 404, 'Missing module instance ID or operation name.');
+            return send(req, res, 400, 'Missing module instance ID or operation name.');
         }
         
         // check if miid an operation exists
-        if (M.miids[path[1]] && M.miids[path[1]][path[2]]) {
+        if (miidEventExists(path[1], path[2])) {
             var operation = M.miids[path[1]].clone();
             operation.link = {
                 req: req,
@@ -45,25 +57,24 @@ function requestHandler (req, res) {
             };
             
             // set a empty response header object
-            link.res.headers = {};
+            operation.link.res.headers = {};
             
             session.get(req.headers, function (session) {
                 
                 operation.link.session = session;
                 
-                // TODO call operation
-                //M.miids[path[1]][path[2]].call(operation)
-                //req.resume();
+                // emit operation
+                operation.emit(path[2]);
+                req.resume();
             });
             
         } else {
             // TODO not found
-            //return resumeAndSend(link, 404, 'Miid or operation not found.');
+            return send(req, res, 404, 'Miid or operation not found.');
         }
         
     } else {
-        // TODO route
-        route(link);
+        route(url.pathname, req, res);
         req.resume();
     }
 }
@@ -98,7 +109,7 @@ M.ws.on('connection', function(ws) {
             data[0] = data[0].split(':');
             
             // check if miid and event exists
-            if (M.miids[data[0][0]] && M.miids[link.miid].listeners(data[0][1]).length === 0) {
+            if (miidEventExists(data[0][0], data[0][1])) {
             
                 var message = M.miids[data[0][0]].clone();
                 message.link = {
