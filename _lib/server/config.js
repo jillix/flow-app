@@ -231,7 +231,6 @@ function getConfig () {
     for (var option in argv) {
         
         // ignore keys
-        // TODO from where does those options come from? 
         if (option === '_' || option === '$0') {
             continue;
         }
