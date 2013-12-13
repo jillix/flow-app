@@ -12,6 +12,7 @@ process.mono.config = config;
 process.mono.miids = {};
 var coreModule = new EventEmitter();
 require(config.paths.SERVER_ROOT + 'module').call(coreModule);
+coreModule.m_miid = 'M';
 
 // add core module to miid cache
 process.mono.miids.M = coreModule;

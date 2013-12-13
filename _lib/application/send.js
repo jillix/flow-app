@@ -4,9 +4,9 @@ var compressLimit = 680;
 var defaultHeader = {'content-type': 'text/plain'};
 
 exports.broadcast = broadcast;
-exports.sendWs = sendWs;
-exports.sendHttp = sendHttp;
-exports.stream = stream;
+exports.message = message;
+exports.link = link;
+exports.server = server;
 
 function convertToBuffer (data, headers) {
 
@@ -44,33 +44,41 @@ function convertToBuffer (data, headers) {
 
 function createMessage (miid, event, err, data, msgId) {
     
-    var message;
-    
-    // create json message
-    if (!(data instanceof Buffer)) {
-        
-        message = [
-            miid,
-            event,
-            err || 0,
-            data
-        ];
-        
-        if (msgId) {
-            message[4] = msgId;
-        }
-        
-        // parse json
-        try {
-            message = JSON.stringify(message);
-        } catch (err) {
-            message = err.message;
-        }
+    // return if data is binary
+    if (data instanceof Buffer) {
+        return data;
     }
     
-    return message || data;
+    // mono ws protocoll: ["miid:event:msgid","err","data"]
+    
+    var message = [miid + ':' + event];
+    
+    if (msgId) {
+        message[0] += ':' + msgId;
+    }
+    
+    message[1] = err || 0;
+    message[2] = data;
+    
+    // parse json
+    try {
+        message = JSON.stringify(message);
+    } catch (err) {
+        // TODO handle error
+        message = err.message;
+    }
+    
+    return message;
 }
 
+// send a message on the origin socket
+function message (miid, event, err, data, callback) {
+    var self = this;
+    
+    self.ws.send(createMessage(miid, event, err, data, self.msgId));
+}
+
+// broadcast message to all connected sockets
 function broadcast (miid, event, err, data) {
     
     data = createMessage(miid, event, err, data);
@@ -81,19 +89,18 @@ function broadcast (miid, event, err, data) {
     }
 }
 
-function sendWs (err, data) {
-    var self = this;
-    
-    data = createMessage(self.miid, self.event, err, data, self.msgId);
-    
-    // send data
-    return self.ws.send(data);
+// special function for the server for easy sending http data
+function server (req, res, code, data) {
+    req.resume();
+    res.statusCode = code;
+    res.end(new Buffer(data));
 }
 
-function sendHttp (code, data) {
+// request response for operations
+function link (code, data) {
     var self = this;
-    var headers = this.res.headers || defaultHeader;
     
+    var headers = self.res.headers || defaultHeader;
     headers.server = 'Mono Web Server';
     
     data = convertToBuffer(data, headers);
@@ -103,9 +110,9 @@ function sendHttp (code, data) {
         data = M.error(M.error.APP_SEND_JSON_STRINGIFY);
     }
     
-    /*if (code >= 400 && self.config.logLevel === 'debug') {
+    if (code >= 400 && M.config.logLevel === 'debug') {
         console.log("DEBUG: " + data);
-    }*/
+    }
     
     if (data.length >= compressLimit && !headers['content-encoding'] && headers['content-type']) {
         
@@ -128,77 +135,10 @@ function sendHttp (code, data) {
     
     headers['content-length'] = data.length;
     
-    this.res.writeHead(code, headers);
-    this.res.end(data);
+    self.res.writeHead(code, headers);
+    self.res.end(data);
     
-    /*if (self.config.logLevel === 'verbose') {
+    if (self.M.logLevel === 'verbose') {
         console.log('Request time: ' + (new Date().getTime() - this.time) + 'ms' + ' | ' + this.pathname);
-    }*/
-};
-
-function stream (link) {
-    var self = this;
-    
-    var first = true;
-    var isJSON = false;
-    var error = false;
-
-    return {
-        
-        start: function (code) {
-
-            var headers = link.res.headers || defaultHeader;
-            headers['server'] = 'Mono Web Server';
-            link.res.writeHead(code, headers);
-
-            if (headers['content-type'].indexOf('application/json') > -1) {
-                isJSON = true;
-                link.res.write(new Buffer('['));
-            } else {
-                isJSON = false;
-            }
-
-            first = true;
-            error = false;
-        },
-
-        error: function (err) {
-            error = true;
-            link.res.write(convertToBuffer(err));
-        },
-        
-        data: function (data) {
-            
-            if (error) {
-                return;
-            }
-
-            // TODO compress stream data
-            data = convertToBuffer(data);
-
-            if (!first && isJSON) {
-                data = Buffer.concat([new Buffer(','), data]);
-            } else {
-                first = false;
-            }
-
-            link.res.write(data);
-        },
-
-        end: function (){
-            
-            if (isJSON) {
-                link.res.write(new Buffer(']'));
-            }
-
-            first = true;
-            error = false;
-
-            link.res.end();
-            
-            if (M.config.logLevel === 'verbose') {
-                console.log('Request time: ' + (new Date().getTime() - link.time) + 'ms' + ' | ' + link.pathname);
-            }
-        }
-    };
-};
+    }
+}

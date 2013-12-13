@@ -10,13 +10,7 @@ var WebSocketServer = require('ws').Server;
 var parse = require('url').parse;
 var route = require(M.config.paths.SERVER_ROOT + 'router');
 var session = require(M.config.paths.SERVER_ROOT + 'session');
-// var send = require(M.config.paths.SERVER_ROOT + 'send');
-
-function send (req, res, code, data) {
-    req.resume();
-    res.statusCode = code;
-    res.end(new Buffer(data));
-}
+var send = require(M.config.paths.SERVER_ROOT + 'send');
 
 // check if miid and event exists
 function miidEventExists (miid, event) {
@@ -36,13 +30,13 @@ function requestHandler (req, res) {
     
         if (path.length < 3) {
             // TODO send error
-            return send(req, res, 400, 'Invalid operation url.');
+            return send.server(req, res, 400, 'Invalid operation url.');
         }
         
         // if no operation was found in the request URL
         if (!path[1] || !path[2]) {
             // TODO send error
-            return send(req, res, 400, 'Missing module instance ID or operation name.');
+            return send.server(req, res, 400, 'Missing module instance ID or operation name.');
         }
         
         // check if miid an operation exists
@@ -53,7 +47,9 @@ function requestHandler (req, res) {
                 res: res,
                 path: path.slice(3),
                 query: url.query,
-                pathname: url.pathname
+                pathname: url.pathname,
+                event: path[2],
+                send: send.link
             };
             
             // set a empty response header object
@@ -70,7 +66,7 @@ function requestHandler (req, res) {
             
         } else {
             // TODO not found
-            return send(req, res, 404, 'Miid or operation not found.');
+            return send.server(req, res, 404, 'Miid or operation not found.');
         }
         
     } else {
@@ -115,7 +111,9 @@ M.ws.on('connection', function(ws) {
                 message.link = {
                     ws: ws,
                     event: data[0][1],
-                    session: session
+                    session: session,
+                    send: send.message
+                    //broadcast: send.broadcast
                 };
             
                 if (data[0][2]) {

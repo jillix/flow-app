@@ -21,23 +21,14 @@ function getCachedMiid (miid, roleId) {
     return null;
 }
 
-// TODO http must also be supported
 function sendHandler (event) {
     return function (err, data, callback) {
         var self = this;
-        
-        // handle broadcast events
-        if (!link || link.constructor.name !== 'Link') {
-            data = link;
-            M.broadcast(self.m_miid, event, err, data);
-            
-        // http request
-        } else if (link.ws) {
-            link.send(err, data);
-        // ws request
-        } else {
-            // TODO status codes
-            link.send(200, data);
+        console.log('\n');
+        console.log(self.link.event, event, self.link.id);
+        // websocket link
+        if (self.link.ws) {
+            return self.link.send(self.m_miid, event, err, data, callback);
         }
     };
 }
@@ -106,6 +97,7 @@ function loadModule (miid, roleId, callback) {
                 }
                 
                 // listen to server events
+                // TODO this are the events which have automatically the send handler
                 if (dbMiid.events.server) {
                     for (var i = 0, l = dbMiid.events.server.length; i < l; ++i) {
                         Module.on(dbMiid.events.server[i], sendHandler(dbMiid.events.server[i]));
@@ -123,46 +115,62 @@ function loadModule (miid, roleId, callback) {
     });
 }
 
+// load miid configuration (ws)
 function load (err, miid) {
     var self = this;
     
     // send client config from cache
-    var cachedMiid = getCachedMiid(miid, self.session._rid);
+    var cachedMiid = getCachedMiid(miid, self.link.session._rid);
     if (cachedMiid) {
         return self.link.send(cachedMiid.m_client);
     }
     
     // load and init module
-    loadModule(miid, self.session._rid, function (err, config) {
+    loadModule(miid, self.link.session._rid, function (err, config) {
         
         if (err) {
-            return self.link.send(404, err || 'not found');
+            return self.emit('config', err || 'Module not found');
         }
         
         // handle i18n html
         if (typeof config.html === 'object') {
-            config.html = config.html[self.session._loc] ? config.html[self.session._loc] : 'no html found';
+            config.html = config.html[self.link.session._loc] ? config.html[self.link.session._loc] : 'no html found';
         }
         
         // return client config
-        self.link.send(config);
+        self.emit('config', null, config);
     });
 }
 
-// browser modules
-function file (link) {
+// get html snipptets (ws)
+function html (err, data) {
+    var self = this;
     
-    var miid = link.path[0];
-    var path = link.path[1];
+    var file = M.config.paths.PUBLIC_ROOT + data.replace(/[^a-z0-9\/\.\-_]|\.\.\//gi, "");
+    fs.readFile(file, {encoding: 'utf8'}, function (err, data) {
+        
+        if (err) {
+            return self.emit('html', 'File not found');
+        }
+        
+        self.emit('html', null, data);
+    });
+}
+
+// browser modules (http)
+function file () {
+    
+    var miid = self.link.path[0];
+    var path = self.link.path[1];
     
     // check if request format is correct
     if (!miid || !path) {
-        return link.send(400, "Incorrect module request URL format");
+        return self.link.send(400, "Incorrect module request URL format");
     }
     
     // the module name must be almost alphanumeric
     if (link.pathname.replace(/[^a-z0-9\/\.\-_@]|\.\.\//gi, "") !== link.pathname) {
-        return link.send(400, "Incorrect data in module request URL");
+        return self.link.send(400, "Incorrect data in module request URL");
     }
     
     // get miid from cache
@@ -171,47 +179,34 @@ function file (link) {
         
         // handle compression
         if (M.config.compressFiles) {
-            link.res.setHeader('content-encoding', 'gzip');
-            link.res.setHeader('vary', 'accept-encoding');
+            self.link.res.setHeader('content-encoding', 'gzip');
+            self.link.res.setHeader('vary', 'accept-encoding');
         }
         
         // overwrite url
-        link.req.url = cachedMiid.m_name + path;
+        self.link.req.url = cachedMiid.m_name + path;
         
         // server file
-        return M.file.module.serve(link.req, link.res);
+        return M.file.module.serve(self.link.req, self.link.res);
     }
     
-    link.send(404, 'Miid not found');
+    self.link.send(404, 'Miid not found');
 }
 
-function client (link){
-    
-    if (M.config.compressFiles) {
-        link.res.setHeader('content-encoding', 'gzip');
-        link.res.setHeader('vary', 'accept-encoding');
-        link.req.url = link.path[0].split('.')[0] + '.min.gz';
-    
-    } else {
-        link.req.url = link.path[0];
-    }
-    
-    M.file.client.serve(link.req, link.res);
-}
-
-// read miid html file
-function html (link) {
+// get mono client (http)
+function client (){
     var self = this;
     
-    var file = M.config.paths.PUBLIC_ROOT + link.data.replace(/[^a-z0-9\/\.\-_]|\.\.\//gi, "");
-    fs.readFile(file, {encoding: 'utf8'}, function (err, data) {
-        
-        if (err) {
-            return link.send('File not found');
-        }
-        
-        link.send(null, data);
-    });
+    if (M.config.compressFiles) {
+        self.link.res.setHeader('content-encoding', 'gzip');
+        self.link.res.setHeader('vary', 'accept-encoding');
+        self.link.req.url = link.path[0].split('.')[0] + '.min.gz';
+    
+    } else {
+        self.link.req.url = self.link.path[0];
+    }
+    
+    M.file.client.serve(self.link.req, self.link.res);
 }
 
 function init (config) {
@@ -225,11 +220,7 @@ function init (config) {
     
     // setup toclient event interface
     self.on('config',  sendHandler('config'));
-    
-    // TODO return operations
-    return {
-        operationA: function () {}
-    };
+    self.on('html',  sendHandler('html'));
 }
 
 module.exports = init;
