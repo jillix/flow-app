@@ -1,18 +1,19 @@
 var gzip = require('zlib').gzip;
 var M = process.mono;
 
-function sendClient (link, miid) {
+function sendClient (res, miid) {
     var self = this;
     
     // set headers
-    link.res.headers["content-type"] = "text/html; charset=utf-8";
-    link.res.headers["access-control-allow-origin"] = 'http://jipics.net';
-    link.res.headers['content-encoding'] = 'gzip';
+    res.headers["content-type"] = "text/html; charset=utf-8";
+    res.headers["access-control-allow-origin"] = 'http://jipics.net';
+    res.headers['content-encoding'] = 'gzip';
     
     var cached = M.cache.client.get(miid);
     if (cached) {
-        link.res.headers['content-length'] = cached.length;
-        return link.send(200, cached);
+        res.headers['content-length'] = cached.length;
+        res.writeHead(200, res.headers);
+        return res.end(cached);
     }
     
     gzip(
@@ -32,8 +33,9 @@ function sendClient (link, miid) {
             
             M.cache.client.save(miid, data);
             
-            link.res.headers['content-length'] = data.length;
-            link.send(200, data);
+            res.headers['content-length'] = data.length;
+            res.writeHead(200, res.headers);
+            res.end(data);
         }
     );
 }
@@ -74,29 +76,25 @@ function traverse(path, routes, current) {
     return false;
 }
 
-function route (link) {
+function route (pathname, req, res) {
     var self = this;
     
-    var module = traverse(link.pathname.replace(/\/$/, ""), M.config.routes, "");
+    var module = traverse(pathname.replace(/\/$/, ""), M.config.routes, "");
 
     if (typeof module == "string") {
         
+        res.headers = {};
         module = module.split(":");
         
-        // save locale in session
-        if (module[1] && link.session._loc !== module[1]) {
-            return link.session.set({_loc: module[1]}, function (err) {
-                
-                // TODO handle error
-                link.res.headers['set-cookie'] = self.config.session.locale + '=' + module[1] + '; path=/';
-                sendClient.call(self, link, module[0]); 
-            });
+        // set locale in http cookie
+        if (module[1]) {
+            res.headers['set-cookie'] = M.config.session.locale + '=' + module[1] + '; path=/';
         }
         
-        sendClient.call(self, link, module[0]);
+        sendClient.call(self, res, module[0]);
     
     } else {
-        M.file.public.serve(link.req, link.res);
+        M.file.public.serve(req, res);
     }
 }
 
