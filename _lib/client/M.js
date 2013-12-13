@@ -438,133 +438,46 @@ var M = (function() {
             }
             
             return this;
-        },
-        
-        // make requests to backend
-        link: function(url, data, callback) {
-            
-            if (typeof url !== 'string') {
-                return;
-            }
-            
-            if (typeof data === fn) {
-                callback = data;
-                data = {};
-            }
-            
-            // create new link
-            var link = new XMLHttpRequest();
-            
-            if (path[0] === '/') {
-                url = url;
-            } else {
-                url = '/@/' + (this.miid || 'M') + '/' + url;
-            }
-            
-            // open the connection
-            link.open(data ? 'post' : 'get', url, true);
-            
-            // handle data
-            if (data && !(typeof FormData !== 'undefined' && data instanceof FormData)) {
-        
-                try {
-                    // set content-type header to application/json
-                    link.setRequestHeader('content-type', 'application/json');
-        
-                    // stringify object to JSON
-                    data = JSON.stringify(data);
-        
-                } catch(err) {
-        
-                    // abort request
-                    link.abort();
-        
-                    // fire callback with error
-                    if (callback) {
-                        callback(err);
-                    }
-        
-                    // exit function
-                    return;
-                }
-            }
-            
-            // request complete callback
-            onload(link, function () {
-                
-                // get error message
-                var err = link.A ? 'A' : link.status < 400 ? null : link.responseText;
-    
-                // reset abort status
-                link.A = 0;
-    
-                if (callback) {
-    
-                    var response = null;
-    
-                    // parse result as JSON
-                    if ((link.getResponseHeader('content-type') || '').indexOf('application/json') > -1) {
-
-                        try {
-                            response = JSON.parse(link.responseText);
-                        }
-                        catch (error) {
-                            err = error;
-                        }
-                    }
-                    else {
-                        response = link.responseText;
-                    }
-                    
-                    // fire callback
-                    callback(err, response, link);
-                }
-            });
-            
-            // send data
-            link.send(options.data);
-
-            return function() {
-                link.A = 1;
-                link.abort();
-            };
         }
     };
     
     // handle websocket messages events
-    webSocket.onmessage = function (event) {
+    webSocket.onmessage = function (message) {
         
         // ["miid:event:msgid","err","data"]
         
         var response;
-        var err;
+        var err = null;
         
         // parse message
         try {
-            response = JSON.parse(event.data);
+            message = JSON.parse(message.data);
         } catch (error) {
             err = error;
         }
         
-        response[0] = response[0].split(':');
+        message[0] = message[0].split(':');
         
-        var miid = response[0][0];
-        var event = response[0][1];
-        var msgId = response[0][2];
-        var responseErr = response[1];
-        var data = response[2];
+        // parse message
+        var miid = message[0][0];
+        var event = message[0][1];
+        var msgId = message[0][2];
+        var data = message[2];
+        
+        // get error
+        err = message[1] || err;
         
         if (miid && event) {
             
             // handle callback
             if (msgId && wsCallbacks[miid] && wsCallbacks[miid][msgId]) {
-                wsCallbacks[miid][msgId].call(modules[miid] || Mono, null, data);
+                wsCallbacks[miid][msgId].call(modules[miid] || Mono, err, data);
                 delete wsCallbacks[miid][msgId];
             }
             
             // emit event
             if (modules[miid]) {
-                modules[miid].emit(event, null, data);
+                modules[miid].emit(event, err, data);
             }
         }
     };

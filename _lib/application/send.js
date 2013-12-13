@@ -72,18 +72,17 @@ function createMessage (miid, event, err, data, msgId) {
 }
 
 // send a message on the origin socket
-function message (miid, event, err, data, callback) {
+function message (miid, event, err, data) {
     var self = this;
-    
-    // TODO handle callback
     
     self.ws.send(createMessage(miid, event, err, data, self.id));
 }
 
 // broadcast message to all connected sockets
-function broadcast (miid, event, err, data) {
+function broadcast (event, err, data) {
+    var self = this;
     
-    data = createMessage(miid, event, err, data);
+    data = createMessage(self.m_miid, event, err, data);
     
     // broadcast
     for (var i = 0, l = M.ws.clients.length; i < l; ++i) {

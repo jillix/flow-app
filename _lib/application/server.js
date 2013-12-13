@@ -12,9 +12,10 @@ var route = require(M.config.paths.SERVER_ROOT + 'router');
 var session = require(M.config.paths.SERVER_ROOT + 'session');
 var send = require(M.config.paths.SERVER_ROOT + 'send');
 
-// check if miid and event exists
-function miidEventExists (miid, event) {
-    if (M.miids[miid] && M.miids[miid].listeners(event).length > 0) {
+// check access and if miid and event exists
+function checkAccess (miid, event) {
+    
+    if (M.miids[miid] && M.miids[miid].m_access[event] && M.miids[miid].listeners(event).length > 0) {
         return true;
     }
     return false;
@@ -40,7 +41,7 @@ function requestHandler (req, res) {
         }
         
         // check if miid an operation exists
-        if (miidEventExists(path[1], path[2])) {
+        if (checkAccess(path[1], path[2])) {
             var operation = M.miids[path[1]].clone();
             operation.link = {
                 req: req,
@@ -105,7 +106,7 @@ M.ws.on('connection', function(ws) {
             data[0] = data[0].split(':');
             
             // check if miid and event exists
-            if (miidEventExists(data[0][0], data[0][1])) {
+            if (checkAccess(data[0][0], data[0][1])) {
             
                 var message = M.miids[data[0][0]].clone();
                 message.link = {
@@ -113,7 +114,6 @@ M.ws.on('connection', function(ws) {
                     event: data[0][1],
                     session: session,
                     send: send.message
-                    //broadcast: send.broadcast
                 };
             
                 if (data[0][2]) {

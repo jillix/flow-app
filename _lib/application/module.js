@@ -1,6 +1,7 @@
 var fs = require('fs');
 var EventEmitter = require('events').EventEmitter;
 var ObjectId = require('mongodb').ObjectID;
+var broadcast = require('./send').broadcast;
 var M = process.mono;
 
 function getCachedMiid (miid, roleId) {
@@ -22,12 +23,12 @@ function getCachedMiid (miid, roleId) {
 }
 
 function sendHandler (event) {
-    return function (err, data, callback) {
+    return function (err, data) {
         var self = this;
         
         // websocket link
         if (self.link.ws) {
-            self.link.send(self.m_miid, event, err, data, callback);
+            self.link.send(self.m_miid, event, err, data);
         }
     };
 }
@@ -67,11 +68,16 @@ function loadModule (miid, roleId, callback) {
             }
             
             // create new Mono observer instance
-            // TODO broadcast option self.emit('operationA');
             var Module = new EventEmitter();
             Module.m_name = moduleName;
             Module.m_miid = miid;
             Module.m_client = dbMiid.client;
+            
+            // allow only the clients events to be emitted form the server
+            Module.m_access = {};
+            
+            // attach the broadcast functionality
+            Module.broadcast = broadcast;
             
             // save module name in client config
             Module.m_client.name = Module.m_name;
@@ -87,27 +93,27 @@ function loadModule (miid, roleId, callback) {
                 Module.m_client.scripts = module.dependencies.concat(Module.m_client.scripts || []);
             }
             
-            // handle network events
-            if (dbMiid.events) {
+            // add client events config to client config
+            if (dbMiid.access) {
+                Module.m_client.events = dbMiid.access;
                 
-                // add client events config to client config
-                if (dbMiid.events.client) {
-                    Module.m_client.events = dbMiid.events.client;
+                // allow server to emit client events
+                for (i = 0, l = dbMiid.access.length; i < l; ++i) {
+                    Module.m_access[dbMiid.access[i]] = true;
                 }
-                
-                // listen to server events
-                // TODO this are the events which have automatically the send handler
-                if (dbMiid.events.server) {
-                    for (var i = 0, l = dbMiid.events.server.length; i < l; ++i) {
-                        Module.on(dbMiid.events.server[i], sendHandler(dbMiid.events.server[i]));
-                    }
+            }
+            
+            // this are the events which have automatically send as handler
+            if (dbMiid.server && dbMiid.server.events) {
+                for (i = 0, l = dbMiid.server.events.length; i < l; ++i) {
+                    Module.on(dbMiid.server.events[i], sendHandler(dbMiid.server.events[i]));
                 }
             }
             
             // init mono module and save in cache
             // TODO update this cache when a miid config changes
             M.miids[miid] = Module;
-            monoModule.call(Module, dbMiid.server.data);
+            monoModule.call(Module, dbMiid.server ? dbMiid.server.data : {});
             
             callback(null,  Module.m_client || {});
         });
