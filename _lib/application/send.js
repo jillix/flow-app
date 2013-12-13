@@ -75,7 +75,9 @@ function createMessage (miid, event, err, data, msgId) {
 function message (miid, event, err, data, callback) {
     var self = this;
     
-    self.ws.send(createMessage(miid, event, err, data, self.msgId));
+    // TODO handle callback
+    
+    self.ws.send(createMessage(miid, event, err, data, self.id));
 }
 
 // broadcast message to all connected sockets

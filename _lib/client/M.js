@@ -546,21 +546,20 @@ var M = (function() {
             err = error;
         }
         
-        if (!response || !response[0] || !response[1]) {
-            return console.error('invalid message');
-        }
+        response[0] = response[0].split(':');
         
-        var miid = response[0];
-        var event = response[1];
-        var responseErr = response[2];
-        var data = response[3];
+        var miid = response[0][0];
+        var event = response[0][1];
+        var msgId = response[0][2];
+        var responseErr = response[1];
+        var data = response[2];
         
         if (miid && event) {
             
             // handle callback
-            if (response[4] && wsCallbacks[miid] && wsCallbacks[miid][response[4]]) {
-                wsCallbacks[miid][response[4]].call(modules[miid] || Mono, null, data);
-                delete wsCallbacks[miid][response[4]];
+            if (msgId && wsCallbacks[miid] && wsCallbacks[miid][msgId]) {
+                wsCallbacks[miid][msgId].call(modules[miid] || Mono, null, data);
+                delete wsCallbacks[miid][msgId];
             }
             
             // emit event
@@ -666,7 +665,7 @@ var M = (function() {
             if (config.html) {
                 
                 // load html snippets over ws
-                send('html')(config.html, function (err, html) {
+                send('getHtml')(config.html, function (err, html) {
                     
                     // create module container
                     var container = document.createElement('div');

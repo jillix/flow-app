@@ -24,11 +24,10 @@ function getCachedMiid (miid, roleId) {
 function sendHandler (event) {
     return function (err, data, callback) {
         var self = this;
-        console.log('\n');
-        console.log(self.link.event, event, self.link.id);
+        
         // websocket link
         if (self.link.ws) {
-            return self.link.send(self.m_miid, event, err, data, callback);
+            self.link.send(self.m_miid, event, err, data, callback);
         }
     };
 }
@@ -122,7 +121,7 @@ function load (err, miid) {
     // send client config from cache
     var cachedMiid = getCachedMiid(miid, self.link.session._rid);
     if (cachedMiid) {
-        return self.link.send(cachedMiid.m_client);
+        return self.emit('config', null, cachedMiid.m_client);
     }
     
     // load and init module
@@ -146,6 +145,10 @@ function load (err, miid) {
 function html (err, data) {
     var self = this;
     
+    if (!data) {
+        return self.emit('html', 'No path given');
+    }
+    
     var file = M.config.paths.PUBLIC_ROOT + data.replace(/[^a-z0-9\/\.\-_]|\.\.\//gi, "");
     fs.readFile(file, {encoding: 'utf8'}, function (err, data) {
         
@@ -159,6 +162,7 @@ function html (err, data) {
 
 // browser modules (http)
 function file () {
+    var self = this;
     
     var miid = self.link.path[0];
     var path = self.link.path[1];
@@ -169,12 +173,12 @@ function file () {
     }
     
     // the module name must be almost alphanumeric
-    if (link.pathname.replace(/[^a-z0-9\/\.\-_@]|\.\.\//gi, "") !== link.pathname) {
+    if (self.link.pathname.replace(/[^a-z0-9\/\.\-_@]|\.\.\//gi, "") !== self.link.pathname) {
         return self.link.send(400, "Incorrect data in module request URL");
     }
     
     // get miid from cache
-    var cachedMiid = getCachedMiid(miid, link.session._rid);
+    var cachedMiid = getCachedMiid(miid, self.link.session._rid);
     if (cachedMiid) {
         
         // handle compression
@@ -216,7 +220,7 @@ function init (config) {
     self.on('load', load);
     self.on('module', file);
     self.on('client', client);
-    self.on('html', html);
+    self.on('getHtml', html);
     
     // setup toclient event interface
     self.on('config',  sendHandler('config'));
