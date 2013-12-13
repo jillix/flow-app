@@ -1,4 +1,4 @@
-var forever = require('forever-mac');
+var forever = require('forever');
 var config = require('./config');
 
 function start () {
