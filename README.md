@@ -43,10 +43,7 @@ Documentation can be found at https://github.com/jillix/mono/
 # as deamon
 ./bin/mono start
 
-# in dev mode
-./bin mono -d
-
-# in dev mode with app terminal outpu
+# in dev mode with app output
 ./bin mono -dt
 ```
 
