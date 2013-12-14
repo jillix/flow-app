@@ -26,15 +26,16 @@ function getCachedMiid (miid, roleId) {
 // load miid configuration (ws)
 function load (err, miid) {
     var self = this;
+    var session = self.link.ws.session;
     
     // send client config from cache
-    var cachedMiid = getCachedMiid(miid, self.link.session._rid);
+    var cachedMiid = getCachedMiid(miid, session[M.config.session.role]);
     if (cachedMiid) {
         return self.emit('config', null, cachedMiid.mono.client);
     }
     
     // load and init module
-    moduleInstance.load(miid, self.link.session._rid, function (err, config) {
+    moduleInstance.load(miid, session[M.config.session.role], function (err, config) {
         
         if (err) {
             return self.emit('config', err || 'Module not found');
@@ -42,7 +43,7 @@ function load (err, miid) {
         
         // handle i18n html
         if (typeof config.html === 'object') {
-            config.html = config.html[self.link.session._loc] ? config.html[self.link.session._loc] : 'no html found';
+            config.html = config.html[session[M.config.session.locale]] ? config.html[session[M.config.session.locale]] : 'no html found';
         }
         
         // return client config
@@ -87,7 +88,7 @@ function file () {
     }
     
     // get miid from cache
-    var cachedMiid = getCachedMiid(miid, self.link.session._rid);
+    var cachedMiid = getCachedMiid(miid, self.link.req.session[M.config.session.role]);
     if (cachedMiid) {
         
         // handle compression
