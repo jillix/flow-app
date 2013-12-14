@@ -370,10 +370,6 @@ var M = (function() {
         },
         
         // remove listeners
-        /*
-            this.off('setSomething', 'miid', function () {});
-            this.off('setSomething', function () {});
-        */
         off: function(event, miid, handler) {
             
             if (arguments.length < 3) {
@@ -404,9 +400,6 @@ var M = (function() {
         },
         
         // emit event
-        /*
-            this.emit('myEvent', arg1, arg2, ...);
-        */
         emit: function(event) {
             
             if (event === 'ready' && modules[this.miid]) {
@@ -483,13 +476,17 @@ var M = (function() {
     };
     
     function send (event) {
-        return function (data, callback) {
+        return function (err, data, callback) {
             
             // ["miid:event:msgid","err","data"]
             
             var self = this;
             var miid = this.miid || 'M';
-            var message = [miid + ':' + event, null];
+            var message = [miid + ':' + event, 0];
+            
+            if (err) {
+                message[1] = err.toString();
+            }
             
             if (data) {
                 message[2] = data;
@@ -542,7 +539,7 @@ var M = (function() {
         }
         
         // get miid config
-        send('load')(miid, function (err, config) {
+        send('load')(null, miid, function (err, config) {
             
             if (typeof config !== 'object') {
                 callback(new Error('Invalid module config.'));
@@ -578,7 +575,7 @@ var M = (function() {
             if (config.html) {
                 
                 // load html snippets over ws
-                send('getHtml')(config.html, function (err, html) {
+                send('getHtml')(null, config.html, function (err, html) {
                     
                     // create module container
                     var container = document.createElement('div');
@@ -599,7 +596,7 @@ var M = (function() {
             
             // load scripts and init module
             if (config.scripts && config.scripts.length > 0) {
-               
+                
                 loadJS(miid, config.name, config.scripts, function (miid, moduleConstructor) {
                     
                     // create module

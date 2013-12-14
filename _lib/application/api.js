@@ -8,28 +8,10 @@ var Cache = require(config.paths.API_PUBLIC + 'cache');
 process.mono = new EventEmitter();
 process.mono.config = config;
 
-// create miid cache
-process.mono.miids = {};
-var coreModule = new EventEmitter();
-require(config.paths.SERVER_ROOT + 'module').call(coreModule);
-coreModule.m_miid = 'M';
-// set core module access
-coreModule.m_access = {
-    load: true,
-    module: true,
-    client: true,
-    getHtml: true
-};
-
-// add core module to miid cache
-process.mono.miids.M = coreModule;
-// set core module public rights
-process.mono.miids.M.m_roles = {'*': 1};
-
 // create caches
 process.mono.cache = {
-    client: Cache()
-    //miids: Cache()
+    client: Cache(),
+    miids: Cache()
 };
 
 // error handling
@@ -51,18 +33,12 @@ require(config.paths.API_APPLICATION + 'dbs')(process.mono.config, function(err,
         throw new Error(err);
     }
     
+    // add dbs to api
     process.mono.db = dbs;
+    
+    // init core server module
+    require('./moduleInstance').core();
+    
+    // emit api ready
     process.mono.emit('ready', Server);
 });
-
-// APPLICATION LOG
-//var appPath = self.config.paths.APPLICATION_ROOT + application._id;
-// the application directory must be present otherwise the piped
-// streams below will crash the mono proxy server
-//if (!fs.existsSync(appPath)) {
-//    return callback(self.error(self.error.APP_DIR_NOT_FOUND, application._id));
-//}
-// write to application log
-//var log = fs.createWriteStream(appPath + '/log.txt');
-//app.stdout.pipe(log);
-//app.stderr.pipe(log);

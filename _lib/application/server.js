@@ -12,13 +12,15 @@ var route = require(M.config.paths.SERVER_ROOT + 'router');
 var session = require(M.config.paths.SERVER_ROOT + 'session');
 var send = require(M.config.paths.SERVER_ROOT + 'send');
 
-// check access and if miid and event exists
-function checkAccess (miid, event) {
+// check event access and if event and miid exists
+function getCachedMiid (miid, event) {
     
-    if (M.miids[miid] && M.miids[miid].m_access[event] && M.miids[miid].listeners(event).length > 0) {
-        return true;
+    miid = M.cache.miids.get(miid);
+    
+    if (miid && miid.mono.access[event] && miid.listeners(event).length > 0) {
+        return miid;
     }
-    return false;
+    return null;
 }
 
 // handle http request
@@ -40,9 +42,12 @@ function requestHandler (req, res) {
             return send.server(req, res, 400, 'Missing module instance ID or operation name.');
         }
         
+        // get cached miid and check access
+        var miid = getCachedMiid(path[1], path[2]);
+        
         // check if miid an operation exists
-        if (checkAccess(path[1], path[2])) {
-            var operation = M.miids[path[1]].clone();
+        if (miid) {
+            var operation = miid.clone();
             operation.link = {
                 req: req,
                 res: res,
@@ -105,13 +110,17 @@ M.ws.on('connection', function(ws) {
             // mono ws protocoll: ["miid:event:msgid","err","data"]
             data[0] = data[0].split(':');
             
-            // check if miid and event exists
-            if (checkAccess(data[0][0], data[0][1])) {
+            // get miid from cache and check access
+            var miid = getCachedMiid(data[0][0], data[0][1]);
             
-                var message = M.miids[data[0][0]].clone();
+            // check if miid and event exists
+            if (miid) {
+            
+                var message = miid.clone();
                 message.link = {
                     ws: ws,
                     event: data[0][1],
+                    miid: data[0][0],
                     session: session,
                     send: send.message
                 };
