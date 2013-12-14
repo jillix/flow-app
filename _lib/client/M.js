@@ -482,7 +482,7 @@ var M = (function() {
             var message = [miid + ':' + event, 0];
             
             if (err) {
-                message[1] = err.toString();
+                message[1] = err;
             }
             
             if (data) {
