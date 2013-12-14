@@ -53,7 +53,7 @@ Documentation can be found at https://github.com/jillix/mono/
 # when started as deamon
 ./bin/mono stop
 
-# when startes in dev mode (press Ctrl + C)
+# when started in dev mode (press Ctrl + C)
 ^C
 ```
 
