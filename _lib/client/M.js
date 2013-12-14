@@ -86,9 +86,6 @@ var M = (function() {
             for (var selector in config.modules) {
                 M(selector, config.modules[selector]);
             }
-            
-            // TODO remove when bind-layout doesn't load modules anymore
-            delete config.modules;
         }
         
         if (typeof moduleLoadCache[miid].init === fn) {
