@@ -1,3 +1,3 @@
 #!/usr/bin/env node
 
-require('../_lib/server/start').start();
+require('../lib/server/start').start();
