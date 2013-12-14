@@ -44,12 +44,16 @@ Documentation can be found at https://github.com/jillix/mono/
 ./bin/mono start
 
 # in dev mode with app output
-./bin mono -dt
+./bin/mono -dt
 ```
 
 **stop mono server**
 
 ```
-node stop
+# when started as deamon
+./bin/mono stop
+
+# when startes in dev mode (press Ctrl + C)
+^C
 ```
 
