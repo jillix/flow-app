@@ -57,3 +57,26 @@ Documentation can be found at https://github.com/jillix/mono/
 ^C
 ```
 
+## middleware
+**http**
+```
+M.on('request', function (req, res, next) {
+
+    // do middleware stufff with req and res, ex. sessions
+    req.session = {};
+    
+    // continue with request
+    next();
+});
+```
+**websockets**
+```
+M.on('connection', function(ws, next) {
+
+    // do middleware stufff with ws, ex. sessions
+    ws.session = {};
+    
+    // continue with connection
+    next();
+});
+```
