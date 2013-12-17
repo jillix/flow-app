@@ -2,7 +2,7 @@
 
 ## installation
 
-#### server installation
+#### server installation
 
 These steps must be followed when installing Mono on a new EC2 server or when you want to cleanup the `mono` user and reinstall the server.
 
