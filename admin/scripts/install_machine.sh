@@ -240,9 +240,11 @@ function setup_monodev {
     # the root for application templates
     mkdir -p /apps/templates
 
+    # clone MonoDev into the app template directory
     git clone git@github.com:jillix/MonoDev.git "/apps/templates/MonoDev"
 
-    # TODO
+    # call MonoDev bootstrap installation script
+    node /apps/templates/MonoDev/bootstrap.js
 }
 
 function get_credentials {
