@@ -15,7 +15,7 @@ These steps must be followed when installing Mono on a new EC2 server or when yo
 2. Login with the `ubuntu` user
 3. Run this bash snippet:
 
-```
+```sh
 echo "Enter Github user name: " ; read GH_USERNAME ; curl -u $GH_USERNAME -H "Accept: application/vnd.github.raw" -o ~/install_machine.sh -s "https://api.github.com/repos/jillix/mono/contents/admin/scripts/install_machine.sh" ; chmod +x ~/install_machine.sh ; sudo -E ~/install_machine.sh
 ```
 
@@ -23,7 +23,7 @@ echo "Enter Github user name: " ; read GH_USERNAME ; curl -u $GH_USERNAME -H "Ac
 
 After you have `node` and `MongoDb` on your Unix-based machine, run:
 
-```
+```sh
 git clone git@github.com:jillix/mono.git
 cd mono
 npm install
@@ -64,7 +64,7 @@ Documentation can be found at https://github.com/jillix/mono/
 
 **start mono server**
 
-```
+```sh
 # as deamon
 ./bin/mono start
 
@@ -74,7 +74,7 @@ Documentation can be found at https://github.com/jillix/mono/
 
 **stop mono server**
 
-```
+```sh
 # when started as deamon
 ./bin/mono stop
 
@@ -84,7 +84,7 @@ Documentation can be found at https://github.com/jillix/mono/
 
 ## middleware
 **http**
-```
+```js
 M.on('request', function (req, res, next) {
 
     // do middleware stufff with req and res, ex. sessions
@@ -95,7 +95,7 @@ M.on('request', function (req, res, next) {
 });
 ```
 **websockets**
-```
+```js
 M.on('connection', function(ws, next) {
 
     // do middleware stufff with ws, ex. sessions
