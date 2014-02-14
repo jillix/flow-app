@@ -57,6 +57,9 @@ options:
   --dbPort        MongoDB port (27017)
   --help          you're staring at it
 
+environment variables:
+  MONO_DB_PASSWORD the password for the "server" user in the "mono" Mongo database
+
 Documentation can be found at https://github.com/jillix/mono/
 ```
 
