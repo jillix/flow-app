@@ -2,34 +2,20 @@
 // - get application template
 // - create admin user if not exists
 // - install application in admin user
-var path = require('path');
-var fs = require('fs');
-var git = require('nodegit');
 var args = process.argv.slice(2);
-var appCache = path.normalize(__dirname + '/../cache/apps/');
-var appName;
+gitPath = args[0];
 
-if (!args[0] || !(appName = args[0].match(/https:\/\/[^\/]+\/[^\/]+\/([^\/]+)\.git/))) {
+if (!gitPath) {
     return console.log(
-        'No git path! ..or invalid path\n' +
+        'No git path!\n' +
         'Please specify a git path as first parameter.\n' +
         'example: node install_app.js https://github.com/jillix/admin.git'
+        
     );
 }
 
-appName = appCache + appName[1];
-
-// get application template
-git.Repo.clone(args[0], appName, null, function(err, repo) {
-    fs.exists(appName, function (exists) {
-        
-        if (!exist) {
-            throw err || new Error('[setup/install.js: no application found after git clone.');
-        }
-        
-        console.log(exists ? true : false);
-    });
-});
+// 1. create/get user
+// 2. clone and install admin app
 
 return;
 
