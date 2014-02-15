@@ -205,6 +205,8 @@ function install_software {
     # install java runtime if not present
     install openjdk-7-jre-headless java
 
+    # TODO install cmake (for nodegit)
+
     # install graphicsmagick
     install graphicsmagick gm
 
