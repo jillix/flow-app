@@ -2,16 +2,35 @@
 // - get application template
 // - create admin user if not exists
 // - install application in admin user
+var path = require('path');
+var fs = require('fs');
+var git = require('nodegit');
+var args = process.argv.slice(2);
+var appCache = path.normalize(__dirname + '/../cache/apps/');
+var appName;
 
-var monoRoot = process.argv[2];
-
-if (!monoRoot) {
-    return console.log('No mono root!\nPlease specify the mono root directory as first parameter.\nexample: install.js /path/to/mono/');
+if (!args[0] || !(appName = args[0].match(/https:\/\/[^\/]+\/[^\/]+\/([^\/]+)\.git/))) {
+    return console.log(
+        'No git path! ..or invalid path\n' +
+        'Please specify a git path as first parameter.\n' +
+        'example: node install_app.js https://github.com/jillix/admin.git'
+    );
 }
 
-var appTemplate = __dirname + '/application/';
+appName = appCache + appName[1];
 
-console.log(appTemplate);
+// get application template
+git.Repo.clone(args[0], appName, null, function(err, repo) {
+    fs.exists(appName, function (exists) {
+        
+        if (!exist) {
+            throw err || new Error('[setup/install.js: no application found after git clone.');
+        }
+        
+        console.log(exists ? true : false);
+    });
+});
+
 return;
 
 var EventEmitter = require('events').EventEmitter;
