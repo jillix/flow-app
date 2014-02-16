@@ -1,28 +1,106 @@
-// steps:
-// - get application template
-// - create admin user if not exists
-// - install application in admin user
-var args = process.argv.slice(2);
-gitPath = args[0];
+var fs = require('fs');
+var path = require('path');
 
-if (!gitPath) {
+var mongo = require('mongodb');
+var MongoClient = mongo.MongoClient;
+var MongoServer = mongo.Server;
+var mongoClient = new MongoClient(new MongoServer('localhost', 27017));
+
+var root = path.normalize(__dirname + '/../');
+var appCache = root + '/cache/apps/';
+var appName = 'admin';
+var repo = 'https://github.com/jillix/admin.git';
+var userName = 'admin@jillix.com';
+var userPwd = '1234';
+var systemDb = 'mono';
+
+// TODO set unique index on mono/m_users.name
+
+// check if application repo exists
+if (!fs.existsSync(appCache + appName)) {
     return console.log(
-        'No git path!\n' +
-        'Please specify a git path as first parameter.\n' +
-        'example: node install_app.js https://github.com/jillix/admin.git'
-        
+        'No admin app "' + appName + '" found!\n' +
+        'Please clone your admin app to mono/cache/apps/.\n' +
+        'example: git clone git@github.com:jillix/admin.git'
     );
 }
 
-// 1. create/get user
-// 2. clone and install admin app
+// get the mono database
+getDatabases(function (err, dbs) {
+    
+    if (err) {
+        return finish(err);
+    }
+    
+    // mimic process.mono
+    process.mono = {
+        db: dbs,
+        paths: {MONO_ROOT: root}
+    };
+
+    // get api
+    var API = require(appCache + appName + '/api');
+    API(function (err, api) {
+        
+        // create/get user
+        api.user.get(userName, function (err, user) {
+            
+            if (err) {
+                return finish(err);
+            }
+            
+            // reset admin app if admin user exists
+            if (user) {
+                return api.app.resetDev(user, repo, function (err, appId) {
+                    finish(err, appId);
+                });
+            }
+            
+            // create new user
+            api.user.create(userName, userPwd, function (err, user) {
+                
+                if (err) {
+                    return finish(err);
+                }
+                
+                finish(err, appId);
+                
+                // clone and install admin app
+                api.app.cloneDev(user, repo, function (err, appId) {
+                    finish(err, appId);
+                });
+            });
+        });
+    });
+});
+
+function finish (err, appId) {
+    
+    mongoClient.close();
+    
+    if (err) {
+        return console.error(err);
+    }
+    
+    console.log('Admin app "' + appId + '" succesfully installed.');
+}
+
+function getDatabases (callback) {
+    mongoClient.open(function(err, mongoClient) {
+        
+        if (err) {
+            callback(err);
+        }
+        
+        callback(null, {
+            mono: mongoClient.db(systemDb)
+        });
+    });
+}
 
 return;
 
 var EventEmitter = require('events').EventEmitter;
-var mongo = require('mongodb');
-var MongoClient = mongo.MongoClient;
-var MongoServer = mongo.Server;
 
 var newApp = require('./application.json');
 
