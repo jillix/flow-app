@@ -14,8 +14,6 @@ var userName = 'admin@jillix.com';
 var userPwd = '1234';
 var systemDb = 'mono';
 
-// TODO set unique index on mono/m_users.name
-
 // check if application repo exists
 if (!fs.existsSync(appCache + appName)) {
     return console.log(
@@ -52,7 +50,7 @@ getDatabases(function (err, dbs) {
             // reset admin app if admin user exists
             if (user) {
                 return api.app.resetDev(user, repo, function (err, appId) {
-                    finish(err, appId);
+                    finish(err, appId, true);
                 });
             }
             
@@ -74,7 +72,7 @@ getDatabases(function (err, dbs) {
     });
 });
 
-function finish (err, appId) {
+function finish (err, appId, re) {
     
     mongoClient.close();
     
@@ -82,7 +80,7 @@ function finish (err, appId) {
         return console.error(err);
     }
     
-    console.log('Admin app "' + appId + '" succesfully installed.');
+    console.log('Admin app "' + appId + '" succesfully ' + (re ? 're-' : '') + 'installed.');
 }
 
 function getDatabases (callback) {
@@ -92,9 +90,33 @@ function getDatabases (callback) {
             callback(err);
         }
         
-        callback(null, {
-            mono: mongoClient.db(systemDb)
+        var db = mongoClient.db(systemDb);
+        
+        // ensure indexes
+        ensureIndexes(db, function (err) {
+            
+            if (err) {
+                callback(err);
+            }
+            
+            callback(null, {
+                mono: db
+            });
         });
+    });
+}
+
+function ensureIndexes (db, callback) {
+    
+    // ensure m_application indexes
+    db.ensureIndex('m_appliactions', {domains: 1}, {unique: true}, function (err) {
+        
+        if (err) {
+            return callback(err);
+        }
+        
+        // ensure m_users indexes
+        db.ensureIndex('m_users', {name: 1}, {unique: true}, callback);
     });
 }
 
