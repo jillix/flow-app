@@ -61,8 +61,6 @@ getDatabases(function (err, dbs) {
                     return finish(err);
                 }
                 
-                finish(err, appId);
-                
                 // clone and install admin app
                 api.app.cloneDev(user, repo, function (err, appId) {
                     finish(err, appId);
