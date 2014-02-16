@@ -33,6 +33,7 @@ getDatabases(function (err, dbs) {
     // mimic process.mono
     process.mono = {
         db: dbs,
+        dbClient: mongoClient,
         paths: {MONO_ROOT: root}
     };
 
