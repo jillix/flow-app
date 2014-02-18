@@ -91,6 +91,9 @@ function getDatabases (callback) {
         
         var db = mongoClient.db(systemDb);
         
+        // TODO check if server db user exists
+        // TODO check if admin db user exsits
+        
         // ensure indexes
         ensureIndexes(db, function (err) {
             
