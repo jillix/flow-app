@@ -35,7 +35,9 @@
         "mongodb"       : "*",
         "node-static"   : "*",
         "optimist"      : "*",
-        "cookie"        : "*"
+        "cookie"        : "*",
+        "fs-extra"      : "*",
+        "nodegit"       : "*"
     },
     "devDependencies": {
     },
