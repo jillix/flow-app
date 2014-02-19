@@ -1,5 +1,6 @@
 var fs = require('fs');
 var path = require('path');
+var git = require('gitty');
 
 var mongo = require('mongodb');
 var MongoClient = mongo.MongoClient;
@@ -7,24 +8,33 @@ var MongoServer = mongo.Server;
 var mongoClient = new MongoClient(new MongoServer('localhost', 27017));
 
 var root = path.normalize(__dirname + '/../');
-var appCache = root + '/cache/apps/';
 var appName = 'admin';
-var repo = 'https://github.com/jillix/admin.git';
+var appCache = root + 'cache/apps/' + appName + '/';
+var repo = 'git@github.com:jillix/admin.git';
 var userName = 'admin@jillix.com';
 var userPwd = '1234';
 var systemDb = 'mono';
 
-// check if application repo exists
-if (!fs.existsSync(appCache + appName)) {
-    return console.log(
-        'No admin app "' + appName + '" found!\n' +
-        'Please clone your admin app to mono/cache/apps/.\n' +
-        'example: git clone git@github.com:jillix/admin.git'
-    );
-}
+// check if app exists in cache
+fs.exists(appCache, function (exists) {
+    
+    if (!exists) {
+        // clone admin app to cache
+        return git.clone(appCache, repo, function (err) {
+            
+            if (err) {
+                return finish(err);
+            }
+            
+            getDatabases(installAdmin);
+        });
+    }
+    
+    getDatabases(installAdmin);
+});
 
 // get the mono database
-getDatabases(function (err, dbs, dbClient) {
+function installAdmin (err, dbs, dbClient) {
     
     if (err) {
         return finish(err);
@@ -38,7 +48,7 @@ getDatabases(function (err, dbs, dbClient) {
     };
 
     // get api
-    var API = require(appCache + appName + '/api');
+    var API = require(appCache + 'api');
     API(function (err, api) {
         
         // create/get user
@@ -69,7 +79,7 @@ getDatabases(function (err, dbs, dbClient) {
             });
         });
     });
-});
+}
 
 function finish (err, appId, re) {
     
@@ -94,7 +104,6 @@ function getDatabases (callback) {
         // TODO check if server db user exists
         // TODO check if admin db user exsits
         
-        // ensure indexes
         ensureIndexes(db, function (err) {
             
             if (err) {
