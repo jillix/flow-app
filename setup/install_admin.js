@@ -8,15 +8,18 @@ var MongoServer = mongo.Server;
 var mongoClient = new MongoClient(new MongoServer('localhost', 27017));
 
 var root = path.normalize(__dirname + '/../');
-var appName = 'admin';
-var appCache = root + 'cache/apps/' + appName + '/';
 var repo = 'git@github.com:jillix/admin.git';
+var appName = repo.replace(/(git@)|(\.[a-z0-9]+:)|(\/)|(\.git)/g, '.').slice(1, -1);
+var appCache = root + 'cache/apps/' + appName + '/';
 var userName = 'admin@jillix.com';
 var userPwd = '1234';
 var systemDb = 'mono';
+var appExists = false;
 
 // check if app exists in cache
 fs.exists(appCache, function (exists) {
+    
+    appExists = exists;
     
     if (!exists) {
         // clone admin app to cache
@@ -26,15 +29,15 @@ fs.exists(appCache, function (exists) {
                 return finish(err);
             }
             
-            getDatabases(installAdmin);
+            getDatabases(getApiAndUser);
         });
     }
     
-    getDatabases(installAdmin);
+    getDatabases(getApiAndUser);
 });
 
 // get the mono database
-function installAdmin (err, dbs, dbClient) {
+function getApiAndUser (err, dbs, dbClient) {
     
     if (err) {
         return finish(err);
@@ -58,11 +61,8 @@ function installAdmin (err, dbs, dbClient) {
                 return finish(err);
             }
             
-            // reset admin app if admin user exists
             if (user) {
-                return api.app.resetDev(user, repo, function (err, appId) {
-                    finish(err, appId, true);
-                });
+                return installAdmin(api, user, repo, appExists);
             }
             
             // create new user
@@ -72,12 +72,24 @@ function installAdmin (err, dbs, dbClient) {
                     return finish(err);
                 }
                 
-                // clone and install admin app
-                api.app.cloneDev(user, repo, function (err, appId) {
-                    finish(err, appId);
-                });
+                installAdmin(api, user, repo, appExists);
             });
         });
+    });
+}
+
+function installAdmin (api, user, repo, appExists) {
+    
+    // reset admin app if admin app exists
+    if (appExists) {
+        return api.app.resetDev(user, repo, function (err, appId) {
+            finish(err, appId, true);
+        });
+    }
+    
+    // clone and install admin app
+    api.app.cloneDev(user, repo, function (err, appId) {
+        finish(err, appId);
     });
 }
 
