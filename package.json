@@ -37,7 +37,7 @@
         "optimist"      : "*",
         "cookie"        : "*",
         "fs-extra"      : "*",
-        "nodegit"       : "*"
+        "gitty"         : "*"
     },
     "devDependencies": {
     },
