@@ -13,14 +13,12 @@ var root = path.normalize(__dirname + '/../');
 var repo = 'git@github.com:jillix/admin.git';
 var appName = repo.replace(/(git@)|(\.[a-z0-9]+:)|(\/)|(\.git)/g, '.').slice(1, -1);
 var appCache = root + 'cache/apps/' + appName + '/';
+
 var userName = 'admin@jillix.com';
 var userPwd = '1234';
-var appExists = false;
 
 // check if app exists in cache
 fs.exists(appCache, function (exists) {
-    
-    appExists = exists;
     
     if (!exists) {
         // clone admin app to cache
@@ -63,7 +61,7 @@ function getApiAndUser (err, dbs, dbClient) {
             }
             
             if (user) {
-                return installAdmin(api, user, repo, appExists);
+                return installAdmin(api, user, repo);
             }
             
             // create new user
@@ -73,21 +71,13 @@ function getApiAndUser (err, dbs, dbClient) {
                     return finish(err);
                 }
                 
-                installAdmin(api, user, repo, appExists);
+                installAdmin(api, user, repo);
             });
         });
     });
 }
 
-function installAdmin (api, user, repo, appExists) {
-    
-    // reset admin app if admin app exists
-    if (appExists) {
-        return api.app.resetDev(user, repo, function (err, appId) {
-            finish(err, appId, true);
-        });
-    }
-    
+function installAdmin (api, user, repo) {
     // add user to mono db
     monoDb.addUser(user._id.toString(), user.apiKey, {roles: ['readWrite']}, function (err) {
         
