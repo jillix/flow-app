@@ -6,6 +6,8 @@ var mongo = require('mongodb');
 var MongoClient = mongo.MongoClient;
 var MongoServer = mongo.Server;
 var mongoClient = new MongoClient(new MongoServer('localhost', 27017));
+var systemDb = 'mono';
+var monoDb = mongoClient.db(systemDb);
 
 var root = path.normalize(__dirname + '/../');
 var repo = 'git@github.com:jillix/admin.git';
@@ -13,7 +15,6 @@ var appName = repo.replace(/(git@)|(\.[a-z0-9]+:)|(\/)|(\.git)/g, '.').slice(1, 
 var appCache = root + 'cache/apps/' + appName + '/';
 var userName = 'admin@jillix.com';
 var userPwd = '1234';
-var systemDb = 'mono';
 var appExists = false;
 
 // check if app exists in cache
@@ -87,9 +88,17 @@ function installAdmin (api, user, repo, appExists) {
         });
     }
     
-    // clone and install admin app
-    api.app.cloneDev(user, repo, function (err, appId) {
-        finish(err, appId);
+    // add user to mono db
+    monoDb.addUser(user._id.toString(), user.apiKey, {roles: ['readWrite']}, function (err) {
+        
+        if (err) {
+            return finish(err);
+        } 
+    
+        // clone and install admin app
+        api.app.cloneDev(user, repo, function (err, appId) {
+            finish(err, appId);
+        });
     });
 }
 
@@ -114,17 +123,14 @@ function getDatabases (callback) {
         var db = mongoClient.db(systemDb);
         
         // TODO check if server db user exists
-        // TODO check if admin db user exsits
         
-        ensureIndexes(db, function (err) {
+        ensureIndexes(monoDb, function (err) {
             
             if (err) {
                 callback(err);
             }
             
-            callback(null, {
-                mono: db
-            }, mongoClient);
+            callback(null, {mono: monoDb}, mongoClient);
         });
     });
 }
