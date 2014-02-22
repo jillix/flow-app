@@ -16,6 +16,7 @@ var appCache = root + 'cache/apps/' + appName + '/';
 
 var userName = 'admin@jillix.com';
 var userPwd = '1234';
+var userRole = '530650dc6d8405c53b5841a3';
 
 // check if app exists in cache
 fs.exists(appCache, function (exists) {
@@ -65,7 +66,7 @@ function getApiAndUser (err, dbs, dbClient) {
             }
             
             // create new user
-            api.user.create(userName, userPwd, function (err, user) {
+            api.user.create(userName, userPwd, userRole, function (err, user) {
                 
                 if (err) {
                     return finish(err);
