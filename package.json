@@ -31,7 +31,6 @@
     "dependencies" : {
         "ws"            : "*",
         "forever"       : "*",
-        "modm"          : "*",
         "mongodb"       : "*",
         "node-static"   : "*",
         "optimist"      : "*",
