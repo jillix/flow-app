@@ -129,7 +129,7 @@ function getDatabases (callback) {
 function ensureIndexes (db, callback) {
     
     // ensure m_application indexes
-    db.ensureIndex('m_appliactions', {domains: 1}, {unique: true}, function (err) {
+    db.ensureIndex('m_applications', {domains: 1}, {unique: true}, function (err) {
         
         if (err) {
             return callback(err);
