@@ -2,6 +2,19 @@ var fs = require('fs');
 var path = require('path');
 var git = require('gitty');
 
+// TODO emulate a module with all the apis (store, model, etc..)
+// TODO implement stores
+/*
+    M.cache.stores
+    M.cache.projects
+    M.config.owner
+    M.config.apiKey
+    M.config.store
+*/
+
+// setup store factory
+var store = require('../lib/stores/factory');
+
 var mongo = require('mongodb');
 var MongoClient = mongo.MongoClient;
 var MongoServer = mongo.Server;
