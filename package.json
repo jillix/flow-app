@@ -32,7 +32,7 @@
         "ws"            : "*",
         "forever"       : "*",
         "mongodb"       : "*",
-        "node-static"   : "*",
+        "mime"          : "*",
         "optimist"      : "*",
         "cookie"        : "*",
         "fs-extra"      : "*",
