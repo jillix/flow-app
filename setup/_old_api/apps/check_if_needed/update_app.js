@@ -16,7 +16,7 @@ var appPath = CONFIG.argv[0];
 var appConfig = require(appPath + "/application.json");
 
 // TODO: Find a relation between .git url and .zip url. This works for Github only.
-if (!appConfig.repository) {   
+if (!appConfig.repository) {
     console.error("This application doesn't contain the repository field.");
     process.exit(2);
 }
@@ -47,7 +47,7 @@ mkDir.on("exit", function(code) {
     }
     else {
         console.log("Succesfully created temp directory: " + downloadDirectory);
-        
+
         // Download the repository as zip into temp directory.
         var downloader = spawn("wget", ["--no-check-certificate", "-O", zipPath, appUrl]);
 
@@ -60,14 +60,14 @@ mkDir.on("exit", function(code) {
             if (code) {
                 console.error("Download app failed with code: " + code);
                 process.exit(5);
-            } 
+            }
             // No problem
             else {
                 console.log("ZIP file successfully downloaded in " + zipPath);
 
                 var env = process.env;
                 env.MONO_ROOT = CONFIG.root;
-                
+
                 // Deploy the zip file
                 var depl_app = spawn(CONFIG.root + "/admin/scripts/installation/deploy_app.sh", [zipPath], { env: env });
 
@@ -77,19 +77,19 @@ mkDir.on("exit", function(code) {
                     console.log(data.toString().trim());
                     output += data.toString();
                 });
-                
+
                 depl_app.stderr.on("data", function(data) {
                     console.error(data.toString().trim());
                     output += data.toString();
                 });
-                
+
                 // Deployement is finished
                 depl_app.on("exit", function(code){
                     var deployedMessage = "Succesfully deployed application";
                     var appId = output.substring(output.indexOf(deployedMessage) + deployedMessage.length).trim();
 
                     console.log("NEW APP ID: " + appId);
-                
+
                     if (code) {
                         console.error("Application updating failed with error code: " + code + " at deployement.");
                         process.exit(7);
@@ -115,14 +115,14 @@ mkDir.on("exit", function(code) {
 
                             // and now close the orient connection
                             orient.disconnect(CONFIG.orient);
-                        });                        
+                        });
                     }
 
                     // Delete zip file directory
                     var deleteZipFile = spawn("rm", ["-rf", downloadDirectory]);
                     deleteZipFile.stderr.pipe(process.stderr);
                     deleteZipFile.stdout.pipe(process.stdout);
-                    
+
                     deleteZipFile.on("exit", function(code) {
                         if (code) {
                             console.log("Failed to delete zip file.");
@@ -134,5 +134,5 @@ mkDir.on("exit", function(code) {
                 });
             }
         });
-    } 
+    }
 });

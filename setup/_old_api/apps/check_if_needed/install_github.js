@@ -29,7 +29,7 @@ mkDir.on("exit", function(code) {
     }
     else {
         console.log("Succesfully created temp directory: " + downloadDirectory);
-        
+
         // Download the repository as zip into temp directory.
         var downloader = spawn("wget", ["--no-check-certificate", "-O", zipPath, appZipUrl]);
 
@@ -42,14 +42,14 @@ mkDir.on("exit", function(code) {
             if (code) {
                 console.error("Download app as zip failed with code: " + code);
                 process.exit(3);
-            } 
+            }
             // No problem
             else {
                 console.log("ZIP file successfully downloaded in " + zipPath);
 
                 var env = process.env;
                 env.MONO_ROOT = CONFIG.root;
-                
+
                 // Deploy the zip file
                 var depl_app = spawn(CONFIG.root + "/admin/scripts/installation/deploy_app.sh", [zipPath], { env: env });
 
@@ -59,15 +59,15 @@ mkDir.on("exit", function(code) {
                     console.log(data.toString().trim());
                     output += data.toString();
                 });
-                
+
                 depl_app.stderr.on("data", function(data) {
                     console.error(data.toString().trim());
                     output += data.toString();
                 });
-                
+
                 // Deployement is finished
                 depl_app.on("exit", function(code){
-                
+
                     if (code) {
                         console.error("Application deployement failed with error code: " + code + ".");
                         process.exit(4);
@@ -81,7 +81,7 @@ mkDir.on("exit", function(code) {
                     var deleteZipFile = spawn("rm", [zipPath]);
                     deleteZipFile.stderr.pipe(process.stderr);
                     deleteZipFile.stdout.pipe(process.stdout);
-                    
+
                     deleteZipFile.on("exit", function(code) {
                         if (code) {
                             console.log("Failed to delete zip file.");
@@ -93,5 +93,5 @@ mkDir.on("exit", function(code) {
                 });
             }
         });
-    } 
+    }
 });

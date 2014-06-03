@@ -13,13 +13,13 @@ RESULT_COUNT=`ps aux | grep node | grep -c "\-\-app $APP_PREFIX"`
 # 0 is too few
 if [ $RESULT_COUNT -lt 1 ]
 then
-    echo "I could not find an application having the ID starting with: $APP_PREFIX" 1>&2 
+    echo "I could not find an application having the ID starting with: $APP_PREFIX" 1>&2
     exit 1
 fi
 # more than 1 is too much
 if [ $RESULT_COUNT -gt 1 ]
 then
-    echo "I could not uniquely identify an app having the ID starting with: $APP_PREFIX" 1>&2 
+    echo "I could not uniquely identify an app having the ID starting with: $APP_PREFIX" 1>&2
     exit 1
 fi
 
