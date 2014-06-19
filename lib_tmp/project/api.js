@@ -1,0 +1,39 @@
+var fs = require('fs');
+var EventEmitter = require('events').EventEmitter;
+var Static = require('node-static');
+var config = require('./config');
+var Cache = require(config.paths.LIB_ROOT + 'utils/cache');
+
+// create server object
+process.mono = new EventEmitter();
+process.mono.config = config;
+
+// create caches
+process.mono.cache = {
+    client: Cache(),
+    projects: Cache(),
+    instances: Cache(),
+    stores: Cache(),
+    models: Cache(),
+    views: Cache(),
+    snippets: Cache(),
+    public: Cache()
+};
+
+// error handling
+process.mono.error = require(config.paths.LIB_ROOT + 'utils/error');
+
+// setup session middleware
+require(config.paths.MIDDLEWARE + 'session')(function (err) {
+
+    // terminate process on error
+    if (err) {
+        throw new Error(err);
+    }
+
+    // init and cache core module instance
+    require(config.paths.MODULE + 'module')();
+
+    // emit api ready
+    process.mono.emit('ready');
+});
