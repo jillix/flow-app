@@ -58,47 +58,47 @@ mono stop && mono
 ##Anatomy of an instance
 ```json
 {
-    _name: instance name
-    _config: custom instance config
-    _module: sonv name of the module
-    view:{
-        'name': {
-            _: reference to instance
-            _tp: template function
-            html: html string
-            dom: reference to dom node
-            on: event handlers
-            config: custom module config
-            prototype: V: {
-                render: render function
-                set: set a template
+    "_name": "instance name",
+    "_config": "custom instance config",
+    "_module": "sonv name of the module",
+    "view":{
+        "name": {
+            "_": "reference to instance",
+            "_tp": "template function",
+            "html": "html string",
+            "dom": "reference to dom node",
+            "on": "event handlers",
+            "config": "custom module config",
+            "prototype": {
+                "render": "render function",
+                "set": "set a template"
             }
         }
     },
-    model: {
-        'name': {
-            _: reference to instance
-            data: current data array
-            on: event handlers
-            config: custom module config
-            prototype: M: {
-                req: model request function
+    "model": {
+        "name": {
+            "_": "reference to instance",
+            "data": "current data array",
+            "on": "event handlers",
+            "config": "custom module config",
+            "prototype": {
+                "req": "model request function"
             }
         }
-    }
-    prototype: I: {
-        route: route to url
-        emit: emit an event
-        on: listen to an event
-        off: unlisten to an event or event handler
-        _load: load an element (inst, view, module)
-        _path: get a value from a path (ex. Obj.prop.method)
-        _clone: clone an object
-        _toArray: convert to array
-        _flat: flatten objects
-        _uid: create a random string
-        _reload: reload the client (without reloading the window)
     },
-    methods.. (custom module methods)
+    "prototype": {
+        "route": "route to url",
+        "emit": "emit an event",
+        "on": "listen to an event",
+        "off": "unlisten to an event or event handler",
+        "_load": "load an element (inst, view, module)",
+        "_path": "get a value from a path (ex. Obj.prop.method)",
+        "_clone": "clone an object",
+        "_toArray": "convert to array",
+        "_flat": "flatten objects",
+        "_uid": "create a random string",
+        "_reload": "reload the client (without reloading the window)"
+    },
+    "methods..": "custom module methods"
 }
 ```
