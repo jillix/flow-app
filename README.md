@@ -16,25 +16,19 @@ usage: mono [actions] [options]
 The mono proxy server v0.1.0
 
 actions:
-  start           start mono server (it's the same as without start)
-  stop            stop mono server and applications
+  start           start proxy server (it's the same as without "start")
+  stop            stop mono proxy and processes
 
 options:
   -v, --version   print mono's version
-  -d, --dev       start mono proxy directly (false)
-  -h, --host      define a host (useful with a proxy)
-  -l, --log       specify a path for the log file (/home/adi/repos/mono/tmp/log.txt)
-  -t, --logTerm   print output of the applications in the terminal (false)
+  -h, --host      define a host (useful with a proxy) ()
+  -l, --log       specify a path for the log file (/home/adrian/repos/mono/tmp/log.txt)
   --port          port for http and websockets communication (8000)
-  --appPortStart  application port range start (10001)
-  --appPortEnd    application port range end (19999)
+  --appPortStart  process port range start (10001)
+  --appPortEnd    process port range end (19999)
   --attempts      number of attempts to restart a script (3)
-  --silent        run the child script silencing stdout and stderr (false)
-  --verbose       run forver with verbose (false)
   --minUptime     minimum uptime (millis) for a script to not be considered "spinning" (2000)
   --spinSleepTime time to wait (millis) between launches of a spinning script (1000)
-  --dbHost        host address for MongoDB (127.0.0.1)
-  --dbPort        MongoDB port (27017)
   --help          you're staring at it
 
 Documentation can be found at https://github.com/jillix/mono/
@@ -61,6 +55,7 @@ mono stop && mono
     "_name": "instance name",
     "_config": "custom instance config",
     "_module": "sonv name of the module",
+    "_ready": "indicates that an instance is ready",
     "view":{
         "name": {
             "_": "reference to instance",
