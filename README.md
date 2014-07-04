@@ -1,27 +1,7 @@
 #mono
 
 ## installation
-
-#### server installation
-
-These steps must be followed when installing Mono on a new EC2 server or when you want to cleanup the `mono` user and reinstall the server.
-
-**NOTE**
-
-* This will remove the `mono` user account and all his files!!!
-* MongoDb databases are not affected.
-
-1. Launch a EC2 instance
-2. Login with the `ubuntu` user
-3. Run this bash snippet:
-
-```sh
-echo "Enter Github user name: " ; read GH_USERNAME ; curl -u $GH_USERNAME -H "Accept: application/vnd.github.raw" -o ~/install_machine.sh -s "https://api.github.com/repos/jillix/mono/contents/admin/scripts/install_machine.sh" ; chmod +x ~/install_machine.sh ; sudo -E ~/install_machine.sh
-```
-
-#### local installation
-
-After you have `node` and `MongoDb` on your Unix-based machine, run:
+comming soon...
 
 ```sh
 git clone git@github.com:jillix/mono.git
@@ -57,54 +37,68 @@ options:
   --dbPort        MongoDB port (27017)
   --help          you're staring at it
 
-environment variables:
-  MONO_DB_PASSWORD the password for the "server" user in the "mono" Mongo database
-
 Documentation can be found at https://github.com/jillix/mono/
 ```
 
 #### usage examples
 
-**start mono server**
+**start/stop mono server**
 
 ```sh
-# as deamon
-./bin/mono start
+# start mono
+mono
 
-# in dev mode with app output
-./bin/mono -dt
+# stop mono
+mono stop
+
+# start and stop mono
+mono stop && mono
 ```
 
-**stop mono server**
-
-```sh
-# when started as deamon
-./bin/mono stop
-
-# when started in dev mode (press Ctrl + C)
-^C
-```
-
-## middleware
-**http**
-```js
-M.on('request', function (req, res, next) {
-
-    // do middleware stufff with req and res, ex. sessions
-    req.session = {};
-
-    // continue with request
-    next();
-});
-```
-**websockets**
-```js
-M.on('connection', function(ws, next) {
-
-    // do middleware stufff with ws, ex. sessions
-    ws.session = {};
-
-    // continue with connection
-    next();
-});
+##Anatomy of an instance
+```json
+{
+    _name: instance name
+    _config: custom instance config
+    _module: sonv name of the module
+    view:{
+        'name': {
+            _: reference to instance
+            _tp: template function
+            html: html string
+            dom: reference to dom node
+            on: event handlers
+            config: custom module config
+            prototype: V: {
+                render: render function
+                set: set a template
+            }
+        }
+    },
+    model: {
+        'name': {
+            _: reference to instance
+            data: current data array
+            on: event handlers
+            config: custom module config
+            prototype: M: {
+                req: model request function
+            }
+        }
+    }
+    prototype: I: {
+        route: route to url
+        emit: emit an event
+        on: listen to an event
+        off: unlisten to an event or event handler
+        _load: load an element (inst, view, module)
+        _path: get a value from a path (ex. Obj.prop.method)
+        _clone: clone an object
+        _toArray: convert to array
+        _flat: flatten objects
+        _uid: create a random string
+        _reload: reload the client (without reloading the window)
+    },
+    methods.. (custom module methods)
+}
 ```
