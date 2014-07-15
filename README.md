@@ -4,9 +4,9 @@
 comming soon...
 
 ```sh
-git clone git@github.com:jillix/mono.git
-cd mono
-npm install
+$ git clone git@github.com:jillix/mono.git
+$ cd mono
+$ npm install
 ```
 
 ## CLI usage
@@ -40,13 +40,13 @@ Documentation can be found at https://github.com/jillix/mono/
 
 ```sh
 # start mono
-mono
+$ mono
 
 # stop mono
-mono stop
+$ mono stop
 
 # start and stop mono
-mono stop && mono
+$ mono && mono stop
 ```
 
 ##Anatomy of an instance
