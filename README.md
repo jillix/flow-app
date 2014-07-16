@@ -45,6 +45,6 @@ $ mono
 # stop mono
 $ mono stop
 
-# start and stop mono
-$ mono && mono stop
+# restart mono
+$ mono stop && mono
 ```
