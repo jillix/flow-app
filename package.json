@@ -1,0 +1,47 @@
+{
+    "name": "engine",
+    "version": "v0.1.0",
+    "private": true,
+    "author": "jillix <contact@jillix.com>",
+    "description": "The jillix cloud engine",
+    "contributors": [
+        {
+            "name": "Adrian Ottiker",
+            "email": "adrian@ottiker.com"
+        },
+        {
+            "name": "Gabriel Petrovay",
+            "email": "gabipetrovay@gmail.com"
+        },
+        {
+            "name": "Ionica Bizau",
+            "email": "bizauionica@gmail.com"
+        }
+    ],
+    "scripts": {
+        "postdeploy": "node install_admin.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/jillix/engine.git"
+    },
+    "keywords": [
+        "web",
+	"cloud",
+        "application",
+        "framework"
+    ],
+    "dependencies" : {
+        "ws"            : "*",
+        "forever"       : "*",
+        "mongodb"       : "*",
+        "mime"          : "*",
+        "optimist"      : "*",
+        "cookie"        : "*",
+        "fs-extra"      : "*",
+        "gitty"         : "*"
+    },
+    "engine": {
+        "node": ">=0.10"
+    }
+}
