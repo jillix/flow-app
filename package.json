@@ -36,9 +36,7 @@
         "mongodb"       : "*",
         "mime"          : "*",
         "optimist"      : "*",
-        "cookie"        : "*",
-        "fs-extra"      : "*",
-        "gitty"         : "*"
+        "cookie"        : "*"
     },
     "engine": {
         "node": ">=0.10"
