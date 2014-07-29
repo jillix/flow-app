@@ -18,9 +18,6 @@
             "email": "bizauionica@gmail.com"
         }
     ],
-    "scripts": {
-        "postdeploy": "node install_admin.js"
-    },
     "repository": {
         "type": "git",
         "url": "https://github.com/jillix/engine.git"
@@ -28,7 +25,6 @@
     "keywords": [
         "web",
 	"cloud",
-        "application",
         "framework"
     ],
     "dependencies" : {
