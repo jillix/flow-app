@@ -35,7 +35,9 @@
         "ws"            : "*",
         "mongodb"       : "*",
         "mime"          : "*",
-        "cookie"        : "*"
+        "cookie"        : "*",
+	"html-minifier"	: "*",
+	"clean-css"	: "*"
     },
     "engine": {
         "node": ">=0.10"
