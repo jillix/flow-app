@@ -27,3 +27,9 @@ npm install
 node lib/project/server.js admin 10001
 open http://github.jillix.admin.jillix.ch:10001/
 ```
+
+## Start proxy
+
+```sh
+$ node lib/proxy/server.js
+```
