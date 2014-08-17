@@ -3,9 +3,14 @@
 ## Installation
 
 ```sh
-export ENGINE_APPS="~/Documents/engine-apps" # what directory you want
+export ENGINE_APPS="/home/$USER/Documents/engine-apps" # what directory you want
 export ENGINE_DIR=$ENGINE_APPS/engine
+
 # For a better experience, add the variables above in .basrch or .profile
+
+# It's recommended to have absolute paths like /home/someone/... because they will be used
+# in admin application
+
 git clone git@github.com:jillix/engine.git $ENGINE_APPS/engine
 git clone git@github.com:jillix/admin.git $ENGINE_APPS/admin
 mongo main
