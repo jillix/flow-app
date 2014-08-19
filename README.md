@@ -3,7 +3,11 @@
 ## Installation
 
 ```sh
-export ENGINE_APPS="/home/$USER/Documents/engine-apps" # what directory you want
+# create the folder that will contain the engine framework and admin application
+# Supposing you are in this folder, run:
+echo $PWD
+
+export ENGINE_APPS=... # <-- The output of `echo $PWD`
 export ENGINE_DIR=$ENGINE_APPS/engine
 
 # For a better experience, add the variables above in .basrch or .profile
