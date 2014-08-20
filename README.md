@@ -5,9 +5,9 @@
 ```sh
 # create the folder that will contain the engine framework and admin application
 # Supposing you are in this folder, run:
-echo $PWD
+cd <your working directory>
 
-export ENGINE_APPS=... # <-- The output of `echo $PWD`
+export ENGINE_APPS=`echo $PWD` # <-- The output of `echo $PWD`
 export ENGINE_DIR=$ENGINE_APPS/engine
 
 # For a better experience, add the variables above in .basrch or .profile
@@ -27,7 +27,6 @@ rm -rf modules
 unzip modules.zip
 rm modules.zip
 cd $ENGINE_APPS/engine
-git checkout johnnys-branch
 npm install
  
 # Add domains in `/etc/hosts`
