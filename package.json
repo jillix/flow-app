@@ -28,12 +28,11 @@
         "framework"
     ],
     "dependencies" : {
-        "ws"            : "*",
-        "mongodb"       : "*",
-        "mime"          : "*",
-        "cookie"        : "*",
-	"html-minifier"	: "*",
-	"clean-css"	: "*"
+        "ws"            : "0.4.32",
+        "mime"          : "1.2.11",
+        "cookie"        : "0.1.2",
+	"html-minifier"	: "0.6.8",
+	"clean-css"	: "2.2.16"
     },
     "engine": {
         "node": ">=0.10"
