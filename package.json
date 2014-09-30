@@ -1,40 +1,40 @@
 {
-    "name": "engine",
-    "version": "v0.1.0",
-    "private": true,
-    "author": "jillix <contact@jillix.com>",
-    "description": "The jillix cloud engine",
-    "contributors": [
-        {
-            "name": "Adrian Ottiker",
-            "email": "adrian@ottiker.com"
-        },
-        {
-            "name": "Gabriel Petrovay",
-            "email": "gabipetrovay@gmail.com"
-        },
-        {
-            "name": "Ionica Bizau",
-            "email": "bizauionica@gmail.com"
-        }
-    ],
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/jillix/engine.git"
-    },
-    "keywords": [
-        "web",
-	"cloud",
-        "framework"
-    ],
-    "dependencies" : {
-        "ws"            : "0.4.32",
-        "mime"          : "1.2.11",
-        "cookie"        : "0.1.2",
-	"html-minifier"	: "0.6.8",
-	"clean-css"	: "2.2.16"
-    },
-    "engine": {
-        "node": ">=0.10"
-    }
+  "name": "engine",
+  "version": "0.1.0",
+  "private": true,
+  "author": "jillix <contact@jillix.com>",
+  "description": "The jillix cloud engine",
+  "contributors": [
+    "Adrian Ottiker <adrian@ottiker.com>",
+    "Gabriel Petrovay <gabipetrovay@gmail.com>",
+    "Ionica Bizau <bizauionica@gmail.com>"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jillix/engine.git"
+  },
+  "keywords": [
+    "web",
+    "cloud",
+    "framework"
+  ],
+  "dependencies": {
+    "ws": "0.4.32",
+    "mime": "1.2.11",
+    "cookie": "0.1.2",
+    "html-minifier": "0.6.8",
+    "clean-css": "2.2.16"
+  },
+  "engine": {
+    "node": ">=0.10"
+  },
+  "bugs": {
+    "url": "https://github.com/jillix/engine/issues"
+  },
+  "homepage": "https://github.com/jillix/engine",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
 }
