@@ -23,7 +23,8 @@
     "mime": "1.2.11",
     "cookie": "0.1.2",
     "html-minifier": "0.6.8",
-    "clean-css": "2.2.16"
+    "clean-css": "2.2.16",
+    "oriento": "0.5.1"
   },
   "engine": {
     "node": ">=0.10"
