@@ -41,5 +41,9 @@ open http://github.jillix.admin.jillix.ch:10001/
 ## Start proxy
 
 ```sh
-$ node lib/proxy/server.js
+# dev mode
+$ node lib/proxy/server.js [PORT]
+
+# production mode
+$ node lib/proxy/server.js [PORT] PRO
 ```
