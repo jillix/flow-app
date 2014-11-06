@@ -1,4 +1,4 @@
-# engine
+# Engine
 
 ## Installation
 
@@ -28,12 +28,12 @@ unzip modules.zip
 rm modules.zip
 cd $ENGINE_APPS/engine
 npm install
- 
+
 # Add domains in `/etc/hosts`
 # 127.0.0.1       github.jillix.admin.jillix.ch
 # 127.0.0.1       github.jillix.starter.jillix.ch
 # 127.0.0.1       github.jillix.composition-visualization.jillix.ch
- 
+
 node lib/project/server.js admin 10001
 open http://github.jillix.admin.jillix.ch:10001/
 ```
