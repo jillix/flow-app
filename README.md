@@ -1,6 +1,6 @@
 # jillix Engine
 
-Run and sever engine applications.
+Run and serve engine applications.
 
 ## Installation
 1. Clone the repository: `git clone git@github.com:jillix/engine.git`
