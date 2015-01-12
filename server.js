@@ -1,11 +1,11 @@
-require('./config');
+require('./lib/server/config');
 var env = process.env;
 var http = require('http');
 var WebSocketServer = require('ws').Server;
 var parse = require('url').parse;
 var clone = require(env.Z_PATH_UTILS + 'object').clone;
-var route = require('./router');
-var send = require('./send');
+var route = require(env.Z_PATH_SERVER + 'router');
+var send = require(env.Z_PATH_SERVER + 'send');
 var middleware = require(env.Z_PATH_MIDDLEWARE + 'session');
 var cache = require(env.Z_PATH_CACHE + 'cache');
 
