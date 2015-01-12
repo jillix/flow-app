@@ -7,4 +7,4 @@ Run and serve engine applications.
 2. Go to the engine dir `cd engine` and do a `npm install`
 
 ## Start an app
-`node lib/project/server.js [absolute/path/to/engineApp/repo] [port]`
+`node server.js [absolute/path/to/engineApp/repo] [port]`
