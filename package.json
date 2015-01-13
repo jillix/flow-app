@@ -19,7 +19,7 @@
     "framework"
   ],
   "dependencies": {
-    "ws": "0.4.32",
+    "ws": "0.6.5",
     "mime": "1.2.11",
     "cookie": "0.1.2",
     "uglify-js": "2.4.15",
