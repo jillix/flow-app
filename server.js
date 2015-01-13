@@ -122,6 +122,25 @@ function connectionHandler (err, session, ws) {
 
         // parse data
         // protocoll: ["instanceName:event:msgid","data"]
+
+        /**
+            types:
+            0: Call
+            1: Event
+            ---------------------------
+            2: End
+            3: Data
+            4: Error
+
+            protocoll:
+            0, id, instance.method
+            1, id, instance.event
+            ---------------------------
+            2, id, err, data
+            3, id, data
+        */
+
+
         try {
             data = JSON.parse(data.toString());
             data[0] = data[0].split(':');
