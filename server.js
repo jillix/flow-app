@@ -80,6 +80,7 @@ function requestHandler (err, session, req, res) {
                 event.send(code, data);
             });
 
+            // resume request
             req.resume();
 
         } else {
