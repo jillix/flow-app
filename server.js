@@ -12,6 +12,24 @@ var cache = require(env.Z_PATH_CACHE + 'cache');
 // create instance cache with role check
 var instanceCache = cache.pojo('instances', true);
 
+// init and cache core module instance
+require(env.Z_PATH_MODULE + 'module');
+
+// start http server
+var httpServer = http.createServer(middleware(requestHandler));
+
+// start ws server
+var ws = new WebSocketServer({server: httpServer});
+
+// pass websocket to send module
+send.setWebsocket(ws);
+
+// listen to ws connections
+ws.on('connection', middleware(connectionHandler));
+
+// start http server
+httpServer.listen(env.Z_PORT);
+
 // check if role has access to instance and operation
 function checkOperationAccess (role, instance, event) {
 
@@ -154,21 +172,3 @@ function connectionHandler (err, session, ws) {
         }
     });
 }
-
-// init and cache core module instance
-require(env.Z_PATH_MODULE + 'module')();
-
-// start http server
-var httpServer = http.createServer(middleware(requestHandler));
-
-// start ws server
-var ws = new WebSocketServer({server: httpServer});
-
-// pass websocket to send module
-send.setWebsocket(ws);
-
-// listen to ws connections
-ws.on('connection', middleware(connectionHandler));
-
-// start http server
-httpServer.listen(env.Z_PORT);
