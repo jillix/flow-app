@@ -6,7 +6,7 @@ var lib = engine_root + 'lib/';
 // read repo path
 var repo = process.argv[2];
 if (!repo) {
-    throw new Error('No repo path argument.');
+    throw new Error('No repo path.');
 }
 
 // get the path to the repo
@@ -14,7 +14,7 @@ repo = repo[0] === '/' ? repo : path.normalize(engine_root + '/../' + repo) + '/
 
 // get port
 if (!process.argv[3] || !process.argv[3].replace(/[^0-9]/g, '')) {
-    throw new Error('Not port argument.');
+    throw new Error('Not port.');
 }
 process.env.Z_PORT = process.argv[3];
 
@@ -78,25 +78,26 @@ process.env.Z_PATH_PROCESS_COMPOSITION = repo + 'composition/';
 // TODO this should be a part of the service application
 //process.env.Z_PATH_REPOS = process.env.ENGINE_APPS || process.env.HOME + '/engine_repos/';
 
-var env = process.env;
+var engine = require('./lib/engine');
+
 var http = require('http');
 var WebSocketServer = require('ws').Server;
 
-var middleware = require(env.Z_PATH_MIDDLEWARE + 'session');
-var requestHandler = require(env.Z_PATH_SERVER + 'request');
-var connectionHandler = require(env.Z_PATH_SERVER + 'socket');
+//var session = require(env.Z_PATH_MIDDLEWARE + 'session');
+//var requestHandler = require(env.Z_PATH_SERVER + 'request');
+//var connectionHandler = require(env.Z_PATH_SERVER + 'socket');
 
 // init and cache core module instance
 //require(env.Z_PATH_MODULE + 'module');
 
 // start http server
-process.httpServer = http.createServer(middleware(requestHandler));
+engine.httpServer = http.createServer(engine.session(engine.requestHandler));
 
 // start ws server
-process.webSocketServer = new WebSocketServer({server: process.httpServer});
+engine.webSocketServer = new WebSocketServer({server: engine.httpServer});
 
 // listen to ws connections
-process.webSocketServer.on('connection', middleware(connectionHandler));
+engine.webSocketServer.on('connection', engine.session(engine.connectionHandler));
 
 // start http server
-process.httpServer.listen(env.Z_PORT);
+engine.httpServer.listen(process.env.Z_PORT);
