@@ -1,32 +1,23 @@
-var path = require('path');
-var engine_root = path.normalize(__dirname + '/');
-var lib = engine_root + 'lib/';
-
-// ------------------------------------------------------------------ CLI CHECKS
 // read repo path
 var repo = process.argv[2];
 if (!repo) {
     throw new Error('No repo path.');
 }
 
-// get the path to the repo
-repo = repo[0] === '/' ? repo : path.normalize(engine_root + '/../' + repo) + '/';
-
 // get port
-if (!process.argv[3] || !process.argv[3].replace(/[^0-9]/g, '')) {
+var port = process.argv[3];
+if (!port || !port.replace(/[^0-9]/g, '')) {
     throw new Error('Not port.');
 }
-process.env.Z_PORT = process.argv[3];
 
-// check production mode
+// production mode
 if (process.argv[4] === 'PRO') {
     process.env.Z_PRODUCTION = 'true';
 }
 
-// --------------------------------------------------------------- ENV VARIABLES
-// access values
-process.env.Z_USER = '530639e09060f4703737e017';    // TODO get value from env
-process.env.Z_KEY = '0ULtAr8iH151p69q2XYTCht';      // TODO get value from env
+// access info
+process.env.Z_USER = process.argv[5] || '';
+process.env.Z_KEY = process.argv[6]  || '';
 
 // system roles
 process.env.Z_ROLE_MODULE = '_module';
@@ -39,17 +30,13 @@ process.env.Z_SESSION_USER_KEY = 'user';
 
 // engine values
 process.env.Z_OP_KEY = '@';
-process.env.Z_CORE_INST = 'Z';
-process.env.Z_CLIENT_LIBS = repo + 'libs.json';
 
 // module role
 process.env.Z_ROLE_MODULE = 'module';
 
 // send events
 process.env.Z_SEND_INST_REQ = 'I>';
-process.env.Z_SEND_MODEL_REQ = 'M>';
 process.env.Z_SEND_QUERY_REQ = 'Q>';
-process.env.Z_SEND_VIEW_REQ = 'V>';
 process.env.Z_SEND_MODULE_REQ = 'M';
 process.env.Z_SEND_CLIENT_REQ = 'Z';
 
@@ -58,46 +45,25 @@ process.env.Z_HTTP_CACHE_MAX_AGE = 86400;
 process.env.Z_HTTP_CACHE_MAX_AGE_FINGERPRINT = 94670000;
 
 // path values
-process.env.Z_PATH_ENGINE = engine_root;
-process.env.Z_PATH_CACHE = lib + 'cache/';
-process.env.Z_PATH_MODELS = lib + 'models/';
-process.env.Z_PATH_STORES = lib + 'stores/';
-process.env.Z_PATH_MIDDLEWARE = lib + 'middleware/';
-process.env.Z_PATH_SERVER = lib + 'server/';
-process.env.Z_PATH_CLIENT = lib + 'client/';
-process.env.Z_PATH_MODULE = lib + 'module/';
-process.env.Z_PATH_VIEWS = lib + 'views/';
-process.env.Z_PATH_UTILS = lib + 'utils/';
-
+process.env.Z_PATH_ENGINE = require('path').normalize(__dirname + '/');
 process.env.Z_PATH_PROCESS_REPO = repo;
 process.env.Z_PATH_PROCESS_PUBLIC = repo + 'public/';
 process.env.Z_PATH_PROCESS_MARKUP = repo + 'markup/';
 process.env.Z_PATH_PROCESS_MODULES = repo + 'modules/';
 process.env.Z_PATH_PROCESS_COMPOSITION = repo + 'composition/';
 
-// TODO this should be a part of the service application
-//process.env.Z_PATH_REPOS = process.env.ENGINE_APPS || process.env.HOME + '/engine_repos/';
-
-var engine = require('./lib/engine');
-
 var http = require('http');
 var WebSocketServer = require('ws').Server;
+var engine = require('./lib/engine');
 
-//var session = require(env.Z_PATH_MIDDLEWARE + 'session');
-//var requestHandler = require(env.Z_PATH_SERVER + 'request');
-//var connectionHandler = require(env.Z_PATH_SERVER + 'socket');
-
-// init and cache core module instance
-//require(env.Z_PATH_MODULE + 'module');
-
-// start http server
+// create a http server
 engine.httpServer = http.createServer(engine.session(engine.requestHandler));
 
-// start ws server
+// create a websocket server
 engine.webSocketServer = new WebSocketServer({server: engine.httpServer});
 
-// listen to ws connections
+// listen to websocket connections
 engine.webSocketServer.on('connection', engine.session(engine.connectionHandler));
 
 // start http server
-engine.httpServer.listen(process.env.Z_PORT);
+engine.httpServer.listen(port);
