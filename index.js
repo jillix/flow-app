@@ -1,23 +1,16 @@
-// read repo path
+#!/usr/bin/env node
+
+// read CLI arguments
 var repo = process.argv[2];
-if (!repo) {
-    throw new Error('No repo path.');
-}
-
-// get port
 var port = process.argv[3];
-if (!port || !port.replace(/[^0-9]/g, '')) {
-    throw new Error('Not port.');
-}
+var user = process.argv[4];
+var key = process.argv[5];
+var production = process.argv[6] === 'PRO' ? true : false;
 
-// production mode
-if (process.argv[4] === 'PRO') {
-    process.env.Z_PRODUCTION = 'true';
+// check the CLI arguments
+if (!repo || !port || !user || !key) {
+    throw new Error('Invalid CLI arguments Example: ./index.js /absolute/path/to/repo 8000 USERID APIKEY [PRO]');
 }
-
-// access info
-process.env.Z_USER = process.argv[5] || '';
-process.env.Z_KEY = process.argv[6]  || '';
 
 // system roles
 process.env.Z_ROLE_MODULE = '_module';
@@ -31,15 +24,6 @@ process.env.Z_SESSION_USER_KEY = 'user';
 // engine values
 process.env.Z_OP_KEY = '@';
 
-// module role
-process.env.Z_ROLE_MODULE = 'module';
-
-// send events
-process.env.Z_SEND_INST_REQ = 'I>';
-process.env.Z_SEND_QUERY_REQ = 'Q>';
-process.env.Z_SEND_MODULE_REQ = 'M';
-process.env.Z_SEND_CLIENT_REQ = 'Z';
-
 // http caching
 process.env.Z_HTTP_CACHE_MAX_AGE = 86400;
 process.env.Z_HTTP_CACHE_MAX_AGE_FINGERPRINT = 94670000;
@@ -52,18 +36,5 @@ process.env.Z_PATH_PROCESS_MARKUP = repo + 'markup/';
 process.env.Z_PATH_PROCESS_MODULES = repo + 'modules/';
 process.env.Z_PATH_PROCESS_COMPOSITION = repo + 'composition/';
 
-var http = require('http');
-var WebSocketServer = require('ws').Server;
-var engine = require('./lib/engine');
-
-// create a http server
-engine.httpServer = http.createServer(engine.session(engine.requestHandler));
-
-// create a websocket server
-engine.webSocketServer = new WebSocketServer({server: engine.httpServer});
-
-// listen to websocket connections
-engine.webSocketServer.on('connection', engine.session(engine.connectionHandler));
-
-// start http server
-engine.httpServer.listen(port);
+// start engine
+require('./lib/engine')(repo, port, user, key, production);
