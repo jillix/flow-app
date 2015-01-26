@@ -8,7 +8,7 @@ var key = process.argv[5];
 var production = process.argv[6] === 'PRO' ? true : false;
 
 // check the CLI arguments
-if (!repo || !port || !user || !key) {
+if (!repo || !port) {
     throw new Error('Invalid CLI arguments Example: ./index.js /absolute/path/to/repo 8000 USERID APIKEY [PRO]');
 }
 
