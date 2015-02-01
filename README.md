@@ -7,4 +7,4 @@ Run and serve engine applications.
 2. Go to the engine dir `cd engine` and do a `npm install`
 
 ## Start an app
-`iojs index.js [absolute/path/to/engineApp/repo] [port]`
+`./engine [absolute/path/to/engineApp/repo] [port]`
