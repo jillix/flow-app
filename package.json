@@ -1,6 +1,6 @@
 {
   "name": "engine",
-  "version": "0.1.0",
+  "version": "0.1.0-alpha",
   "private": true,
   "author": "jillix <contact@jillix.com>",
   "description": "The jillix cloud engine",
