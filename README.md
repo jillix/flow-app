@@ -9,3 +9,6 @@ Applications are made of module instances, which are configured in **composition
 
 ## Start an app
 `./engine [absolute/path/to/application/repo] [port]`
+
+## Composition
+TODO document the [composition configuration](https://docs.google.com/a/ottiker.com/drawings/d/1JL4PaJjawA0h593ea5oOEs8WlC8HSs1GZnZrvXF0GWw/edit) in the README.
