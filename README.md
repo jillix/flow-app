@@ -89,6 +89,7 @@ This example is form https://github.com/adioo/view.
 * event: `function (event, data) {}`
 
 ####Emit events
+Engine events always have an event object as first parameter. So if a module emit event s from code, it's good to give an event object as first parameter.
 ```js
 this.emit({/*custom event*/}, {data: "object"});
 ```
