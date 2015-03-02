@@ -14,10 +14,52 @@ Applications are made of module instances, which are configured in **composition
 ##Start an app
 `./engine [absolute/path/to/app/repo] [port]`
 
-##Composition
-TODO document the [composition configuration](https://docs.google.com/a/ottiker.com/drawings/d/1JL4PaJjawA0h593ea5oOEs8WlC8HSs1GZnZrvXF0GWw/edit) in the README.
+####Composition
+Module instance:
+```json
+"name": "string",
+"module": "string"|{object},
+"roles": {"name": true|false},
+"flow": [{in}],
+"config": {object},
+"client": {
+    "config": {object},
+    "flow": [{in}],
+    "extFlow": [{in}],
+    "load": ["name"],
+    "styles": ["file"],
+    "markup": ["file"]
+}
+```
+Flow `in`:
+```json
+{
+    "in": "pattern|click",
+    "selector": "#",
+    "scope": "global|parent",
+    "1": true|false,
+    "noRoute": true|false,
+    "dontPrevent": true|false,
+    "out": [{out}]
+}
+```
+Flow `out`:
+```json
+{
+    "load": ["name"],
+    "route": "path{value}",
+    "emit": "event",
+    "call": "method",
+    "to": "instance",
+    "data": {object}
+    "set": {
+        "key": "path{value}",
+        "key": "$#css:attr{value}"
+    }
+}
+```
 
-##Modules
+####Modules
 Extend the `npm` `package.json` with following infos, to load module client resources:
 ```json
 {
@@ -29,4 +71,13 @@ Extend the `npm` `package.json` with following infos, to load module client reso
         "markup": ["file.html"]
     }
 }
+```
+
+####Event handler types
+* link: `function (link) {}`
+* event: `function (event, data) {}`
+
+####Emit events
+```js
+this.emit({/*custom event*/}, {data: "object"});
 ```
