@@ -56,9 +56,7 @@ Extend the `npm` `package.json` with following infos, to load module client reso
     "out": [{}]
 }
 ```
-* extFlow `in`:
-A module is responsible to handle an `extFlow` config.
-This example is form https://github.com/adioo/view.
+* extFlow `in` (A module is responsible to handle an `extFlow` config.This example is form (adioo/view)[https://github.com/adioo/view]):
 ```json
 {
     "in": "DOM_event",
