@@ -36,7 +36,7 @@ Extend the `npm` `package.json` with following info, to load module client resou
 
 #### Composition
 
-- Module instance:
+ - Module instance:
 
   ```json
   {
