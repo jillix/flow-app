@@ -1,4 +1,4 @@
-#!/usr/bin/env iojs
+#!/usr/bin/env node
 
 // read CLI arguments
 var repo = process.argv[2];

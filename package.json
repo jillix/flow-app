@@ -1,9 +1,12 @@
 {
   "name": "engine",
-  "version": "0.1.0-alpha",
+  "version": "0.1.0-beta",
   "private": true,
   "author": "jillix <contact@jillix.com>",
   "description": "The jillix cloud engine",
+  "bin": {
+    "engine": "./engine"
+  },
   "contributors": [
     "Adrian Ottiker <adrian@ottiker.com>",
     "Gabriel Petrovay <gabipetrovay@gmail.com>",
@@ -34,7 +37,7 @@
     "url": "https://github.com/jillix/engine/issues"
   },
   "homepage": "https://github.com/jillix/engine",
-  "main": "index.js",
+  "main": "engine",
   "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
