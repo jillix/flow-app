@@ -28,7 +28,8 @@
     "uglify-js": "2.4.16",
     "html-minifier": "0.7.0 ",
     "clean-css": "3.0.8",
-    "fs-extra": "0.16.3"
+    "fs-extra": "0.16.3",
+    "fwatcher": "1.0.0"
   },
   "engine": {
     "node": ">=0.10"
