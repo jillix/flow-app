@@ -4,6 +4,9 @@
   "private": true,
   "author": "jillix <contact@jillix.com>",
   "description": "The jillix cloud engine",
+  "bin": {
+    "engine": "./engine"
+  },
   "contributors": [
     "Adrian Ottiker <adrian@ottiker.com>",
     "Gabriel Petrovay <gabipetrovay@gmail.com>",
@@ -25,7 +28,8 @@
     "uglify-js": "2.4.16",
     "html-minifier": "0.7.0 ",
     "clean-css": "3.0.8",
-    "fs-extra": "0.16.3"
+    "fs-extra": "0.16.3",
+    "fwatcher": "1.0.0"
   },
   "engine": {
     "node": ">=0.10"
@@ -34,5 +38,9 @@
     "url": "https://github.com/jillix/engine/issues"
   },
   "homepage": "https://github.com/jillix/engine",
-  "main": "engine"
+  "main": "engine",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
 }
