@@ -104,5 +104,5 @@ Extend the `npm` `package.json` with following info, to load module client resou
 Engine events always have an event object as first parameter. So if a module emit event s from code, it's good to give an event object as first parameter.
 
 ```js
-this.emit({/*custom event*/}, {data: "object"});
+this.emit("eventName", {/*custom event*/}, {data: "object"});
 ```
