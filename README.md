@@ -106,3 +106,6 @@ Engine events always have an event object as first parameter. So if a module emi
 ```js
 this.emit("eventName", {/*custom event*/}, {data: "object"});
 ```
+
+#### Please note
+* Websocket communication after restart ([Issue #174](https://github.com/jillix/engine/issues/174))
