@@ -18,8 +18,12 @@ Applications are made of module instances, which are configured in **composition
 ```sh
 $ engine [absolute/path/to/app/repo] [port]
 ```
+#### How to build a module
+1. Define the API (exported methods).
+2. Define the configurable parts.
+3. Write the methods with jsDocs Documentation.
 
-#### Modules
+#### Module package
 Extend the `npm` `package.json` with following info, to load module client resources:
 
 ```json
