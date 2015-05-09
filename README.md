@@ -18,12 +18,28 @@ Applications are made of module instances, which are configured in **composition
 ```sh
 $ engine [absolute/path/to/app/repo] [port]
 ```
-#### How to build a module
-1. Define the API (exported methods).
-2. Define the configurable parts.
-3. Write the methods with jsDocs Documentation.
+#### Module guidlines
+* A module has a isolated purpose and functionality.
+* `flow` and `extFlow` handle the interactions (Events, DOM).
+* Modules are independent and configurable.
 
-#### Module package
+Think of a module as a collection of functionality (`exports`) that can be used with the flow composition.
+
+- **API**
+    * Define a clear purpose and functionality.
+    * Define the methods to export (accessible through flow).
+    * Write flow `out` configuration examples (with all possible options).
+    * Write methods with [jsDocs](https://github.com/jsdoc3/jsdoc) comments.
+
+- **Config**
+    * Define configurable options.
+    * Write full configuration example.
+
+- **NPM Package**
+    * Use always versions for dependencies.
+    * No promts in npm scripts.
+
+#### Module package extensions
 Extend the `npm` `package.json` with following info, to load module client resources:
 
 ```json
