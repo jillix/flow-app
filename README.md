@@ -56,7 +56,7 @@ Extend the `npm` `package.json` with following info, to load module client resou
 
 #### Composition
 
- - Module instance:
+ - **Module instance:**
 
   ```json
   {
@@ -76,7 +76,7 @@ Extend the `npm` `package.json` with following info, to load module client resou
   }
   ```
 
- - Flow `in`:
+ - **Flow `in`:**
 
   ```json
   {
@@ -87,7 +87,7 @@ Extend the `npm` `package.json` with following info, to load module client resou
   }
   ```
 
- - extFlow `in` (A module is responsible to handle an `extFlow` config.This example is form [adioo/view](https://github.com/adioo/view)):
+ - **extFlow `in`** (A module is responsible to handle an `extFlow` config.This example is form [adioo/view](https://github.com/adioo/view)):
 
   ```json
   {
@@ -99,7 +99,7 @@ Extend the `npm` `package.json` with following info, to load module client resou
   }
   ```
 
- - Flow `out`:
+ - **Flow `out`:**
 
   ```json
   {
