@@ -18,7 +18,7 @@ Applications are made of module instances, which are configured in **composition
 ```sh
 $ engine [absolute/path/to/app/repo] [port]
 ```
-#### Module guidlines
+#### Module guidelines
 * A module has a isolated purpose and functionality.
 * `flow` and `extFlow` handle the interactions (Events, DOM).
 * Modules are independent and configurable.
