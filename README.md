@@ -116,6 +116,15 @@ Extend the `npm` `package.json` with following info, to load module client resou
   }
   ```
 
+#### Path types
+To fetch files from the applications public folder, or to emit and event on the server via an HTTP request, engine has two simple prefix that must be appended to the URL.
+
+#####Public file path `/!`
+Example: `/!/path/to/public/file.suffix`
+
+#####Operation path `/@/[module_instance]/[event]/`
+Example: `/@/[module_instance]/[event]/path/data/?search=query#hash`
+
 #### Event handler types
  - link: `function (link) {}`
  - event: `function (event, data) {}`
