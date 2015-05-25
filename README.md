@@ -63,12 +63,16 @@ Extend the `npm` `package.json` with following info, to load module client resou
       "name": "string",
       "module": "string",
       "roles": {"roleName": true},
-      "flow": [{}],
+      "I": [{}],
+      "O": {},
       "config": {},
       "client": {
           "config": {},
-          "flow": [{}],
-          "extFlow": [{}],
+          "I": [{}],
+          "O": {
+              "name": [{}]
+          },
+          "ext": [{}],
           "load": ["moduleInstanceName"],
           "styles": ["/path/file.css"],
           "markup": ["/path/file.html"]
@@ -76,37 +80,38 @@ Extend the `npm` `package.json` with following info, to load module client resou
   }
   ```
 
- - **Flow `in`:**
+ - **`I` (incoming):**
 
   ```json
   {
-      "in": "event_pattern",
+      "on": "event_pattern",
       "1": false,
-      "noRoute": false,
-      "out": [{}]
+      "nr": false,
+      "flow": [{}]
   }
   ```
 
- - **extFlow `in`** (A module is responsible to handle an `extFlow` config.This example is form [adioo/view](https://github.com/adioo/view)):
+ - **`ext` (external)** (A module is responsible to handle an `extFlow` config.This example is form [adioo/view](https://github.com/adioo/view)):
 
   ```json
   {
-      "in": "DOM_event",
+      "on": "DOM_event",
+      "element": "attrName",
       "selector": "#",
       "scope": "global|parent",
       "dontPrevent": false,
-      "out": [{}]
+      "flow": [{}]
   }
   ```
 
- - **Flow `out`:**
+ - **`flow` handler:**
 
   ```json
   {
       "load": ["name"],
-      "route": "path{value}",
-      "emit": "event",
+      "pipe": "event",
       "call": "method",
+      "route": "path{value}",
       "to": "instance",
       "data": {},
       "set": {
