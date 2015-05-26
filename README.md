@@ -134,12 +134,21 @@ Example: `/@/[module_instance]/[event]/path/data/?search=query#hash`
  - link: `function (link) {}`
  - event: `function (event, data) {}`
 
-#### Emit events
-Engine events always have an event object as first parameter. So if a module emit event s from code, it's good to give an event object as first parameter.
-
+#### Event streams
 ```js
-this.emit("eventName", {/*custom event*/}, {data: "object"});
+// create new event stream
+var event = this.event("eventName");
+
+// emit data on the event stream
+event.emit(error, {data: "object"})
+
+// append data handlers
+event.data(function (err, data) {});
+
+// pipe data emits to another event
+event.pipe(this.event("anotherEvent"));
 ```
 
 #### Please note
 * Websocket communication after restart ([Issue #174](https://github.com/jillix/engine/issues/174))
+
