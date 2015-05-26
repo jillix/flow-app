@@ -132,7 +132,8 @@ Example: `/@/[module_instance]/[event]/path/data/?search=query#hash`
 
 #### Event handler types
  - link: `function (link) {}`
- - event: `function (event, data) {}`
+ - event: `function (eventStream) {}`
+ - data: `function (err, data) {}`
 
 #### Event streams
 ```js
