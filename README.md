@@ -85,9 +85,13 @@ Extend the `npm` `package.json` with following info, to load module client resou
   ```json
   {
       "on": "event_pattern",
+      "data": {},
+      "set": {},
+      "load": [],
+      "route": "",
+      "flow": [{}],
       "1": false,
-      "nr": false,
-      "flow": [{}]
+      "nr": false
   }
   ```
 
@@ -108,16 +112,9 @@ Extend the `npm` `package.json` with following info, to load module client resou
 
   ```json
   {
-      "load": ["name"],
       "pipe": "event",
       "call": "method",
-      "route": "path{value}",
-      "to": "instance",
-      "data": {},
-      "set": {
-          "key": "path{value}",
-          "key": "$#css:attr{value}"
-      }
+      "to": "instance"
   }
   ```
 
