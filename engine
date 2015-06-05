@@ -7,7 +7,7 @@ var production = process.argv[4] === 'PRO' ? true : false;
 
 // check the CLI arguments
 if (!repo || !port) {
-    throw new Error('Invalid CLI arguments Example: ./engine /absolute/path/to/repo 8000 [PRO]');
+    throw new Error('Invalid CLI arguments. Example: ./engine /absolute/path/to/repo [PORT] ["PRO"]');
 }
 
 // start engine
