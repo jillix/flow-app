@@ -159,18 +159,16 @@ exports.method = function (stream) {
 ```
 
 #### Engine API
-#####engine.reload
-Empties all caches, closes all sockets and resets the document (client only).
-Example:
+#####engine.reload (client only)
+Empties all caches, closes all sockets and resets the document.
 ```js
 engine.reload();
 
 // reload but keep the document (DOM)
 engine.reload(true);
 ```
-
 #####engine.client
-Is indicating that engine runs in a client (browser). On the server this value is undefined.
+Is `true`, when engine runs in a client (browser). On the server this value is undefined.
 
 #####engine.production
-Is true, when the production argument `PRO` is passed to the process, otherwise the value is undefined.
+Is `true`, when the production argument `PRO` is passed to the process, otherwise `false`.
