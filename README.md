@@ -43,7 +43,7 @@ Extend the `npm` `package.json` with following info, to define a default config 
 
 ```json
 {
-    engine_instance: {
+    "engine_instance": {
         "public": "public/folder",
         "config": {},
         "flow": [{}],
@@ -90,7 +90,7 @@ Extend the `npm` `package.json` with following info, to define a default config 
   ```json
   {
       "on": "event",
-      "1: false,
+      "1": false,
       "to": "instance",
       "emit": "event",
       "call": "path|instance/event|ws://domain.com/instance/event",
