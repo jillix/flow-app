@@ -79,11 +79,10 @@ Think of a module as a collection of functionality (`exports`) that can be used 
          "load": ["instance"],
          "client": {
                "config": {},
-                     "flow": [{}],
-                     "load": ["instance"],
-                     "styles": ["/path/file.css"],
-                     "markup": ["/path/file.html"]
-               }
+               "flow": [{}],
+               "load": ["instance"],
+               "styles": ["/path/file.css"],
+               "markup": ["/path/file.html"]
          }
    }
    ```
