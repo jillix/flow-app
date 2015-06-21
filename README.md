@@ -85,7 +85,7 @@ Extend the `npm` `package.json` with following info, to define a default config 
 }
   ```
 
- - **`flow`:**
+ - **Flow:**
 
   ```json
   {
