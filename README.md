@@ -78,11 +78,12 @@ Think of a module as a collection of functionality (`exports`) that can be used 
          "flow": [{}],
          "load": ["instance"],
          "client": {
-         "config": {},
-               "flow": [{}],
-               "load": ["instance"],
-               "styles": ["/path/file.css"],
-               "markup": ["/path/file.html"]
+               "config": {},
+                     "flow": [{}],
+                     "load": ["instance"],
+                     "styles": ["/path/file.css"],
+                     "markup": ["/path/file.html"]
+               }
          }
    }
    ```
@@ -93,12 +94,12 @@ Think of a module as a collection of functionality (`exports`) that can be used 
 
    ```json
    {
-      "on": "event",
-      "1": false,
-      "to": "instance",
-      "emit": "event",
-      "call": "path|instance/event|ws://domain.com/instance/event",
-      "data": ["path", {}]
+         "on": "event",
+         "1": false,
+         "to": "instance",
+         "emit": "event",
+         "call": "path|instance/event|ws://domain.com/instance/event",
+         "data": ["path", {}]
    }
    ```
    Flow's `call` can now emit server side events, by providing a URL: `ws://domain.com/instance/event`. This will pipe the event stream to a websocket stream, which is emitted on the server side. If the domain is not part of the URL: `instance/event` engine uses the current client host.
