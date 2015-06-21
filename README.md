@@ -43,7 +43,7 @@ Extend the `npm` `package.json` with following info, to define a default config 
 
 ```json
 {
-    "engine_instance": {
+    "composition": {
         "public": "public/folder",
         "config": {},
         "flow": [{}],
