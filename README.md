@@ -125,6 +125,9 @@ exports.method = function (stream) {
     // revceive data from origin stream
     stream.data(function (err, data) {});
     
+    // send this stream further down the pipe
+    this.flow("eventName", stream);
+    
     // ----------------------------------------------------
     
     // emit a new event stream (flow config can listen to those events)
