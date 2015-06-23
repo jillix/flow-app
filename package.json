@@ -29,7 +29,7 @@
     "html-minifier": "0.7.0 ",
     "clean-css": "3.0.8",
     "fs-extra": "0.16.3",
-    "fwatcher": "1.0.0",
+    "fwatcher": "2.0.0",
     "wrabbit": "2.1.0"
   },
   "engine": {
