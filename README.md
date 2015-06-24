@@ -1,26 +1,25 @@
 engine
 ======
 
-Engine is a framework/platform, which takes care of **resource loading**, **networking** and **interaction**.
-Applications are made of module instances, which are configured in **composition** files.
+Engine is a framework/platform, which takes care of **resources**, **networking** and **interaction**.
+Applications are made of module, which are instantiated and configured with **composition** files.
 
-### Install the server
+###Install the server
 1. Clone the repository: `git clone git@github.com:jillix/engine.git`
 2. Go to the engine dir `cd engine` and do a `npm install`
 3. If you like to run `engine` globally, run `npm link` in the engine directory.
 
-### Install an app
+###Install an app
 1. Clone the repository: `git clone [git_url]`
 2. Change directory: `cd [app_repo_dir]/` and do a `npm install`
 
-### Start an app
-
+###Start an app
 ```sh
-$ engine [absolute/path/to/app/repo] [port]
+$ engine [absolute/path/to/app/repo] [port] [PRO]
 ```
-#### Module guidelines
+###Module guidelines
 * A module has a isolated purpose and functionality.
-* `flow` and `extFlow` handle the interactions (Events, DOM).
+* `flow` uses the module instances public API.
 * Modules are independent and configurable.
 
 Think of a module as a collection of functionality (`exports`) that can be used with the flow composition.
@@ -28,7 +27,7 @@ Think of a module as a collection of functionality (`exports`) that can be used 
 - **API**
     * Define a clear purpose and functionality.
     * Define the methods to export (accessible through flow).
-    * Write flow `out` configuration examples (with all possible options).
+    * Write flow configuration examples (with all possible options).
     * Write methods with [jsDocs](https://github.com/jsdoc3/jsdoc) comments.
 
 - **Config**
@@ -39,84 +38,64 @@ Think of a module as a collection of functionality (`exports`) that can be used 
     * Use always versions for dependencies.
     * No promts in npm scripts.
 
-#### Module package extensions
-Extend the `npm` `package.json` with following info, to load module client resources:
-
+###Module instance config
+#####Package:
+Extend the `npm` `package.json` with a `composition` object, to define a default config for instances of the module:
 ```json
 {
-    "public": "public/folder",
-    "clientDependencies": ["moduleName"],
-    "components": {
-        "scripts": ["file.js"],
-        "styles": ["file.css"],
-        "markup": ["file.html"]
+    "composition": {
+        "public": "public/folder",
+        "config": {},
+        "flow": [{}],
+        "client": {
+            "module": [
+                "module/script.js",
+                "/public/repo/script.js",
+                "//external/script.js"
+            ],
+            "dependencies": ["module"],
+            "config": {},
+            "flow": [{}],
+            "styles": ["styles.css"],
+            "markup": ["markup.html"]
+        }
     }
 }
 ```
-
-#### Composition
-
- - **Module instance:**
-
-  ```json
-  {
-      "name": "string",
-      "module": "string",
-      "roles": {"roleName": true},
-      "flow": [{}],
+##### Composition:
+A composition config, configures an instance of a module.
+```json
+{
+      "roles": {"*": true},
+      "name": "instance",
+      "module": "module",
       "config": {},
+      "flow": [{}],
+      "load": ["instance"],
       "client": {
-          "config": {},
-          "flow": [{}],
-          "extFlow": [{}],
-          "load": ["moduleInstanceName"],
-          "styles": ["/path/file.css"],
-          "markup": ["/path/file.html"]
+            "config": {},
+            "flow": [{}],
+            "load": ["instance"],
+            "styles": ["/path/file.css"],
+            "markup": ["/path/file.html"]
       }
-  }
-  ```
-
- - **Flow `in`:**
-
-  ```json
-  {
-      "in": "event_pattern",
+}
+```
+#####Flow:
+Flow configs create streams, that allow to send and receive data from a module instance method.
+```json
+{
+      "on": "event",
       "1": false,
-      "noRoute": false,
-      "out": [{}]
-  }
-  ```
-
- - **extFlow `in`** (A module is responsible to handle an `extFlow` config.This example is form [adioo/view](https://github.com/adioo/view)):
-
-  ```json
-  {
-      "in": "DOM_event",
-      "selector": "#",
-      "scope": "global|parent",
-      "dontPrevent": false,
-      "out": [{}]
-  }
-  ```
-
- - **Flow `out`:**
-
-  ```json
-  {
-      "load": ["name"],
-      "route": "path{value}",
-      "emit": "event",
-      "call": "method",
       "to": "instance",
-      "data": {},
-      "set": {
-          "key": "path{value}",
-          "key": "$#css:attr{value}"
-      }
-  }
-  ```
+      "emit": "event",
+      "call": "path|instance/event|ws://domain.com/instance/event",
+      "data": ["path", {}]
+}
+```
+Flow's `call` can now emit server side events, by providing a URL: `ws://domain.com/instance/event`. This will pipe the event stream to a websocket stream, which is emitted on the server side. If the domain is not part of the URL: `instance/event` engine uses the current client host.
 
-#### Path types
+###Path types
 To fetch files from the applications public folder, or to emit and event on the server via an HTTP request, engine has two simple prefix that must be appended to the URL.
 
 #####Public file path `/!`
@@ -125,16 +104,78 @@ Example: `/!/path/to/public/file.suffix`
 #####Operation path `/@/[module_instance]/[event]/`
 Example: `/@/[module_instance]/[event]/path/data/?search=query#hash`
 
-#### Event handler types
- - link: `function (link) {}`
- - event: `function (event, data) {}`
-
-#### Emit events
-Engine events always have an event object as first parameter. So if a module emit event s from code, it's good to give an event object as first parameter.
-
+###Event streams
+Every module instance has the event stream (flow) object as prototype.
+Heres and example how to use a flow stream in your module code:
 ```js
-this.emit("eventName", {/*custom event*/}, {data: "object"});
+// exported module method
+exports.method = function (stream) {
+    
+    // write back to the origin stream (callback events!)
+    stream.write(err, data);
+    
+    // revceive data from origin stream
+    stream.data(function (err, data) {});
+    
+    // send this stream further down the pipe
+    this.flow("eventName", stream);
+    
+    // ----------------------------------------------------
+    
+    // emit a new event stream (flow config can listen to those events)
+    var myStream = this.flow("eventName");
+    
+    // Append a data handler
+    // Data handlers are called in the order they were appended. And if a data handler
+    // returns data, the next data handler will have the return value as data argument.
+    myStream.data(function (err, data) {
+    
+        // ..do something with the data
+        
+        // return a data object for the next handlers.
+        // this allows to transform the data as it flows in the event stream.
+        return data;
+    });
+    
+    // write to the event stream
+    myStream.write(error, {data: "object"});
+    
+    // writes on "myStream" are received by the "stream" data handlers
+    myStream.pipe(stream);
+    
+    // writes on "stream" are received by the "myStream" data handlers
+    stream.pipe(myStream);
+    
+    // duplex
+    myStream.pipe(stream).pipe(myStream);
+    
+    // pause stream
+    myStream.pause();
+    
+    // resume stream
+    myStream.resume();
+    
+    // end stream
+    myStream.end();
+    
+    // append a custom write handler
+    myStream._write = function (err, data) {}
+    
+    // append a custom end handler
+    myStream._end = function (/* Arguments from the end method */) {}
+}
 ```
+###Engine API
+#####engine.reload (client only)
+Empties all caches, closes all sockets and resets the document.
+```js
+engine.reload();
 
-#### Please note
-* Websocket communication after restart ([Issue #174](https://github.com/jillix/engine/issues/174))
+// reload but keep the document (DOM)
+engine.reload(true);
+```
+#####engine.client
+Is `true`, when engine runs in a client (browser). On the server this value is undefined.
+
+#####engine.production
+Is `true`, when the production argument `PRO` is passed to the process, otherwise `false`.
