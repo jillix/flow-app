@@ -115,7 +115,7 @@ exports.method = function (stream) {
     stream.write(err, data);
     
     // revceive data from origin stream
-    stream.data(function (err, data) {});
+    stream.data(function (err, data, stream, options) {});
     
     // send this stream further down the pipe
     this.flow("eventName", stream);
