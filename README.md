@@ -48,10 +48,10 @@ Extend the `npm` `package.json` with a `composition` object, to define a default
         "config": {},
         "flow": [{}],
         "client": {
-            "module": [
-                "module/script.js",
-                "/public/repo/script.js",
-                "//external/script.js"
+        "module": [
+                  "module/script.js",
+                  "/public/repo/script.js",
+                  "//external/script.js"
             ],
             "dependencies": ["module"],
             "config": {},
@@ -79,6 +79,29 @@ A composition config, configures an instance of a module.
             "styles": ["/path/file.css"],
             "markup": ["/path/file.html"]
       }
+}
+```
+##### Custom module:
+Custom modules are create by providing the `composition` part of a module package, to the `module` key.
+Expect the `client.dependencies` key is not supported, cause the client dependencies are dependent on installed 
+modules and custom modules cannot install other modules.
+```json
+{
+      "module": {
+            "public": "public/folder",
+            "config": {},
+            "flow": [{}],
+            "client": {
+                  "module": [
+                        "/public/repo/script.js",
+                        "//external/script.js"
+                  ],
+                  "config": {},
+                  "flow": [{}],
+                  "styles": ["styles.css"],
+                  "markup": ["markup.html"]
+            }
+      },
 }
 ```
 #####Flow:
