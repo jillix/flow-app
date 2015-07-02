@@ -82,7 +82,7 @@ A composition config, configures an instance of a module.
 }
 ```
 ##### Custom module:
-Custom modules are create by providing the `composition` part of a module package, to the `module` key.
+Custom modules are created by providing the `composition` part of a module package, to the `module` key.
 Expect the `client.dependencies` key is not supported, cause the client dependencies are dependent on installed 
 modules and custom modules cannot install other modules.
 ```json
