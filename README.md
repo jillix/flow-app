@@ -66,31 +66,55 @@ Extend the `npm` `package.json` with a `composition` object, to define a default
 A composition config, configures an instance of a module.
 ```json
 {
-      "roles": {"*": true},
-      "name": "instance",
-      "module": "module",
-      "config": {},
-      "flow": [{}],
-      "load": ["instance"],
-      "client": {
+    "roles": {"*": true},
+    "name": "instance",
+    "module": "module",
+    "config": {},
+    "flow": [{}],
+    "load": ["instance"],
+    "client": {
+        "config": {},
+        "flow": [{}],
+        "load": ["instance"],
+        "styles": ["/path/file.css"],
+        "markup": ["/path/file.html"]
+    }
+}
+```
+##### Custom module:
+Custom modules are created by providing the `composition` part of a module package, to the `module` key.
+Expect the `client.dependencies` key is not supported, cause the client dependencies are dependent on installed 
+modules and custom modules cannot install other modules.
+```json
+{
+    "module": {
+        "main": "folder/in/repo/index.js",
+        "public": "public/folder",
+        "config": {},
+        "flow": [{}],
+        "client": {
+            "module": [
+                "/public/script.js",
+                "//external/script.js"
+            ],
             "config": {},
             "flow": [{}],
-            "load": ["instance"],
-            "styles": ["/path/file.css"],
-            "markup": ["/path/file.html"]
-      }
+            "styles": ["/public/styles.css"],
+            "markup": ["markup.html"]
+        }
+    }
 }
 ```
 #####Flow:
 Flow configs create streams, that allow to send and receive data from a module instance method.
 ```json
 {
-      "on": "event",
-      "1": false,
-      "to": "instance",
-      "emit": "event",
-      "call": "path|instance/event|ws://domain.com/instance/event",
-      "data": ["path", {}]
+    "on": "event",
+    "1": false,
+    "to": "instance",
+    "emit": "event",
+    "call": "path|instance/event|ws://domain.com/instance/event",
+    "data": ["path", {}]
 }
 ```
 Flow's `call` can now emit server side events, by providing a URL: `ws://domain.com/instance/event`. This will pipe the event stream to a websocket stream, which is emitted on the server side. If the domain is not part of the URL: `instance/event` engine uses the current client host.
