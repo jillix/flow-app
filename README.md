@@ -88,17 +88,18 @@ modules and custom modules cannot install other modules.
 ```json
 {
     "module": {
+        "main": "folder/in/repo/index.js",
         "public": "public/folder",
         "config": {},
         "flow": [{}],
         "client": {
             "module": [
-                "/public/repo/script.js",
+                "/public/script.js",
                 "//external/script.js"
             ],
             "config": {},
             "flow": [{}],
-            "styles": ["styles.css"],
+            "styles": ["/public/styles.css"],
             "markup": ["markup.html"]
         }
     }
