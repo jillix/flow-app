@@ -83,7 +83,7 @@ A composition config, configures an instance of a module.
 ```
 ##### Custom module:
 Custom modules are created by providing the `composition` part of a module package, to the `module` key.
-Expect the `client.dependencies` key is not supported, cause the client dependencies are dependent on installed 
+Expect the `client.dependencies` key is not supported, cause the client dependencies are dependent on installed
 modules and custom modules cannot install other modules.
 ```json
 {
@@ -134,57 +134,57 @@ Heres and example how to use a flow stream in your module code:
 ```js
 // exported module method
 exports.method = function (stream) {
-    
+
     // write back to the origin stream (callback events!)
     stream.write(err, data);
-    
+
     // revceive data from origin stream
     stream.data(function (err, data, stream, options) {});
-    
+
     // send this stream further down the pipe
     this.flow("eventName", stream);
-    
+
     // ----------------------------------------------------
-    
+
     // emit a new event stream (flow config can listen to those events)
     var myStream = this.flow("eventName");
-    
+
     // Append a data handler
     // Data handlers are called in the order they were appended. And if a data handler
     // returns data, the next data handler will have the return value as data argument.
     myStream.data(function (err, data) {
-    
+
         // ..do something with the data
-        
+
         // return a data object for the next handlers.
         // this allows to transform the data as it flows in the event stream.
         return data;
     });
-    
+
     // write to the event stream
     myStream.write(error, {data: "object"});
-    
+
     // writes on "myStream" are received by the "stream" data handlers
     myStream.pipe(stream);
-    
+
     // writes on "stream" are received by the "myStream" data handlers
     stream.pipe(myStream);
-    
+
     // duplex
     myStream.pipe(stream).pipe(myStream);
-    
+
     // pause stream
     myStream.pause();
-    
+
     // resume stream
     myStream.resume();
-    
+
     // end stream
     myStream.end();
-    
+
     // append a custom write handler
     myStream._write = function (err, data) {}
-    
+
     // append a custom end handler
     myStream._end = function (/* Arguments from the end method */) {}
 }
