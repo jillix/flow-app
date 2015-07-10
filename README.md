@@ -191,6 +191,32 @@ exports.method = function (stream) {
     myStream._end = function (/* Arguments from the end method */) {}
 }
 ```
+###Logs
+Engine provides a simple method to handle logging.
+```js
+// loggin in a instance
+exports.method = function () {
+      
+      // log an error
+      this.log('F', {msg: 'Fatal message', additional: 'data'});
+      this.log('E', {additional: 'data'}, 'Error message');
+      this.log('W', 'Warning message');
+}
+
+// login core engine
+engine.log('I', {msg: 'Info message', additional: 'data'});
+engine.log('D', {additional: 'data'}, 'Debug message');
+engine.log('T', 'Trace message');
+```
+The available log levels are:
+* `F` or `fatal`
+* `E` or `error`
+* `W` or `warn`
+* `I` or `info`
+* `D` or `debug`
+* `T` or `trace`
+
+All logs are streamed to `process.stdout`.
 ###Engine API
 #####engine.reload (client only)
 Empties all caches, closes all sockets and resets the document.
