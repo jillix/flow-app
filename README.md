@@ -87,22 +87,24 @@ Expect the `client.dependencies` key is not supported, cause the client dependen
 modules and custom modules cannot install other modules.
 ```json
 {
-    "module": {
-        "main": "folder/in/repo/index.js",
-        "public": "public/folder",
-        "config": {},
-        "flow": [{}],
-        "client": {
-            "module": [
-                "/public/script.js",
-                "//external/script.js"
-            ],
-            "config": {},
-            "flow": [{}],
-            "styles": ["/public/styles.css"],
-            "markup": ["markup.html"]
-        }
-    }
+   "roles": {"*": true},
+   "name": "instance",
+   "module": {
+      "main": "folder/in/repo/index.js",
+      "public": "public/folder",
+      "config": {},
+      "flow": [{}],
+      "client": {
+         "module": [
+            "/public/script.js",
+            "//external/script.js"
+         ],
+         "config": {},
+         "flow": [{}],
+         "styles": ["/public/styles.css"],
+         "markup": ["markup.html"]
+      }
+   }
 }
 ```
 #####Flow:
