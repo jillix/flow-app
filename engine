@@ -3,12 +3,13 @@
 // read CLI arguments
 var repo = process.argv[2];
 var port = process.argv[3];
-var production = process.argv[4] === 'PRO' ? true : false;
+var logLevel = process.argv[4];
+var production = process.argv[5] === 'PRO' ? true : false;
 
 // check the CLI arguments
 if (!repo || !port) {
-    throw new Error('Invalid CLI arguments. Example: ./engine /absolute/path/to/repo [PORT] ["PRO"]');
+    throw new Error('Invalid CLI arguments. Example: ./engine /absolute/path/to/repo [PORT] ["fatal|error|warn|info|debug|trace"] ["PRO"]');
 }
 
 // start engine
-require('./lib/engine')(repo, port, production);
+require('./lib/engine')(repo, port, logLevel, production);
