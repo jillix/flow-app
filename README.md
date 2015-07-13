@@ -113,6 +113,7 @@ Flow configs create streams, that allow to send and receive data from a module i
 {
     "on": "event",
     "1": false,
+    "load": ["instance"],
     "to": "instance",
     "emit": "event",
     "call": "path|instance/event|ws://domain.com/instance/event",
