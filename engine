@@ -7,7 +7,7 @@ var logLevel = process.argv[4];
 var production = process.argv[5] === 'PRO' ? true : false;
 
 // check the CLI arguments
-if (!repo || !port) {
+if (!repo || !port || !logLevel) {
     throw new Error('Invalid CLI arguments. Example: ./engine /absolute/path/to/repo [PORT] ["fatal|error|warn|info|debug|trace"] ["PRO"]');
 }
 
