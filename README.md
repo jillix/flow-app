@@ -15,7 +15,7 @@ Applications are made of module, which are instantiated and configured with **co
 
 ###Start an app
 ```sh
-$ engine [absolute/path/to/app/repo] [port] [PRO]
+$ engine [absolute/path/to/app/repo] [port] ["fatal|error|warn|info|debug|trace"] ["PRO"]
 ```
 ###Module guidelines
 * A module has a isolated purpose and functionality.
