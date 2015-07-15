@@ -46,7 +46,7 @@ Extend the `npm` `package.json` with a `composition` object, to define a default
     "composition": {
         "public": "public/folder",
         "config": {},
-        "flow": [{}],
+        "flow": [],
         "client": {
             "module": [
                 "module/script.js",
@@ -55,7 +55,7 @@ Extend the `npm` `package.json` with a `composition` object, to define a default
             ],
             "dependencies": ["module"],
             "config": {},
-            "flow": [{}],
+            "flow": [],
             "styles": ["styles.css"],
             "markup": ["markup.html"]
         }
@@ -70,11 +70,11 @@ A composition config, configures an instance of a module.
     "name": "instance",
     "module": "module",
     "config": {},
-    "flow": [{}],
+    "flow": [],
     "load": ["instance"],
     "client": {
         "config": {},
-        "flow": [{}],
+        "flow": [],
         "load": ["instance"],
         "styles": ["/path/file.css"],
         "markup": ["/path/file.html"]
@@ -93,14 +93,14 @@ modules and custom modules cannot install other modules.
       "main": "folder/in/repo/index.js",
       "public": "public/folder",
       "config": {},
-      "flow": [{}],
+      "flow": [],
       "client": {
          "module": [
             "/public/script.js",
             "//external/script.js"
          ],
          "config": {},
-         "flow": [{}],
+         "flow": [],
          "styles": ["/public/styles.css"],
          "markup": ["markup.html"]
       }
@@ -108,19 +108,78 @@ modules and custom modules cannot install other modules.
 }
 ```
 #####Flow:
-Flow configs create streams, that allow to send and receive data from a module instance method.
-```json
-{
-    "on": "event",
-    "1": false,
-    "load": ["instance"],
-    "to": "instance",
-    "emit": "event",
-    "call": "path|instance/event|ws://domain.com/instance/event",
-    "data": ["path", {}]
-}
+Flow configs create streams, that allow to send and receive data between module instance methods.
+Flow config format:
+```js
+[
+    // First array item is the event name.
+    // If the event name is in an array ["eventName"],
+    // engine will remove the event after first call.
+    "eventName",
+    
+    // Data handler call
+    /*
+        function (err, data) {
+          return data;
+        }
+    */
+    [":path.to.dataHandler", argN],
+    
+    // Stream handler call
+    /*
+        function (stream) {
+          return stream;
+        }
+    */
+    ["path.to.streamHandler", argN]
+]
 ```
-Flow's `call` can now emit server side events, by providing a URL: `ws://domain.com/instance/event`. This will pipe the event stream to a websocket stream, which is emitted on the server side. If the domain is not part of the URL: `instance/event` engine uses the current client host.
+######Data transform and method call:
+```json
+[
+    "event",
+    [":transform", {"data": {"my": "value"}}],
+    "instance/method
+]
+```
+######Load instance:
+```json
+[
+    "event",
+    ["load", ["instance"]]
+]
+```
+######Local emit:
+```json
+[
+    "event",
+    [":transform", {"data": {"my": "value"}}],
+    ["flow", "instance/event"]
+]
+```
+######Server emit:
+```json
+[
+    "event",
+    [":transform", {"data": {"my": "value"}}],
+    ["link", "instance/event"],
+    [":transform", {"data": {"my": "value"}}],
+    "instance/method
+]
+```
+######All options:
+```json
+[
+    ["event"],
+    [":transform", {"data": {"my": "value"}}],
+    ["instance/method", {}],
+    ["load", ["instance"]],
+    ["link", "instance/event"],
+    ["flow", "instance/event"]
+]
+```
+First item in the flow array is the event name. The value can be a simple string `"eventName"` or it can be an array, which will remove the event after calling the first time.
+Data handlers are indicated with a `:` char at the beginning of the method path `":dataHandler"`.
 
 ###Path types
 To fetch files from the applications public folder, or to emit and event on the server via an HTTP request, engine has two simple prefix that must be appended to the URL.
