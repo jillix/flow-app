@@ -217,55 +217,49 @@ Heres and example how to use a flow stream in your module code:
 // exported module method
 exports.method = function (stream) {
 
-    // write back to the origin stream (callback events!)
+    // revceive data from stream
+    stream.data(function (data, stream, argN) {});
+    
+    // revceive errors from stream
+    stream.error(function (data, stream, argN) {});
+
+    // write to the stream
     stream.write(err, data);
 
-    // revceive data from origin stream
-    stream.data(function (err, data, stream, options) {});
+    // pause stream
+    stream.pause();
 
-    // send this stream further down the pipe
-    this.flow("eventName", stream);
+    // resume stream
+    stream.resume();
 
-    // ----------------------------------------------------
+    // end stream
+    stream.end();
 
-    // emit a new event stream (flow config can listen to those events)
+    // emit this stream
+    var myStream = this.flow("eventName", stream);
+    
+    // create a new stream and emit it
     var myStream = this.flow("eventName");
+    
+    // create a new stream
+    var myStream = this.flow([[/*flow call*/]]);
 
     // Append a data handler
     // Data handlers are called in the order they were appended. And if a data handler
     // returns data, the next data handler will have the return value as data argument.
-    myStream.data(function (err, data) {
+    myStream.data(function (data, myStream) {
 
         // ..do something with the data
-
+        
+        // stop the current data stream.
+        // this is handy, when an error occurs:
+        myStream.write(new Error());
+        return null;
+        
         // return a data object for the next handlers.
         // this allows to transform the data as it flows in the event stream.
         return data;
     });
-
-    // write to the event stream
-    myStream.write(error, {data: "object"});
-
-    // writes on "myStream" are received by the "stream" data handlers
-    myStream.pipe(stream);
-
-    // writes on "stream" are received by the "myStream" data handlers
-    stream.pipe(myStream);
-
-    // duplex
-    myStream.pipe(stream).pipe(myStream);
-
-    // pause stream
-    myStream.pause();
-
-    // resume stream
-    myStream.resume();
-
-    // end stream
-    myStream.end();
-
-    // append a custom write handler
-    myStream._write = function (err, data) {}
 
     // append a custom end handler
     myStream._end = function (/* Arguments from the end method */) {}
