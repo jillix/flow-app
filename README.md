@@ -173,6 +173,8 @@ Flow config format:
 [
     ["event"],
     [":transform", {"data": {"my": "value"}}],
+    ["!instance/error", {}],
+    [">instance/method", {}],
     ["instance/method", {}],
     ["load", ["instance"]],
     ["link", "instance/event"],
