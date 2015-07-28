@@ -120,11 +120,19 @@ Flow config format:
     
     // Data handler call
     /*
-        function (err, data) {
+        function (data) {
           return data;
         }
     */
     [":path.to.dataHandler", argN],
+    
+    // Error handler call
+    /*
+        function (data) {
+          return data;
+        }
+    */
+    ["!path.to.errorHandler", argN],
     
     // Stream handler call
     /*
@@ -133,6 +141,14 @@ Flow config format:
         }
     */
     ["path.to.streamHandler", argN]
+    
+    // Down stream handler call
+    /*
+        function (stream) {
+          return stream;
+        }
+    */
+    [">path.to.streamHandler", argN]
 ]
 ```
 ######Data transform and method call:
@@ -155,7 +171,7 @@ Flow config format:
 [
     "event",
     [":transform", {"data": {"my": "value"}}],
-    ["flow", "instance/event"]
+    ["instance/emit", "event"]
 ]
 ```
 ######Server emit:
@@ -163,7 +179,8 @@ Flow config format:
 [
     "event",
     [":transform", {"data": {"my": "value"}}],
-    ["link", "instance/event"],
+    [">link", "instance/event"],
+    "!errorHandler",
     [":transform", {"data": {"my": "value"}}],
     "instance/method
 ]
@@ -176,9 +193,9 @@ Flow config format:
     ["!instance/error", {}],
     [">instance/method", {}],
     ["instance/method", {}],
+    ["instance/emit", "event"],
     ["load", ["instance"]],
-    ["link", "instance/event"],
-    ["flow", "instance/event"]
+    [">link", "instance/event"]
 ]
 ```
 First item in the flow array is the event name. The value can be a simple string `"eventName"` or it can be an array, which will remove the event after calling the first time.
