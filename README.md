@@ -189,13 +189,18 @@ Flow config format:
 ```json
 [
     ["event"],
+    
     [":transform", {"data": {"my": "value"}}],
     ["!instance/error", {}],
+    
     [">instance/method", {}],
     ["instance/method", {}],
+    
     ["instance/emit", "event"],
+    ["link", "instance/event"]
+    
     ["load", ["instance"]],
-    [">link", "instance/event"]
+    ":reload"
 ]
 ```
 First item in the flow array is the event name. The value can be a simple string `"eventName"` or it can be an array, which will remove the event after calling the first time.
@@ -297,9 +302,6 @@ All logs are streamed to `process.stdout`.
 Empties all caches, closes all sockets and resets the document.
 ```js
 engine.reload();
-
-// reload but keep the document (DOM)
-engine.reload(true);
 ```
 #####engine.client
 Is `true`, when engine runs in a client (browser). On the server this value is undefined.
