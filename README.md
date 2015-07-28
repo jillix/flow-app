@@ -218,10 +218,26 @@ Heres and example how to use a flow stream in your module code:
 exports.method = function (stream) {
 
     // revceive data from stream
-    stream.data(function (data, stream, argN) {});
+    stream.data(function (data, stream, argN) {
+        
+        // stop the data stream
+        // Tip: this is handy, when an error occurs:
+        stream.write(new Error());
+        return null;
+        
+        // return modified data
+        return data;
+    });
     
     // revceive errors from stream
-    stream.error(function (data, stream, argN) {});
+    stream.error(function (error, stream, argN) {
+        
+        // stop the error stream
+        return null;
+        
+        // return modified error
+        return error;
+    });
 
     // write to the stream
     stream.write(err, data);
@@ -244,25 +260,10 @@ exports.method = function (stream) {
     // create a new stream
     var myStream = this.flow([[/*flow call*/]]);
 
-    // Append a data handler
-    // Data handlers are called in the order they were appended. And if a data handler
-    // returns data, the next data handler will have the return value as data argument.
-    myStream.data(function (data, myStream) {
-
-        // ..do something with the data
-        
-        // stop the current data stream.
-        // this is handy, when an error occurs:
-        myStream.write(new Error());
-        return null;
-        
-        // return a data object for the next handlers.
-        // this allows to transform the data as it flows in the event stream.
-        return data;
-    });
-
     // append a custom end handler
-    myStream._end = function (/* Arguments from the end method */) {}
+    myStream._end = function (/* Arguments from the end method */) {
+        /* do custom things when a stream ends. closing sockets for example. */
+    }
 }
 ```
 ###Logs
