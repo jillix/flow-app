@@ -120,11 +120,19 @@ Flow config format:
     
     // Data handler call
     /*
-        function (err, data) {
+        function (data) {
           return data;
         }
     */
     [":path.to.dataHandler", argN],
+    
+    // Error handler call
+    /*
+        function (data) {
+          return data;
+        }
+    */
+    ["!path.to.errorHandler", argN],
     
     // Stream handler call
     /*
@@ -133,6 +141,14 @@ Flow config format:
         }
     */
     ["path.to.streamHandler", argN]
+    
+    // Down stream handler call
+    /*
+        function (stream) {
+          return stream;
+        }
+    */
+    [">path.to.streamHandler", argN]
 ]
 ```
 ######Data transform and method call:
@@ -155,7 +171,7 @@ Flow config format:
 [
     "event",
     [":transform", {"data": {"my": "value"}}],
-    ["flow", "instance/event"]
+    ["instance/emit", "event"]
 ]
 ```
 ######Server emit:
@@ -163,7 +179,8 @@ Flow config format:
 [
     "event",
     [":transform", {"data": {"my": "value"}}],
-    ["link", "instance/event"],
+    [">link", "instance/event"],
+    "!errorHandler",
     [":transform", {"data": {"my": "value"}}],
     "instance/method
 ]
@@ -172,13 +189,18 @@ Flow config format:
 ```json
 [
     ["event"],
+    
     [":transform", {"data": {"my": "value"}}],
     ["!instance/error", {}],
+    
     [">instance/method", {}],
     ["instance/method", {}],
+    
+    ["instance/emit", "event"],
+    ["link", "instance/event"]
+    
     ["load", ["instance"]],
-    ["link", "instance/event"],
-    ["flow", "instance/event"]
+    ":reload"
 ]
 ```
 First item in the flow array is the event name. The value can be a simple string `"eventName"` or it can be an array, which will remove the event after calling the first time.
@@ -200,58 +222,53 @@ Heres and example how to use a flow stream in your module code:
 // exported module method
 exports.method = function (stream) {
 
-    // write back to the origin stream (callback events!)
-    stream.write(err, data);
-
-    // revceive data from origin stream
-    stream.data(function (err, data, stream, options) {});
-
-    // send this stream further down the pipe
-    this.flow("eventName", stream);
-
-    // ----------------------------------------------------
-
-    // emit a new event stream (flow config can listen to those events)
-    var myStream = this.flow("eventName");
-
-    // Append a data handler
-    // Data handlers are called in the order they were appended. And if a data handler
-    // returns data, the next data handler will have the return value as data argument.
-    myStream.data(function (err, data) {
-
-        // ..do something with the data
-
-        // return a data object for the next handlers.
-        // this allows to transform the data as it flows in the event stream.
+    // revceive data from stream
+    stream.data(function (data, stream, argN) {
+        
+        // stop the data stream
+        // Tip: this is handy, when an error occurs:
+        stream.write(new Error());
+        return null;
+        
+        // return modified data
         return data;
     });
+    
+    // revceive errors from stream
+    stream.error(function (error, stream, argN) {
+        
+        // stop the error stream
+        return null;
+        
+        // return modified error
+        return error;
+    });
 
-    // write to the event stream
-    myStream.write(error, {data: "object"});
-
-    // writes on "myStream" are received by the "stream" data handlers
-    myStream.pipe(stream);
-
-    // writes on "stream" are received by the "myStream" data handlers
-    stream.pipe(myStream);
-
-    // duplex
-    myStream.pipe(stream).pipe(myStream);
+    // write to the stream
+    stream.write(err, data);
 
     // pause stream
-    myStream.pause();
+    stream.pause();
 
     // resume stream
-    myStream.resume();
+    stream.resume();
 
     // end stream
-    myStream.end();
+    stream.end();
 
-    // append a custom write handler
-    myStream._write = function (err, data) {}
+    // emit this stream
+    var myStream = this.flow("eventName", stream);
+    
+    // create a new stream and emit it
+    var myStream = this.flow("eventName");
+    
+    // create a new stream
+    var myStream = this.flow([[/*flow call*/]]);
 
     // append a custom end handler
-    myStream._end = function (/* Arguments from the end method */) {}
+    myStream._end = function (/* Arguments from the end method */) {
+        /* do custom things when a stream ends. closing sockets for example. */
+    }
 }
 ```
 ###Logs
@@ -285,9 +302,6 @@ All logs are streamed to `process.stdout`.
 Empties all caches, closes all sockets and resets the document.
 ```js
 engine.reload();
-
-// reload but keep the document (DOM)
-engine.reload(true);
 ```
 #####engine.client
 Is `true`, when engine runs in a client (browser). On the server this value is undefined.
