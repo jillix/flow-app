@@ -118,36 +118,30 @@ Flow config format:
     // engine will remove the event after first call.
     "eventName",
     
-    // Data handler call
+    // Data or error handler
     /*
         function (data) {
           return data;
         }
     */
+    
+    // Data handler call
     [":path.to.dataHandler", argN],
     
     // Error handler call
-    /*
-        function (data) {
-          return data;
-        }
-    */
     ["!path.to.errorHandler", argN],
     
-    // Stream handler call
+    // Stream handler
     /*
         function (stream) {
           return stream;
         }
     */
+    // Stream handler call
     ["path.to.streamHandler", argN]
     
-    // Down stream handler call
-    /*
-        function (stream) {
-          return stream;
-        }
-    */
+    // Stream handler call.
+    // stream.write(), will not write back to the input stream
     [">path.to.streamHandler", argN]
 ]
 ```
@@ -155,7 +149,7 @@ Flow config format:
 ```json
 [
     "event",
-    [":transform", {"data": {"my": "value"}}],
+    [":ALTR", {"data": {"my": "value"}}],
     "instance/method
 ]
 ```
@@ -163,25 +157,25 @@ Flow config format:
 ```json
 [
     "event",
-    ["load", ["instance"]]
+    ["LOAD", ["instance"]]
 ]
 ```
 ######Local emit:
 ```json
 [
     "event",
-    [":transform", {"data": {"my": "value"}}],
-    ["instance/emit", "event"]
+    [":ALTR", {"data": {"my": "value"}}],
+    ["instance/flow", "event"]
 ]
 ```
 ######Server emit:
 ```json
 [
     "event",
-    [":transform", {"data": {"my": "value"}}],
-    [">link", "instance/event"],
+    [":ALTR", {"data": {"my": "value"}}],
+    [">flow", "instance/event"],
     "!errorHandler",
-    [":transform", {"data": {"my": "value"}}],
+    [":ALTR", {"data": {"my": "value"}}],
     "instance/method
 ]
 ```
@@ -190,36 +184,30 @@ Flow config format:
 [
     ["event"],
     
-    [":transform", {"data": {"my": "value"}}],
+    [":ALTR", {"data": {"my": "value"}}],
     ["!instance/error", {}],
     
     [">instance/method", {}],
     ["instance/method", {}],
     
-    ["instance/emit", "event"],
-    ["link", "instance/event"]
+    ["flow", "event"],
+    ["instance/flow", "event"],
+   
+    ["flow", "@event"]
+    ["flow", "@instance/event"]
     
-    ["load", ["instance"]],
-    ":reload"
+    ["LOAD", ["instance"]],
+    ":ERES"
 ]
 ```
 First item in the flow array is the event name. The value can be a simple string `"eventName"` or it can be an array, which will remove the event after calling the first time.
 Data handlers are indicated with a `:` char at the beginning of the method path `":dataHandler"`.
 
-###Path types
-To fetch files from the applications public folder, or to emit and event on the server via an HTTP request, engine has two simple prefix that must be appended to the URL.
-
-#####Public file path `/!`
-Example: `/!/path/to/public/file.suffix`
-
-#####Operation path `/@/[module_instance]/[event]/`
-Example: `/@/[module_instance]/[event]/path/data/?search=query#hash`
-
 ###Event streams
 Every module instance has the event stream (flow) object as prototype.
 Heres and example how to use a flow stream in your module code:
 ```js
-// exported module method
+// exported module method (stream handler)
 exports.method = function (stream) {
 
     // revceive data from stream
@@ -263,12 +251,37 @@ exports.method = function (stream) {
     var myStream = this.flow("eventName");
     
     // create a new stream
+    // NOTE: this feature will probably disapear.
     var myStream = this.flow([[/*flow call*/]]);
 
     // append a custom end handler
     myStream._end = function (/* Arguments from the end method */) {
         /* do custom things when a stream ends. closing sockets for example. */
     }
+}
+
+// callback case
+function myMethod (callback) {
+
+    // if you must call a callback function inside a data handler,
+    // then you have to append the handler every time the method is called.
+    // otherwise the scope, so the "callback" is always from the first method call.
+    
+    // create a stream, which is NOT cached.
+    // to do this just pass "true" as second argument.
+    var myStream = this.flow("eventName", true);
+    
+    // append a data handler.
+    // note: if the stream would be cached, this data handler would be appended
+    // every time the "myMethod" is called.
+    myStream.data(function () {
+        
+        callback();
+        
+        // for streams, that are not cached, the module is responsible
+        // to end the stream!
+        myStream.end()
+    });
 }
 ```
 ###Logs
@@ -297,6 +310,16 @@ The available log levels are:
 * `T` or `trace`
 
 All logs are streamed to `process.stdout`.
+
+###Path types
+To fetch files from the applications public folder, or to emit and event on the server via an HTTP request, engine has two simple prefix that must be appended to the URL.
+
+#####Public file path `/!`
+Example: `/!/path/to/public/file.suffix`
+
+#####Operation path `/@/[module_instance]/[event]/`
+Example: `/@/[module_instance]/[event]/path/data/?search=query#hash`
+
 ###Engine API
 #####engine.reload (client only)
 Empties all caches, closes all sockets and resets the document.
