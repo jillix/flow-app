@@ -6,7 +6,7 @@ Applications are made of module, which are instantiated and configured with **co
 
 ###Install the server
 1. Append engine as a dependency in your app's `package.json`.
-2. Define the start scrip: `"start": "./node_modules/engine/engine ."`
+2. Define the start script: `"start": "./node_modules/engine/engine ."`
 
 ###Install an app
 1. Clone the repository: `git clone [git_url]`
