@@ -5,17 +5,17 @@ Engine is a framework/platform, which takes care of **resources**, **networking*
 Applications are made of module, which are instantiated and configured with **composition** files.
 
 ###Install the server
-1. Clone the repository: `git clone git@github.com:jillix/engine.git`
-2. Go to the engine dir `cd engine` and do a `npm install`
-3. If you like to run `engine` globally, run `npm link` in the engine directory.
+1. Append engine as a dependency in your app's `package.json`.
+2. Define the start script: `"start": "./node_modules/engine/engine ."`
 
 ###Install an app
 1. Clone the repository: `git clone [git_url]`
 2. Change directory: `cd [app_repo_dir]/` and do a `npm install`
 
 ###Start an app
+Go into your app root folder and do: 
 ```sh
-$ engine [absolute/path/to/app/repo] [port] ["fatal|error|warn|info|debug|trace"] ["PRO"]
+$ npm start [port] ["fatal|error|warn|info|debug|trace"] ["PRO"]
 ```
 ###Module guidelines
 * A module has a isolated purpose and functionality.
