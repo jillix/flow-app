@@ -1,0 +1,36 @@
+{
+   "kind":"ReplicationController",
+   "apiVersion":"v1",
+   "metadata":{
+      "name":"engine-pro",
+      "labels":{
+         "name":"engine-pro"
+      }
+   },
+   "spec":{
+      "replicas":1,
+      "selector":{
+         "name":"engine-pro"
+      },
+      "template":{
+         "metadata":{
+            "labels":{
+               "name":"engine-pro"
+         },
+         "spec":{
+            "containers":[
+               {
+                  "name":"engine-pro",
+                  "image":"engine-pro",
+                  "ports":[
+                     {
+                        "containerPort":8000,
+                        "protocol":"TCP"
+                     }
+                  ]
+               }
+            ]
+         }
+      }
+   }
+}
