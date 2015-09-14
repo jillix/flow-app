@@ -13,7 +13,7 @@ Applications are made of module, which are instantiated and configured with **co
 2. Change directory: `cd [app_repo_dir]/` and do a `npm install`
 
 ###Start an app
-Go into your app root folder and do: 
+Go into your app root folder and do:
 ```sh
 $ npm start [port] ["fatal|error|warn|info|debug|trace"] ["PRO"]
 ```
@@ -117,85 +117,51 @@ Flow config format:
     // If the event name is in an array ["eventName"],
     // engine will remove the event after first call.
     "eventName",
-    
+
     // Data or error handler
     /*
-        function (data) {
+        function (stream, option, data) {
           return data;
         }
     */
-    
+
     // Data handler call
-    [":path.to.dataHandler", argN],
-    
+    [":path.to.dataHandler", {"argN": "str{data}"}, "instance/optionHandler"],
+
     // Error handler call
-    ["!path.to.errorHandler", argN],
-    
+    ["!path.to.errorHandler", {"argN": "str{data}"}, "instance/optionHandler"],
+
     // Stream handler
     /*
-        function (stream) {
+        function (stream, option) {
           return stream;
         }
     */
     // Stream handler call
-    ["path.to.streamHandler", argN]
-    
+    ["path.to.streamHandler", {"argN": "str{data}"}, "instance/optionHandler"]
+
     // Stream handler call.
     // stream.write(), will not write back to the input stream
-    [">path.to.streamHandler", argN]
+    [">path.to.streamHandler", {"argN": "str{data}"}, "instance/optionHandler"]
 ]
 ```
-######Data transform and method call:
-```json
-[
-    "event",
-    [":ALTR", {"data": {"my": "value"}}],
-    "instance/method
-]
-```
-######Load instance:
-```json
-[
-    "event",
-    ["LOAD", ["instance"]]
-]
-```
-######Local emit:
-```json
-[
-    "event",
-    [":ALTR", {"data": {"my": "value"}}],
-    ["instance/flow", "event"]
-]
-```
-######Server emit:
-```json
-[
-    "event",
-    [":ALTR", {"data": {"my": "value"}}],
-    [">flow", "instance/event"],
-    "!errorHandler",
-    [":ALTR", {"data": {"my": "value"}}],
-    "instance/method
-]
-```
-######All options:
+######All options example:
 ```json
 [
     ["event"],
-    
+
     [":ALTR", {"data": {"my": "value"}}],
     ["!instance/error", {}],
-    
+
     [">instance/method", {}],
     ["instance/method", {}],
-    
+
     ["flow", "event"],
     ["instance/flow", "event"],
-   
+
     ["flow", "@event"]
     ["flow", "@instance/event"]
-    
+
     ["LOAD", ["instance"]],
     ":ERES"
 ]
@@ -208,26 +174,26 @@ Every module instance has the event stream (flow) object as prototype.
 Heres and example how to use a flow stream in your module code:
 ```js
 // exported module method (stream handler)
-exports.method = function (stream) {
+exports.method = function (stream, options) {
 
     // revceive data from stream
-    stream.data(function (data, stream, argN) {
-        
+    stream.data(function (stream, options, data) {
+
         // stop the data stream
         // Tip: this is handy, when an error occurs:
         stream.write(new Error());
         return null;
-        
+
         // return modified data
         return data;
     });
-    
+
     // revceive errors from stream
-    stream.error(function (error, stream, argN) {
-        
+    stream.error(function (stream, options, error) {
+
         // stop the error stream
         return null;
-        
+
         // return modified error
         return error;
     });
@@ -246,10 +212,10 @@ exports.method = function (stream) {
 
     // emit this stream
     var myStream = this.flow("eventName", stream);
-    
+
     // create a new stream and emit it
     var myStream = this.flow("eventName");
-    
+
     // create a new stream
     // NOTE: this feature will probably disapear.
     var myStream = this.flow([[/*flow call*/]]);
@@ -266,18 +232,18 @@ function myMethod (callback) {
     // if you must call a callback function inside a data handler,
     // then you have to append the handler every time the method is called.
     // otherwise the scope, so the "callback" is always from the first method call.
-    
+
     // create a stream, which is NOT cached.
     // to do this just pass "true" as second argument.
     var myStream = this.flow("eventName", true);
-    
+
     // append a data handler.
     // note: if the stream would be cached, this data handler would be appended
     // every time the "myMethod" is called.
     myStream.data(function () {
-        
+
         callback();
-        
+
         // for streams, that are not cached, the module is responsible
         // to end the stream!
         myStream.end()
@@ -289,7 +255,7 @@ Engine provides a simple method to handle logging.
 ```js
 // loggin in a instance
 exports.method = function () {
-      
+
       // log an error
       this.log('F', {msg: 'Fatal message', additional: 'data'});
       this.log('E', {additional: 'data'}, 'Error message');
