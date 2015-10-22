@@ -278,13 +278,21 @@ The available log levels are:
 All logs are streamed to `process.stdout`.
 
 ###Path types
-To fetch files from the applications public folder, or to emit and event on the server via an HTTP request, engine has two simple prefix that must be appended to the URL.
+Request files from a configured `public` directory, fetch module files from client module dependencies and call operations on the server side.
+Note that, the first segment of a public file path cannot contain a `: or `@` char, since they are used to route to the to the corresponding operation.
 
-#####Public file path `/!`
-Example: `/!/path/to/public/file.suffix`
+**Not allowed paths for public files:**
+* `/path:to/public/file.suffix`
+* `/path@to/public/file.suffix`
 
-#####Operation path `/@/[module_instance]/[event]/`
-Example: `/@/[module_instance]/[event]/path/data/?search=query#hash`
+#####Public file path `/`
+Example: `/path/to/public/file.suffix`
+
+#####Module file path `/[name]@[version]/`
+Example: `/[name]@[version]/path/file.suffix`
+
+#####Operation path `/[module_instance]:[event]/`
+Example: `/[module_instance]:[event]/path/data/?search=query#hash`
 
 ###Engine API
 #####engine.reload (client only)
