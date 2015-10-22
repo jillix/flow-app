@@ -289,10 +289,10 @@ Note that, the first segment of a public file path cannot contain a `: or `@` ch
 Example: `/path/to/public/file.suffix`
 
 #####Module file path `/[name]@[version]/`
-Example: `/[name]@[version]/path/file.suffix`
+Example: `/view@0.4.2/state/index.js`
 
 #####Operation path `/[module_instance]:[event]/`
-Example: `/[module_instance]:[event]/path/data/?search=query#hash`
+Example: `/registration:verifyEmail/tokenX/?locale=en_US#hash`
 
 ###Engine API
 #####engine.reload (client only)
