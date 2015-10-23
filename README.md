@@ -278,12 +278,12 @@ The available log levels are:
 All logs are streamed to `process.stdout`.
 
 ###Path types
-Request files from a configured `public` directory, fetch module files from client module dependencies and call operations on the server side.
-Note that, the first segment of a public file path cannot contain a `: or `@` char, since they are used to route to the to the corresponding operation.
+Request files from a configured `public` directory, fetch module bundle file and call operations on the server side.
+Note that, the first segment of a public file URL cannot contain a `:` char, since they are used to route to the to the corresponding operation.
 
 **Not allowed paths for public files:**
 * `/path:to/public/file.suffix`
-* `/path@to/public/file.suffix`
+* `/anExistingModuleName/client[.fingerprint].js`
 
 #####Public file path `/`
 Example: `/path/to/public/file.suffix`
@@ -294,15 +294,3 @@ Debug example: `/view/client.js`
 
 #####Operation path `/[module_instance]:[event]/`
 Example: `/registration:verifyEmail/tokenX/?locale=en_US#hash`
-
-###Engine API
-#####engine.reload (client only)
-Empties all caches, closes all sockets and resets the document.
-```js
-engine.reload();
-```
-#####engine.client
-Is `true`, when engine runs in a client (browser). On the server this value is undefined.
-
-#####engine.production
-Is `true`, when the production argument `PRO` is passed to the process, otherwise `false`.
