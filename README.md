@@ -289,8 +289,8 @@ Note that, the first segment of a public file URL cannot contain a `:` char, sin
 Example: `/path/to/public/file.suffix`
 
 #####Module file path `/[module]/client.[fingerprint].js/`
-Production example: `/view/client.273dhs7.js`
-Debug example: `/view/client.js`
+* Production example: `/view/client.273dhs7.js`
+* Debug example: `/view/client.js`
 
 #####Operation path `/[module_instance]:[event]/`
 Example: `/registration:verifyEmail/tokenX/?locale=en_US#hash`
