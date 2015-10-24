@@ -1,21 +1,110 @@
 #!/usr/bin/env node
 
-// TODO better arguments parsing with optimist or similar
+var fs = require('fs');
+var path = require('path');
 
-// read CLI arguments
-var repo = process.argv[2];
-var port = process.argv[3];
-var logLevel = process.argv[4];
-var production = process.argv[5] === 'PRO' ? true : false;
-var token = process.argv[6] ? process.argv[6] : null;
+// parse cli arguments
+var argv = require('yargs')
+    .alias('d', 'debug')
+    .alias('l', 'logLevel')
+    .alias('t', 'token')
+    // TODO ssl options
+    .boolean('d')
+    .choices('l', ['fatal', 'error', 'warn', 'info', 'debug', 'trace'])
 
-// check the CLI arguments
-if (!repo || !port || !logLevel) {
-    throw new Error('Invalid CLI arguments. Example: ./engine /absolute/path/to/repo [PORT] ["fatal|error|warn|info|debug|trace"] ["PRO"]');
+    // check if repo path exists
+    .check(function (argv, aliases) {
+
+        if (typeof argv._[0] === 'string') {
+            argv.repo = path.resolve(argv._[0]);
+
+            if (fs.statSync(argv.repo)) {
+                return true;
+            }
+        }
+    })
+
+    // check if port is a number
+    .check(function (argv, aliases) {
+
+        if (argv._[1]) {
+            argv.port = typeof argv._[1] === 'number' ? argv._[1] : parseInt(argv._[1].replace(/[^0-9]/, ''));
+
+            if (argv.port) {
+                return true;
+            }
+
+        // set default port
+        } else {
+            argv.port = 8000;
+            return true;
+        }
+    })
+
+    // set default log level
+    .check(function (argv, aliases) {
+
+        if (!argv.l) {
+            argv.l = argv.logLevel = argv.d ? 'debug' : 'error';
+        }
+
+        return true;
+    })
+
+    // TODO help text
+    .help('h')
+    .alias('h', 'help')
+    .argv
+
+console.log(argv);
+
+// TODO merge app configs with arguments
+var config = require(argv.repo + '/package.json');
+
+// check if entrypoints are in the config
+if (config.entrypoints) {
+
 }
 
+// TODO ssl certificates
+/*
+    // TODO implement http2 when https://letsencrypt.org/ is available
+    var ssl = {
+        key: fs.readFileSync('./example/localhost.key'),
+        cert: fs.readFileSync('./example/localhost.crt')
+    };
+*/
+
+// TODO sessions
+/*
+// merge session configs
+if (global.pkg.session) {
+    sessionDefaults = Object.assign(sessionDefaults, global.pkg.session);
+    sessionDefaults.secret = token || sessionDefaults.secret;
+}
+
+
+    cookieName: 'SES', // cookie name dictates the key name added to the request object
+    requestKey: 'session', // requestKey overrides cookieName for the key name added to the request object
+    secret: crypto.randomBytes(64).toString('hex'), // should be a large unguessable string
+    duration: 24 * 60 * 60 * 1000, // how long the session will stay valid in ms
+    activeDuration: 1000 * 60 * 5, // if expiresIn < activeDuration, the session will be extended by activeDuration milliseconds
+    cookie: {
+        ephemeral: false, // when true, cookie expires when the browser closes
+        httpOnly: true, // when true, cookie is not accessible from javascript
+        secure: false // when true, cookie will only be sent over SSL. use key 'secureProxy' instead if you handle SSL not in your node process
+    },
+
+    // engine related configs
+    wildcard: '*',
+    role: 'role',
+    user: 'user',
+    locale: 'locale'
+*/
+
+
 // start engine
-require('./lib/server')(repo, port, logLevel, production, token);
+//require('./lib/server')(config);
 
 /*
 // Start forking if you are the master.
