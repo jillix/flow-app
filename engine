@@ -27,14 +27,14 @@ var argv = require('yargs')
     .option('c', {
         alias: 'sslCert',
         type: 'string',
-        demand: false, // TODO set this to true, when http2 is implemented
+        demand: true,
         requiresArg: 'k',
         describe: 'Path to the SSL certificate file.'
     })
     .option('k', {
         alias: 'sslKey',
         type: 'string',
-        demand: false, // TODO set this to true, when http2 is implemented
+        demand: true,
         requiresArg: 'c',
         describe: 'Path to the SSL key file.'
     })
@@ -83,8 +83,9 @@ var argv = require('yargs')
             argv.ssl.key = fs.readFileSync(path.resolve(argv.k));
         }
 
-        // TODO remove the return, when http2 is supported
-        return true;
+        if (argv.ssl.cert && argv.ssl.key) {
+            return true;
+        }
     })
 
     // set default log level
@@ -128,7 +129,7 @@ config.logLevel = argv.l;
 config.production = argv.d ? false : true;
 
 // ssl config
-config.ssl = argv.ssl || config.ssl;
+config.ssl = argv.ssl || config.ssl || {};
 
 // session config
 var defaultSession = {
