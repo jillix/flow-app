@@ -151,5 +151,25 @@ var defaultSession = {
 };
 config.session = config.session ? Object.assign(defaultSession, config.session) : defaultSession;
 
+// app paths
+var defaultPaths = {
+    composition: config.workDir + '/composition',
+    modules: config.workDir + '/node_modules',
+    public: config.workDir + '/public',
+    markup: config.workDir + '/markup',
+};
+config.paths = config.paths ? Object.assign(defaultPaths, config.paths) : defaultPaths;
+
+// static headers
+config.static = {
+    maxAge: 86400,
+    fpMaxAge: 94670000
+};
+
+// core instance name
+config.flow = {
+    coreInstance: '@'
+};
+
 // start server
 require('./lib/server')(config);
