@@ -28,8 +28,8 @@
     "express": "4.13.3",
     "fs-extra": "0.22.1",
     "html-minifier": "0.7.2",
-    "http2": "3.2.0",
     "lru-cache": "1.4.0",
+    "spdy": "^2.0.5",
     "uglify-js": "2.4.24",
     "ws": "0.8.0",
     "yargs": "1.2.0"
