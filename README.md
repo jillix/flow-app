@@ -17,27 +17,6 @@ Go into your app root folder and do:
 ```sh
 $ npm start [port] ["fatal|error|warn|info|debug|trace"] ["PRO"]
 ```
-###Module guidelines
-* A module has a isolated purpose and functionality.
-* `flow` uses the module instances public API.
-* Modules are independent and configurable.
-
-Think of a module as a collection of functionality (`exports`) that can be used with the flow composition.
-
-- **API**
-    * Define a clear purpose and functionality.
-    * Define the methods to export (accessible through flow).
-    * Write flow configuration examples (with all possible options).
-    * Write methods with [jsDocs](https://github.com/jsdoc3/jsdoc) comments.
-
-- **Config**
-    * Define configurable options.
-    * Write full configuration example.
-
-- **NPM Package**
-    * Use always versions for dependencies.
-    * No promts in npm scripts.
-
 ###Module instance config
 #####Package:
 Extend the `npm` `package.json` with a `composition` object, to define a default config for instances of the module:
