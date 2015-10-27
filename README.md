@@ -96,7 +96,7 @@ modules and custom modules cannot install other modules.
    }
 }
 ```
-The `module.browser` field represents the [browserify "browser" option].
+The `module.browser` field represents the [browserify "browser" option](https://github.com/substack/node-browserify#browser-field).
 #####Flow:
 Check out the work in progress: [Stream Network Specification](https://docs.google.com/a/ottiker.com/drawings/d/1gdj-OtzugN5YERXqqJ6OcMrowUiO9DsczmYvf3zyB9I/edit?usp=sharing).
 Flow configs create streams, that allow to send and receive data between module instance methods.
