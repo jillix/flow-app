@@ -47,9 +47,11 @@ Extend the `npm` `package.json` with a `composition` object, to define a default
         "public": "public/folder",
         "config": {},
         "flow": [],
+        "load": ["instance"],
         "client": {
             "config": {},
             "flow": [],
+            "load": ["instance"],
             "styles": ["styles.css"],
             "markup": ["markup.html"]
         }
@@ -65,9 +67,11 @@ A composition config, configures an instance of a module.
     "module": "module",
     "config": {},
     "flow": [],
+    "load": ["instance"],
     "client": {
         "config": {},
         "flow": [],
+        "load": ["instance"],
         "styles": ["/path/file.css"],
         "markup": ["/path/file.html"]
     }
@@ -87,9 +91,11 @@ modules and custom modules cannot install other modules.
     },
     "config": {},
     "flow": [],
+    "load": ["instance"],
     "client": {
         "config": {},
         "flow": [],
+        "load": ["instance"],
         "styles": ["/path/file.css"],
         "markup": ["/path/file.html"]
     }
