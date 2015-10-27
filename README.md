@@ -48,12 +48,6 @@ Extend the `npm` `package.json` with a `composition` object, to define a default
         "config": {},
         "flow": [],
         "client": {
-            "module": [
-                "module/script.js",
-                "/public/repo/script.js",
-                "//external/script.js"
-            ],
-            "dependencies": ["module"],
             "config": {},
             "flow": [],
             "styles": ["styles.css"],
@@ -71,11 +65,9 @@ A composition config, configures an instance of a module.
     "module": "module",
     "config": {},
     "flow": [],
-    "load": ["instance"],
     "client": {
         "config": {},
         "flow": [],
-        "load": ["instance"],
         "styles": ["/path/file.css"],
         "markup": ["/path/file.html"]
     }
@@ -87,26 +79,24 @@ Expect the `client.dependencies` key is not supported, cause the client dependen
 modules and custom modules cannot install other modules.
 ```json
 {
-   "roles": {"*": true},
-   "name": "instance",
-   "module": {
-      "main": "folder/in/repo/index.js",
-      "public": "public/folder",
-      "config": {},
-      "flow": [],
-      "client": {
-         "module": [
-            "/public/script.js",
-            "//external/script.js"
-         ],
-         "config": {},
-         "flow": [],
-         "styles": ["/public/styles.css"],
-         "markup": ["markup.html"]
-      }
+    "roles": {"*": true},
+    "name": "instance",
+    "module": {
+        "main": "server_main.js",
+        "browser": "./client_main.js"
+    },
+    "config": {},
+    "flow": [],
+    "client": {
+        "config": {},
+        "flow": [],
+        "styles": ["/path/file.css"],
+        "markup": ["/path/file.html"]
+    }
    }
 }
 ```
+The `module.browser` field represents the [browserify "browser" option].
 #####Flow:
 Check out the work in progress: [Stream Network Specification](https://docs.google.com/a/ottiker.com/drawings/d/1gdj-OtzugN5YERXqqJ6OcMrowUiO9DsczmYvf3zyB9I/edit?usp=sharing).
 Flow configs create streams, that allow to send and receive data between module instance methods.
@@ -161,9 +151,6 @@ Flow config format:
 
     ["flow", "@event"]
     ["flow", "@instance/event"]
-
-    ["LOAD", ["instance"]],
-    ":ERES"
 ]
 ```
 First item in the flow array is the event name. The value can be a simple string `"eventName"` or it can be an array, which will remove the event after calling the first time.
