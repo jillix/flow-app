@@ -75,7 +75,6 @@ A composition config, configures an instance of a module.
         "styles": ["/path/file.css"],
         "markup": ["/path/file.html"]
     }
-   }
 }
 ```
 The `module.browser` field represents the [browserify "browser" option](https://github.com/substack/node-browserify#browser-field).
