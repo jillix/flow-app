@@ -6,7 +6,7 @@
 # create bundles with node_modules/module/client_bundle.js
 # important create external bundles of the top level modules!!
 # browserify -r view -o node_modules/view/M.js
-# browserify --dg (disable detecting of nodes global (process, ect.)) also for modules??
+# browserify --dg false (disable detecting of nodes global (process, ect.)) also for modules??
 # use source maps for debugging ?
 
 # minify js in production mode
