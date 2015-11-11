@@ -128,40 +128,50 @@ Flow config format:
         [
             [
                 "
-                    TYPE[':', '.']
-                    METHOD_PATH
+                    TYPE[:, .]
+                    METHOD[(instance/)method.path]
                 ",
-                {
-                    key: "value"
-                }
+                {"key": "value"}
             ],
             [
                 "
-                    TYPE['>', '|']
-                    FLOW[
-                        '/[instance/]event',
-                        '@[instance/]event'
-                    ]
+                    LINK[>, |]
+                    TYPE[< = local, / = http, @ = ws, * = custom]
+                    FLOW[(instance/)event]
                     ..or..
-                    METHOD_PATH
+                    METHOD[(instance/)method.path]
                 ",
                 {
-                    objectMode: false,
-                    key: value
+                    "objectMode": false,
+                    "key": "value"
                 }
             ]
         ],
         [
-            ":dataHandler",
-            ".onceHandler"
-            ">instance/event"
-            "|instance/event"
+            ":method",
+            ":instance/method",
+            ".method",
+            ".instance/method",
+            "><event"
+            "><instance/event"
+            ">/event"
+            ">/instance/event"
+            ">@event"
+            ">@instance/event"
+            ">*method"
+            ">*instance/method"
+            "|<event"
+            "|<instance/event"
+            "|/event"
+            "|/instance/event"
+            "|@event"
+            "|@instance/event"
+            "|*method"
+            "|*instance/method"
         ]
     ]
 }
 ```
-First item in the flow array is the event name. The value can be a simple string `"eventName"` or it can be an array, which will remove the event after calling the first time.
-Data handlers are indicated with a `:` char at the beginning of the method path `":dataHandler"`.
 
 ###Event streams
 Every module instance has the event stream (flow) object as prototype.
