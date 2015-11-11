@@ -79,96 +79,146 @@ A composition config, configures an instance of a module.
 ```
 The `module.browser` field represents the [browserify "browser" option](https://github.com/substack/node-browserify#browser-field).
 #####Flow:
-Check out the work in progress: [Stream Network Specification](https://docs.google.com/a/ottiker.com/drawings/d/1gdj-OtzugN5YERXqqJ6OcMrowUiO9DsczmYvf3zyB9I/edit?usp=sharing).
 Flow configs create streams, that allow to send and receive data between module instance methods.
-Flow config format:
-```js
-{
-    "eventName": [
-
-        [
-            // Data handler
-            /*
-                function (stream, option, data) {
-                  return data;
-                }
-            */
-
-            // Data handler call
-            [":path.to.dataHandler", {"argN": "str{data}"}], 
-
-            // Data handler is removed after receiving first chunk
-            [".path.to.onceHandler", {"argN": "str{data}"}],
-
-            // Stream handler
-            /*
-                function (stream, option) {
-                  return stream;
-                }
-            */
-            // Stream handler call
-            // Write data to stream and write results to next data handlers.
-            [">path.to.streamHandler", {"argN": "str{data}"}],
-
-            // Stream handler call.
-            // Write data to stream and push simultaneously to the next data handlers
-            ["|path.to.streamHandler", {"argN": "str{data}"}]
-        ],
-        [
-            // An Error stream is the same like a data stream,
-            // except they receive the error from a data stream.
-        ]
-    ]
-}
-```
-######All options example:
+Flow config *structure*:
 ```json
 {
-    "event": [
+    "Data + Error": [
+        ["data"],
+        ["error"]
+    ],
+    "only Data": [["data"]],
+    "only Error": [,["error"]]
+}
+```
+Flow config *syntax*:
+```js
+{
+    // Those events can be called with `instance.flow("eventName")`     
+    "eventName": [
+        
+        // Data handlers:
+        // If someone writes to the event stream, this array defines the sequenze,
+        // in which the data chunk is passed to the handler functions.
         [
+
+            // Handler:
+            // A handler is a method of an instance,
+            // optionally pass an `options` object to the function call.
             [
-                "
-                    TYPE[:, .]
-                    METHOD[(instance/)method.path]
-                ",
+                // Define the `type` of the handler function.
+                "TYPE[" +
+
+                    // The ":" char defines a data handler.
+                    ":," +
+
+                    // The "." char defines a data hanlder,
+                    // that is removed after the first data chunk.
+                    "." +
+                "]" +
+
+                // The method path is a flat object key (dot notation).
+                // If no instance is defined, the instance of the emitter (this.flow()) is used
+                "METHOD[(instance/)method.path]",
+
+                // An `optional` JSON object, that is passed to the handler function call.
                 {"key": "value"}
             ],
+
+            // Stream handler:
+            // Stream handlers receive the raw event stream object to read from, or write to.
+            // Stream handlers are always called, before the data handlers.
             [
-                "
-                    LINK[>, |]
-                    TYPE[< = local, / = http, @ = ws, * = custom]
-                    FLOW[(instance/)event]
-                    ..or..
-                    METHOD[(instance/)method.path]
-                ",
+                // LINK types define how a linked stream is connected to the flow network.
+                "LINK[" +
+
+                    // Write the data to the linked stream and let the linked stream write
+                    // data to the next stream in the network.
+                    ">," +
+
+                    // Write data to the linked stream and simultaneously
+                    // to the next stream in the network
+                    "|" +
+                "]" +
+                
+                // Emit events locally, over the network, or define
+                // a custom handler to connect you custom streams.
+                "NET[< = local, / = http, @ = ws, * = custom]" +
+
+                // In case of "<", "/" or "@", the flow stream handler is called,
+                // which connects an event stream to the current data flow.
+                "FLOW[(instance/)event]" +
+
+                //..or..
+
+                // The method path is a flat object key (dot notation).
+                // If no instance is defined, the instance of the emitter (this.flow()) is used
+                "METHOD[(instance/)method.path]",
+
+                // An `optional` JSON object, that is passed to the handler function call.
                 {
+                    // If your custom stream is in buffer mode,
+                    // disbale object mode on the event stream.
                     "objectMode": false,
                     "key": "value"
                 }
             ]
         ],
+
+        // Error handlers
+        [
+            // Error handlers have the same configuration as the data handler.
+        ]
+    ]
+}
+```
+Flow config *all combinations*:
+```json
+{
+    "eventName": [
         [
             ":method",
             ":instance/method",
             ".method",
             ".instance/method",
-            "><event"
-            "><instance/event"
-            ">/event"
-            ">/instance/event"
-            ">@event"
-            ">@instance/event"
-            ">*method"
-            ">*instance/method"
-            "|<event"
-            "|<instance/event"
-            "|/event"
-            "|/instance/event"
-            "|@event"
-            "|@instance/event"
-            "|*method"
-            "|*instance/method"
-        ]
+            "><event",
+            "><instance/event",
+            ">/event",
+            ">/instance/event",
+            ">@event",
+            ">@instance/event",
+            ">*method",
+            ">*instance/method",
+            "|<event",
+            "|<instance/event",
+            "|/event",
+            "|/instance/event",
+            "|@event",
+            "|@instance/event",
+            "|*method",
+            "|*instance/method",
+            [":method", {"key": "value"}],
+            [":instance/method", {"key": "value"}],
+            [".method", {"key": "value"}],
+            [".instance/method", {"key": "value"}],
+            ["><event", {"key": "value"}],
+            ["><instance/event", {"key": "value"}],
+            [">/event", {"key": "value"}],
+            [">/instance/event", {"key": "value"}],
+            [">@event", {"key": "value"}],
+            [">@instance/event", {"key": "value"}],
+            [">*method", {"key": "value"}],
+            [">*instance/method", {"key": "value"}],
+            ["|<event", {"key": "value"}],
+            ["|<instance/event", {"key": "value"}],
+            ["|/event", {"key": "value"}],
+            ["|/instance/event", {"key": "value"}],
+            ["|@event", {"key": "value"}],
+            ["|@instance/event", {"key": "value"}],
+            ["|*method", {"key": "value"}],
+            ["|*instance/method", {"key": "value"}]
+        ],
+        ["..same as data handlers"]
     ]
 }
 ```
