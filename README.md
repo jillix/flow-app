@@ -17,8 +17,7 @@ Go into your app root folder and do:
 ```sh
 $ npm start [port] ["fatal|error|warn|info|debug|trace"] ["PRO"]
 ```
-###Module instance config
-#####Package:
+###Module package extension
 Extend the `npm` `package.json` with a `composition` object, to define a default config for instances of the module:
 ```json
 {
@@ -37,6 +36,7 @@ Extend the `npm` `package.json` with a `composition` object, to define a default
     }
 }
 ```
+###Module instance config
 ##### Composition:
 A composition config, configures an instance of a module.
 ```json
@@ -78,9 +78,9 @@ A composition config, configures an instance of a module.
 }
 ```
 The `module.browser` field represents the [browserify "browser" option](https://github.com/substack/node-browserify#browser-field).
-#####Flow:
+###Flow:
 Flow configs create streams, that allow to send and receive data between module instance methods.
-Flow config *structure*:
+#####Flow config *structure*:
 ```json
 {
     "Data + Error": [
@@ -91,7 +91,7 @@ Flow config *structure*:
     "only Error": [,["error"]]
 }
 ```
-Flow config *syntax*:
+#####Flow config *syntax*:
 ```js
 {
     // Those events can be called with `instance.flow("eventName")`     
@@ -172,7 +172,7 @@ Flow config *syntax*:
     ]
 }
 ```
-Flow config *all combinations*:
+#####Flow config *all combinations*:
 ```json
 {
     "eventName": [
