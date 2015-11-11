@@ -83,56 +83,82 @@ Check out the work in progress: [Stream Network Specification](https://docs.goog
 Flow configs create streams, that allow to send and receive data between module instance methods.
 Flow config format:
 ```js
-[
-    // First array item is the event name.
-    // If the event name is in an array ["eventName"],
-    // engine will remove the event after first call.
-    "eventName",
+{
+    "eventName": [
 
-    // Data or error handler
-    /*
-        function (stream, option, data) {
-          return data;
-        }
-    */
+        [
+            // Data handler
+            /*
+                function (stream, option, data) {
+                  return data;
+                }
+            */
 
-    // Data handler call
-    [":path.to.dataHandler", {"argN": "str{data}"}, "instance/optionHandler"],
+            // Data handler call
+            [":path.to.dataHandler", {"argN": "str{data}"}], 
 
-    // Error handler call
-    ["!path.to.errorHandler", {"argN": "str{data}"}, "instance/optionHandler"],
+            // Data handler is removed after receiving first chunk
+            [".path.to.onceHandler", {"argN": "str{data}"}],
 
-    // Stream handler
-    /*
-        function (stream, option) {
-          return stream;
-        }
-    */
-    // Stream handler call
-    ["path.to.streamHandler", {"argN": "str{data}"}, "instance/optionHandler"]
+            // Stream handler
+            /*
+                function (stream, option) {
+                  return stream;
+                }
+            */
+            // Stream handler call
+            // Write data to stream and write results to next data handlers.
+            [">path.to.streamHandler", {"argN": "str{data}"}],
 
-    // Stream handler call.
-    // stream.write(), will not write back to the input stream
-    [">path.to.streamHandler", {"argN": "str{data}"}, "instance/optionHandler"]
-]
+            // Stream handler call.
+            // Write data to stream and push simultaneously to the next data handlers
+            ["|path.to.streamHandler", {"argN": "str{data}"}]
+        ],
+        [
+            // An Error stream is the same like a data stream,
+            // except they receive the error from a data stream.
+        ]
+    ]
+}
 ```
 ######All options example:
 ```json
-[
-    ["event"],
-
-    [":ALTR", {"data": {"my": "value"}}],
-    ["!instance/error", {}],
-
-    [">instance/method", {}],
-    ["instance/method", {}],
-
-    ["flow", "event"],
-    ["instance/flow", "event"],
-
-    ["flow", "@event"]
-    ["flow", "@instance/event"]
-]
+{
+    "event": [
+        [
+            [
+                "
+                    TYPE[':', '.']
+                    METHOD_PATH
+                ",
+                {
+                    key: "value"
+                }
+            ],
+            [
+                "
+                    TYPE['>', '|']
+                    FLOW[
+                        '/[instance/]event',
+                        '@[instance/]event'
+                    ]
+                    ..or..
+                    METHOD_PATH
+                ",
+                {
+                    objectMode: false,
+                    key: value
+                }
+            ]
+        ],
+        [
+            ":dataHandler",
+            ".onceHandler"
+            ">instance/event"
+            "|instance/event"
+        ]
+    ]
+}
 ```
 First item in the flow array is the event name. The value can be a simple string `"eventName"` or it can be an array, which will remove the event after calling the first time.
 Data handlers are indicated with a `:` char at the beginning of the method path `":dataHandler"`.
