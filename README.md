@@ -26,13 +26,8 @@ Extend the `npm` `package.json` with a `composition` object, to define a default
         "config": {},
         "flow": [],
         "load": ["instance"],
-        "client": {
-            "config": {},
-            "flow": [],
-            "load": ["instance"],
-            "styles": ["styles.css"],
-            "markup": ["markup.html"]
-        }
+        "styles": ["styles.css"],
+        "markup": ["markup.html"]
     }
 }
 ```
@@ -47,13 +42,8 @@ A composition config, configures an instance of a module.
     "config": {},
     "flow": [],
     "load": ["instance"],
-    "client": {
-        "config": {},
-        "flow": [],
-        "load": ["instance"],
-        "styles": ["/path/file.css"],
-        "markup": ["/path/file.html"]
-    }
+    "styles": ["/path/file.css"],
+    "markup": ["/path/file.html"]
 }
 ```
 ##### Composition with custom module:
@@ -68,13 +58,8 @@ A composition config, configures an instance of a module.
     "config": {},
     "flow": [],
     "load": ["instance"],
-    "client": {
-        "config": {},
-        "flow": [],
-        "load": ["instance"],
-        "styles": ["/path/file.css"],
-        "markup": ["/path/file.html"]
-    }
+    "styles": ["/path/file.css"],
+    "markup": ["/path/file.html"]
 }
 ```
 The `module.browser` field represents the [browserify "browser" option](https://github.com/substack/node-browserify#browser-field).
