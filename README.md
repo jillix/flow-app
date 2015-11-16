@@ -211,10 +211,14 @@ exports.method = function (stream, options) {
 // data handler
 function myMethod (next, options, data) {
     
-    // pass transfored data
+    // Push data to response (readable), without calling the next data handler.
+    // Note, that you have to call next again, to signal that the handler is done.
+    next(data, true);
+    
+    // Pass transformed data to the next data handler.
     next(null, data);
     
-    // emit en error
+    // Emit en error
     next(new Error('Something bad happend.'));
 }
 ```
