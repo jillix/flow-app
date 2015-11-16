@@ -128,7 +128,7 @@ Flow configs create streams, that allow to send and receive data between module 
                 
                 // Emit events locally, over the network, or define
                 // a custom handler to connect you custom streams.
-                "NET[< = local, / = http, @ = ws, * = custom]" +
+                "NET[> = flow, * = custom]" +
 
                 // In case of "<", "/" or "@", the flow stream handler is called,
                 // which connects an event stream to the current data flow.
@@ -145,6 +145,8 @@ Flow configs create streams, that allow to send and receive data between module 
                     // If your custom stream is in buffer mode,
                     // disbale object mode on the event stream.
                     "objectMode": false,
+                    "to": "instance",
+                    "net": "http|ws",
                     "key": "value"
                 }
             ]
@@ -166,40 +168,20 @@ Flow configs create streams, that allow to send and receive data between module 
             ":instance/method",
             ".method",
             ".instance/method",
-            "><event",
-            "><instance/event",
-            ">/event",
-            ">/instance/event",
-            ">@event",
-            ">@instance/event",
+            ">>event",
             ">*method",
             ">*instance/method",
-            "|<event",
-            "|<instance/event",
-            "|/event",
-            "|/instance/event",
-            "|@event",
-            "|@instance/event",
+            "|>event",
             "|*method",
             "|*instance/method",
             [":method", {"key": "value"}],
             [":instance/method", {"key": "value"}],
             [".method", {"key": "value"}],
             [".instance/method", {"key": "value"}],
-            ["><event", {"key": "value"}],
-            ["><instance/event", {"key": "value"}],
-            [">/event", {"key": "value"}],
-            [">/instance/event", {"key": "value"}],
-            [">@event", {"key": "value"}],
-            [">@instance/event", {"key": "value"}],
+            [">>event", {"to": "instance", "net": "ws"}],
             [">*method", {"key": "value"}],
             [">*instance/method", {"key": "value"}],
-            ["|<event", {"key": "value"}],
-            ["|<instance/event", {"key": "value"}],
-            ["|/event", {"key": "value"}],
-            ["|/instance/event", {"key": "value"}],
-            ["|@event", {"key": "value"}],
-            ["|@instance/event", {"key": "value"}],
+            ["|>event", {"to": "instance", "net": "ws"}],
             ["|*method", {"key": "value"}],
             ["|*instance/method", {"key": "value"}]
         ],
@@ -212,109 +194,30 @@ Flow configs create streams, that allow to send and receive data between module 
 Every module instance has the event stream (flow) object as prototype.
 Heres and example how to use a flow stream in your module code:
 ```js
-// exported module method (stream handler)
+// stream handler
 exports.method = function (stream, options) {
-
-    // revceive data from stream
-    stream.data(function (stream, options, data) {
-
-        // stop the data stream
-        // Tip: this is handy, when an error occurs:
-        stream.write(new Error());
-        return null;
-
-        // return modified data
-        return data;
-    });
-
-    // revceive errors from stream
-    stream.error(function (stream, options, error) {
-
-        // stop the error stream
-        return null;
-
-        // return modified error
-        return error;
-    });
-
-    // write to the stream
-    stream.write(err, data);
-
-    // pause stream
-    stream.pause();
-
-    // resume stream
-    stream.resume();
-
-    // end stream
-    stream.end();
-
-    // emit this stream
-    var myStream = this.flow("eventName", stream);
-
-    // create a new stream and emit it
-    var myStream = this.flow("eventName");
-
-    // create a new stream
-    // NOTE: this feature will probably disapear.
-    var myStream = this.flow([[/*flow call*/]]);
-
-    // append a custom end handler
-    myStream._end = function (/* Arguments from the end method */) {
-        /* do custom things when a stream ends. closing sockets for example. */
-    }
+    // the first argument "stream" is a a duplex stream.
+    
+    // pipe to a writable
+    stream.pipe(otherWritableStream);
+    
+    // read from a readable
+    otherReadableStream.pipe(stream);
+    
+    // use another duplex stream
+    stream.pipe(transformStream).pipe(stream);
 }
 
-// callback case
-function myMethod (callback) {
-
-    // if you must call a callback function inside a data handler,
-    // then you have to append the handler every time the method is called.
-    // otherwise the scope, so the "callback" is always from the first method call.
-
-    // create a stream, which is NOT cached.
-    // to do this just pass "true" as second argument.
-    var myStream = this.flow("eventName", true);
-
-    // append a data handler.
-    // note: if the stream would be cached, this data handler would be appended
-    // every time the "myMethod" is called.
-    myStream.data(function () {
-
-        callback();
-
-        // for streams, that are not cached, the module is responsible
-        // to end the stream!
-        myStream.end()
-    });
+// data handler
+function myMethod (next, options, data) {
+    
+    // pass transfored data
+    next(null, data);
+    
+    // emit en error
+    next(new Error('Something bad happend.'));
 }
 ```
-###Logs
-Engine provides a simple method to handle logging.
-```js
-// loggin in a instance
-exports.method = function () {
-
-      // log an error
-      this.log('F', {msg: 'Fatal message', additional: 'data'});
-      this.log('E', {additional: 'data'}, 'Error message');
-      this.log('W', 'Warning message');
-}
-
-// login core engine
-engine.log('I', {msg: 'Info message', additional: 'data'});
-engine.log('D', {additional: 'data'}, 'Debug message');
-engine.log('T', 'Trace message');
-```
-The available log levels are:
-* `F` or `fatal`
-* `E` or `error`
-* `W` or `warn`
-* `I` or `info`
-* `D` or `debug`
-* `T` or `trace`
-
-All logs are streamed to `process.stdout`.
 
 ###Path types
 Request files from a configured `public` directory, fetch module bundle file and call operations on the server side.
