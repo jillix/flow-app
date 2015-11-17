@@ -152,9 +152,7 @@ Flow configs create streams, that allow to send and receive data between module 
         ],
 
         // Error handlers
-        [
-            // Error handlers have the same configuration as the data handler.
-        ]
+        "onErrorEvent"
     ]
 }
 ```
@@ -184,7 +182,7 @@ Flow configs create streams, that allow to send and receive data between module 
             ["|*method", {"key": "value"}],
             ["|*instance/method", {"key": "value"}]
         ],
-        ["..same as data handlers"]
+        "onErrorEvent"
     ]
 }
 ```
