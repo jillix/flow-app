@@ -70,10 +70,9 @@ Flow configs create streams, that allow to send and receive data between module 
 {
     "Data + Error": [
         ["data"],
-        ["error"]
+        "error"
     ],
-    "only Data": [["data"]],
-    "only Error": [,["error"]]
+    "only Data": [["data"]]
 }
 ```
 #####Flow config *syntax*:
