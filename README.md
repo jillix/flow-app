@@ -209,7 +209,7 @@ exports.method = function (stream, options) {
 }
 
 // data handler
-function myMethod (next, options, data) {
+function myMethod (options, data, next) {
     
     // Push data to response (readable), without calling the next data handler.
     // Note, that you have to call next again, to signal that the handler is done.
