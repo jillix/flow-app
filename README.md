@@ -157,20 +157,33 @@ Flow configs create streams, that allow to send and receive data between module 
 }
 ```
 #####Flow config *all combinations*:
-```json
+```js
 {
     "eventName": [
         [
+            // Data handler: receives data from flow or custom streams.
             ":method",
             ":instance/method",
+            
+            // "Once" data handler: Like a data handler, but will be removed after first data chunk is processed.
             ".method",
             ".instance/method",
+            
+            // Flow emit: write data to event and write event result data to next data handlers or streams.
             ">>event",
+            
+            // Stream handler: A method that returns a readable, writable or duplex stream.
             ">*method",
             ">*instance/method",
+
+            // Flow emit (leaking): Leak the data also to the next data handlers.
             "|>event",
+            
+            // Custom stream (leaking)
             "|*method",
             "|*instance/method",
+            
+            // ..same as above. but with the options argument, which is passed to the handler function
             [":method", {"key": "value"}],
             [":instance/method", {"key": "value"}],
             [".method", {"key": "value"}],
@@ -182,6 +195,8 @@ Flow configs create streams, that allow to send and receive data between module 
             ["|*method", {"key": "value"}],
             ["|*instance/method", {"key": "value"}]
         ],
+        
+        // if an error happens somewhere in the above flow, this event will be emitted, with the error as data.
         "onErrorEvent"
     ]
 }
