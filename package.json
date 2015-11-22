@@ -27,7 +27,6 @@
     "flowhttp": "^0.3.0",
     "spdy": "^2.0.5",
     "stream-browserify": "^2.0.1",
-    "websocket-stream": "^2.0.2",
     "ws": "^0.8.0",
     "yargs": "^3.29.0"
   },
