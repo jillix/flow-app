@@ -68,23 +68,23 @@ Flow configs create streams, that allow to send and receive data between module 
 #####Flow config *structure*:
 ```json
 {
-    "Data + Error": [
-        ["data"],
-        "error"
-    ],
-    "only Data": [["data"]]
+    "listener": {
+        "d": ["data"],
+        "e": "endEvent",
+        "r": "errorEvent"
+    }
 }
 ```
 #####Flow config *syntax*:
 ```js
 {
     // Those events can be called with `instance.flow("eventName")`     
-    "eventName": [
+    "eventName": {
         
         // Data handlers:
         // If someone writes to the event stream, this array defines the sequenze,
         // in which the data chunk is passed to the handler functions.
-        [
+        "d": [
 
             // Handler:
             // A handler is a method of an instance,
@@ -150,17 +150,20 @@ Flow configs create streams, that allow to send and receive data between module 
                 }
             ]
         ],
-
-        // Error handlers
-        "onErrorEvent"
-    ]
+        
+        // End event
+        "e": "onEndEvent"
+        
+        // Error event
+        "r": "onErrorEvent"
+    }
 }
 ```
 #####Flow config *all combinations*:
 ```js
 {
-    "eventName": [
-        [
+    "eventName": {
+        "d": [
             // Data handler: receives data from flow or custom streams.
             ":method",
             ":instance/method",
@@ -196,8 +199,11 @@ Flow configs create streams, that allow to send and receive data between module 
             ["|*instance/method", {"key": "value"}]
         ],
         
+        // if the above flow stream ends, this event will be emitted, no data.
+        "e": "onEndEvent"
+        
         // if an error happens somewhere in the above flow, this event will be emitted, with the error as data.
-        "onErrorEvent"
+        "r": "onErrorEvent"
     ]
 }
 ```
