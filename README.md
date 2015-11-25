@@ -17,52 +17,6 @@ Go into your app root folder and do:
 ```sh
 $ npm start [port] ["fatal|error|warn|info|debug|trace"] ["PRO"]
 ```
-###Module package extension
-Extend the `npm` `package.json` with a `composition` object, to define a default config for instances of the module:
-```json
-{
-    "composition": {
-        "public": "public/folder",
-        "config": {},
-        "flow": {},
-        "load": ["instance"],
-        "styles": ["styles.css"],
-        "markup": ["markup.html"]
-    }
-}
-```
-###Module instance config
-##### Composition:
-A composition config, configures an instance of a module.
-```json
-{
-    "roles": {"*": true},
-    "name": "instance",
-    "module": "module",
-    "config": {},
-    "flow": {},
-    "load": ["instance"],
-    "styles": ["/path/file.css"],
-    "markup": ["/path/file.html"]
-}
-```
-##### Composition with custom module:
-```json
-{
-    "roles": {"*": true},
-    "name": "instance",
-    "module": {
-        "main": "server_main.js",
-        "browser": "./client_main.js"
-    },
-    "config": {},
-    "flow": {},
-    "load": ["instance"],
-    "styles": ["/path/file.css"],
-    "markup": ["/path/file.html"]
-}
-```
-The `module.browser` field represents the [browserify "browser" option](https://github.com/substack/node-browserify#browser-field).
 
 ###Path types
 Request files from a configured `public` directory, fetch module bundle file and call operations on the server side.
