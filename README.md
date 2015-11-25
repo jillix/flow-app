@@ -1,8 +1,6 @@
 engine
 ======
-
-Engine is a framework/platform, which takes care of **resources**, **networking** and **interaction**.
-Applications are made of module, which are instantiated and configured with **composition** files.
+A flow web server.
 
 ###Install the server
 1. Append engine as a dependency in your app's `package.json`.
