@@ -8,4 +8,4 @@ node_modules/
 *_shortcut.js
 *_shortcut.sh
 .lock_*
-M.js
+bundle.js
