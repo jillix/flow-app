@@ -22,18 +22,19 @@
     "framework"
   ],
   "dependencies": {
-    "flow": "jillix/flow",
+    "browserify": "^12.0.1",
     "client-sessions": "^0.7.0",
     "express": "^4.13.3",
+    "flow": "github:jillix/flow",
     "flowhttp": "^0.3.0",
-    "spdy": "^2.0.5",
+    "spdy": "^3.0.0",
     "stream-browserify": "^2.0.1",
     "ws": "^0.8.0",
-    "yargs": "^3.29.0"
+    "yargs": "^3.30.0"
   },
   "browser": {
     "stream": "stream-browserify",
-    "http": "http-browserify"
+    "http": "flowhttp"
   },
   "engine": {
     "node": ">=4"
@@ -45,6 +46,7 @@
   "main": "engine",
   "devDependencies": {},
   "scripts": {
+    "install": "browserify -d ./lib/flow.client.js | gzip -9 > bundle.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   }
 }

@@ -156,6 +156,7 @@ config.session = config.session ? Object.assign(defaultSession, config.session) 
 var defaultPaths = {
     composition: config.workDir + '/composition',
     modules: config.workDir + '/node_modules',
+    custom: config.workDir + '/app_modules',
     public: config.workDir + '/public',
     markup: config.workDir + '/markup',
 };
