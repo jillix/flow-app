@@ -1,19 +1,68 @@
 #!/usr/bin/env node
+var fs = require('fs');
+var zlib = require('zlib');
+var browserify = require('browserify');
 
-//go through all compositions and collect module names
-// merge engine package config into instances
+var base = '/home/adrian_ottiker_com/apps/engine-test';
+var base_app_modules = base + '/app_modules';
+var base_node_modules = base + '/node_modules';
 
-// create bundles with node_modules/module/client_bundle.js
-// important create external bundles of the top level modules!!
-// browserify -r view -o node_modules/view/M.js
-// browserify --dg false (disable detecting of nodes global (process, ect.)) also for modules??
-// compression example
-// browserify lib/flow.client.js > M.js; ccjs M.js > _tmp.js; gzip -9c _tmp.js > M.js; rm _tmp.js
-// watchify example with compression
-// watchify lib/flow.client.js -vd -o 'gzip -9 > M.js'
-// use source maps for debugging ?
+fs.readdir(base + '/composition', function (err, configs) {
 
-// minify js in production mode
-// minify css
-// minify html
-// compress files
+    if (err) {
+        throw err;
+    }
+
+    // get all file paths to bundle
+    var bundles = {};
+    configs.forEach(function (config) {
+        config = require(base + '/composition/' + config);
+
+        /*
+            module: "module",
+            module: "/module/file.js:/module/bundle.js"
+            browser: "module/file.js"
+        */
+
+        if (!config.server && config.module) {
+            config.module = config.browser || config.module;
+
+            if (config.module[0] === '/') {
+                bundles[config.module] = true;  
+            } else {
+                bundles[config.module] = false;
+            }
+        }
+    });
+
+    for (var bundle in bundles) {
+
+        var b = browserify();
+        var requirePath = bundle;
+
+        if (bundles[bundle]) {
+            requirePath = requirePath.split('/');
+            requirePath.pop();
+            requirePath = requirePath.join('/') + '/bundle.js';
+            b.require(base_app_modules + bundle, {expose: requirePath});
+            bundle = base_app_modules + requirePath;
+        } else {
+            b.require(bundle);
+            bundle = base_node_modules + '/' + bundle + '/bundle.js';
+        }
+
+        console.log('create file:', bundle);
+        var gzip = zlib.createGzip({level: zlib.Z_BEST_COMPRESSION});
+        var file = fs.createWriteStream(bundle);
+        b.bundle().pipe(gzip).pipe(file);
+    }
+});
+
+// TODO
+// compile with closure compiler
+//  - ccjs bundle.js
+// merge engine package config into instances?
+// debugging
+//  - recompile individual modules
+//  - watchify lib/flow.client.js -vd -o 'gzip -9 > M.js'
+
