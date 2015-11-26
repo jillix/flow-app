@@ -55,5 +55,9 @@ Example: `/path/to/public/file.suffix`
 * Production example: `/module/view/bundle.273dhs7.js`
 * Debug example: `/module/view/bundle.js`
 
+#####Custom module file path `/app_module/[module]/bundle.[fingerprint].js/`
+* Production example: `/app_module/view/bundle.273dhs7.js`
+* Debug example: `/app_module/view/bundle.js`
+
 #####Operation path `/flow/[module_instance]:[event]/`
 Example: `/flow/registration:verifyEmail/tokenX/?locale=en_US#hash`
