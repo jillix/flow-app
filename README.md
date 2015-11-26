@@ -3,17 +3,36 @@ engine
 A flow web server.
 
 ###Install the server
-1. Append engine as a dependency in your app's `package.json`.
-2. Define the start script: `"start": "./node_modules/engine/engine ."`
+* Append `engine` as a dependency in your app's `package.json`:
+```json
+{
+    "dependencies": {
+        "engine": "github:jillix/engine"
+    }
+}
+```
+* Define the npm scripts:
+```json
+"scripts": {
+    "install": "./node_modules/engine/install .",
+    "start": "node ./node_modules/engine/engine -c ssl/dev.crt -k ssl/dev.key .",
+    "reload": "./node_modules/engine/install .; npm start"
+}
+```
 
-###Install an app
+### Install the app
 1. Clone the repository: `git clone [git_url]`
 2. Change directory: `cd [app_repo_dir]/` and do a `npm install`
 
 ###Start an app
 Go into your app root folder and do:
 ```sh
-$ npm start [port] ["fatal|error|warn|info|debug|trace"] ["PRO"]
+$ npm start [port] ["fatal|error|warn|info|debug|trace"]
+```
+###Reload an app
+Reload recomiles the module bundles. Meant to use while developing.
+```sh
+$ npm run reload [port] ["fatal|error|warn|info|debug|trace"]
 ```
 
 ### Module package extension
