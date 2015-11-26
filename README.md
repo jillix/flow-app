@@ -47,6 +47,7 @@ Note that, the first segment of a public file URL cannot contain a `:` char, sin
 **Not allowed paths for public files:**
 * `/flow/*`
 * `/module/*`
+* `/app_module/*`
 
 #####Public file path `/`
 Example: `/path/to/public/file.suffix`
