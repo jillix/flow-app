@@ -16,6 +16,30 @@ Go into your app root folder and do:
 $ npm start [port] ["fatal|error|warn|info|debug|trace"] ["PRO"]
 ```
 
+### Module package extension
+Extend the `npm` `package.json` with a `composition` object, to define a default config for instances of the module:
+```json
+{
+    "composition": {
+        "config": {},
+        "flow": {},
+        "load": ["instance"],
+        "styles": ["styles.css"],
+        "markup": ["markup.html"]
+    }
+}
+```
+##### Composition with custom module:
+To create a custom module instance form a app repo file, just define a path as module name.
+The base path for custom module files is: `*/app/app_modules`. 
+```json
+{
+    "module": "/module/main.js",
+    "browser": "/module/client.js",
+}
+```
+The `browser` field represents the [browserify "browser" option](https://github.com/substack/node-browserify#browser-field).
+
 ###Path types
 Request files from a configured `public` directory, fetch module bundle file and call operations on the server side.
 Note that, the first segment of a public file URL cannot contain a `:` char, since they are used to route to the to the corresponding operation.
