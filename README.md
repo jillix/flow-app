@@ -21,15 +21,15 @@ Request files from a configured `public` directory, fetch module bundle file and
 Note that, the first segment of a public file URL cannot contain a `:` char, since they are used to route to the to the corresponding operation.
 
 **Not allowed paths for public files:**
-* `/path:to/public/file.suffix`
-* `/anExistingModuleName/client[.fingerprint].js`
+* `/flow/*`
+* `/module/*`
 
 #####Public file path `/`
 Example: `/path/to/public/file.suffix`
 
-#####Module file path `/[module]/client.[fingerprint].js/`
-* Production example: `/view/client.273dhs7.js`
-* Debug example: `/view/client.js`
+#####Module file path `/module/[module]/bundle.[fingerprint].js/`
+* Production example: `/module/view/bundle.273dhs7.js`
+* Debug example: `/module/view/bundle.js`
 
-#####Operation path `/[module_instance]:[event]/`
-Example: `/registration:verifyEmail/tokenX/?locale=en_US#hash`
+#####Operation path `/flow/[module_instance]:[event]/`
+Example: `/flow/registration:verifyEmail/tokenX/?locale=en_US#hash`
