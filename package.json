@@ -24,6 +24,7 @@
   "dependencies": {
     "browserify": "^12.0.1",
     "client-sessions": "^0.7.0",
+    "closurecompiler": "^1.5.2",
     "express": "^4.13.3",
     "flow": "github:jillix/flow",
     "flowhttp": "^0.3.0",
@@ -46,7 +47,8 @@
   "main": "engine",
   "devDependencies": {},
   "scripts": {
-    "install": "browserify -d ./lib/flow.client.js | gzip -9 > bundle.js",
+    "install": "browserify ./lib/flow.client.js | gzip -9 > bundle.js",
+    "bundle": "browserify ./lib/flow.client.js > bundle.js; ccjs bundle.js --language_in=ES5 > _tmp.js; gzip -9c _tmp.js > bundle.js; rm _tmp.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   }
 }
