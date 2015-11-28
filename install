@@ -63,7 +63,7 @@ flowApi.getInstances(base, function (err, bundles) {
 
     for (var bundle in bundles) {
 
-        var b = browserify({debug: true});
+        var b = browserify({debug: false});
         var requirePath = bundle;
 
         if (bundles[bundle]) {
