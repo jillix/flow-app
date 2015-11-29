@@ -47,8 +47,9 @@
   "main": "engine",
   "devDependencies": {},
   "scripts": {
-    "install": "browserify ./lib/flow.client.js | gzip -9 > bundle.js",
+    "install": "npm run bundle",
     "bundle": "browserify ./lib/flow.client.js > bundle.js; ccjs bundle.js --language_in=ES5 > _tmp.js; gzip -9c _tmp.js > bundle.js; rm _tmp.js",
+    "bundleDev": "browserify ./lib/flow.client.js | gzip -9 > bundle.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   }
 }
