@@ -4,6 +4,47 @@
         <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
         <link rel="icon" href="/favicon.ico"/>
         <script src="/module/engine/bundle.js"></script>
+        <style media="screen" type="text/css">
+            html {
+                font-family: sans-serif;
+                background-color: white;
+                height: 100%;
+            }
+            body {
+                height: 100%;
+            }
+            .loader {
+                z-index: 1;
+                position: relative;
+                width: 200px;
+                height: 5px;
+                margin: 0 auto;
+            }
+            .loader div {
+                display: block;
+                position: absolute;
+                background-color: rgb(0, 121, 178);
+                top: 0; bottom: 0;
+                left: 0; right: 0;
+                border-radius: 5px;
+                animation: jump .9s infinite ease-in;
+            }
+            @keyframes jump {
+                0%    {left: 0%;    right: 0%}
+                10%   {left: 98%;  right: 0%}
+                30%   {left: 98%;  right: 0%}
+                40%   {left: 80%;  right: 0%}
+                50%   {left: 0%;    right: 0%}
+                60%   {left: 0%;    right: 98%}
+                80%   {left: 0%;    right: 98%}
+                90%   {left: 0%;    right: 80%}
+                100%   {left: 0%;    right: 0%}
+            }
+        </style>
     </head>
-    <body></body>
+    <body>
+        <div class="loader">
+            <div></div>
+        </div> 
+    </body>
 </html>
