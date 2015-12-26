@@ -29,37 +29,25 @@
                 top: 0; bottom: 0;
                 left: 0; right: 0;
                 border-radius: 5px;
-                animation: jump .9s infinite ease-in;
+                animation: jump .9s infinite;
             }
             @keyframes jump {
-                0%    {
-                    left: 90%;
-                    right: 0%;
-                    transform: translate3d(1px, 0px, 0px);
-                    animation-timing-function: ease-out;
-                }
-                25%    {
+                0%, 50%, 100% {
                     left: 0%;
                     right: 0%;
-                    transform: translate3d(-1px, 0px, 0px);
+                    transform: translate3d(-0.1px, 0px, 0px);
                     animation-timing-function: ease-in;
                 }
-                50%    {
-                    left: 0%;
-                    right: 90%;
-                    transform: translate3d(1px, 0px, 0px);
+                12.5%, 37.5% {
+                    left: 95%;
+                    right: 0%;
+                    transform: translate3d(0.1px, 0px, 10px);
                     animation-timing-function: ease-out;
                 }
-                75% {
+                62.5%, 87.5% {
                     left: 0%;
-                    right: 0%;
-                    transform: translate3d(-1px, 0px, 0px);
-                    animation-timing-function: ease-in;
-                }
-                100%    {
-                    left: 90%;
-                    right: 0%;
-                    transform: translate3d(1px, 0px, 0px);
+                    right: 95%;
+                    transform: translate3d(0.1px, 0px, 0px);
                     animation-timing-function: ease-out;
                 }
             }
