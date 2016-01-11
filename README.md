@@ -42,9 +42,7 @@ Extend the `npm` `package.json` with a `composition` object, to define a default
     "composition": {
         "config": {},
         "flow": {},
-        "load": ["instance"],
-        "styles": ["styles.css"],
-        "markup": ["markup.html"]
+        "load": ["instance"]
     }
 }
 ```
