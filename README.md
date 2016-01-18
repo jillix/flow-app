@@ -63,6 +63,7 @@ Note that, the first segment of a public file URL cannot contain a `:` char, sin
 
 **Not allowed paths for public files:**
 * `/flow/*`
+* `/flow_comp/*`
 * `/module/*`
 * `/app_module/*`
 
@@ -77,5 +78,8 @@ Example: `/path/to/public/file.suffix`
 * Production example: `/app_module/view/bundle.273dhs7.js`
 * Debug example: `/app_module/view/bundle.js`
 
-#####Operation path `/flow/[module_instance]:[event]/`
+#####Flow emit path `/flow/[module_instance]:[event]/`
 Example: `/flow/registration:verifyEmail/tokenX/?locale=en_US#hash`
+
+#####Module instance composition path `/flow_comp/[module_instance]`
+Example: `/flow_comp/compositionName`
