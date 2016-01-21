@@ -26,7 +26,6 @@
     "express": "^4.13.3",
     "flow": "github:jillix/flow",
     "flow-http": "github:jillix/flow-http",
-    "flow-pack": "github:jillix/flow-pack",
     "flow-ws": "github:jillix/flow-ws",
     "spdy": "^3.0.0",
     "ws": "^1.0.1",
@@ -39,14 +38,10 @@
     "url": "https://github.com/jillix/engine/issues"
   },
   "homepage": "https://github.com/jillix/engine",
-  "main": "engine",
+  "main": "index.js",
+  "browser": "lib/flow.client.js",
   "devDependencies": {},
   "scripts": {
-    "install": "npm run bundleclient; npm run bundlemodules",
-    "bundlemodules": "./install",
-    "bundlemodulesdev": "./install -d",
-    "bundleclient": "browserify ./lib/flow.client.js > bundle.js; ccjs bundle.js --language_in=ES5 > _tmp.js; gzip -9c _tmp.js > bundle.js; rm _tmp.js",
-    "bundleclientdev": "browserify -d ./lib/flow.client.js | gzip -9 > bundle.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   }
 }
