@@ -108,6 +108,8 @@ var argv = require('yargs')
     .strict()
     .argv;
 
+console.log(argv);
+
 // create runtime config from app package
 var config = require(argv.repo + '/package.json');
 
