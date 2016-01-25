@@ -1,9 +1,9 @@
 {
-  "name": "engine",
+  "name": "flow-app",
   "version": "0.1.0-beta",
   "private": true,
   "author": "jillix <contact@jillix.com>",
-  "description": "The jillix cloud engine",
+  "description": "Web framework for flow applications.",
   "contributors": [
     "Adrian Ottiker <adrian@ottiker.com>",
     "Gabriel Petrovay <gabipetrovay@gmail.com>",
@@ -11,7 +11,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/jillix/engine.git"
+    "url": "https://github.com/jillix/flow-app.git"
   },
   "keywords": [
     "application",
@@ -35,9 +35,9 @@
     "node": ">=5"
   },
   "bugs": {
-    "url": "https://github.com/jillix/engine/issues"
+    "url": "https://github.com/jillix/flow-app/issues"
   },
-  "homepage": "https://github.com/jillix/engine",
+  "homepage": "https://github.com/jillix/flow-app",
   "main": "index.js",
   "browser": "lib/flow.client.js",
   "scripts": {
