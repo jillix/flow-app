@@ -26,7 +26,7 @@
     "client-sessions": "^0.7.0",
     "closurecompiler": "^1.5.2",
     "express": "^4.13.3",
-    "flow": "github:jillix/flow",
+    "flow": "jillix/flow",
     "flowhttp": "^0.3.0",
     "spdy": "^3.0.0",
     "stream-browserify": "^2.0.1",
