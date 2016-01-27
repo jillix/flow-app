@@ -9,6 +9,9 @@
     "Gabriel Petrovay <gabipetrovay@gmail.com>",
     "Ionica Bizau <bizauionica@gmail.com>"
   ],
+  "bin": {
+    "flow-app": "bin/index.js"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/jillix/flow-app.git"
@@ -38,7 +41,7 @@
     "url": "https://github.com/jillix/flow-app/issues"
   },
   "homepage": "https://github.com/jillix/flow-app",
-  "main": "index.js",
+  "main": "bin/index.js",
   "browser": "lib/flow.client.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
