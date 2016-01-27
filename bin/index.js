@@ -1,179 +1,176 @@
 #!/usr/bin/env node
 
+"use strict";
+
+var config = require('./config');
 var fs = require('fs');
-var path = require('path');
-var crypto = require('crypto');
+var http = require('spdy');
+var express = require('express');
+var sessions = require('client-sessions');
+var FlowServer = require('../lib/flow.server');
+var FlowWs = require('flow-ws');
+var isJSFile = /\.js$/;
+var Flow = FlowServer(config);
+var app = express();
+var server = http.createServer(config.ssl, app);
+var clientSession = sessions(config.session);
+var clientFile = fs.readFileSync('../bundle.js');
+var wss = new FlowWs.server({server: server});
+wss.on('connection', function connection(socket) {
 
-// parse cli arguments
-var argv = require('yargs')
-    .option('d', {
-        alias: 'debug',
-        default: false,
-        type: 'boolean',
-        describe: 'Start engine in debug mode.'
-    })
-    .option('l', {
-        alias: 'logLevel',
-        default: 'error',
-        type: 'string',
-        choices: ['fatal', 'error', 'warn', 'info', 'debug', 'trace'],
-        describe: 'Set log level.'
-    })
-    .option('t', {
-        alias: 'token',
-        type: 'string',
-        describe: 'Set secret tocken for client sessions.'
-    })
-    .option('c', {
-        alias: 'sslCert',
-        type: 'string',
-        demand: true,
-        requiresArg: 'k',
-        describe: 'Path to the SSL certificate file.'
-    })
-    .option('k', {
-        alias: 'sslKey',
-        type: 'string',
-        demand: true,
-        requiresArg: 'c',
-        describe: 'Path to the SSL key file.'
-    })
+    // plug client session midleware
+    clientSession(socket.upgradeReq, {}, function (err) {
 
-    // check if repo path exists
-    .check(function (argv) {
+        // setup flow on socket
+        socket.app = app;
 
-        if (typeof argv._[0] === 'string') {
-            argv.repo = path.resolve(argv._[0]);
+        // multiplexer for flow event streams
+        socket.onmessage = FlowWs.demux(Flow, socket.upgradeReq.session);
+    });
+});
 
-            if (fs.statSync(argv.repo)) {
-                return true;
+// use encrypted client sessions
+app.use(clientSession);
+
+// load module instance compostion (TODO use JSON-LD)
+app.use('/flow_comp/:name', function (req, res) {
+
+    var name = req.params.name;
+    if (!name) {
+        res.set({'content-type': 'text/plain'}).status(400);
+        res.end(new Error('Flow.server.composition: No module instance compostion name.').stack);
+        return;
+    }
+
+    // handle entrypoint
+    if (name === '*') {
+        // TODO get real host name. and find a way to handle multidomain apps
+        //      with the infrastructure api
+        var host = '';// = socket.upgradeReq.headers.host.split(':')[0];
+        var entrypoints = config.entrypoints[req.session.role ? 'private' : 'public'];
+
+        // TODO maybe entrypoints can have simple routing..
+        name = entrypoints[host] || entrypoints['*']; 
+    }
+
+    Flow.mic(name, function (err, composition) {
+
+        if (err) {
+            res.set({'content-type': 'text/plain'}).status(400);
+            res.end(err.stack);
+            return;
+        }
+
+        var module = composition.browser || composition.module;
+        if (!module) {
+            res.set({'content-type': 'text/plain'}).status(400);
+            return res.end(new Error('Flow.server.composition: No module field on instance "' + name  + '".').stack);
+        }
+
+        // handle custom modules
+        if (
+            module[0] === '/' &&
+            isJSFile.test(module)
+        ) {
+            // create client path
+            (module = module.split('/')).pop();
+            composition.module = module.join('/');
+        } 
+
+        res.set({'content-type': 'application/json'}).status(200);
+        res.end(JSON.stringify(composition));
+    });
+});
+
+// emit flow events from http urls
+app.use('/flow/:instance::event', function (req, res) {
+
+    var instance = req.params.instance;
+    var eventNme = req.params.event;
+
+    if (!instance || !eventNme) {
+        res.set({'content-type': 'text/plain'}).status(400);
+        res.end(new Error('Instance or event name not found.'));
+        return;
+    }
+
+    var event = Flow.flow(eventNme, {
+        to: instance,
+        session: req.session,
+        req: req,
+        res: res,
+    });
+    req.pipe(event.i);
+    event.o.on('error', function (err) {
+        res.status(err.code || 500).send(err.message);
+    });
+    event.o.pipe(res);
+
+    // push url as first data chunk
+    if (req.method === 'GET') {
+        req.push(req.url.substr(1));
+    }
+});
+
+// serve client module bundles
+app.get('/module/:module/bundle(.:fp)?.js', function(req, res) {
+
+    // set longer cache age, if file is fingerprinted
+    res.set({
+        'Cache-Control': 'public, max-age=' + req.params.fp ? config.static.fpMaxAge : config.static.maxAge,
+        'Content-Encoding': 'gzip'
+    });
+
+    res.sendFile(config.paths.modules + '/' + req.params.module + '/bundle.js');
+});
+
+// serve client custom module bundles
+app.get('/app_module/:module/bundle(.:fp)?.js', function(req, res) {
+
+    // set longer cache age, if file is fingerprinted
+    res.set({
+        'Cache-Control': 'public, max-age=' + req.params.fp ? config.static.fpMaxAge : config.static.maxAge,
+        'Content-Encoding': 'gzip'
+    });
+
+    res.sendFile(config.paths.custom + '/' + req.params.module + '/bundle.js');
+});
+
+// static file server for public files
+app.use(express.static(config.paths.public, {
+    setHeaders: function setCustomCacheControl(res, path) {
+        var suffix = path.split('.').pop();
+        if (suffix === 'js') {
+            res.setHeader('Content-Encoding', 'gzip');
+        }
+    } 
+}));
+
+// send the initial document with engine client
+app.use(function (req, res) {
+
+    // push the engine client directly
+    // TODO why is res.push all of the sudden undefined???!!!
+    if (res.push) {
+        res.push('/module/engine/bundle.js', {
+            request: {accept: '*/*'},
+                response: {
+                'content-type': 'application/javascript',
+                'Content-Encoding': 'gzip'
             }
-        }
-    })
+        }).end(clientFile);
+    }
 
-    // check if port is a number
-    .check(function (argv) {
+    // send the document
+    res.set({
+        'Cache-Control': 'public, max-age=' + config.static.maxAge
+        //'Content-Encoding': 'gzip'
+    });
 
-        if (argv._[1]) {
-            argv.port = typeof argv._[1] === 'number' ? argv._[1] : parseInt(argv._[1].replace(/[^0-9]/, ''));
+    res.sendFile(config.paths.modules + '/engine/lib/document.html');
+});
 
-            if (argv.port) {
-                return true;
-            }
-
-        // set default port
-        } else {
-            argv.port = 8000;
-            return true;
-        }
-    })
-
-    // check if ssl certificates exists
-    .check(function (argv) {
-
-        argv.ssl = {};
-
-        // check if ssl certificate exists
-        if (typeof argv.c === 'string') {
-            argv.ssl.cert = fs.readFileSync(path.resolve(argv.c));
-        }
-
-        // check if ssl key file exists
-        if (typeof argv.k === 'string') {
-            argv.ssl.key = fs.readFileSync(path.resolve(argv.k));
-        }
-
-        if (argv.ssl.cert && argv.ssl.key) {
-            return true;
-        }
-    })
-
-    // set default log level
-    .check(function (argv) {
-
-        if (!argv.l && argv.d) {
-            argv.l = argv.logLevel = 'debug';
-        }
-
-        return true;
-    })
-
-    .usage('engine [options] [APP_REPO_PATH] [PORT]')
-    .example('engine /usr/src/app 8000', "Start engine in production mode.")
-    .example('engine -d /usr/src/app 8000', "Start engine in debug mode.")
-    .example('engine -t secretToken /usr/src/app 8000', "Define a secret token for client sessions.")
-    .example('engine -c /path/to/cert.pem -k /path/to/key.pem 8000', "Define SSL certificate")
-    .help('h')
-    .alias('h', 'help')
-    .strict()
-    .argv;
-
-console.log(argv);
-
-// create runtime config from app package
-var config = require(argv.repo + '/package.json');
-
-// set working directory
-config.workDir = argv.repo;
-
-// set port
-config.port = argv.port;
-
-// check if entrypoints are in the config
-if (typeof config.entrypoints !== 'object') {
-    throw new Error('No entrypoints defined in package.');
-}
-
-// log level
-config.logLevel = argv.l;
-
-// debug mode
-config.production = argv.d ? false : true;
-
-// ssl config
-config.ssl = argv.ssl || config.ssl || {};
-
-// session config
-var defaultSession = {
-    cookieName: 'SES', // cookie name dictates the key name added to the request object
-    requestKey: 'session', // requestKey overrides cookieName for the key name added to the request object
-    secret: argv.token || crypto.randomBytes(64).toString('hex'), // should be a large unguessable string
-    duration: 24 * 60 * 60 * 1000, // how long the session will stay valid in ms
-    activeDuration: 1000 * 60 * 5, // if expiresIn < activeDuration, the session will be extended by activeDuration milliseconds
-    cookie: {
-        ephemeral: false, // when true, cookie expires when the browser closes
-        httpOnly: true, // when true, cookie is not accessible from javascript
-        secure: false // when true, cookie will only be sent over SSL. use key 'secureProxy' instead if you handle SSL not in your node process
-    },
-
-    // engine related configs
-    wildcard: '*',
-    role: 'role',
-    user: 'user',
-    locale: 'locale'
-};
-config.session = config.session ? Object.assign(defaultSession, config.session) : defaultSession;
-
-// app paths
-var defaultPaths = {
-    composition: config.workDir + '/composition',
-    modules: config.workDir + '/node_modules',
-    custom: config.workDir + '/app_modules',
-    public: config.workDir + '/public',
-    markup: config.workDir + '/markup',
-};
-config.paths = config.paths ? Object.assign(defaultPaths, config.paths) : defaultPaths;
-
-// static headers
-config.static = {
-    maxAge: 86400,
-    fpMaxAge: 94670000
-};
-
-// core instance name
-config.flow = {
-    coreInstance: '@'
-};
-
-// start server
-require('./lib/server')(config);
+// start http server
+server.listen(config.port, function () {
+    console.log('Engine is listening on port', config.port);
+});
