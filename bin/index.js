@@ -4,6 +4,7 @@
 
 var config = require('./config');
 var fs = require('fs');
+var path = require('path');
 var http = require('spdy');
 var express = require('express');
 var sessions = require('client-sessions');
@@ -14,7 +15,9 @@ var Flow = FlowServer(config);
 var app = express();
 var server = http.createServer(config.ssl, app);
 var clientSession = sessions(config.session);
-var clientFile = fs.readFileSync(__dirname + '/../bundle.js');
+var root = path.resolve(__dirname + '/../');
+var indexFile = fs.readFileSync(root + '/lib/document.html');
+var clientFile = fs.readFileSync(root + '/bundle.js');
 var wss = new FlowWs.server({server: server});
 wss.on('connection', function connection(socket) {
 
@@ -155,7 +158,7 @@ app.use(function (req, res) {
         res.push('/module/engine/bundle.js', {
             request: {accept: '*/*'},
                 response: {
-                'content-type': 'application/javascript',
+                'Content-Type': 'application/javascript',
                 'Content-Encoding': 'gzip'
             }
         }).end(clientFile);
@@ -163,11 +166,12 @@ app.use(function (req, res) {
 
     // send the document
     res.set({
-        'Cache-Control': 'public, max-age=' + config.static.maxAge
+        'Cache-Control': 'public, max-age=' + config.static.maxAge,
+        'Content-Type': 'text/html'
         //'Content-Encoding': 'gzip'
     });
 
-    res.sendFile(config.paths.modules + '/engine/lib/document.html');
+    res.end(indexFile);
 });
 
 // start http server
