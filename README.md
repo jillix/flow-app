@@ -1,22 +1,22 @@
-engine
+Flow-App
 ======
 A flow web server.
 
 ###Install the server
-* Append `engine` as a dependency in your app's `package.json`:
+* Append `flow-app` as a dependency in your app's `package.json`:
 ```json
 {
     "dependencies": {
-        "engine": "github:jillix/engine"
+        "flow-app": "github:jillix/flow-app"
     }
 }
 ```
 * Define the npm scripts:
 ```json
 "scripts": {
-    "install": "./node_modules/engine/install .",
-    "start": "node ./node_modules/engine/engine -c ssl/dev.crt -k ssl/dev.key .",
-    "reload": "./node_modules/engine/install .; npm start"
+    "install": "flow-pack . -i flow-app.",
+    "start": "flow-app -c ssl/dev.crt -k ssl/dev.key .",
+    "debug": "flow-pack . -di flow-app; npm start"
 }
 ```
 
