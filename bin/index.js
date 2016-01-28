@@ -14,7 +14,7 @@ var Flow = FlowServer(config);
 var app = express();
 var server = http.createServer(config.ssl, app);
 var clientSession = sessions(config.session);
-var clientFile = fs.readFileSync('../bundle.js');
+var clientFile = fs.readFileSync(__dirname + '/../bundle.js');
 var wss = new FlowWs.server({server: server});
 wss.on('connection', function connection(socket) {
 
