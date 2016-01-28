@@ -1,17 +1,20 @@
 {
-  "name": "engine",
+  "name": "flow-app",
   "version": "0.1.0-beta",
   "private": true,
   "author": "jillix <contact@jillix.com>",
-  "description": "The jillix cloud engine",
+  "description": "Web framework for flow applications.",
   "contributors": [
     "Adrian Ottiker <adrian@ottiker.com>",
     "Gabriel Petrovay <gabipetrovay@gmail.com>",
     "Ionica Bizau <bizauionica@gmail.com>"
   ],
+  "bin": {
+    "flow-app": "bin/index.js"
+  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/jillix/engine.git"
+    "url": "https://github.com/jillix/flow-app.git"
   },
   "keywords": [
     "application",
@@ -24,7 +27,7 @@
     "flow": "github:jillix/flow",
     "flow-http": "github:jillix/flow-http",
     "flow-ws": "github:jillix/flow-ws",
-    "flow-pack": "github:jillix/flow-pack",
+    "flow-pack": "github:jillix/flow-pack#app-install",
     "spdy": "^3.2.0",
     "yargs": "^3.32.0"
   },
@@ -32,10 +35,10 @@
     "node": ">=5"
   },
   "bugs": {
-    "url": "https://github.com/jillix/engine/issues"
+    "url": "https://github.com/jillix/flow-app/issues"
   },
-  "homepage": "https://github.com/jillix/engine",
-  "main": "index.js",
+  "homepage": "https://github.com/jillix/flow-app",
+  "main": "bin/index.js",
   "browser": "lib/flow.client.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
