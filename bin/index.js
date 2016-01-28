@@ -6,19 +6,23 @@ var config = require('./config');
 var fs = require('fs');
 var path = require('path');
 var http = require('spdy');
+var WSS = require('ws').Server;
 var express = require('express');
 var sessions = require('client-sessions');
 var FlowServer = require('../lib/flow.server');
 var FlowWs = require('flow-ws');
+
 var isJSFile = /\.js$/;
 var Flow = FlowServer(config);
 var app = express();
 var server = http.createServer(config.ssl, app);
 var clientSession = sessions(config.session);
+
 var root = path.resolve(__dirname + '/../');
 var indexFile = fs.readFileSync(root + '/lib/document.html');
 var clientFile = fs.readFileSync(root + '/bundle.js');
-var wss = new FlowWs.server({server: server});
+
+var wss = new WSS({server: server});
 wss.on('connection', function connection(socket) {
 
     // plug client session midleware
@@ -171,7 +175,7 @@ app.use(function (req, res) {
         //'Content-Encoding': 'gzip'
     });
 
-    res.end(indexFile);
+    res.send(indexFile);
 });
 
 // start http server
