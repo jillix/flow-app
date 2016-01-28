@@ -1,24 +1,7 @@
-#!/usr/bin/env node
-
 var fs = require('fs');
 var path = require('path');
 var crypto = require('crypto');
-
-// parse cli arguments
 var argv = require('yargs')
-    .option('d', {
-        alias: 'debug',
-        default: false,
-        type: 'boolean',
-        describe: 'Start engine in debug mode.'
-    })
-    .option('l', {
-        alias: 'logLevel',
-        default: 'error',
-        type: 'string',
-        choices: ['fatal', 'error', 'warn', 'info', 'debug', 'trace'],
-        describe: 'Set log level.'
-    })
     .option('t', {
         alias: 'token',
         type: 'string',
@@ -42,12 +25,11 @@ var argv = require('yargs')
     // check if repo path exists
     .check(function (argv) {
 
-        if (typeof argv._[0] === 'string') {
-            argv.repo = path.resolve(argv._[0]);
+        argv._[0] = argv._[0] || '.';
+        argv.repo = path.resolve(argv._[0]);
 
-            if (fs.statSync(argv.repo)) {
-                return true;
-            }
+        if (fs.statSync(argv.repo)) {
+            return true;
         }
     })
 
@@ -88,48 +70,31 @@ var argv = require('yargs')
         }
     })
 
-    // set default log level
-    .check(function (argv) {
-
-        if (!argv.l && argv.d) {
-            argv.l = argv.logLevel = 'debug';
-        }
-
-        return true;
-    })
-
-    .usage('engine [options] [APP_REPO_PATH] [PORT]')
-    .example('engine /usr/src/app 8000', "Start engine in production mode.")
-    .example('engine -d /usr/src/app 8000', "Start engine in debug mode.")
-    .example('engine -t secretToken /usr/src/app 8000', "Define a secret token for client sessions.")
-    .example('engine -c /path/to/cert.pem -k /path/to/key.pem 8000', "Define SSL certificate")
+    .usage('flow-app [options] [APP_REPO_PATH] [PORT]')
+    .example('flow-app /usr/src/app 8000', "Start flow app node.")
+    .example('flow-app -t secretToken /usr/src/app 8000', "Define a secret token for client sessions.")
+    .example('flow-app -c /path/to/cert.pem -k /path/to/key.pem 8000', "Define SSL certificate")
     .help('h')
     .alias('h', 'help')
     .strict()
     .argv;
 
 // create runtime config from app package
-var config = require(argv.repo + '/package.json');
+var flow = require(argv.repo + '/package.json');
 
 // set working directory
-config.workDir = argv.repo;
+flow.workDir = argv.repo;
 
 // set port
-config.port = argv.port;
+flow.port = argv.port;
 
 // check if entrypoints are in the config
-if (typeof config.entrypoints !== 'object') {
+if (typeof flow.entrypoints !== 'object') {
     throw new Error('No entrypoints defined in package.');
 }
 
-// log level
-config.logLevel = argv.l;
-
-// debug mode
-config.production = argv.d ? false : true;
-
 // ssl config
-config.ssl = argv.ssl || config.ssl || {};
+flow.ssl = argv.ssl || flow.ssl || {};
 
 // session config
 var defaultSession = {
@@ -144,34 +109,30 @@ var defaultSession = {
         secure: false // when true, cookie will only be sent over SSL. use key 'secureProxy' instead if you handle SSL not in your node process
     },
 
-    // engine related configs
+    // flow app related configs
     wildcard: '*',
     role: 'role',
     user: 'user',
     locale: 'locale'
 };
-config.session = config.session ? Object.assign(defaultSession, config.session) : defaultSession;
+flow.session = flow.session ? Object.assign(defaultSession, flow.session) : defaultSession;
 
 // app paths
 var defaultPaths = {
-    composition: config.workDir + '/composition',
-    modules: config.workDir + '/node_modules',
-    custom: config.workDir + '/app_modules',
-    public: config.workDir + '/public',
-    markup: config.workDir + '/markup',
+    composition: flow.workDir + '/composition',
+    modules: flow.workDir + '/node_modules',
+    custom: flow.workDir + '/app_modules',
+    public: flow.workDir + '/public'
 };
-config.paths = config.paths ? Object.assign(defaultPaths, config.paths) : defaultPaths;
+
+flow.paths = flow.paths ? Object.assign(defaultPaths, flow.paths) : defaultPaths;
 
 // static headers
-config.static = {
+flow.static = {
     maxAge: 86400,
     fpMaxAge: 94670000
 };
 
-// core instance name
-config.flow = {
-    coreInstance: '@'
-};
+// export config
+module.exports = flow;
 
-// start server
-require('./lib/server')(config);

@@ -1,20 +1,20 @@
 {
-  "name": "engine",
+  "name": "flow-app",
   "version": "0.1.0-beta",
   "private": true,
   "author": "jillix <contact@jillix.com>",
-  "description": "The jillix cloud engine",
-  "bin": {
-    "engine": "./engine"
-  },
+  "description": "Web framework for flow applications.",
   "contributors": [
     "Adrian Ottiker <adrian@ottiker.com>",
     "Gabriel Petrovay <gabipetrovay@gmail.com>",
     "Ionica Bizau <bizauionica@gmail.com>"
   ],
+  "bin": {
+    "flow-app": "bin/index.js"
+  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/jillix/engine.git"
+    "url": "https://github.com/jillix/flow-app.git"
   },
   "keywords": [
     "application",
@@ -22,34 +22,25 @@
     "framework"
   ],
   "dependencies": {
-    "browserify": "^12.0.1",
     "client-sessions": "^0.7.0",
-    "closurecompiler": "^1.5.2",
-    "express": "^4.13.3",
-    "flow": "jillix/flow",
-    "flowhttp": "^0.3.0",
-    "spdy": "^3.0.0",
-    "stream-browserify": "^2.0.1",
-    "ws": "^0.8.0",
-    "yargs": "^3.30.0"
-  },
-  "browser": {
-    "stream": "stream-browserify",
-    "http": "flowhttp"
+    "express": "^4.13.4",
+    "flow": "github:jillix/flow",
+    "flow-http": "github:jillix/flow-http",
+    "flow-ws": "github:jillix/flow-ws",
+    "flow-pack": "github:jillix/flow-pack#app-install",
+    "spdy": "^3.2.0",
+    "yargs": "^3.32.0"
   },
   "engine": {
-    "node": ">=4"
+    "node": ">=5"
   },
   "bugs": {
-    "url": "https://github.com/jillix/engine/issues"
+    "url": "https://github.com/jillix/flow-app/issues"
   },
-  "homepage": "https://github.com/jillix/engine",
-  "main": "engine",
-  "devDependencies": {},
+  "homepage": "https://github.com/jillix/flow-app",
+  "main": "bin/index.js",
+  "browser": "lib/flow.client.js",
   "scripts": {
-    "install": "npm run bundle",
-    "bundle": "browserify ./lib/flow.client.js > bundle.js; ccjs bundle.js --language_in=ES5 > _tmp.js; gzip -9c _tmp.js > bundle.js; rm _tmp.js",
-    "bundleDev": "browserify ./lib/flow.client.js | gzip -9 > bundle.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   }
 }
