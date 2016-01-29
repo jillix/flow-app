@@ -68,7 +68,7 @@ app.use('/\\)\\)/:instance::event', function (req, res) {
     });
     req.pipe(event.i);
     event.o.on('error', function (err) {
-        res.status(err.code || 500).send(err.message);
+        res.status(err.code || 500).send(err.stack);
     });
     event.o.pipe(res);
 
@@ -150,10 +150,10 @@ app.use(function (req, res) {
 
     var stream = Flow.flow('http_req', {to: instance, req: req, res: res});
     stream.o.pipe(res);
-    req.pipe(stream.i);
     stream.o.on('error', function (err) {
         res.status(err.code || 500).send(err.stack);
     });
+    req.pipe(stream.i);
 });
 
 // start http server
