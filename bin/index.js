@@ -9,20 +9,29 @@ var http = require('spdy');
 var WSS = require('ws').Server;
 var express = require('express');
 var sessions = require('client-sessions');
-var FlowServer = require('../lib/flow.server');
+var Flow = require('../lib/flow.server');
 var FlowWs = require('flow-ws');
 
 var isJSFile = /\.js$/;
-var Flow = FlowServer(config);
 var app = express();
 var server = http.createServer(config.ssl, app);
+var wss = new WSS({server: server});
 var clientSession = sessions(config.session);
 
 var root = path.resolve(__dirname + '/../');
 var indexFile = fs.readFileSync(root + '/lib/document.html');
 var clientFile = fs.readFileSync(root + '/bundle.js');
 
-var wss = new WSS({server: server});
+function getEntrypoint (req) {
+
+    var entrypoints = config.entrypoints[req.session.role ? 'private' : 'public'];
+    if (!entrypoints) {
+        return;
+    }
+
+    return entrypoints[req.hostname] || entrypoints['*'];
+}
+
 wss.on('connection', function connection(socket) {
 
     // plug client session midleware
@@ -39,8 +48,38 @@ wss.on('connection', function connection(socket) {
 // use encrypted client sessions
 app.use(clientSession);
 
+// emit flow events from http urls
+app.use('/\\)\\)/:instance::event', function (req, res) {
+
+    var instance = req.params.instance;
+    var eventNme = req.params.event;
+
+    if (!instance || !eventNme) {
+        res.set({'content-type': 'text/plain'}).status(400);
+        res.end(new Error('Instance or event name not found.'));
+        return;
+    }
+
+    var event = Flow.flow(eventNme, {
+        to: instance,
+        session: req.session,
+        req: req,
+        res: res,
+    });
+    req.pipe(event.i);
+    event.o.on('error', function (err) {
+        res.status(err.code || 500).send(err.message);
+    });
+    event.o.pipe(res);
+
+    // push url as first data chunk
+    if (req.method === 'GET') {
+        req.push(req.url.substr(1));
+    }
+});
+
 // load module instance compostion (TODO use JSON-LD)
-app.use('/flow_comp/:name', function (req, res) {
+app.get('/\\(\\(/:name', function (req, res) {
 
     var name = req.params.name;
     if (!name) {
@@ -51,13 +90,7 @@ app.use('/flow_comp/:name', function (req, res) {
 
     // handle entrypoint
     if (name === '*') {
-        // TODO get real host name. and find a way to handle multidomain apps
-        //      with the infrastructure api
-        var host = '';// = socket.upgradeReq.headers.host.split(':')[0];
-        var entrypoints = config.entrypoints[req.session.role ? 'private' : 'public'];
-
-        // TODO maybe entrypoints can have simple routing..
-        name = entrypoints[host] || entrypoints['*']; 
+        name = getEntrypoint(req);
     }
 
     Flow.mic(name, function (err, composition) {
@@ -89,50 +122,8 @@ app.use('/flow_comp/:name', function (req, res) {
     });
 });
 
-// emit flow events from http urls
-app.use('/flow/:instance::event', function (req, res) {
-
-    var instance = req.params.instance;
-    var eventNme = req.params.event;
-
-    if (!instance || !eventNme) {
-        res.set({'content-type': 'text/plain'}).status(400);
-        res.end(new Error('Instance or event name not found.'));
-        return;
-    }
-
-    var event = Flow.flow(eventNme, {
-        to: instance,
-        session: req.session,
-        req: req,
-        res: res,
-    });
-    req.pipe(event.i);
-    event.o.on('error', function (err) {
-        res.status(err.code || 500).send(err.message);
-    });
-    event.o.pipe(res);
-
-    // push url as first data chunk
-    if (req.method === 'GET') {
-        req.push(req.url.substr(1));
-    }
-});
-
-// serve client module bundles
-app.get('/module/:module/bundle(.:fp)?.js', function(req, res) {
-
-    // set longer cache age, if file is fingerprinted
-    res.set({
-        'Cache-Control': 'public, max-age=' + req.params.fp ? config.static.fpMaxAge : config.static.maxAge,
-        'Content-Encoding': 'gzip'
-    });
-
-    res.sendFile(config.paths.modules + '/' + req.params.module + '/bundle.js');
-});
-
 // serve client custom module bundles
-app.get('/app_module/:module/bundle(.:fp)?.js', function(req, res) {
+app.get('/(\\(\\)|\\)\\()/:module/bundle(.:fp)?.js', function(req, res) {
 
     // set longer cache age, if file is fingerprinted
     res.set({
@@ -140,11 +131,38 @@ app.get('/app_module/:module/bundle(.:fp)?.js', function(req, res) {
         'Content-Encoding': 'gzip'
     });
 
-    res.sendFile(config.paths.custom + '/' + req.params.module + '/bundle.js');
+    //res.sendFile(config.paths.modules + '/' + req.params.module bundle.js');
+    res.sendFile(config.paths[req.path[1] === '(' ? 'modules' : 'custom'] + '/' + req.params.module + '/bundle.js');
+});
+
+// emit url to flow
+app.use(function (req, res) {
+    
+    var instance = getEntrypoint(req);
+    if (!instance) {
+        res.set({'content-type': 'text/plain'}).status(400);
+        return res.end(new Error('Flow.server: No entrypoint found for "' + req.hostname  + '".').stack);
+    }
+
+    console.log(instance, req.hostname);
+    // ..return client? dynamic index html?
+    // ..static file server?
+
+    var stream = Flow.flow('http_req', {to: instance, req: req, res: res});
+    stream.o.pipe(res);
+    req.pipe(stream.i);
+    stream.o.on('error', function (err) {
+        res.status(err.code || 500).send(err.stack);
+    });
+});
+
+// start http server
+server.listen(config.port, function () {
+    console.log('Engine is listening on port', config.port);
 });
 
 // static file server for public files
-app.use(express.static(config.paths.public, {
+/*app.use(express.static(config.paths.public, {
     setHeaders: function setCustomCacheControl(res, path) {
         var suffix = path.split('.').pop();
         if (suffix === 'js') {
@@ -160,7 +178,7 @@ app.use(function (req, res) {
     // TODO why is res.push all of the sudden undefined???!!!
     if (res.push) {
         res.push('/module/engine/bundle.js', {
-            request: {accept: '*/*'},
+            request: {accept: '*'+'/'+'*'},
                 response: {
                 'Content-Type': 'application/javascript',
                 'Content-Encoding': 'gzip'
@@ -176,9 +194,4 @@ app.use(function (req, res) {
     });
 
     res.send(indexFile);
-});
-
-// start http server
-server.listen(config.port, function () {
-    console.log('Engine is listening on port', config.port);
-});
+});*/
