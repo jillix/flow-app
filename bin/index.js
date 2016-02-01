@@ -18,10 +18,6 @@ var server = http.createServer(config.ssl, app);
 var wss = new WSS({server: server});
 var clientSession = sessions(config.session);
 
-var root = path.resolve(__dirname + '/../');
-var indexFile = fs.readFileSync(root + '/lib/document.html');
-var clientFile = fs.readFileSync(root + '/bundle.js');
-
 function getEntrypoint (req) {
 
     var entrypoints = config.entrypoints[req.session.role ? 'private' : 'public'];
@@ -131,7 +127,6 @@ app.get('/(\\(\\)|\\)\\()/:module/bundle(.:fp)?.js', function(req, res) {
         'Content-Encoding': 'gzip'
     });
 
-    //res.sendFile(config.paths.modules + '/' + req.params.module bundle.js');
     res.sendFile(config.paths[req.path[1] === '(' ? 'modules' : 'custom'] + '/' + req.params.module + '/bundle.js');
 });
 
@@ -145,7 +140,6 @@ app.use(function (req, res) {
     }
 
     console.log(instance, req.hostname);
-    // ..return client? dynamic index html?
     // ..static file server?
 
     var stream = Flow.flow('http_req', {to: instance, req: req, res: res});
@@ -153,7 +147,7 @@ app.use(function (req, res) {
     stream.o.on('error', function (err) {
         res.status(err.code || 500).send(err.stack);
     });
-    req.pipe(stream.i);
+    stream.i.end(req.path);
 });
 
 // start http server
@@ -170,28 +164,4 @@ server.listen(config.port, function () {
         }
     } 
 }));
-
-// send the initial document with engine client
-app.use(function (req, res) {
-
-    // push the engine client directly
-    // TODO why is res.push all of the sudden undefined???!!!
-    if (res.push) {
-        res.push('/module/engine/bundle.js', {
-            request: {accept: '*'+'/'+'*'},
-                response: {
-                'Content-Type': 'application/javascript',
-                'Content-Encoding': 'gzip'
-            }
-        }).end(clientFile);
-    }
-
-    // send the document
-    res.set({
-        'Cache-Control': 'public, max-age=' + config.static.maxAge,
-        'Content-Type': 'text/html'
-        //'Content-Encoding': 'gzip'
-    });
-
-    res.send(indexFile);
-});*/
+*/
