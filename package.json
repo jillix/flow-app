@@ -39,7 +39,6 @@
   },
   "homepage": "https://github.com/jillix/flow-app",
   "main": "bin/index.js",
-  "browser": "lib/flow.client.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   }
