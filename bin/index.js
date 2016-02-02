@@ -45,7 +45,9 @@ wss.on('connection', function connection(socket) {
 app.use(clientSession);
 
 // emit flow events from http urls
-app.use('/\\)\\)/:instance::event', function (req, res) {
+app.use('/_f/:instance::event', function (req, res) {
+
+    console.log('EMIT:', req.url);
 
     var instance = req.params.instance;
     var eventNme = req.params.event;
@@ -75,7 +77,9 @@ app.use('/\\)\\)/:instance::event', function (req, res) {
 });
 
 // load module instance compostion (TODO use JSON-LD)
-app.get('/\\(\\(/:name', function (req, res) {
+app.use(['/_mi/:name', '/_cmi/:name'], function (req, res) {
+
+    console.log('COMPOSITION:', req.url);
 
     var name = req.params.name;
     if (!name) {
@@ -119,7 +123,13 @@ app.get('/\\(\\(/:name', function (req, res) {
 });
 
 // serve client custom module bundles
-app.get('/(\\(\\)|\\)\\()/:module/bundle(.:fp)?.js', function(req, res) {
+app.get(
+    [
+        '/_m/:module/bundle(.:fp)?.js',
+        '/_cm/:module/bundle(.:fp)?,js'
+    ], function(req, res) {
+
+    console.log('MODULE:', req.url);
 
     // set longer cache age, if file is fingerprinted
     res.set({
@@ -127,41 +137,32 @@ app.get('/(\\(\\)|\\)\\()/:module/bundle(.:fp)?.js', function(req, res) {
         'Content-Encoding': 'gzip'
     });
 
-    res.sendFile(config.paths[req.path[1] === '(' ? 'modules' : 'custom'] + '/' + req.params.module + '/bundle.js');
+    res.sendFile(config.paths[req.path[2] === 'm' ? 'modules' : 'custom'] + '/' + req.params.module + '/bundle.js');
 });
 
 // emit url to flow
 app.use(function (req, res) {
-    
+
     var instance = getEntrypoint(req);
     if (!instance) {
         res.set({'content-type': 'text/plain'}).status(400);
         return res.end(new Error('Flow.server: No entrypoint found for "' + req.hostname  + '".').stack);
     }
 
-    console.log(instance, req.hostname);
-    // ..static file server?
-
-    var stream = Flow.flow('http_req', {to: instance, req: req, res: res});
+    var stream = Flow.flow('http_req', {
+        to: instance,
+        req: req,
+        res: res,
+        session: req.session
+    });
     stream.o.pipe(res);
     stream.o.on('error', function (err) {
         res.status(err.code || 500).send(err.stack);
     });
-    stream.i.end(req.path);
+    req.pipe(stream.i);
 });
 
 // start http server
 server.listen(config.port, function () {
     console.log('Engine is listening on port', config.port);
 });
-
-// static file server for public files
-/*app.use(express.static(config.paths.public, {
-    setHeaders: function setCustomCacheControl(res, path) {
-        var suffix = path.split('.').pop();
-        if (suffix === 'js') {
-            res.setHeader('Content-Encoding', 'gzip');
-        }
-    } 
-}));
-*/
