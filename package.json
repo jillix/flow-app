@@ -27,7 +27,7 @@
     "flow": "github:jillix/flow",
     "flow-http": "github:jillix/flow-http",
     "flow-ws": "github:jillix/flow-ws",
-    "flow-pack": "github:jillix/flow-pack#app-install",
+    "flow-pack": "github:jillix/flow-pack",
     "spdy": "^3.2.0",
     "yargs": "^3.32.0"
   },
