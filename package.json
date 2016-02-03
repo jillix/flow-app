@@ -26,9 +26,10 @@
     "express": "^4.13.4",
     "flow": "github:jillix/flow",
     "flow-http": "github:jillix/flow-http",
-    "flow-ws": "github:jillix/flow-ws",
     "flow-pack": "github:jillix/flow-pack",
+    "flow-ws": "github:jillix/flow-ws",
     "spdy": "^3.2.0",
+    "ws": "^1.0.1",
     "yargs": "^3.32.0"
   },
   "engine": {
