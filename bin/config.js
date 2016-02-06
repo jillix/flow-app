@@ -33,23 +33,6 @@ var argv = require('yargs')
         }
     })
 
-    // check if port is a number
-    .check(function (argv) {
-
-        if (argv._[1]) {
-            argv.port = typeof argv._[1] === 'number' ? argv._[1] : parseInt(argv._[1].replace(/[^0-9]/, ''));
-
-            if (argv.port) {
-                return true;
-            }
-
-        // set default port
-        } else {
-            argv.port = 8000;
-            return true;
-        }
-    })
-
     // check if ssl certificates exists
     .check(function (argv) {
 
@@ -87,11 +70,6 @@ flow.workDir = argv.repo;
 
 // set port
 flow.port = argv.port;
-
-// check if entrypoints are in the config
-if (typeof flow.entrypoints !== 'object') {
-    throw new Error('No entrypoints defined in package.');
-}
 
 // ssl config
 flow.ssl = argv.ssl || flow.ssl || {};
