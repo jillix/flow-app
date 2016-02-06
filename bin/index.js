@@ -1,168 +1,28 @@
-#!/usr/bin/env node
+var Flow = require('flow');
+var config = require('./config.js');
 
-"use strict";
+Flow(config, {
 
-var config = require('./config');
-var fs = require('fs');
-var path = require('path');
-var http = require('spdy');
-var WSS = require('ws').Server;
-var express = require('express');
-var sessions = require('client-sessions');
-var Flow = require('../lib/flow.server');
-var FlowWs = require('flow-ws');
+    mod: function loadModule (name, callback) {
 
-var isJSFile = /\.js$/;
-var app = express();
-var server = http.createServer(config.ssl, app);
-var wss = new WSS({server: server});
-var clientSession = sessions(config.session);
-
-function getEntrypoint (req) {
-
-    var entrypoints = config.entrypoints[req.session.role ? 'private' : 'public'];
-    if (!entrypoints) {
-        return;
-    }
-
-    return entrypoints[req.hostname] || entrypoints['*'];
-}
-
-wss.on('connection', function connection(socket) {
-
-    // plug client session midleware
-    clientSession(socket.upgradeReq, {}, function (err) {
-
-        // setup flow on socket
-        socket.app = app;
-
-        // multiplexer for flow event streams
-        socket.onmessage = FlowWs.demux(Flow, socket.upgradeReq.session);
-    });
-});
-
-// use encrypted client sessions
-app.use(clientSession);
-
-// emit flow events from http urls
-app.use('/_f/:instance::event', function (req, res) {
-
-    console.log('EMIT:', req.url);
-
-    var instance = req.params.instance;
-    var eventNme = req.params.event;
-
-    if (!instance || !eventNme) {
-        res.set({'content-type': 'text/plain'}).status(400);
-        res.end(new Error('Instance or event name not found.'));
-        return;
-    }
-
-    var event = Flow.flow(eventNme, {
-        to: instance,
-        session: req.session,
-        req: req,
-        res: res,
-    });
-    req.pipe(event.i);
-    event.o.on('error', function (err) {
-        res.status(err.code || 500).send(err.stack);
-    });
-    event.o.pipe(res);
-
-    // push url as first data chunk
-    if (req.method === 'GET') {
-        req.push(req.url.substr(1));
-    }
-});
-
-// load module instance compostion (TODO use JSON-LD)
-app.use(['/_mi/:name', '/_cmi/:name'], function (req, res) {
-
-    console.log('COMPOSITION:', req.url);
-
-    var name = req.params.name;
-    if (!name) {
-        res.set({'content-type': 'text/plain'}).status(400);
-        res.end(new Error('Flow.server.composition: No module instance compostion name.').stack);
-        return;
-    }
-
-    // handle entrypoint
-    if (name === '*') {
-        name = getEntrypoint(req);
-    }
-
-    Flow.mic(name, function (err, composition) {
-
-        if (err) {
-            res.set({'content-type': 'text/plain'}).status(400);
-            res.end(err.stack);
-            return;
+        try {
+            var module = require(name[0] === '/' ? this.config.paths.custom + name : name);
+        } catch (err) {
+            return callback(err);
         }
 
-        var module = composition.browser || composition.module;
-        if (!module) {
-            res.set({'content-type': 'text/plain'}).status(400);
-            return res.end(new Error('Flow.server.composition: No module field on instance "' + name  + '".').stack);
+        callback(null, module);
+    },
+
+    mic: function (name, callback) {
+
+        try {
+            var composition = require(this.config.paths.composition + '/' + name + '.json');
+        } catch (err) {
+            return callback(err);
         }
 
-        // handle custom modules
-        if (
-            module[0] === '/' &&
-            isJSFile.test(module)
-        ) {
-            // create client path
-            (module = module.split('/')).pop();
-            composition.module = module.join('/');
-        } 
-
-        res.set({'content-type': 'application/json'}).status(200);
-        res.end(JSON.stringify(composition));
-    });
-});
-
-// serve client custom module bundles
-app.get(
-    [
-        '/_m/:module/bundle(.:fp)?.js',
-        '/_cm/:module/bundle(.:fp)?,js'
-    ], function(req, res) {
-
-    console.log('MODULE:', req.url);
-
-    // set longer cache age, if file is fingerprinted
-    res.set({
-        'Cache-Control': 'public, max-age=' + req.params.fp ? config.static.fpMaxAge : config.static.maxAge,
-        'Content-Encoding': 'gzip'
-    });
-
-    res.sendFile(config.paths[req.path[2] === 'm' ? 'modules' : 'custom'] + '/' + req.params.module + '/bundle.js');
-});
-
-// emit url to flow
-app.use(function (req, res) {
-
-    var instance = getEntrypoint(req);
-    if (!instance) {
-        res.set({'content-type': 'text/plain'}).status(400);
-        return res.end(new Error('Flow.server: No entrypoint found for "' + req.hostname  + '".').stack);
+        callback(null, composition);
     }
 
-    var stream = Flow.flow('http_req', {
-        to: instance,
-        req: req,
-        res: res,
-        session: req.session
-    });
-    stream.o.pipe(res);
-    stream.o.on('error', function (err) {
-        res.status(err.code || 500).send(err.stack);
-    });
-    req.pipe(stream.i);
-});
-
-// start http server
-server.listen(config.port, function () {
-    console.log('Engine is listening on port', config.port);
-});
+}).load();
