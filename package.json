@@ -22,13 +22,7 @@
     "framework"
   ],
   "dependencies": {
-    "client-sessions": "^0.7.0",
-    "express": "^4.13.4",
     "flow": "github:jillix/flow",
-    "flow-http": "github:jillix/flow-http",
-    "flow-ws": "github:jillix/flow-ws",
-    "flow-pack": "github:jillix/flow-pack#app-install",
-    "spdy": "^3.2.0",
     "yargs": "^3.32.0"
   },
   "engine": {
