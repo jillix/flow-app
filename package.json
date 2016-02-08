@@ -22,7 +22,7 @@
     "framework"
   ],
   "dependencies": {
-    "flow": "github:jillix/flow",
+    "flow": "github:jillix/flow#remove-net-option",
     "yargs": "^3.32.0"
   },
   "engine": {
