@@ -64,16 +64,16 @@ var argv = require('yargs')
     .argv;
 
 // create runtime config from app package
-var flow = require(argv.repo + '/package.json');
+var config = require(argv.repo + '/package.json');
 
 // set working directory
-flow.workDir = argv.repo;
+config.workDir = argv.repo;
 
 // set port
-flow.port = argv.port;
+config.port = argv.port;
 
 // ssl config
-flow.ssl = argv.ssl || flow.ssl || {};
+config.ssl = argv.ssl || config.ssl || {};
 
 // session config
 var defaultSession = {
@@ -94,17 +94,17 @@ var defaultSession = {
     user: 'user',
     locale: 'locale'
 };
-flow.session = flow.session ? Object.assign(defaultSession, flow.session) : defaultSession;
+config.session = config.session ? Object.assign(defaultSession, config.session) : defaultSession;
 
 // app paths
 var defaultPaths = {
-    composition: flow.workDir + '/composition',
-    modules: flow.workDir + '/node_modules',
-    custom: flow.workDir + '/app_modules',
-    public: flow.workDir + '/public'
+    composition: config.workDir + '/composition',
+    modules: config.workDir + '/node_modules',
+    custom: config.workDir + '/app_modules',
+    public: config.workDir + '/public'
 };
 
-flow.paths = flow.paths ? Object.assign(defaultPaths, flow.paths) : defaultPaths;
+config.paths = config.paths ? Object.assign(defaultPaths, config.paths) : defaultPaths;
 
 Flow(config, {
     mod: function loadModule (name, callback) {
