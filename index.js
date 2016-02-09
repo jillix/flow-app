@@ -1,3 +1,4 @@
+var Flow = require('flow');
 var fs = require('fs');
 var path = require('path');
 var crypto = require('crypto');
@@ -105,12 +106,11 @@ var defaultPaths = {
 
 flow.paths = flow.paths ? Object.assign(defaultPaths, flow.paths) : defaultPaths;
 
-// static headers
-flow.static = {
-    maxAge: 86400,
-    fpMaxAge: 94670000
-};
-
-// export config
-module.exports = flow;
-
+Flow(config, {
+    mod: function loadModule (name, callback) {
+        callback(null, require(name[0] === '/' ? this.config.paths.custom + name : name));
+    },
+    mic: function (name, callback) {
+        callback(null, require(this.config.paths.composition + '/' + name + '.json'));
+    }
+}).load();
