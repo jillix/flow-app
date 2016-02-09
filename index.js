@@ -1,31 +1,44 @@
+var DEFAULT_PORT = 8000;
+var DEFAULT_LOG_LEVEL = 'error';
+
 var Flow = require('flow');
 var fs = require('fs');
 var path = require('path');
 var crypto = require('crypto');
+
 var argv = require('yargs')
     .option('t', {
         alias: 'token',
         type: 'string',
-        describe: 'Set secret tocken for client sessions.'
+        describe: 'Set secret token for client sessions'
     })
     .option('c', {
         alias: 'sslCert',
         type: 'string',
         demand: true,
         requiresArg: 'k',
-        describe: 'Path to the SSL certificate file.'
+        describe: 'Path to the SSL certificate file'
     })
     .option('k', {
         alias: 'sslKey',
         type: 'string',
         demand: true,
         requiresArg: 'c',
-        describe: 'Path to the SSL key file.'
+        describe: 'Path to the SSL key file'
+    })
+    .option('p', {
+        alias: 'port',
+        default: DEFAULT_PORT,
+        describe: 'Port to start the application on (default: ' + DEFAULT_PORT + ')'
+    })
+    .option('l', {
+        alias: 'log-level',
+        default: DEFAULT_LOG_LEVEL,
+        describe: 'The application log level: [fatal|error|warn|info|debug|trace] (default: ' + DEFAULT_LOG_LEVEL + ')'
     })
 
-    // check if repo path exists
+    // check if app path exists
     .check(function (argv) {
-
         argv._[0] = argv._[0] || '.';
         argv.repo = path.resolve(argv._[0]);
 
@@ -34,33 +47,46 @@ var argv = require('yargs')
         }
     })
 
+    // check for valid port number
+    .check(function (argv) {
+
+        var port = Number(argv.p);
+
+        if (typeof(argv.p) === 'boolean' || isNaN(port) || port < 1 || port > 65535) {
+            return 'Invalid port number. Choose a number from 1 to 65535.';
+        }
+        return true;
+    })
+
     // check if ssl certificates exists
     .check(function (argv) {
 
         argv.ssl = {};
 
-        // check if ssl certificate exists
-        if (typeof argv.c === 'string') {
+        // file read will throw an error
+        try {
             argv.ssl.cert = fs.readFileSync(path.resolve(argv.c));
+        } catch (err) {
+            return 'Cannot read the certificate file\n' + err;
         }
-
-        // check if ssl key file exists
-        if (typeof argv.k === 'string') {
+        try {
             argv.ssl.key = fs.readFileSync(path.resolve(argv.k));
+        } catch (err) {
+            return 'Cannot read the certificate key file\n' + err;
         }
 
-        if (argv.ssl.cert && argv.ssl.key) {
-            return true;
-        }
+        return true;
     })
 
-    .usage('flow-app [options] [APP_REPO_PATH] [PORT]')
-    .example('flow-app /usr/src/app 8000', "Start flow app node.")
-    .example('flow-app -t secretToken /usr/src/app 8000', "Define a secret token for client sessions.")
-    .example('flow-app -c /path/to/cert.pem -k /path/to/key.pem 8000', "Define SSL certificate")
+    .usage('flow-app [options] <APP_REPO_PATH>')
+    .example('flow-app -c path/to/cert.pem -k path/to/key.pem path/to/app', 'Start an app')
+    .example('flow-app -c path/to/cert.pem -k path/to/key.pem -t "secretToken" path/to/app', 'Define a secret token for client sessions')
+    .example('flow-app -c path/to/cert.pem -k path/to/key.pem -p 1234 path/to/app', 'Start an app on port 1234')
     .help('h')
     .alias('h', 'help')
+    .showHelpOnFail(false, 'Specify --help for available options')
     .strict()
+    .wrap(120)
     .argv;
 
 // create runtime config from app package
