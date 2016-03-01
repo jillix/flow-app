@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 var DEFAULT_PORT = 8000;
 var DEFAULT_LOG_LEVEL = 'error';
 
