@@ -5,27 +5,44 @@ var fs = require('fs');
 var path = require('path');
 var argv = require('yargs')
 
-    // check if app path exists
-    .check(function (argv) {
-        argv._[0] = argv._[0] || '.';
-        argv.repo = path.resolve(argv._[0]);
+// check init event exists
+.check(function (argv) {
 
-        if (fs.statSync(argv.repo)) {
-            return true;
-        }
-    })
-    .usage('flow-app <APP_REPO_PATH>')
-    .example('flow-app path/to/app', 'Start an app')
-    .help('h')
-    .alias('h', 'help')
-    .strict()
-    .argv;
-
-Flow({
-    mod: function loadModule (name, callback) {
-        callback(null, require(name[0] === '/' ? argv.repo + '/app_modules' + name : name));
-    },
-    mic: function (name, callback) {
-        callback(null, require(argv.repo + '/composition/' + name + '.json'));
+    if (typeof argv._[1] !== 'string') {
+        return;
     }
-})();
+
+    argv.event = argv._[1];
+    return true;
+})
+
+// check if app path exists
+.check(function (argv) {
+    argv._[0] = argv._[0] || '.';
+    argv.repo = path.resolve(argv._[0]);
+
+    if (fs.statSync(argv.repo)) {
+
+        // load module instance composition (MIC)
+        argv.mic = function (name, callback) {
+            callback(null, require(argv.repo + '/composition/' + name + '.json'));
+        };
+
+        // load module
+        argv.mod = function (name, callback) {
+            callback(null, require(name[0] === '/' ? argv.repo + '/app_modules' + name : name));
+        };
+
+        return true;
+    }
+})
+
+.usage('flow-app <APP_REPO_PATH> <FLOW_EVENT>')
+.example('flow-app path/to/app http_server/start', 'Start a http server.')
+.help('h')
+.alias('h', 'help')
+.strict()
+.argv;
+
+// emit init flow event
+Flow(argv.event, argv);

@@ -1,26 +1,14 @@
 var Flow = require('flow');
+global.flow = function (event, options) {
 
-// init flow with core module
-module.exports = Flow({
+    if (event !== 'string') {
+        throw Error('Flow: No init event.');
+    }
 
-    // load module bundles and return the entry-point exports
-    mod: function (name, callback) {
-
-        var node = document.createElement('script');
-        var path = name + '.js';
-        node.onload = function () {
-            node.remove();
-            name = name[0] === '/' ? path : name;
-            callback(null, require(name));
-        };
-
-        // set url and append dom script elm to the document head
-        node.src = (name[0] === '/' ? '/_c' : '/_m/') + path;
-        document.head.appendChild(node);
-    },
+    options = options || {};
 
     // load module instance composition (MIC)
-    mic: function (name, callback) {
+    options.mic = function (name, callback) {
 
         httpRequest = new XMLHttpRequest();
         httpRequest.onreadystatechange = function () {
@@ -37,5 +25,23 @@ module.exports = Flow({
         };
         httpRequest.open('GET', '/_i/' + name + '.json');
         httpRequest.send();
-    }
-});
+    };
+
+    // load module
+    options.mod = function (name, callback) {
+
+        var node = document.createElement('script');
+        var path = name + '.js';
+        node.onload = function () {
+            node.remove();
+            name = name[0] === '/' ? path : name;
+            callback(null, require(name));
+        };
+
+        // set url and append dom script elm to the document head
+        node.src = (name[0] === '/' ? '/_c' : '/_m/') + path;
+        document.head.appendChild(node);
+    };
+
+    Flow(event, options);
+};
