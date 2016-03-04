@@ -45,4 +45,4 @@ var argv = require('yargs')
 .argv;
 
 // emit init flow event
-Flow(argv.event, argv);
+Flow(argv.event, argv).i.end(true);
