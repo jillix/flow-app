@@ -140,7 +140,7 @@ app.get('/app_module/:module/bundle(.:fp)?.js', function(req, res) {
         'Content-Encoding': 'gzip'
     });
 
-    res.sendFile(config.paths.custom + '/' + req.params.module + '/bundle.js');
+    res.sendFile(config.paths.bundles + '/' + req.params.module + '.js');
 });
 
 // static file server for public files
