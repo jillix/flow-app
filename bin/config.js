@@ -128,6 +128,8 @@ flow.session = flow.session ? Object.assign(defaultSession, flow.session) : defa
 
 // app paths
 var defaultPaths = {
+    root: flow.workDir,
+    bundles: flow.workDir + '/.bundles',
     composition: flow.workDir + '/composition',
     modules: flow.workDir + '/node_modules',
     custom: flow.workDir + '/app_modules',

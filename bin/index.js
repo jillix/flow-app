@@ -20,7 +20,7 @@ var clientSession = sessions(config.session);
 
 var root = path.resolve(__dirname + '/../');
 var indexFile = fs.readFileSync(root + '/lib/document.html');
-var clientFile = fs.readFileSync(root + '/bundle.js');
+var clientFile = fs.readFileSync(config.paths.bundles + '/flow-app.js');
 
 var wss = new WSS({server: server});
 wss.on('connection', function connection(socket) {
@@ -128,7 +128,7 @@ app.get('/module/:module/bundle(.:fp)?.js', function(req, res) {
         'Content-Encoding': 'gzip'
     });
 
-    res.sendFile(config.paths.modules + '/' + req.params.module + '/bundle.js');
+    res.sendFile(config.paths.bundles + '/' + req.params.module + '.js');
 });
 
 // serve client custom module bundles
@@ -158,12 +158,11 @@ app.use(function (req, res) {
 
     // push the engine client directly
     // TODO why is res.push all of the sudden undefined???!!!
-    if (res.push) {
+    if (req.push) {
         res.push('/module/engine/bundle.js', {
             request: {accept: '*/*'},
                 response: {
-                'Content-Type': 'application/javascript',
-                'Content-Encoding': 'gzip'
+                'Content-Type': 'application/javascript'
             }
         }).end(clientFile);
     }
@@ -172,7 +171,6 @@ app.use(function (req, res) {
     res.set({
         'Cache-Control': 'public, max-age=' + config.static.maxAge,
         'Content-Type': 'text/html'
-        //'Content-Encoding': 'gzip'
     });
 
     res.send(indexFile);
