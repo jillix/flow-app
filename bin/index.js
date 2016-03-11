@@ -5,7 +5,8 @@
 var config = require('./config');
 var fs = require('fs');
 var path = require('path');
-var http = require('spdy');
+var spdy = require('spdy');
+var http = require('http');
 var WSS = require('ws').Server;
 var express = require('express');
 var sessions = require('client-sessions');
@@ -15,7 +16,7 @@ var FlowWs = require('flow-ws');
 var isJSFile = /\.js$/;
 var Flow = FlowServer(config);
 var app = express();
-var server = http.createServer(config.ssl, app);
+var server = spdy.createServer(config.ssl, app);
 var clientSession = sessions(config.session);
 
 var root = path.resolve(__dirname + '/../');
@@ -176,7 +177,17 @@ app.use(function (req, res) {
     res.send(indexFile);
 });
 
-// start http server
+// start HTTPS server
 server.listen(config.port, function () {
     console.log('Engine is listening on port', config.port);
 });
+
+// start HTTP server
+var legacyServer = http.createServer(function(req, res) {
+    // the HTTP port will only redirect to HTTPS
+    res.writeHead(302, {
+        'Location': 'https://' + req.headers.host.split(':')[0] + ':' + config.port + req.url
+    });
+    res.end();
+});
+legacyServer.listen(config.httpPort);

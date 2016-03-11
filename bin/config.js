@@ -1,4 +1,5 @@
 var DEFAULT_PORT = 8000;
+var DEFAULT_HTTP_PORT = 8001;
 var DEFAULT_LOG_LEVEL = 'error';
 
 var fs = require('fs');
@@ -30,6 +31,11 @@ var argv = require('yargs')
         default: DEFAULT_PORT,
         describe: 'Port to start the application on (default: ' + DEFAULT_PORT + ')'
     })
+    .option('q', {
+        alias: 'httpPort',
+        default: DEFAULT_HTTP_PORT,
+        describe: 'The classical HTTP port. All connections will be redirected to the HTTPS (-p) port (default: ' + DEFAULT_HTTP_PORT + ')'
+    })
     .option('l', {
         alias: 'log-level',
         default: DEFAULT_LOG_LEVEL,
@@ -49,10 +55,21 @@ var argv = require('yargs')
     // check for valid port number
     .check(function (argv) {
 
-        var port = Number(argv.p);
+        var port = Number(argv.port);
 
-        if (typeof(argv.p) === 'boolean' || isNaN(port) || port < 1 || port > 65535) {
-            return 'Invalid port number. Choose a number from 1 to 65535.';
+        if (typeof(argv.port) === 'boolean' || isNaN(port) || port < 1 || port > 65535) {
+            return 'Invalid port number (-p, --port). Choose a number from 1 to 65535.';
+        }
+        return true;
+    })
+
+    // check for valid port number
+    .check(function (argv) {
+
+        var port = Number(argv.httpPort);
+
+        if (typeof(argv.httpPort) === 'boolean' || isNaN(port) || port < 1 || port > 65535) {
+            return 'Invalid port number (-q, --httpPort). Choose a number from 1 to 65535.';
         }
         return true;
     })
@@ -94,8 +111,9 @@ var flow = require(argv.repo + '/package.json');
 // set working directory
 flow.workDir = argv.repo;
 
-// set port
+// set ports
 flow.port = argv.port;
+flow.httpPort = argv.httpPort;
 
 // check if entrypoints are in the config
 if (typeof flow.entrypoints !== 'object') {
