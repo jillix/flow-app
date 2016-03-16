@@ -45,4 +45,6 @@ var argv = require('yargs')
 .argv;
 
 // emit init flow event
-Flow(argv.event, argv).i.end(true);
+var stream = Flow(argv.event, argv);
+stream.on('error', console.log.bind(console));
+stream.end(true);
