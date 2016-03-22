@@ -4,21 +4,17 @@ var adapterSet;
 // load module instance composition (MIC)
 function mic (name, callback) {
 
-    httpRequest = new XMLHttpRequest();
-    httpRequest.onreadystatechange = function () {
-        if (httpRequest.readyState === XMLHttpRequest.DONE) {
-            var composition = httpRequest.responseText;
-            if (httpRequest.status === 200) {
-                composition = JSON.parse(composition);
-                composition._roles = {'*': true};
-                callback(null, composition);
-            } else {
-                callback(new Error(httpRequest.responseText));
-            }
+    fetch('/_i/' + name + '.json').then(function(response) {
+
+        if (!response.ok) {
+            return callback(new Error(response.statusText));
         }
-    };
-    httpRequest.open('GET', '/_i/' + name + '.json');
-    httpRequest.send();
+
+        return response.json();
+
+    }).then(function (composition) {
+        callback(null, composition);
+    });
 }
 
 // load module
