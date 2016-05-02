@@ -13,12 +13,12 @@ A flow web server.
     }
 }
 ```
-* Define the npm scripts:
+* **NEEDS UPDATE** Define the npm scripts (**this should not be necessary**)
+
 ```json
 "scripts": {
-    "install": "flow-pack . -i flow-app.",
+    "install": "flow-pack .",
     "start": "flow-app . -c path/to/ssl/certificate.pem -k path/to/ssl/key.pem",
-    "debug": "flow-pack . -di flow-app; npm start"
 }
 ```
 
@@ -35,19 +35,13 @@ Go into your app root folder and do:
 $ npm start
 ```
 
-To change the default port (`8000`) and log level (`error`) use:
+To change the default ports (HTTPS: `8000`, HTTP: 8001) and log level (`error`) use:
 
 ```sh
-$ npm start -- [-p <port>] [-l <fatal|error|warn|info|debug|trace>]
+$ npm start -- [-p <port>] [-q <httpPort>] [-l <fatal|error|warn|info|debug|trace>]
 ```
 
-### Reload an app
-
-Reload recompiles the module bundles. Meant for use while developing.
-
-```sh
-$ npm run-script reload -- [-p <port>] [-l <fatal|error|warn|info|debug|trace>]
-```
+All communication will be made over HTTPS on port `port`. All HTTP connections will be redirected to HTTPS.
 
 ### Module package extension
 
