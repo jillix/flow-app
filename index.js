@@ -12,6 +12,11 @@ var argv = require('yargs')
         return;
     }
 
+	// read application config file
+	if (argv._[2]) {
+		process.config.flow = require(path.resolve(argv._[2]));
+	}
+
     argv.event = argv._[1];
     return true;
 })
@@ -30,7 +35,7 @@ var argv = require('yargs')
 
         // load module
         argv.mod = function (name, callback) {
-            callback(null, require(name[0] === '/' ? argv.repo + '/app_modules' + name : name));
+            callback(null, require(name));
         };
 
         return true;
