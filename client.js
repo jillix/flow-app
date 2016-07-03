@@ -24,12 +24,11 @@ function mod (name, callback) {
     var path = name + '.js';
     node.onload = function () {
         node.remove();
-        name = name[0] === '/' ? path : name;
         callback(null, require(name));
     };
 
     // set url and append dom script elm to the document head
-    node.src = (name[0] === '/' ? '/_c' : '/_m/') + path;
+    node.src = '/_m/' + path;
     document.head.appendChild(node);
 };
 
