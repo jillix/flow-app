@@ -1,55 +1,38 @@
 #!/usr/bin/env node
 
-var Flow = require('flow');
 var fs = require('fs');
 var path = require('path');
 var argv = require('yargs')
 
-// check init event exists
-.check(function (argv) {
-
-    if (typeof argv._[1] !== 'string') {
-        return;
-    }
-
-	// read application config file
-	if (argv._[2]) {
-		process.config.flow = require(path.resolve(argv._[2]));
-	}
-
-    argv.event = argv._[1];
-    return true;
+// entrypoint
+.options('entrypoint', {
+    alias: 'e',
+    default: null
 })
 
-// check if app path exists
-.check(function (argv) {
-    argv._[0] = argv._[0] || '.';
-    argv.repo = path.resolve(argv._[0]);
-
-    if (fs.statSync(argv.repo)) {
-
-        // load module instance composition (MIC)
-        argv.mic = function (name, callback) {
-            callback(null, require(argv.repo + '/composition/' + name + '.json'));
-        };
-
-        // load module
-        argv.mod = function (name, callback) {
-            callback(null, require(name));
-        };
-
-        return true;
-    }
+// config
+.options('config', {
+    alias: 'c',
+    default: '/usr/flow/config.json'
 })
 
-.usage('flow-app <APP_REPO_PATH> <FLOW_EVENT>')
-.example('flow-app path/to/app http_server/start', 'Start a http server.')
+// script
+.options('run', {
+    alias: 'r',
+    default: null
+})
+
+// mics
+.options('mics', {
+    alias: 'm',
+    default: '/usr/flow/mics'
+})
+
+.usage('flow-app ...')
+.example('flow-app -e [ENTRYPOINT] -c [CONFIG] -r [SCRIPT] -m [MICS]', 'All options.')
 .help('h')
 .alias('h', 'help')
 .strict()
 .argv;
 
-// emit init flow event
-var stream = Flow(argv.event, argv);
-stream.on('error', console.log.bind(console));
-stream.end(true);
+console.log(argv);
