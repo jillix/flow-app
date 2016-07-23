@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 
-var fs = require('fs');
-var path = require('path');
+var app = require('./lib/app');
 var argv = require('yargs')
+
+// TODO mandatory args
 
 // entrypoint
 .options('entrypoint', {
@@ -35,4 +36,4 @@ var argv = require('yargs')
 .strict()
 .argv;
 
-console.log(argv);
+app(argv);
