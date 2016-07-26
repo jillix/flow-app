@@ -3,37 +3,24 @@
 var app = require('./lib/app');
 var argv = require('yargs')
 
-// TODO mandatory args
-
 // entrypoint
-.options('entrypoint', {
-    alias: 'e',
-    default: null
+.check(function (argv) {
+
+    if (!argv._[0] || !argv._[1]) {
+        return;
+    }
+
+    argv.config = argv._[1];
+    argv.entrypoint = argv._[0];
+
+    return true;
 })
 
-// config
-.options('config', {
-    alias: 'c',
-    default: '/usr/flow/config.json'
-})
-
-// script
-.options('run', {
-    alias: 'r',
-    default: null
-})
-
-// mics
-.options('mics', {
-    alias: 'm',
-    default: '/usr/flow/mics'
-})
-
-.usage('flow-app ...')
-.example('flow-app -e [ENTRYPOINT] -c [CONFIG] -r [SCRIPT] -m [MICS]', 'All options.')
+.usage('flow-app [ENTRYPOINT] [CONFIG]')
+.example('flow-app myEntrypoint /usr/flow/config.json', 'Start entrypoint, defined in config file.')
 .help('h')
 .alias('h', 'help')
 .strict()
 .argv;
 
-app(argv);
+app(argv.entrypoint, argv.config);
