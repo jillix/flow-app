@@ -1,0 +1,28 @@
+{
+  "name": "flow-nodejs",
+  "version": "0.0.1",
+  "description": "Flow adapter for NodeJS",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jillix/flow-nodejs.git"
+  },
+  "keywords": [
+    "flow",
+    "adapter",
+    "nodejs"
+  ],
+  "author": "Adrian Ottiker <adrian@ottiker.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jillix/flow-nodejs/issues"
+  },
+  "homepage": "https://github.com/jillix/flow-nodejs#readme",
+  "dependencies": {
+    "flow": "github:jillix/flow",
+    "yargs": "^4.8.1"
+  }
+}
