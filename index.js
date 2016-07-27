@@ -12,10 +12,8 @@ var argv = require('yargs')
         return;
     }
 
-	// read application config file
-	if (argv._[2]) {
-		process.config.flow = require(path.resolve(argv._[2]));
-	}
+    // read application config file
+    process.config.flow = argv._[2] ? require(path.resolve(argv._[2])) : {};
 
     argv.event = argv._[1];
     return true;
