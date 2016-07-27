@@ -6,21 +6,22 @@ var argv = require('yargs')
 // entrypoint
 .check(function (argv) {
 
-    if (!argv._[0] || !argv._[1]) {
+    if (!argv._[0] || !argv._[1] || !argv._[2]) {
         return;
     }
 
-    argv.config = argv._[1];
     argv.entrypoint = argv._[0];
+    argv.infrastructure = argv._[1]
+    argv.config = argv._[2];
 
     return true;
 })
 
-.usage('flow-app [ENTRYPOINT] [CONFIG]')
-.example('flow-app myEntrypoint /usr/flow/config.json', 'Start entrypoint, defined in config file.')
+.usage('flow-app [ENTRYPOINT] [INFSTR_CONFIG] [CONFIG_FILE]')
+.example('flow-app myEntrypoint nodejs-local /usr/flow/config.json', 'Start "myEntrypoint" with "nodejs-local" infrastructure, defined in config file.')
 .help('h')
 .alias('h', 'help')
 .strict()
 .argv;
 
-app(argv.entrypoint, argv.config);
+app(argv.entrypoint, argv.infrastructure, argv.config);
