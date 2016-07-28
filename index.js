@@ -1,37 +1,24 @@
 #!/usr/bin/env node
 
 const flow = require('flow');
-const path = require('path');
-const fs = require('fs');
-const argv = require('yargs')
-.options('event', {
-    alias: 'e',
-    required: true
-})
-.options('network', {
-    alias: 'n',
-    required: true
-})
-.options('env', {
-    alias: 'v'
-})
-.argv;
 
-// parse environment
-if (argv.env) {
-    process.flow_env = JSON.parse(argv.env);
-} 
+// TODO add option to read entrypoint form file (container)
 
-console.log(argv.event, argv.network, process.flow_env);
+process.on('message', (entrypoint) => {
 
-var stream = flow(argv.event, {
-    mic: function (name, callback) {
-        callback(null, require(argv.network + '/' + name));
-    },
-    mod: function (name, callback) {
-        callback(null, require(name));
-    }
+    // append mandatory flow environment
+    if (entrypoint.env) {
+        process.flow_env = entrypoint.env;
+    } 
+
+    let stream = flow(entrypoint.event, {
+        mic: (name, callback) => {
+            callback(null, require(entrypoint.network + '/' + name));
+        },
+        mod: (name, callback) => {
+            callback(null, require(name));
+        }
+    });
+    stream.on('error', process.stderr.write.bind(process.stderr));
+    stream.end(1);
 });
-stream.on('error', process.stderr.write.bind(process.stderr));
-stream.end(1);
-
