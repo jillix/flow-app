@@ -16,6 +16,9 @@ var argv = require('yargs')
 
     return true;
 })
+.options('install', {
+    alias: 'i'
+})
 
 .usage('flow-app [ENTRYPOINT] [INFSTR_CONFIG] [CONFIG_FILE]')
 .example('flow-app myEntrypoint nodejs-local /usr/flow/config.json', 'Start "myEntrypoint" with "nodejs-local" infrastructure, defined in config file.')
