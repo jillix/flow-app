@@ -2,7 +2,7 @@
   "name": "flow-app",
   "version": "0.1.0-beta",
   "author": "jillix <contact@jillix.com>",
-  "description": "Flow cli wrapper",
+  "description": "Start flow NodeJS entrypoints locally.",
   "contributors": [
     "Adrian Ottiker <adrian@ottiker.com>",
     "Gabriel Petrovay <gabipetrovay@gmail.com>",
@@ -21,7 +21,6 @@
     "framework"
   ],
   "dependencies": {
-    "flow": "github:jillix/flow",
     "yargs": "^3.32.0"
   },
   "engine": {
@@ -32,7 +31,6 @@
   },
   "homepage": "https://github.com/jillix/flow-app",
   "main": "index.js",
-  "browser": "client.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
