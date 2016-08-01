@@ -37,7 +37,9 @@ const argv = require('yargs')
                 // entrypoint (true = all entrypioints)
                 argv._[1] || true,
                 // infrastructure config name
-                argv._[2]
+                argv._[2],
+                // config file
+                argv.config || './'
             ];
             break;
 
