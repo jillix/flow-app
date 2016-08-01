@@ -6,7 +6,13 @@ const argv = require('yargs')
 .option('config', {
     alias: 'c',
     describe: 'Define a path to a project config file.',
-    default: './'
+    default: './config.json'
+})
+
+// infrastructure config name
+.option('infrastructure', {
+    alias: 'i',
+    describe: 'Get a infrastructure config from the project config.'
 })
 
 // check command and args
@@ -37,9 +43,9 @@ const argv = require('yargs')
                 // entrypoint (true = all entrypioints)
                 argv._[1] || true,
                 // infrastructure config name
-                argv._[2],
+                argv.infrastructure,
                 // config file
-                argv.config || './'
+                argv.config
             ];
             break;
 
@@ -60,8 +66,8 @@ const argv = require('yargs')
 })
 
 // describe commands
-.command('install <git> [install_dir]', 'Install a project for a git url.')
-.command('start [entrypoint] [start_config]', 'Start project or a specific entrypoint.')
+.command('install <git> [install_dir]', 'Install a project from a git url.')
+.command('start [entrypoint]', 'Start project or a specific entrypoint.')
 .command('stop [entrypoint]', 'Stop project or a specific entrypoint.')
 
 // help option
