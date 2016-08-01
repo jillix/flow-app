@@ -1,30 +1,67 @@
 #!/usr/bin/env node
 
-var app = require('./lib/app');
-var argv = require('yargs')
+(require('./lib/app'))(require('yargs')
 
-// entrypoint
+// global config option
+.option('config', {
+    alias: 'c',
+    describe: 'Define a path to a project config file.',
+    default: './'
+})
+
+// check command and args
 .check(function (argv) {
 
-    if (!argv._[0] || !argv._[1] || !argv._[2]) {
-        return;
-    }
+    switch (argv._[0]) {
+        case 'install':
 
-    argv.entrypoint = argv._[0];
-    argv.infrastructure = argv._[1]
-    argv.config = argv._[2];
+            // git repo
+            // TODO validate git url
+            if (!argv._[1]) {
+                throw new Error('Missing git url.');
+            }
+
+            argv.git_url = argv._[1];
+
+            // install dir value
+            argv.install_dir = argv._[2] || './';
+            break;
+
+        case 'start':
+
+            // start a specific or all entrypoints
+            argv.start = argv._[1] || true;
+
+            if (argv._[2]) {
+                argv.infrastructure = argv._[2]; 
+            }
+
+            // TODO restart on mic change
+            break;
+
+        case 'stop':
+            // stop all or specific entrypoints
+            argv.stop = argv._[1] || true; 
+            break;
+
+        default:
+            return;
+    }
 
     return true;
 })
-.options('install', {
-    alias: 'i'
-})
 
-.usage('flow-app [ENTRYPOINT] [INFSTR_CONFIG] [CONFIG_FILE]')
-.example('flow-app myEntrypoint nodejs-local /usr/flow/config.json', 'Start "myEntrypoint" with "nodejs-local" infrastructure, defined in config file.')
+// describe commands
+.command('install <git> [install_dir]', 'Install a project for a git url.')
+.command('start [entrypoint] [start_config]', 'Start project or a specific entrypoint.')
+.command('stop [entrypoint]', 'Stop project or a specific entrypoint.')
+
+// help option
 .help('h')
 .alias('h', 'help')
-.strict()
-.argv;
 
-app(argv.entrypoint, argv.infrastructure, argv.config);
+// demand at least one command
+.demand(1)
+.strict()
+.argv);
+
