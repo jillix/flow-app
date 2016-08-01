@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-(require('./lib/app'))(require('yargs')
+const argv = require('yargs')
 
 // global config option
 .option('config', {
@@ -21,31 +21,37 @@
                 throw new Error('Missing git url.');
             }
 
-            argv.git_url = argv._[1];
-
-            // install dir value
-            argv.install_dir = argv._[2] || './';
+            argv.command = './lib/install';
+            argv.args = [
+                // git url
+                argv._[1],
+                // install dir
+                argv._[2] || './'
+            ];
             break;
 
         case 'start':
 
-            // start a specific or all entrypoints
-            argv.start = argv._[1] || true;
-
-            if (argv._[2]) {
-                argv.infrastructure = argv._[2]; 
-            }
-
-            // TODO restart on mic change
+            argv.command = './lib/entrypoint';
+            argv.args = [
+                // entrypoint (true = all entrypioints)
+                argv._[1] || true,
+                // infrastructure config name
+                argv._[2]
+            ];
             break;
 
         case 'stop':
-            // stop all or specific entrypoints
-            argv.stop = argv._[1] || true; 
+
+            argv.command = './lib/stop';
+            argv.args = [
+                // entrypoint to stop (true = all entrypoints)
+                argv._[1] || true
+            ];
             break;
 
         default:
-            return;
+            throw new Error('Invalid command.');
     }
 
     return true;
@@ -63,5 +69,8 @@
 // demand at least one command
 .demand(1)
 .strict()
-.argv);
+.argv;
+
+// call command
+(require(argv.command)).apply(this, argv.args);
 
