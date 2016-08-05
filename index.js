@@ -41,7 +41,7 @@ const argv = require('yargs')
             argv.command = './lib/entrypoint';
             argv.args = [
                 // entrypoint (true = all entrypioints)
-                argv._[1] || true,
+                argv._[1],
                 // infrastructure config name
                 argv.infrastructure,
                 // config file
