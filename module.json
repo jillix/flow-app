@@ -1,0 +1,18 @@
+{
+    "@context": [
+        "http://localhost:8080/context/module.jsonld",
+        {
+        }
+    ],
+    "@id": "https://github.com/jillix/flow-app#readme",
+    "@type": "Module",
+    "name": "flow-app",
+    "version": "0.0.1",
+    "description": "Example module for flow",
+    "author": "jillix",
+    "gitRepository": "git+https://github.com/jillix/flow-app.git",
+    "exports": [
+    ],
+    "options": [
+    ]
+}
