@@ -8,7 +8,7 @@
     "@type": "Module",
     "name": "flow-app",
     "version": "0.0.1",
-    "description": "Example module for flow",
+    "description": "Flow cli wrapper",
     "author": "jillix",
     "gitRepository": "git+https://github.com/jillix/flow-app.git",
     "exports": [
