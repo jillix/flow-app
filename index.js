@@ -2,7 +2,7 @@
 'use strict'
 
 //import flow from 'flow';
-const flow = require('../flow');
+const flow = require('flow');
 const Adapter = require('./lib/adapters/cayley');
 
 // check if an file path is in argv,
