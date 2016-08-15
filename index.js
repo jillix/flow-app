@@ -2,7 +2,8 @@
 'use strict'
 
 //import flow from 'flow';
-const flow = require('flow');
+const flow = require('../flow');
+const Adapter = require('./lib/adapters/cayley');
 
 // check if an file path is in argv,
 // thus read the entrypoint from there.
@@ -16,7 +17,7 @@ if (process.argv[2]) {
             throw err;
         }
 
-        try {
+        try {A
             data = JSON.parse(data.toString());
         } catch (err) {
             throw err;
@@ -38,15 +39,8 @@ function initEntrypoint (entrypoint) {
         process.flow_env = entrypoint.env;
     } 
 
-    // TODO move adapater to separate file
-    let stream = flow(entrypoint.event, {
-        mic: (name, callback) => {
-            callback(null, require(entrypoint.network + '/' + name));
-        },
-        mod: (name, callback) => {
-            callback(null, require(name));
-        }
-    });
+    // TODO get adapter from entrypoint config
+    let stream = flow(entrypoint.event, Adapter(entrypoint));
     stream.on('error', process.stderr.write.bind(process.stderr));
     stream.end(1);
 }
