@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/jillix/flow-nodejs#readme",
   "dependencies": {
-    "flow": "github:jillix/flow",
+    "flow": "github:jillix/flow#linked-data",
     "yargs": "^4.8.1"
   }
 }
