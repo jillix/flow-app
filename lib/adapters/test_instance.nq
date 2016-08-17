@@ -1,10 +1,35 @@
 module.exports = [
+
+    // instance
+    ["<http://mic.jillix.com/vocab_layout>", "<http://schema.jillix.net/vocab/module>", "<https://raw.githubusercontent.com/adioo/flow-view/jsonldConfig/module.json>"],
+    ["<http://mic.jillix.com/vocab_layout>", "<http://schema.org/name>", "vocab_layout"],
+    ["<http://mic.jillix.com/vocab_layout>", "<http://schema.jillix.net/vocab/roles>", "*"],
+
+    // listeners
+    ["<http://mic.jillix.com/vocab_layout>", "<http://schema.jillix.net/vocab/listener>", "<http://mic.jillix.com/vocab_layout/contexts>"],
+    ["<http://mic.jillix.com/vocab_layout>", "<http://schema.jillix.net/vocab/listener>", "<http://mic.jillix.com/vocab_layout/home>"],
+    ["<http://mic.jillix.com/vocab_layout>", "<http://schema.jillix.net/vocab/listener>", "<http://mic.jillix.com/vocab_layout/start>"],
+    ["<http://mic.jillix.com/vocab_layout>", "<http://schema.jillix.net/vocab/listener>", "<http://mic.jillix.com/vocab_layout/vocab>"],
+
+    // listener HOME
+    ["<http://mic.jillix.com/vocab_layout/home>", "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>", "<http://schema.jillix.net/vocab/listener>"],
+    ["<http://mic.jillix.com/vocab_layout/home>", "<http://schema.org/name>", "home"],
+    ["<http://mic.jillix.com/vocab_layout/home>", "<http://schema.jillix.net/vocab/handler>", "<http://mic.jillix.com/vocab_layout/home/0>"],
+    ["<http://mic.jillix.com/vocab_layout/home/0>", "<http://schema.jillix.net/vocab/instance>", "<http://mic.jillix.com/vocab_router>"],
+    ["<http://mic.jillix.com/vocab_layout/home/0>", "<http://schema.jillix.net/vocab/method>", "module:route"],
+    ["<http://mic.jillix.com/vocab_layout/home/0>", "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>", "<http://schema.jillix.net/vocab/DataHandler>"],
+    ["<http://mic.jillix.com/vocab_layout/home/0>", "<http://schema.jillix.net/vocab/methodOptions>", "<http://mic.jillix.com/vocab_layout/home/0/arguments>"],
+    ["<http://mic.jillix.com/vocab_layout/home/0>", "<http://schema.jillix.net/vocab/handler>", "<http://mic.jillix.com/vocab_layout/home/1>"],
+    ["<http://mic.jillix.com/vocab_layout/home/1>", "<http://schema.jillix.net/vocab/instance>", "<http://mic.jillix.com/vocab_layout>"],
+    ["<http://mic.jillix.com/vocab_layout/home/1>", "<http://schema.jillix.net/vocab/method>", "module:state"],
+    ["<http://mic.jillix.com/vocab_layout/home/1>", "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>", "<http://schema.jillix.net/vocab/DataHandler>"],
+    ["<http://mic.jillix.com/vocab_layout/home/1>", "<http://schema.jillix.net/vocab/methodOptions>", "<http://mic.jillix.com/vocab_layout/home/1/arguments>"],
+
+
+
     ["<http://service.jillix.com/jillix/service/vocab/builder/vocab_layout/listeners/contexts>", "<http://schema.jillix.net/vocab/handlers>", "_:b40"],
     ["<http://service.jillix.com/jillix/service/vocab/builder/vocab_layout/listeners/contexts>", "<http://schema.org/name>", "contexts"],
     ["<http://service.jillix.com/jillix/service/vocab/builder/vocab_layout/listeners/contexts>", "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>", "<http://schema.jillix.net/vocab/FlowListener>"],
-    ["<http://service.jillix.com/jillix/service/vocab/builder/vocab_layout/listeners/home>", "<http://schema.jillix.net/vocab/handlers>", "_:b42"],
-    ["<http://service.jillix.com/jillix/service/vocab/builder/vocab_layout/listeners/home>", "<http://schema.org/name>", "home"],
-    ["<http://service.jillix.com/jillix/service/vocab/builder/vocab_layout/listeners/home>", "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>", "<http://schema.jillix.net/vocab/FlowListener>"],
     ["<http://service.jillix.com/jillix/service/vocab/builder/vocab_layout/listeners/start>", "<http://schema.jillix.net/vocab/handlers>", "_:b44"],
     ["<http://service.jillix.com/jillix/service/vocab/builder/vocab_layout/listeners/start>", "<http://schema.org/name>", "start"],
     ["<http://service.jillix.com/jillix/service/vocab/builder/vocab_layout/listeners/start>", "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>", "<http://schema.jillix.net/vocab/FlowListener>"],
@@ -12,13 +37,6 @@ module.exports = [
     ["<http://service.jillix.com/jillix/service/vocab/builder/vocab_layout/listeners/vocab>", "<http://schema.org/name>", "vocab"],
     ["<http://service.jillix.com/jillix/service/vocab/builder/vocab_layout/listeners/vocab>", "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>", "<http://schema.jillix.net/vocab/FlowListener>"],
     ["<http://service.jillix.com/jillix/service/vocab/builder/vocab_layout>", "<http://schema.jillix.net/vocab/config>", "_:b0"],
-    ["<http://service.jillix.com/jillix/service/vocab/builder/vocab_layout>", "<http://schema.jillix.net/vocab/flowListeners>", "<http://service.jillix.com/jillix/service/vocab/builder/vocab_layout/listeners/contexts>"],
-    ["<http://service.jillix.com/jillix/service/vocab/builder/vocab_layout>", "<http://schema.jillix.net/vocab/flowListeners>", "<http://service.jillix.com/jillix/service/vocab/builder/vocab_layout/listeners/home>"],
-    ["<http://service.jillix.com/jillix/service/vocab/builder/vocab_layout>", "<http://schema.jillix.net/vocab/flowListeners>", "<http://service.jillix.com/jillix/service/vocab/builder/vocab_layout/listeners/start>"],
-    ["<http://service.jillix.com/jillix/service/vocab/builder/vocab_layout>", "<http://schema.jillix.net/vocab/flowListeners>", "<http://service.jillix.com/jillix/service/vocab/builder/vocab_layout/listeners/vocab>"],
-    ["<http://service.jillix.com/jillix/service/vocab/builder/vocab_layout>", "<http://schema.jillix.net/vocab/module>", "<https://raw.githubusercontent.com/adioo/flow-view/jsonldConfig/module.json>"],
-    ["<http://service.jillix.com/jillix/service/vocab/builder/vocab_layout>", "<http://schema.jillix.net/vocab/roles>", "*"],
-    ["<http://service.jillix.com/jillix/service/vocab/builder/vocab_layout>", "<http://schema.org/name>", "vocab_layout"],
     ["<http://service.jillix.com/jillix/service/vocab/builder/vocab_layout>", "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>", "<http://schema.jillix.net/vocab/ModuleInstanceConfig>"],
     ["_:b0", "<http://dbpedia.org/property/states>", "_:b1"],
     ["_:b0", "<http://dbpedia.org/property/states>", "_:b10"],
@@ -69,14 +87,8 @@ module.exports = [
     ["_:b20", "<http://dbpedia.org/property/element>", "contexts"],
     ["_:b20", "<http://schema.jillix.net/vocab/listener>", "http://service.jillix.com/jillix/service/vocab/builder/vocab_layout/listeners/contexts"],
     ["_:b20", "<http://schema.org/event>", "click"],
-    ["_:b21", "<http://schema.jillix.net/vocab/instance>", "<http://service.jillix.com/jillix/service/vocab/builder/vocab_router>"],
-    ["_:b21", "<http://schema.jillix.net/vocab/method>", "route"],
-    ["_:b21", "<http://schema.jillix.net/vocab/methodOptions>", "_:b22"],
-    ["_:b21", "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>", "<http://schema.jillix.net/vocab/DataHandler>"],
-    ["_:b23", "<http://schema.jillix.net/vocab/instance>", "<http://service.jillix.com/jillix/service/vocab/builder/vocab_layout>"],
-    ["_:b23", "<http://schema.jillix.net/vocab/method>", "state"],
-    ["_:b23", "<http://schema.jillix.net/vocab/methodOptions>", "_:b24"],
-    ["_:b23", "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>", "<http://schema.jillix.net/vocab/DataHandler>"],
+    
+    
     ["_:b24", "<http://schema.org/name>", "/activateHome"],
     ["_:b25", "<http://schema.jillix.net/vocab/instance>", "<http://service.jillix.com/jillix/service/vocab/builder/vocab_router>"],
     ["_:b25", "<http://schema.jillix.net/vocab/method>", "route"],
@@ -123,10 +135,6 @@ module.exports = [
     ["_:b40", "<http://www.w3.org/1999/02/22-rdf-syntax-ns#rest>", "_:b41"],
     ["_:b41", "<http://www.w3.org/1999/02/22-rdf-syntax-ns#first>", "_:b31"],
     ["_:b41", "<http://www.w3.org/1999/02/22-rdf-syntax-ns#rest>", "<http://www.w3.org/1999/02/22-rdf-syntax-ns#nil>"],
-    ["_:b42", "<http://www.w3.org/1999/02/22-rdf-syntax-ns#first>", "_:b21"],
-    ["_:b42", "<http://www.w3.org/1999/02/22-rdf-syntax-ns#rest>", "_:b43"],
-    ["_:b43", "<http://www.w3.org/1999/02/22-rdf-syntax-ns#first>", "_:b23"],
-    ["_:b43", "<http://www.w3.org/1999/02/22-rdf-syntax-ns#rest>", "<http://www.w3.org/1999/02/22-rdf-syntax-ns#nil>"],
     ["_:b44", "<http://www.w3.org/1999/02/22-rdf-syntax-ns#first>", "_:b33"],
     ["_:b44", "<http://www.w3.org/1999/02/22-rdf-syntax-ns#rest>", "_:b45"],
     ["_:b45", "<http://www.w3.org/1999/02/22-rdf-syntax-ns#first>", "_:b34"],
