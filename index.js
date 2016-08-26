@@ -2,7 +2,7 @@
 'use strict'
 
 //import flow from 'flow';
-const flow = require('flow');
+const Flow = require('flow');
 const Adapter = require('./lib/adapters/cayley');
 
 // check if an file path is in argv,
@@ -40,7 +40,9 @@ function initEntrypoint (entrypoint) {
     } 
 
     // TODO get adapter from entrypoint config
-    let stream = flow(entrypoint.event, Adapter(entrypoint));
-    stream.on('error', process.stderr.write.bind(process.stderr));
-    stream.end(1);
+    let flow = Flow(Adapter(entrypoint))
+    flow = flow(entrypoint.node, entrypoint.emit);
+    flow.pipe(process.stdout);
+    flow.on('error', process.stderr.write.bind(process.stderr));
+    flow.end(1);
 }
