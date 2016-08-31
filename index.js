@@ -40,7 +40,7 @@ function initEntrypoint (entrypoint) {
     } 
 
     // TODO get adapter from entrypoint config
-    let flow = Flow(Adapter(entrypoint))
+    let flow = Flow(Adapter(entrypoint));
     flow = flow(entrypoint.node, entrypoint.emit);
     flow.pipe(process.stdout);
     flow.on('error', process.stderr.write.bind(process.stderr));
