@@ -24,7 +24,7 @@ if (process.argv[2]) {
         }
 
         initEntrypoint(data);
-    })
+    });
 
 // expect a IPC message with the entrypoint.
 } else {
@@ -41,7 +41,7 @@ function initEntrypoint (entrypoint) {
 
     // TODO get adapter from entrypoint config
     let flow = Flow(Adapter(entrypoint));
-    flow = flow(entrypoint.node, entrypoint.emit);
+    flow = flow(entrypoint.emit);
     flow.pipe(process.stdout);
     flow.on('error', process.stderr.write.bind(process.stderr));
     flow.end(1);
