@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/jillix/flow-nodejs#readme",
   "dependencies": {
-    "cayley-triple-io": "github:jillix/cayley-triple-io",
+    "cayley": "^0.2.1",
     "flow": "github:jillix/flow#linked-data",
     "lru-cache": "^4.0.1",
     "yargs": "^4.8.1"
