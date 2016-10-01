@@ -43,6 +43,6 @@ function initEntrypoint (entrypoint) {
     let flow = Flow(Adapter(entrypoint));
     flow = flow(entrypoint.emit);
     flow.on('data', chunk => process.stdout.write(chunk.toString()));
-    flow.on('error', error => process.stderr.write(error.toString()));
+    flow.on('error', error => process.stderr.write(error.stack.toString()));
     flow.end(1);
 }
