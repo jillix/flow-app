@@ -39,9 +39,7 @@ function initEntrypoint (entrypoint) {
         process.flow_env = entrypoint.env;
     } 
 
-    // TODO get adapter from entrypoint config
-    let flow = Flow(Adapter(entrypoint));
-    flow = flow(entrypoint.emit);
+    let flow = Flow(Adapter(entrypoint))(entrypoint.emit);
     flow.on('data', chunk => process.stdout.write(chunk.toString()));
     flow.on('error', error => process.stderr.write(error.stack.toString()));
     flow.end(1);
