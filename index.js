@@ -35,9 +35,7 @@ if (process.argv[2]) {
 function initEntrypoint (entrypoint) {
 
     // append mandatory flow environment
-    if (entrypoint.env) {
-        process.flow_env = entrypoint.env;
-    } 
+    process.flow_env = entrypoint.env || {};
 
     let flow = Flow(Adapter(entrypoint))(entrypoint.emit);
     flow.on('data', chunk => process.stdout.write(chunk.toString()));
