@@ -1,21 +1,23 @@
 #!/usr/bin/env node
 
-const flow = require('flow');
+const Flow = require('flow');
 const resolve = require('path').resolve;
 const dirname = require('path').dirname;
 const readFile = require('fs').readFile;
+const Adapter = require('./lib/adapters/cayley');
 const entrypoint_name = process.argv[2];
 const app_config = resolve(process.argv[3] || '.');
+const base_path = dirname(app_config);
 
 !entrypoint_name && error('Missing entrypoint argument.');
 readFile(app_config, (err, config) => err ? error(err.stack) : initEntrypoint(getEntrypoint(config)));
 
 function initEntrypoint (entrypoint) {
-    console.log(process.flow_env);
-    /*let flow = Flow(Adapter(entrypoint))(entrypoint.emit);
+    console.log(entrypoint)
+    let flow = Flow(Adapter(entrypoint))(entrypoint.emit);
     flow.on('data', chunk => process.stdout.write(chunk.toString()));
     flow.on('error', error => process.stderr.write(error.stack.toString()));
-    flow.end(1);*/
+    flow.end(1);
 }
 
 function getEntrypoint (config) {
@@ -34,7 +36,7 @@ function getEntrypoint (config) {
         error('No event defined in entrypoint.');
     }
 
-    entrypoint.base = dirname(app_config);
+    entrypoint.base = base_path;
 
     if (entrypoint.env && entrypoint.env.length) {
         environment(entrypoint, config);
@@ -55,6 +57,7 @@ function environment (entrypoint, config) {
 
         Object.assign(process.flow_env, env.vars);
     });
+    entrypoint.env = process.flow_env;
 }
 
 function error (msg) {
