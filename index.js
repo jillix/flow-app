@@ -10,7 +10,7 @@ const app_config = resolve(process.argv[3] || '.');
 const base_path = dirname(app_config);
 
 !entrypoint_name && error('Missing entrypoint argument.');
-readFile(app_config, (err, config) => err ? error(err.stack) : initEntrypoint(getEntrypoint(config)));
+initEntrypoint(getEntrypoint(require(app_config)));
 
 function initEntrypoint (entrypoint) {
     console.log(entrypoint)
@@ -21,8 +21,6 @@ function initEntrypoint (entrypoint) {
 }
 
 function getEntrypoint (config) {
-
-    config = JSON.parse(config.toString());
 
     if (!config.entrypoints && !config.entrypoints.length) {
         error('No entrypoints defined in config.');
