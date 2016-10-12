@@ -6,7 +6,7 @@ const readFile = require('fs').readFile;
 const Flow = require(__dirname + '/node_modules/flow');
 const Adapter = require(__dirname + '/lib/adapters/cayley');
 const entrypoint_name = process.argv[2];
-const app_config = resolve(process.argv[3] || './config.json');
+const app_config = resolve(process.argv[3] || './flow.json');
 const base_path = dirname(app_config);
 
 !entrypoint_name && error('Missing entrypoint argument.');
