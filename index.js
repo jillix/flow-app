@@ -13,7 +13,6 @@ const base_path = dirname(app_config);
 initEntrypoint(getEntrypoint(require(app_config)));
 
 function initEntrypoint (entrypoint) {
-    console.log(entrypoint)
     let flow = Flow(Adapter(entrypoint))(entrypoint.emit);
     flow.on('data', chunk => process.stdout.write(chunk.toString()));
     flow.on('error', error => process.stderr.write(error.stack.toString()));
@@ -55,7 +54,8 @@ function environment (entrypoint, config) {
 
         Object.assign(process.flow_env, env.vars);
     });
-    entrypoint.env = process.flow_env;
+
+    delete entrypoint.env;
 }
 
 function error (msg) {
