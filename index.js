@@ -1,84 +1,62 @@
 #!/usr/bin/env node
 
-const argv = require('yargs')
+const flow = require('flow');
+const resolve = require('path').resolve;
+const dirname = require('path').dirname;
+const readFile = require('fs').readFile;
+const entrypoint_name = process.argv[2];
+const app_config = resolve(process.argv[3] || '.');
 
-// global config option
-.option('config', {
-    alias: 'c',
-    describe: 'Define a path to a project config file.',
-    default: './config.json'
-})
+!entrypoint_name && error('Missing entrypoint argument.');
+readFile(app_config, (err, config) => err ? error(err.stack) : initEntrypoint(getEntrypoint(config)));
 
-// infrastructure config name
-.option('infrastructure', {
-    alias: 'i',
-    describe: 'Get a infrastructure config from the project config.'
-})
+function initEntrypoint (entrypoint) {
+    console.log(process.flow_env);
+    /*let flow = Flow(Adapter(entrypoint))(entrypoint.emit);
+    flow.on('data', chunk => process.stdout.write(chunk.toString()));
+    flow.on('error', error => process.stderr.write(error.stack.toString()));
+    flow.end(1);*/
+}
 
-// check command and args
-.check(function (argv) {
+function getEntrypoint (config) {
 
-    switch (argv._[0]) {
-        case 'install':
+    config = JSON.parse(config.toString());
 
-            // git repo
-            // TODO validate git url
-            if (!argv._[1]) {
-                throw new Error('Missing git url.');
-            }
-
-            argv.command = './lib/install';
-            argv.args = [
-                // git url
-                argv._[1],
-                // install dir
-                argv._[2] || './'
-            ];
-            break;
-
-        case 'start':
-
-            argv.command = './lib/entrypoint';
-            argv.args = [
-                // entrypoint (true = all entrypioints)
-                argv._[1],
-                // infrastructure config name
-                argv.infrastructure,
-                // config file
-                argv.config
-            ];
-            break;
-
-        case 'stop':
-
-            argv.command = './lib/stop';
-            argv.args = [
-                // entrypoint to stop (true = all entrypoints)
-                argv._[1] || true
-            ];
-            break;
-
-        default:
-            throw new Error('Invalid command.');
+    if (!config.entrypoints && !config.entrypoints.length) {
+        error('No entrypoints defined in config.');
     }
 
-    return true;
-})
+    let entrypoint = config.entrypoints.find((item) => {
+        return item.name === entrypoint_name;
+    });
 
-// describe commands
-.command('install <git> [install_dir]', 'Install a project from a git url.')
-.command('start [entrypoint]', 'Start project or a specific entrypoint.')
-.command('stop [entrypoint]', 'Stop project or a specific entrypoint.')
+    if (!entrypoint.emit) {
+        error('No event defined in entrypoint.');
+    }
 
-// help option
-.help('h')
-.alias('h', 'help')
+    entrypoint.base = dirname(app_config);
 
-// demand at least one command
-.demand(1)
-.strict()
-.argv;
+    if (entrypoint.env && entrypoint.env.length) {
+        environment(entrypoint, config);
+    }
 
-// call command
-(require(argv.command)).apply(this, argv.args);
+    return entrypoint;
+}
 
+function environment (entrypoint, config) {
+    process.flow_env = {};
+    entrypoint.env.forEach((env) => {
+
+        env = config.environments.find((environment) => {
+            return environment.name === env;
+        });
+
+        !env && error('Entrypoint environment reference "' + name + '" does not exist.');
+
+        Object.assign(process.flow_env, env.vars);
+    });
+}
+
+function error (msg) {
+    throw new Error('Flow-nodejs: ' + msg);
+}
