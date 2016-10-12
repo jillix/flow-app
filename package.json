@@ -23,7 +23,7 @@
   "dependencies": {
     "flow": "github:jillix/flow#linked-data",
     "lru-cache": "^4.0.1",
-    "cayley": "^0.2.1"
+    "cayley": "github:danandrei/cayley.js"
   },
   "engine": {
     "node": ">=6"
