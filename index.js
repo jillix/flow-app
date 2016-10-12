@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 
-const Flow = require('flow');
 const resolve = require('path').resolve;
 const dirname = require('path').dirname;
 const readFile = require('fs').readFile;
-const Adapter = require('./lib/adapters/cayley');
+const Flow = require(__dirname + '/node_modules/flow');
+const Adapter = require(__dirname + '/lib/adapters/cayley');
 const entrypoint_name = process.argv[2];
-const app_config = resolve(process.argv[3] || '.');
+const app_config = resolve(process.argv[3] || './config.json');
 const base_path = dirname(app_config);
 
 !entrypoint_name && error('Missing entrypoint argument.');
