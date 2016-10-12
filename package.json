@@ -1,35 +1,37 @@
 {
-  "name": "flow-app",
-  "version": "0.1.0-beta",
+  "name": "flow-nodejs",
+  "version": "0.1.0",
   "author": "jillix <contact@jillix.com>",
-  "description": "Start flow NodeJS entrypoints locally.",
+  "description": "Start flow entrypoints locally with nodejs.",
   "contributors": [
     "Adrian Ottiker <adrian@ottiker.com>",
     "Gabriel Petrovay <gabipetrovay@gmail.com>",
     "Ionica Bizau <bizauionica@gmail.com>"
   ],
   "bin": {
-    "flow-app": "index.js"
+    "flow": "index.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jillix/flow-app.git"
+    "url": "git+https://github.com/jillix/flow-nodejs.git"
   },
   "keywords": [
-    "application",
-    "cloud",
-    "framework"
+    "flow",
+    "nodejs",
+    "cayley"
   ],
   "dependencies": {
-    "flow": "github:jillix/flow"
+    "flow": "github:jillix/flow#linked-data",
+    "lru-cache": "^4.0.1",
+    "cayley": "^0.2.1"
   },
   "engine": {
-    "node": ">=5"
+    "node": ">=6"
   },
   "bugs": {
-    "url": "https://github.com/jillix/flow-app/issues"
+    "url": "https://github.com/jillix/flow-nodejs/issues"
   },
-  "homepage": "https://github.com/jillix/flow-app",
+  "homepage": "https://github.com/jillix/flow-nodejs",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

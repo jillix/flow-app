@@ -1,11 +1,11 @@
 npm-debug.log
+node_modules/
 .DS_Store
+*~
 *.swp
 *.vim
-node_modules/
-*~
-
 *_shortcut.js
 *_shortcut.sh
+*.swo
+*.log
 .lock_*
-bundle.js
