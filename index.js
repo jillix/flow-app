@@ -15,7 +15,7 @@ initEntrypoint(getEntrypoint(require(app_config)));
 function initEntrypoint (entrypoint) {
     let flow = Flow(Adapter(entrypoint))(entrypoint.emit);
     flow.on('data', chunk => process.stdout.write(chunk.toString()));
-    flow.on('error', error => process.stderr.write(error.stack.toString()));
+    flow.on('error', error => process.stderr.write(error.stack.toString() + '\n'));
     flow.end(1);
 }
 
