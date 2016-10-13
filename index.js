@@ -13,7 +13,7 @@ const base_path = dirname(app_config);
 initEntrypoint(getEntrypoint(require(app_config)));
 
 function initEntrypoint (entrypoint) {
-    let flow = Flow(Adapter(entrypoint))(entrypoint.emit);
+    let flow = Flow(Adapter(entrypoint))(entrypoint.emit, {session: {role: entrypoint.role}});
     flow.on('data', chunk => process.stdout.write(chunk.toString()));
     flow.on('error', error => process.stderr.write(error.stack.toString() + '\n'));
     flow.end(1);
@@ -34,6 +34,7 @@ function getEntrypoint (config) {
     }
 
     entrypoint.base = base_path;
+    entrypoint.role = entrypoint.role || '*';//'__entrypoint__';
 
     if (entrypoint.env && entrypoint.env.length) {
         environment(entrypoint, config);
