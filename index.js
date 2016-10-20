@@ -20,7 +20,6 @@ function initEntrypoint (entrypoint) {
 }
 
 function getEntrypoint (config) {
-
     if (!config.entrypoints && !config.entrypoints.length) {
         error('No entrypoints defined in config.');
     }
@@ -28,6 +27,10 @@ function getEntrypoint (config) {
     let entrypoint = config.entrypoints.find((item) => {
         return item.name === entrypoint_name;
     });
+
+    if (!entrypoint) {
+        error('Entrypoint "' + entrypoint_name  + '" not found in config.');
+    }
 
     if (!entrypoint.emit) {
         error('No event defined in entrypoint.');
