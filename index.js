@@ -13,7 +13,7 @@ const base_path = dirname(app_config);
 initEntrypoint(getEntrypoint(require(app_config)));
 
 function initEntrypoint (entrypoint) {
-    let flow = Flow(Adapter(entrypoint))(entrypoint.emit, {session: {role: entrypoint.role}});
+    let flow = Flow(entrypoint.env, Adapter(entrypoint))(entrypoint.emit, {session: {role: entrypoint.role}});
     flow.on('data', chunk => process.stdout.write(chunk.toString()));
     flow.on('error', error => process.stderr.write(error.stack.toString() + '\n'));
     flow.end(1);
@@ -47,7 +47,7 @@ function getEntrypoint (config) {
 }
 
 function environment (entrypoint, config) {
-    process.flow_env = {};
+    const _env = {};
     entrypoint.env.forEach((env) => {
 
         env = config.environments.find((environment) => {
@@ -56,10 +56,10 @@ function environment (entrypoint, config) {
 
         !env && error('Entrypoint environment reference "' + name + '" does not exist.');
 
-        Object.assign(process.flow_env, env.vars);
+        Object.assign(_env, env.vars);
     });
 
-    delete entrypoint.env;
+    entrypoint.env = _env;
 }
 
 function error (msg) {
