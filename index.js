@@ -1,53 +1,67 @@
 #!/usr/bin/env node
 
-var Flow = require('flow');
-var fs = require('fs');
-var path = require('path');
-var argv = require('yargs')
+const resolve = require('path').resolve;
+const dirname = require('path').dirname;
+const readFile = require('fs').readFile;
+const Flow = require(__dirname + '/node_modules/flow');
+const Adapter = require(__dirname + '/lib/cayley');
+const entrypoint_name = process.argv[2];
+const app_config = resolve(process.argv[3] || './flow.json');
+const base_path = dirname(app_config);
 
-// check init event exists
-.check(function (argv) {
+!entrypoint_name && error('Missing entrypoint argument.');
+initEntrypoint(getEntrypoint(require(app_config)));
 
-    if (typeof argv._[1] !== 'string') {
-        return;
+function initEntrypoint (entrypoint) {
+    let flow = Flow(entrypoint.env, Adapter(entrypoint))(entrypoint.emit, {session: {role: entrypoint.role}});
+    flow.on('data', chunk => process.stdout.write(chunk.toString()));
+    flow.on('error', error => process.stderr.write(error.stack.toString() + '\n'));
+    flow.end(1);
+}
+
+function getEntrypoint (config) {
+    if (!config.entrypoints && !config.entrypoints.length) {
+        error('No entrypoints defined in config.');
     }
 
-    // read application config file
-    process.config.flow = argv._[2] ? require(path.resolve(argv._[2])) : {};
+    let entrypoint = config.entrypoints.find((item) => {
+        return item.name === entrypoint_name;
+    });
 
-    argv.event = argv._[1];
-    return true;
-})
-
-// check if app path exists
-.check(function (argv) {
-    argv._[0] = argv._[0] || '.';
-    argv.repo = path.resolve(argv._[0]);
-
-    if (fs.statSync(argv.repo)) {
-
-        // load module instance composition (MIC)
-        argv.mic = function (name, callback) {
-            callback(null, require(argv.repo + '/composition/' + name + '.json'));
-        };
-
-        // load module
-        argv.mod = function (name, callback) {
-            callback(null, require(name));
-        };
-
-        return true;
+    if (!entrypoint) {
+        error('Entrypoint "' + entrypoint_name  + '" not found in config.');
     }
-})
 
-.usage('flow-app <APP_REPO_PATH> <FLOW_EVENT>')
-.example('flow-app path/to/app http_server/start', 'Start a http server.')
-.help('h')
-.alias('h', 'help')
-.strict()
-.argv;
+    if (!entrypoint.emit) {
+        error('No event defined in entrypoint.');
+    }
 
-// emit init flow event
-var stream = Flow(argv.event, argv);
-stream.on('error', console.log.bind(console));
-stream.end(true);
+    entrypoint.base = base_path;
+    entrypoint.role = entrypoint.role || '*';//'__entrypoint__';
+
+    if (entrypoint.env && entrypoint.env.length) {
+        environment(entrypoint, config);
+    }
+
+    return entrypoint;
+}
+
+function environment (entrypoint, config) {
+    const _env = {};
+    entrypoint.env.forEach((env) => {
+
+        env = config.environments.find((environment) => {
+            return environment.name === env;
+        });
+
+        !env && error('Entrypoint environment reference "' + name + '" does not exist.');
+
+        Object.assign(_env, env.vars);
+    });
+
+    entrypoint.env = _env;
+}
+
+function error (msg) {
+    throw new Error('Flow-nodejs: ' + msg);
+}
