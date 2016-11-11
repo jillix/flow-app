@@ -21,7 +21,7 @@
     "cayley"
   ],
   "dependencies": {
-    "flow": "github:jillix/flow#linked-data",
+    "flow": "github:jillix/flow",
     "cayley": "github:danandrei/cayley.js",
     "lru-cache": "^4.0.1"
   },
