@@ -13,7 +13,7 @@ const base_path = dirname(app_config);
 initEntrypoint(getEntrypoint(require(app_config)));
 
 function initEntrypoint (entrypoint) {
-    let flow = Flow(entrypoint.env, Adapter(entrypoint))(entrypoint.emit, {session: {role: entrypoint.role}});
+    let flow = Flow(entrypoint.env, Adapter(entrypoint))(entrypoint.emit);
     flow.on('data', chunk => process.stdout.write(chunk.toString()));
     flow.on('error', error => process.stderr.write(error.stack.toString() + '\n'));
     flow.end(1);
@@ -37,27 +37,28 @@ function getEntrypoint (config) {
     }
 
     entrypoint.base = base_path;
-    entrypoint.role = entrypoint.role || '_:3389dae361af79b04c9c8e7057f60cc6';//'__entrypoint__';
 
-    if (entrypoint.env && entrypoint.env.length) {
-        environment(entrypoint, config);
-    }
+    environment(entrypoint, config);
+    entrypoint.env.role = entrypoint.role || '_:3389dae361af79b04c9c8e7057f60cc6';//'__entrypoint__';
 
     return entrypoint;
 }
 
 function environment (entrypoint, config) {
     const _env = {};
-    entrypoint.env.forEach((env) => {
 
-        env = config.environments.find((environment) => {
-            return environment.name === env;
+    if (entrypoint.env && entrypoint.env.length) {
+        entrypoint.env.forEach((env) => {
+
+            env = config.environments.find((environment) => {
+                return environment.name === env;
+            });
+
+            !env && error('Entrypoint environment reference "' + name + '" does not exist.');
+
+            Object.assign(_env, env.vars);
         });
-
-        !env && error('Entrypoint environment reference "' + name + '" does not exist.');
-
-        Object.assign(_env, env.vars);
-    });
+    }
 
     entrypoint.env = _env;
 }
