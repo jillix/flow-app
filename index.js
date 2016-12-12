@@ -37,7 +37,7 @@ function getEntrypoint (config) {
     }
 
     entrypoint.base = base_path;
-    entrypoint.role = entrypoint.role || '*';//'__entrypoint__';
+    entrypoint.role = entrypoint.role || '_:3389dae361af79b04c9c8e7057f60cc6';//'__entrypoint__';
 
     if (entrypoint.env && entrypoint.env.length) {
         environment(entrypoint, config);
