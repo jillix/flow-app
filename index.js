@@ -5,7 +5,7 @@ const Flow = require(__dirname + '/node_modules/flow');
 const Adapter = require(__dirname + '/lib/adapter');
 const Entrypoint = require(__dirname + '/lib/entrypoint');
 const entrypoint_name = process.argv[2];
-const base_path = resolve(process.argv[3]);
+const base_path = resolve(process.argv[3] || '.');
 
 !entrypoint_name && error('Missing entrypoint argument.');
 Entrypoint(entrypoint_name, entrypoint => {
