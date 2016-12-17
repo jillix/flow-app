@@ -25,6 +25,7 @@
     "flow": "github:jillix/flow",
     "flow-api": "github:jillix/flow-api",
     "flow-streams": "github:adioo/flow-streams",
+    "libobject": "github:jillix/libobject",
     "lru-cache": "^4.0.1"
   },
   "engine": {
