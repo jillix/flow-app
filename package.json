@@ -21,8 +21,10 @@
     "cayley"
   ],
   "dependencies": {
+    "cayley": "github:adioo/cayley.js",
     "flow": "github:jillix/flow",
-    "cayley": "github:danandrei/cayley.js",
+    "flow-api": "github:jillix/flow-api",
+    "flow-streams": "github:adioo/flow-streams",
     "lru-cache": "^4.0.1"
   },
   "engine": {
