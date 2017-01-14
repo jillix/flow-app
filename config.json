@@ -1,0 +1,4 @@
+{
+    "store": "cayley",
+    "config": "http://localhost:64210"
+}
