@@ -25,8 +25,11 @@ Entrypoint(store, entrypoint_name, (entrypoint) => {
     entrypoint.env._appDir = application_dir;
 
     // init flow and emit first sequence
-    let flow = Flow(entrypoint.env, Adapter(store, entrypoint))(entrypoint.sequence);
-    flow.on('data', chunk => process.stdout.write(chunk.toString()));
-    flow.on('error', error => process.stderr.write(error.stack.toString() + '\n'));
-    flow.end(1);
+    const flow = Flow(entrypoint.env, Adapter(store, entrypoint))(entrypoint.sequence, null, true);
+    flow.done = (err) => {
+        err && process.stderr(err);
+    };
+    process.stdin.pipe(flow).pipe(process.stdout)
+    flow.on("error", (err) => {process.stderr.write(err && err.stack ? err.stack.toString() : err)});
+    //flow.err.pipe(process.stderr);
 });
