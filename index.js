@@ -1,28 +1,56 @@
 #!/usr/bin/env node
 
-const resolve = require('path').resolve;
-const Flow = require(__dirname + '/node_modules/flow');
-const Adapter = require(__dirname + '/lib/adapter');
-const sequence_id = process.argv[2];
-const application_dir = resolve(process.argv[3] || '.');
+const cluster = require('cluster');
+const numCPUs = require('os').cpus().length;
 
-if (!sequence_id) {
-    process.stderr.write('Start sequence missing. Example: flow sequenceId');
-    process.exit(0);
+if (cluster.isMaster) {
+    for (let i = 0; i < numCPUs; i++) {
+        cluster.fork();
+    }
+} else {
+
+    const readFile = require("fs").readFile;
+    const Transform = require("stream").Transform;
+    const resolve = require("path").resolve;
+    const LRU = require("lru-cache");
+    const Registry = require(__dirname + "/node_modules/flow-registry");
+    const Flow = require(__dirname + "/node_modules/flow");
+    const sequence_id = process.argv[2];
+    const base_path = resolve(process.argv[3] || '.');
+
+    if (!sequence_id) {
+        process.stderr.write('Start sequence missing. Example: flow sequenceId');
+        process.exit(0);
+    }
+
+    const event = Flow({
+        cache: LRU({max: 500}),
+        seq: (sequence_id, role, cb) => {
+            readFile(base_path + "/" + sequence_id + ".json", (err, data) => {
+
+                if (err) {
+                    return cb(err);
+                }
+
+                try {
+                    cb(null, JSON.parse(data));
+                } catch(err) {
+                    cb(err);
+                }
+            });
+        },
+
+        fn: Registry.getFn
+    })({
+        sequence: sequence_id,
+        role: '_:3389dae361af79b04c9c8e7057f60cc6',
+        base: base_path
+    });
+
+    event.on("error", (err) => {
+        err = err.stack ? err.stack : err;
+        process.stderr.write(err.toString());
+    });
+
+    process.stdin.pipe(event).pipe(process.stdout);
 }
-
-// TODO get sequence id by name, or just ID?
-
-//entrypoint.env._modDir = entrypoint.module_root;
-//entrypoint.env._appDir = application_dir;
- 
-// init flow and emit first sequence
-const event = Flow(Adapter(application_dir))({
-    sequence: sequence_id,
-    role: '_:3389dae361af79b04c9c8e7057f60cc6'
-});
-process.stdin.pipe(event).pipe(process.stdout);
-event.on("error", (err) => {
-    err = err.stack ? err.stack : err;
-    process.stderr.write(err.toString());
-});
