@@ -24,7 +24,7 @@
   "dependencies": {
     "flow": "github:jillix/flow",
     "flow-registry": "github:jillix/flow-registry",
-    "lru-cache": "^4.0.1"
+    "lru-cache": "^4.0.2"
   },
   "engine": {
     "node": ">=7"
