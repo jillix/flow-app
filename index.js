@@ -7,14 +7,14 @@ if (cluster.isMaster) {
     for (let i = 0; i < numCPUs; i++) {
         cluster.fork();
     }
-} else {
+} else { 
 
+    const module_root = __dirname + "/node_modules/"
     const readFile = require("fs").readFile;
-    const Transform = require("stream").Transform;
     const resolve = require("path").resolve;
+    const Flow = require(module_root + "flow");
+    const Registry = require(module_root + "flow-registry");
     const LRU = require("lru-cache");
-    const Registry = require(__dirname + "/node_modules/flow-registry");
-    const Flow = require(__dirname + "/node_modules/flow");
     const sequence_id = process.argv[2];
     const base_path = resolve(process.argv[3] || '.');
 
