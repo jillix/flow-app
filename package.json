@@ -5,6 +5,7 @@
   "description": "Start flow entrypoints locally with nodejs.",
   "contributors": [
     "Adrian Ottiker <adrian@ottiker.com>",
+    "Dan Andrei <dan.andrei@jillix.com>",
     "Gabriel Petrovay <gabipetrovay@gmail.com>",
     "Ionica Bizau <bizauionica@gmail.com>"
   ],
@@ -17,15 +18,12 @@
   },
   "keywords": [
     "flow",
-    "nodejs",
-    "cayley"
+    "cli",
+    "nodejs"
   ],
   "dependencies": {
-    "cayley": "github:adioo/cayley.js",
     "flow": "github:jillix/flow",
-    "flow-api": "github:jillix/flow-api",
     "flow-registry": "github:jillix/flow-registry",
-    "libobject": "github:jillix/libobject",
     "lru-cache": "^4.0.1"
   },
   "engine": {
