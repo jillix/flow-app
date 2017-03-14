@@ -23,6 +23,9 @@ if (cluster.isMaster) {
         process.exit(0);
     }
 
+    // set base path in evnironment
+    process.env.flow_base = base_path;
+
     const event = Flow({
         cache: LRU({max: 500}),
         seq: (sequence_id, role, cb) => {
