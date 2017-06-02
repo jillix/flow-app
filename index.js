@@ -7,10 +7,11 @@ if (cluster.isMaster) {
     for (let i = 0; i < numCPUs; i++) {
         cluster.fork();
     }
-} else { 
+} else {
 
     const module_root = __dirname + "/node_modules/"
-    const readFile = require("fs").readFile;
+    const promisify = require('util').promisify;
+    const readFile = promisify(require("fs").readFile);
     const resolve = require("path").resolve;
     const Flow = require(module_root + "flow");
     const Registry = require(module_root + "flow-registry");
@@ -25,22 +26,10 @@ if (cluster.isMaster) {
 
     // set base path in evnironment
     process.env.flow_base = base_path;
-
     const event = Flow({
         cache: LRU({max: 500}),
-        seq: (sequence_id, role, cb) => {
-            readFile(base_path + "/" + sequence_id + ".json", (err, data) => {
-
-                if (err) {
-                    return cb(err);
-                }
-
-                try {
-                    cb(null, JSON.parse(data));
-                } catch(err) {
-                    cb(err);
-                }
-            });
+        seq: (sequence_id, role) => {
+            return readFile(base_path + "/" + sequence_id + ".json").then(JSON.parse);
         },
 
         fn: Registry.getFn
