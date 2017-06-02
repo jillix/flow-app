@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 
-const cluster = require('cluster');
+/*const cluster = require('cluster');
 const numCPUs = require('os').cpus().length;
 
 if (cluster.isMaster) {
     for (let i = 0; i < numCPUs; i++) {
         cluster.fork();
     }
-} else {
+} else {*/
 
     const module_root = __dirname + "/node_modules/"
     const promisify = require('util').promisify;
@@ -45,4 +45,4 @@ if (cluster.isMaster) {
     });
 
     process.stdin.pipe(event).pipe(process.stdout);
-}
+//}
