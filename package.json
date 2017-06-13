@@ -22,11 +22,11 @@
     "nodejs"
   ],
   "dependencies": {
-    "flow": "github:jillix/flow",
+    "flow": "github:jillix/flow#promise-adapter",
     "lru-cache": "^4.0.2"
   },
   "engine": {
-    "node": ">=7"
+    "node": ">=8"
   },
   "bugs": {
     "url": "https://github.com/jillix/flow-nodejs/issues"
