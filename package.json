@@ -22,8 +22,7 @@
     "nodejs"
   ],
   "dependencies": {
-    "flow": "github:jillix/flow#promise-adapter",
-    "lru-cache": "^4.0.2"
+    "flow": "github:jillix/flow"
   },
   "engine": {
     "node": ">=8"
