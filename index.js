@@ -6,7 +6,7 @@ require(__dirname + "/node_modules/" + "flow");
 const promisify = require("util").promisify;
 const readFile = promisify(require("fs").readFile);
 const path = require("path");
-const access = promisify(require("fs").access);
+const open = promisify(require("fs").open);
 const exec = promisify(require("child_process").exec);
 const sequence_id = process.argv[2];
 const app_base_path = path.resolve(process.argv[3] || ".");
@@ -40,11 +40,12 @@ Flow({
         });
     },
     dep: (name, dependency, role) => {
-        return access(path.resolve(app_base_path + "/node_modules/" + name))
+        return open(path.resolve(app_base_path + "/node_modules/" + name), "r")
         .catch((err) => {
             if (err.code === "ENOENT") {
                 return exec("npm i --production --prefix " + app_base_path + " " + dependency.trim());
             }
+            return Promise.reject(err);
         });
     }
 })({
