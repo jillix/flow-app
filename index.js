@@ -3,15 +3,15 @@
 
 require(__dirname + "/node_modules/" + "flow");
 
-const promisify = require("util").promisify;
-const readFile = promisify(require("fs").readFile);
-const pathResolve = require("path").resolve;
 const fs = require("fs");
-const open = promisify(fs.open);
-const close = promisify(fs.close);
+const presolve = require("path").resolve;
+const promisify = require("util").promisify;
 const exec = promisify(require("child_process").exec);
+const open = promisify(fs.open);
+const read = promisify(fs.readFile);
+const close = promisify(fs.close);
 const sequence_id = process.argv[2];
-const app_base_path = pathResolve(process.argv[3] || ".");
+const app_base_path = presolve(process.argv[3] || ".");
 const cache = {};
 
 if (!sequence_id) {
@@ -31,7 +31,7 @@ Flow({
         delete cache[key];
     },
     seq: (sequence_id, role) => {
-        return readFile(app_base_path + "/sequences/" + sequence_id + ".json").then(JSON.parse);
+        return read(app_base_path + "/sequences/" + sequence_id + ".json").then(JSON.parse);
     },
     fnc: (fn_iri, role) => {
         return new Promise((resolve, reject) => {
@@ -42,7 +42,7 @@ Flow({
         });
     },
     dep: (name, dependency, role) => {
-        return open(pathResolve(app_base_path + "/node_modules/" + name), "r")
+        return open(presolve(app_base_path + "/node_modules/" + name), "r")
         .then(close)
         .catch((err) => {
             return err.code === "ENOENT" ? exec("npm i --production --prefix " + app_base_path + " " + dependency.trim()) : Promise.reject(err);
