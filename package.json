@@ -22,7 +22,7 @@
     "nodejs"
   ],
   "dependencies": {
-    "flow": "github:jillix/flow"
+    "flow": "github:jillix/flow#promise-handler-test"
   },
   "engine": {
     "node": ">=8"
