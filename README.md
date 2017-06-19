@@ -1,11 +1,11 @@
 Flow-nodejs
 ======
 Flow for nodejs.
-###Installation
+### Installation
 ```sh
 npm install -g jillix/flow-nodejs
 ```
-###Usage
+### Usage
 ```sh
 flow sequenceId path/to/sequence/files
 ```
