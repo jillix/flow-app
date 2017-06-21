@@ -18,7 +18,9 @@ if (!sequence_id) {
     process.stderr.write("Start sequence missing. Example: flow sequenceId");
     process.exit(0);
 }
-process.env.FLOW_BASE = app_base_path;
+
+process.env.NODE_PATH = app_base_path + "/node_modules";
+require("module").Module._initPaths();
 
 Flow({
     set: (key, val) => {
