@@ -18,7 +18,6 @@
   },
   "keywords": [
     "flow",
-    "cli",
     "nodejs"
   ],
   "dependencies": {
