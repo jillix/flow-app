@@ -47,7 +47,7 @@ Flow({
         return open(presolve(app_base_path + "/node_modules/" + name), "r")
         .then(close)
         .catch((err) => {
-            return err.code === "ENOENT" ? exec("npm i --production --prefix " + app_base_path + " " + dependency.trim()) : Promise.reject(err);
+            return err.code === "ENOENT" ? exec("npm i --production --save=false --prefix " + app_base_path + " " + dependency.trim()) : Promise.reject(err);
         });
     }
 })({
