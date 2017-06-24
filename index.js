@@ -7,9 +7,8 @@ const fs = require("fs");
 const presolve = require("path").resolve;
 const promisify = require("util").promisify;
 const exec = promisify(require("child_process").exec);
-const open = promisify(fs.open);
+const access = promisify(fs.access);
 const read = promisify(fs.readFile);
-const close = promisify(fs.close);
 const sequence_id = process.argv[2];
 const app_base_path = presolve(process.argv[3] || ".");
 const cache = {};
@@ -44,10 +43,9 @@ Flow({
         });
     },
     dep: (name, dependency, role) => {
-        return open(presolve(app_base_path + "/node_modules/" + name), "r")
-        .then(close)
+        return access(presolve(app_base_path + "/node_modules/" + name))
         .catch((err) => {
-            return err.code === "ENOENT" ? exec("npm i --production --save=false --prefix " + app_base_path + " " + dependency.trim()) : Promise.reject(err);
+            return err.code === "ENOENT" ? exec("npm i --production --prefix " + app_base_path + " " + dependency.trim()) : Promise.reject(err);
         });
     }
 })({
