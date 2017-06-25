@@ -11,10 +11,11 @@ const access = promisify(fs.access);
 const read = promisify(fs.readFile);
 const sequence_id = process.argv[2];
 const app_base_path = presolve(process.argv[3] || ".");
+const role = process.argv[4];
 const cache = {};
 
 if (!sequence_id) {
-    process.stderr.write("Start sequence missing. Example: flow sequenceId");
+    process.stderr.write("Start sequence missing.\n");
     process.exit(0);
 }
 
@@ -22,6 +23,7 @@ process.env.NODE_PATH = app_base_path + "/node_modules";
 require("module").Module._initPaths();
 
 Flow({
+    abp: app_base_path,
     set: (key, val) => {
         return cache[key] = val;
     },
@@ -50,11 +52,7 @@ Flow({
     }
 })({
     sequence: sequence_id,
-    role: "3389dae361af79b04c9c8e7057f60cc6",
-    base: app_base_path
-})
-.then((output) => {
-    console.log("Flow output:", output);
+    role: role
 })
 .catch((err) => {
     err = err.stack ? err.stack : err;
