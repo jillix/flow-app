@@ -50,10 +50,7 @@ Flow({
             return err.code === "ENOENT" ? exec("npm i --production --prefix " + app_base_path + " " + dependency.trim()) : Promise.reject(err);
         });
     }
-})({
-    sequence: sequence_id,
-    role: role
-})
+})(sequence_id, role)
 .catch((err) => {
     err = err.stack ? err.stack : err;
     process.stderr.write(err.toString() + "\n");
