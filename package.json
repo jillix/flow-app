@@ -21,7 +21,7 @@
     "nodejs"
   ],
   "dependencies": {
-    "flow": "github:jillix/flow#promise-handler-test"
+    "flow": "github:jillix/flow#create-input"
   },
   "engine": {
     "node": ">=8"
