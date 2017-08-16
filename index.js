@@ -38,8 +38,13 @@ Flow({
     },
     fnc: (fn_iri, role) => {
         return new Promise((resolve, reject) => {
-            process.nextTick(()=>{
-                require(app_base_path + "/handlers/" + fn_iri);
+            process.nextTick(() => {
+                try {
+                    require(app_base_path + "/handlers/" + fn_iri);
+                } catch(err) {
+                    return reject(err);
+                }
+
                 resolve(fn_iri);
             });
         });
