@@ -1,8 +1,7 @@
 #!/usr/bin/env node
 "use strict"
 
-require(__dirname + "/node_modules/" + "flow");
-
+const Flow = require(__dirname + "/node_modules/flow");
 const fs = require("fs");
 const presolve = require("path").resolve;
 const promisify = require("util").promisify;
@@ -37,16 +36,8 @@ Flow({
         return read(app_base_path + "/sequences/" + sequence_id + ".json").then(JSON.parse);
     },
     fnc: (fn_iri, role) => {
-        return new Promise((resolve, reject) => {
-            process.nextTick(() => {
-                try {
-                    require(app_base_path + "/handlers/" + fn_iri);
-                } catch(err) {
-                    return reject(err);
-                }
-
-                resolve(fn_iri);
-            });
+        return read(app_base_path + "/handlers/" + fn_iri + ".js").then((script) => {
+            return new Function("flow", "abp", "adapter", "require", script.toString());
         });
     },
     dep: (name, dependency, role) => {
@@ -55,7 +46,7 @@ Flow({
             return err.code === "ENOENT" ? exec("npm i --production --prefix " + app_base_path + " " + dependency.trim()) : Promise.reject(err);
         });
     }
-})(sequence_id, role)
+}, require)(sequence_id, role)
 .catch((err) => {
     err = err.stack ? err.stack : err;
     process.stderr.write(err.toString() + "\n");
