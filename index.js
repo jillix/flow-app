@@ -38,7 +38,7 @@ Flow({
     },
     fnc: (fn_iri, role) => {
         return read(app_base_path + "/handlers/" + fn_iri + ".js").then((script) => {
-            return new Function("flow", "abp", "adapter", script.toString());
+            return new Function("Adapter", "flow", script.toString());
         });
     },
     dep: (name, dependency, role) => {
