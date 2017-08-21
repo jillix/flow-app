@@ -20,6 +20,7 @@ if (!sequence_id) {
 
 process.env.NODE_PATH = app_base_path + "/node_modules";
 require("module").Module._initPaths();
+global.require = require;
 
 Flow({
     abp: app_base_path,
@@ -37,7 +38,7 @@ Flow({
     },
     fnc: (fn_iri, role) => {
         return read(app_base_path + "/handlers/" + fn_iri + ".js").then((script) => {
-            return new Function("flow", "abp", "adapter", "require", script.toString());
+            return new Function("flow", "abp", "adapter", script.toString());
         });
     },
     dep: (name, dependency, role) => {
@@ -46,7 +47,7 @@ Flow({
             return err.code === "ENOENT" ? exec("npm i --production --prefix " + app_base_path + " " + dependency.trim()) : Promise.reject(err);
         });
     }
-}, require)(sequence_id, role)
+})(sequence_id, role)
 .catch((err) => {
     err = err.stack ? err.stack : err;
     process.stderr.write(err.toString() + "\n");
