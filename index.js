@@ -1,8 +1,7 @@
 #!/usr/bin/env node
 "use strict"
 
-require(__dirname + "/node_modules/" + "flow");
-
+const Flow = require(__dirname + "/node_modules/flow");
 const fs = require("fs");
 const presolve = require("path").resolve;
 const promisify = require("util").promisify;
@@ -21,6 +20,7 @@ if (!sequence_id) {
 
 process.env.NODE_PATH = app_base_path + "/node_modules";
 require("module").Module._initPaths();
+global.require = require;
 
 Flow({
     abp: app_base_path,
@@ -37,16 +37,8 @@ Flow({
         return read(app_base_path + "/sequences/" + sequence_id + ".json").then(JSON.parse);
     },
     fnc: (fn_iri, role) => {
-        return new Promise((resolve, reject) => {
-            process.nextTick(() => {
-                try {
-                    require(app_base_path + "/handlers/" + fn_iri);
-                } catch(err) {
-                    return reject(err);
-                }
-
-                resolve(fn_iri);
-            });
+        return read(app_base_path + "/handlers/" + fn_iri + ".js").then((script) => {
+            return new Function("Adapter", "flow", script.toString());
         });
     },
     dep: (name, dependency, role) => {
