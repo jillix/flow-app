@@ -18,16 +18,13 @@
   },
   "keywords": [
     "flow",
-    "cli",
     "nodejs"
   ],
   "dependencies": {
-    "flow": "github:jillix/flow",
-    "flow-registry": "github:jillix/flow-registry",
-    "lru-cache": "^4.0.2"
+    "flow": "github:jillix/flow"
   },
   "engine": {
-    "node": ">=7"
+    "node": ">=8"
   },
   "bugs": {
     "url": "https://github.com/jillix/flow-nodejs/issues"
@@ -37,6 +34,5 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "devDependencies": {},
   "license": "MIT"
 }

@@ -1,59 +1,54 @@
 #!/usr/bin/env node
+"use strict"
 
-const cluster = require('cluster');
-const numCPUs = require('os').cpus().length;
+const Flow = require(__dirname + "/node_modules/flow");
+const fs = require("fs");
+const presolve = require("path").resolve;
+const promisify = require("util").promisify;
+const exec = promisify(require("child_process").exec);
+const access = promisify(fs.access);
+const read = promisify(fs.readFile);
+const sequence_id = process.argv[2];
+const app_base_path = presolve(process.argv[3] || ".");
+const role = process.argv[4];
+const cache = {};
 
-if (cluster.isMaster) {
-    for (let i = 0; i < numCPUs; i++) {
-        cluster.fork();
-    }
-} else { 
-
-    const module_root = __dirname + "/node_modules/"
-    const readFile = require("fs").readFile;
-    const resolve = require("path").resolve;
-    const Flow = require(module_root + "flow");
-    const Registry = require(module_root + "flow-registry");
-    const LRU = require("lru-cache");
-    const sequence_id = process.argv[2];
-    const base_path = resolve(process.argv[3] || '.');
-
-    if (!sequence_id) {
-        process.stderr.write('Start sequence missing. Example: flow sequenceId');
-        process.exit(0);
-    }
-
-    // set base path in evnironment
-    process.env.flow_base = base_path;
-
-    const event = Flow({
-        cache: LRU({max: 500}),
-        seq: (sequence_id, role, cb) => {
-            readFile(base_path + "/" + sequence_id + ".json", (err, data) => {
-
-                if (err) {
-                    return cb(err);
-                }
-
-                try {
-                    cb(null, JSON.parse(data));
-                } catch(err) {
-                    cb(err);
-                }
-            });
-        },
-
-        fn: Registry.getFn
-    })({
-        sequence: sequence_id,
-        role: '_:3389dae361af79b04c9c8e7057f60cc6',
-        base: base_path
-    });
-
-    event.on("error", (err) => {
-        err = err.stack ? err.stack : err;
-        process.stderr.write(err.toString());
-    });
-
-    process.stdin.pipe(event).pipe(process.stdout);
+if (!sequence_id) {
+    process.stderr.write("Start sequence missing.\n");
+    process.exit(0);
 }
+
+process.env.NODE_PATH = app_base_path + "/node_modules";
+require("module").Module._initPaths();
+global.require = require;
+
+Flow({
+    abp: app_base_path,
+    set: (key, val) => {
+        return cache[key] = val;
+    },
+    get: (key) => {
+        return cache[key];
+    },
+    del: (key) => {
+        delete cache[key];
+    },
+    seq: (sequence_id, role) => {
+        return read(app_base_path + "/sequences/" + sequence_id + ".json").then(JSON.parse);
+    },
+    fnc: (fn_iri, role) => {
+        return read(app_base_path + "/handlers/" + fn_iri + ".js").then((script) => {
+            return new Function("Adapter", "flow", script.toString());
+        });
+    },
+    dep: (name, dependency, role) => {
+        return access(presolve(app_base_path + "/node_modules/" + name))
+        .catch((err) => {
+            return err.code === "ENOENT" ? exec("npm i --production --prefix " + app_base_path + " " + dependency.trim()) : Promise.reject(err);
+        });
+    }
+})(sequence_id, role)
+.catch((err) => {
+    err = err.stack ? err.stack : err;
+    process.stderr.write(err.toString() + "\n");
+});
