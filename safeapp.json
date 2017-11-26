@@ -1,0 +1,10 @@
+{
+    "app": {
+        "id": "com.jillix.example",
+        "name": "Example App",
+        "vendor": "jillix GmbH"
+    },
+    "containers": {
+        "_example": ["Read", "Insert", "Update", "Delete", "ManagePermissions"]
+    }
+}
