@@ -21,6 +21,7 @@
     "nodejs"
   ],
   "dependencies": {
+    "safe": "git+https://github.com/maidsafe/safe_app_nodejs.git",
     "flow": "github:jillix/flow"
   },
   "engine": {
